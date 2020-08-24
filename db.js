@@ -1,20 +1,22 @@
-const { Pool, Client } = require('pg')
-const client = new Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'my-db',
-  password: 'postgres',
-  port: 5432
-})
-client.connect()
+const { Pool } = require('pg')
+require('dotenv').config()
 
-console.log("Connected")
-// client.query('SELECT * FROM customer')
+if (process.env.DATABASE_HOST === 'localhost') {
+  const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'my-db',
+    password: 'postgres',
+    port: 5432
+  })
+
+  module.exports = pool;
+} else {
+
+  // connect to Aurora db and export
+
+}
 
 
-client.query('SELECT * FROM customer', (err, res) => {
-    console.log(err, res)
-    client.end()
-})
 
-module.exports = client;
+
