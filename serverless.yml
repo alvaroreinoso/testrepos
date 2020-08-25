@@ -101,13 +101,50 @@ functions:
 #    Define function environment variables here
 #    environment:
 #      variable2: value2
-  getLane:
+
+# User
+  getUser:
     handler:
-      lane.getLanes
+      ./handlers/user.getUser
     events:
         - http:
-            path: api/lane/{brokerage_id}
+            path: api/user
             method: get
+            request:
+              parameters:
+                username: true
+
+
+# Lane
+  getLanesByCurrentUser:
+    handler:
+      ./handlers/lane.getLanesByCurrentUser
+    events:
+        - http:
+            path: api/lane
+            method: get
+  getLane:
+    handler:
+      ./handlers/lane.getLane
+    events:
+        - http:
+            path: api/lane/{lane_id}
+            method: get
+  deleteLane:
+    handler:
+      ./handlers/lane.deleteLane
+    events:
+        - http:
+            path: api/lane/{lane_id}
+            method: delete
+
+  addLane:
+    handler:
+      ./handlers/lane.addLane
+    events: 
+        - http:
+            path: api/lane
+            method: post
 
 # you can add CloudFormation resource templates here
 #resources:
