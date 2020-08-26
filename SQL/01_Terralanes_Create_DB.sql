@@ -50,7 +50,7 @@ CREATE TABLE brokerage (
 
 CREATE TABLE "user" (
   id serial PRIMARY KEY,
-  firebase_user_id VARCHAR (255) NOT NULL,
+  username VARCHAR (255) NOT NULL,
   brokerage_id INT NOT NULL,
   team_id INT,
   title VARCHAR (255) NOT NULL,

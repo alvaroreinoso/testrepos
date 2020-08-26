@@ -1,21 +1,21 @@
 'use strict';
 const pool = require('.././db')
+const getCurrentUser = require('.././helpers/user').getCurrentUser
+
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
-    console.log(event)
 
-    const results = await pool.query(`SELECT * FROM lane where customer_location_id = ${brokerage_id}`)
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    const results = await pool.query(`SELECT * FROM lane where customer_location_id = ${user.brokerage_id}`)
 
     return {
         statusCode: 200,
-        body: JSON.stringify(results)
+        body: JSON.stringify(results.rows)
     }
-
 }
 
 module.exports.getLane = async (event, context) => {
-
-    console.log(event.pathParameters)
 
     const lane_id = event.pathParameters.lane_id
 
@@ -64,12 +64,3 @@ module.exports.addLane = async (event, context) => {
         statusCode: 204
     }
 }
-
-
-// GET lanes of current user based on team_id -- user id from token
-
-// GET lane by its id -- route param
-
-// DELETE specific lane -- route param/ json body
-
-// POST specific lane -- json body

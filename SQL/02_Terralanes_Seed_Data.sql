@@ -10,24 +10,24 @@ values
 (3, 2, 'Team Lyles', '🚛'),
 (4, 2, 'Team Lyles', '🌾');
 
-insert into "user" (id, firebase_user_id, brokerage_id, team_id, title, email, first_name, last_name, phone)
+insert into "user" (id, username, brokerage_id, team_id, title, email, first_name, last_name, phone)
 values 
-(1,'8tIuOcWQmlWrir8MSV32P2JbICO2', 1, 1, 'Sales Manager', 'jlyles@opl.com', 'Josh', 'Lyles', '615-123-4567'),
-(2,'ekrs8YGoMHN9IX13iUdskJF3Llp2', 1, 1, 'Account Executive', 'joates@opl.com', 'John', 'Oates', '615-123-4568'),
-(3,'tOfR5HNhf4eZpb65qKMytt14jSE3', 1, 1, 'Account Manager', 'awoodroffe@opl.com', 'Alexis', 'Woodroffe', '615-123-4569'),
-(4,'9QZTmIFyEkhJmv7RSGuMsKOsXak2', 1, 1, 'Account Manager', 'chawkins@opl.com', 'Colton', 'Hawkins', '615-123-4570'),
-(5,'jsOeKxoEXodMQkkZjkR27yDu8Uy2', 1, 2, 'Sales Manager', 'awilliams@opl.com', 'Adam', 'Williams', '615-123-4571'),
-(6,'QxmJrweCYbQSz0ra9PSswvzDp2e2', 1, 2, 'Account Executive', 'spasciak@opl.com', 'Scott', 'Pasciak', '615-123-4572'),
-(7,'YkIMrCrTkQZpmYLQJAkisBUKY7n2', 1, 2, 'Account Manager', 'ckaramanos@opl.com', 'Chris', 'Karamanos', '615-123-4573'),
-(8,'Kf86OKsobcb3gbT8rAyikdyubMw1', 1, 2, 'Account Manager', 'tfayne@opl.com', 'TK', 'Fayne', '615-123-4574'),
-(9,'tQqaF6kJSAexfzLcyyzez3qQnHx2', 2, 3, 'Director of Logistics', 'sclark@dunavant.com', 'Steve', 'Clark', '615-123-4575'),
-(10,'t9FPUimRJaWoS2DgPYopgX5SsN62', 2, 3, 'Logistics Services Manager', 'mmathis@dunavant.com', 'Monica', 'Mathis', '615-123-4575'),
-(11,'BW2Lw3lIUeYEaUjdFgWUiCFKvMu1', 2, 3, 'Logistics Services Manager', 'gpulliam@dunavant.com', 'Guy', 'Pulliam', '615-123-4575'),
-(12,'0zusPUvJRaP5D1mxyG4I2mqUy6F3', 2, 3, 'Logistics Services Manager', 'jsesti@dunavant.com', 'Jeremy', 'Sesti', '615-123-4575'),
-(13,'ypuzUEWy5WZV8HyA2hMVh55ZIuA3', 2, 4, 'Agriculture Logistics Specialist', 'llewis@dunavant.com', 'Laura', 'Lewid', '615-123-4575'),
-(14,'KfDK23ZiwBMCi7XrUwONhEI9UA83', 2, 4, 'Logistics Services Manager', 'jwalsh@dunavant.com', 'Adam', 'Williams', '615-123-4575'),
-(15,'v71tElzPVxUzr8CUUP7OhRRs1xa2', 2, 4, 'Logistics Services Manager', 'rgrissom@dunavant.com', 'Adam', 'Williams', '615-123-4575'),
-(16,'XUqFygM05qUEiBzauOoy6FaEQwH3', 2, 4, 'Logistics Services Manager', 'mcraven@dunavant.com', 'Adam', 'Williams', '615-123-4575');
+(1,'df5cdfae-107d-4ee1-824a-baa75750dcda', 1, 1, 'Sales Manager', 'jlyles@opl.com', 'Josh', 'Lyles', '615-123-4567'),
+(2,'444ce57b-2215-4957-86b1-46d899344bc9', 1, 1, 'Account Executive', 'joates@opl.com', 'John', 'Oates', '615-123-4568'),
+(3,'5e449fcd-eff6-45a5-8707-06cda8415dbc', 1, 1, 'Account Manager', 'awoodroffe@opl.com', 'Alexis', 'Woodroffe', '615-123-4569'),
+(4,'b713abf5-aa13-4ba0-93db-828ee71440fd', 1, 1, 'Account Manager', 'chawkins@opl.com', 'Colton', 'Hawkins', '615-123-4570'),
+(5,'fea88775-181b-44ef-890d-4deb9e9634c8', 1, 2, 'Sales Manager', 'awilliams@opl.com', 'Adam', 'Williams', '615-123-4571'),
+(6,'88f496bb-fa83-4b94-9582-4b424f5150ca', 1, 2, 'Account Executive', 'spasciak@opl.com', 'Scott', 'Pasciak', '615-123-4572'),
+(7,'a1760f93-6382-4fe9-bd87-0705bd9d85cd', 1, 2, 'Account Manager', 'ckaramanos@opl.com', 'Chris', 'Karamanos', '615-123-4573'),
+(8,'70cfc2e9-8507-4349-adee-5ae0352e420c', 1, 2, 'Account Manager', 'tfayne@opl.com', 'TK', 'Fayne', '615-123-4574'),
+(9,'59cf010f-cfaa-4bae-9a88-76e110ede864', 2, 3, 'Director of Logistics', 'sclark@dunavant.com', 'Steve', 'Clark', '615-123-4575'),
+(10,'97306352-5dc7-4754-9521-72e3209b013e', 2, 3, 'Logistics Services Manager', 'mmathis@dunavant.com', 'Monica', 'Mathis', '615-123-4575'),
+(11,'1dc8f2c5-5a48-476b-a6bd-bf7b144a0c2e', 2, 3, 'Logistics Services Manager', 'gpulliam@dunavant.com', 'Guy', 'Pulliam', '615-123-4575'),
+(12,'75c1b1e1-bc45-425e-9eab-067b348c38e1', 2, 3, 'Logistics Services Manager', 'jsesti@dunavant.com', 'Jeremy', 'Sesti', '615-123-4575'),
+(13,'28e6b212-3770-437a-a410-3cad17298853', 2, 4, 'Agriculture Logistics Specialist', 'llewis@dunavant.com', 'Laura', 'Lewid', '615-123-4575'),
+(14,'357a4348-a54c-4cf6-bd58-e6971506273e', 2, 4, 'Logistics Services Manager', 'jwalsh@dunavant.com', 'Adam', 'Williams', '615-123-4575'),
+(15,'c4c1e33e-f317-496c-abfb-cc8c7bc2c23b', 2, 4, 'Logistics Services Manager', 'rgrissom@dunavant.com', 'Adam', 'Williams', '615-123-4575'),
+(16,'830c0cf0-5ce7-46d8-9939-0a47ae71594b', 2, 4, 'Logistics Services Manager', 'mcraven@dunavant.com', 'Adam', 'Williams', '615-123-4575');
 
 insert into customer (id, name, industry, user_id)
 values

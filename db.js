@@ -10,7 +10,7 @@ if (process.env.DATABASE_HOST === 'localhost') {
     port: 5432
   })
 
-  console.log(pool)
+  // console.log(pool)
 
   module.exports = pool;
 } else {

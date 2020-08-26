@@ -9,8 +9,10 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jsonwebtoken": "^8.5.1",
     "serverless": "^1.79.0",
-    "serverless-offline": "^6.5.0"
+    "serverless-offline": "^6.5.0",
+    "serverless-offline-local-authorizers-plugin": "^1.0.2"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

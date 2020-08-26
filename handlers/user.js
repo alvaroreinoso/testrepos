@@ -3,11 +3,9 @@ const pool = require('.././db')
 
 module.exports.getUser = async (event, context) => {
 
-    console.log(event.queryStringParameters.username)
-    
     const username = event.queryStringParameters.username
 
-    const results = await pool.query(`SELECT * FROM "user" where firebase_user_id='${username}'`)
+    const results = await pool.query(`SELECT * FROM "user" where username='${username}'`)
 
     return {
         statusCode: 200,
