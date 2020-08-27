@@ -58,6 +58,12 @@ Run
 sls offline start
 ```
 
-You can now hit the routes locally
+You can now hit the routes locally. I recommend installing *** Insomnia *** to do this.
+
+1. To install insomnia, go to https://support.insomnia.rest/article/11-getting-started#:~:text=Install%20the%20App&text=Visit%20the%20Downloads%20page%20to%20download%20the%20installer%20for%20your%20operating%20system.&text=After%20downloading%20the%20installer%2C%20double,create%20your%20first%20HTTP%20request.
+
+1. Open insomnia and import the `Insomnia.json` file for the project
+
+
 
 
