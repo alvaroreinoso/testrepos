@@ -1,16 +1,16 @@
-insert into brokerage (id, pin, name, address, address_2, city, state, zipcode, phone)
+insert into brokerages (id, pin, name, address, address_2, city, state, zipcode, phone)
 values
 (1, '6b10ba15-cf88-464e-9fd1-a24750afb100', 'One Point Logistics','159 4th Avenue North', null, 'Nashville', 'TN', '37219', '615-412-8906'),
 (2, '89bae886-70b2-4d41-ad2b-9d8383330354', 'Dunavant Logistics','951 Ridgeway Loop Road', 'Suite 205', 'Nashville', 'TN', '37219', '615-412-8906');
 
-insert into team (id, brokerage_id, name, icon)
+insert into teams (id, brokerage_id, name, icon)
 values
 (1, 1, 'Team Lyles', '💵'),
 (2, 1, 'Team Lyles', '💼'),
 (3, 2, 'Team Lyles', '🚛'),
 (4, 2, 'Team Lyles', '🌾');
 
-insert into "user" (id, username, brokerage_id, team_id, title, email, first_name, last_name, phone)
+insert into users (id, username, brokerage_id, team_id, title, email, first_name, last_name, phone)
 values 
 (1,'df5cdfae-107d-4ee1-824a-baa75750dcda', 1, 1, 'Sales Manager', 'jlyles@opl.com', 'Josh', 'Lyles', '615-123-4567'),
 (2,'444ce57b-2215-4957-86b1-46d899344bc9', 1, 1, 'Account Executive', 'joates@opl.com', 'John', 'Oates', '615-123-4568'),
@@ -29,7 +29,7 @@ values
 (15,'c4c1e33e-f317-496c-abfb-cc8c7bc2c23b', 2, 4, 'Logistics Services Manager', 'rgrissom@dunavant.com', 'Adam', 'Williams', '615-123-4575'),
 (16,'830c0cf0-5ce7-46d8-9939-0a47ae71594b', 2, 4, 'Logistics Services Manager', 'mcraven@dunavant.com', 'Adam', 'Williams', '615-123-4575');
 
-insert into customer (id, name, industry, user_id)
+insert into customers (id, name, industry, user_id)
 values
 (1, 'Lollicup USA, Inc.', 'Plastics and Packaging', 1),
 (2, 'Lopez Foods', 'Food and Beverage', 1),
@@ -42,7 +42,7 @@ values
 (9, 'Glencore PLC', 'Agriculture', 13),
 (10, 'Engelhart Commodities', 'Agriculture', 13);
 
-insert into customer_contact (id, first_name, last_name, title, phone, phone_ext, email, contact_level)
+insert into customer_contacts (id, first_name, last_name, title, phone, phone_ext, email, contact_level)
 values
 (1,'Charlene', 'Anan', 'Warehouse Admin', '123-123-4567', '1', 'test51@gmail.com', 1),
 (2,'Samantha', 'Delgadillo', 'Warehouse Admin', '123-123-4568', null, 'test52@gmail.com', 1),
@@ -63,7 +63,7 @@ values
 (17, 'Donald', 'Draper', 'Warehouse Clerk', '123-123-4583', '2', 'test67@gmail.com', 1),
 (18, 'Bill', 'Mitchell', 'Warehouse Clerk', '123-123-4584', null, 'test68@gmail.com', 1);
 
-insert into customer_location (id, customer_id, contact_id, address, city, state, zipcode, is_hq, is_shipping_recieving)
+insert into customer_locations (id, customer_id, contact_id, address, city, state, zipcode, is_hq, is_shipping_recieving)
 values
 (1, 1, 1, '6185 Kimball Ave', 'Chino', 'CA', '91708', true, true),
 (2, 1, 2, '3201 Capital Blvd', 'Rockwall', 'TX', '75032', false, true),
@@ -84,7 +84,7 @@ values
 (17, 10, 17, '900 Terminal Road', 'Fort Worth', 'TX', '76106', false, true),
 (18, 10, 18, '437 Independence Pkwy', 'La Porte', 'TX', '77571', false, true);
 
-insert into lane_partner (id, name)
+insert into lane_partners (id, name)
 values
 (1, 'ABC Plastics'),
 (2, 'XYZ Plastics'),
@@ -137,7 +137,7 @@ values
 (49, 'Midland Cotton'),
 (50, 'Lubbock Cotton');
 
-insert into lane_partner_contact (id, first_name, last_name, title, phone, phone_ext, email)
+insert into lane_partner_contacts (id, first_name, last_name, title, phone, phone_ext, email)
 values
 (1, 'Emma', 'Watson', 'Transportation Manager', '325-897-2222', null, 'test1@gmail.com'),
 (2, 'Amy', 'Adams', 'Transportation Manager', '325-897-2223', null, 'test2@gmail.com'),
@@ -190,7 +190,7 @@ values
 (49, 'Stuart', 'Broad', 'Transportation Manager', '325-897-2269', null, 'test49@gmail.com'),
 (50, 'Landon', 'McClellan', 'Transportation Manager', '325-897-2269', null, 'test49@gmail.com');
 
-insert into lane_partner_location (id, lane_partner_id, contact_id, address, address_2, city, state, zipcode)
+insert into lane_partner_locations (id, lane_partner_id, contact_id, address, address_2, city, state, zipcode)
 values
 (1, 1, 1, '2403 Kline Ave', null, 'Nashville', 'TN', '37211'),
 (2, 2, 2, '386 Industrial Dr S', null, 'Morgantown', 'KY', '42261'),
@@ -243,7 +243,7 @@ values
 (49, 49, 49, '6305 S County Rd 1285', null, 'Midland', 'TX', '79706'),
 (50, 50, 50, '11613 N, I-27', null, 'Lubbock', 'TX', '79403');
 
-insert into lane (id, customer_location_id, lane_partner_location_id, customer_is_shipper)
+insert into lanes (id, customer_location_id, lane_partner_location_id, customer_is_shipper)
 values
 (1, 1, 1, true),
 (2, 1, 2, true),

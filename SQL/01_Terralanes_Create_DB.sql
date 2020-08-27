@@ -1,11 +1,11 @@
-CREATE TABLE customer (
+CREATE TABLE customers (
   id serial PRIMARY KEY,
   name VARCHAR (255) NOT NULL,
   industry VARCHAR (255),
   user_id INT NOT NULL
 );
 
-CREATE TABLE customer_contact (
+CREATE TABLE customer_contacts (
   id serial PRIMARY KEY,
   first_name VARCHAR (255) NOT NULL,
   last_name VARCHAR (255) NOT NULL,
@@ -16,14 +16,14 @@ CREATE TABLE customer_contact (
   contact_level INT NOT NULL
 );
 
-CREATE TABLE team (
+CREATE TABLE teams (
   id serial PRIMARY KEY,
   brokerage_id INT NOT NULL,
   name VARCHAR (255) NOT NULL,
   icon VARCHAR (255)
 );
 
-CREATE TABLE lane (
+CREATE TABLE lanes (
   id serial PRIMARY KEY,
   customer_location_id INT NOT NULL,
   lane_partner_location_id INT NOT NULL,
@@ -31,12 +31,12 @@ CREATE TABLE lane (
   customer_is_shipper boolean NOT NULL
 );
 
-CREATE TABLE lane_partner (
+CREATE TABLE lane_partners (
   id serial PRIMARY KEY,
   name VARCHAR (255) NOT NULL
 );
 
-CREATE TABLE brokerage (
+CREATE TABLE brokerages (
   id serial PRIMARY KEY,
   pin VARCHAR (255) NOT NULL,
   name VARCHAR (255) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE brokerage (
   phone VARCHAR (255) NOT NULL
 );
 
-CREATE TABLE "user" (
+CREATE TABLE users (
   id serial PRIMARY KEY,
   username VARCHAR (255) NOT NULL,
   brokerage_id INT NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE "user" (
   phone VARCHAR (255) NOT NULL
 );
 
-CREATE TABLE lane_partner_contact (
+CREATE TABLE lane_partner_contacts (
   id serial PRIMARY KEY,
   first_name VARCHAR (255) NOT NULL,
   last_name VARCHAR (255) NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE lane_partner_contact (
   email VARCHAR (255) NOT NULL
 );
 
-CREATE TABLE customer_location (
+CREATE TABLE customer_locations (
   id serial PRIMARY KEY,
   customer_id INT NOT NULL,
   contact_id INT NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE customer_location (
   is_shipping_recieving boolean NOT NULL
 );
 
-CREATE TABLE lane_partner_location (
+CREATE TABLE lane_partner_locations (
   id serial PRIMARY KEY,
   lane_partner_id INT NOT NULL,
   contact_id INT NOT NULL,
@@ -94,31 +94,31 @@ CREATE TABLE lane_partner_location (
   zipcode VARCHAR (255) NOT NULL
 );
 
-ALTER TABLE "user" ADD FOREIGN KEY (brokerage_id) REFERENCES brokerage (id);
+ALTER TABLE users ADD FOREIGN KEY (brokerage_id) REFERENCES brokerages (id);
 
 
-ALTER TABLE team ADD FOREIGN KEY (brokerage_id) REFERENCES brokerage (id);
+ALTER TABLE teams ADD FOREIGN KEY (brokerage_id) REFERENCES brokerages (id);
 
 
-ALTER TABLE "user" ADD FOREIGN KEY (team_id) REFERENCES team (id);
+ALTER TABLE users ADD FOREIGN KEY (team_id) REFERENCES teams (id);
 
 
-ALTER TABLE customer ADD FOREIGN KEY (user_id) REFERENCES "user" (id);
+ALTER TABLE customers ADD FOREIGN KEY (user_id) REFERENCES users (id);
 
 
-ALTER TABLE customer_location ADD FOREIGN KEY (customer_id) REFERENCES customer (id);
+ALTER TABLE customer_locations ADD FOREIGN KEY (customer_id) REFERENCES customers (id);
 
 
-ALTER TABLE customer_location ADD FOREIGN KEY (contact_id) REFERENCES customer_contact (id);
+ALTER TABLE customer_locations ADD FOREIGN KEY (contact_id) REFERENCES customer_contacts (id);
 
 
-ALTER TABLE lane_partner_location ADD FOREIGN KEY (contact_id) REFERENCES lane_partner_contact (id);
+ALTER TABLE lane_partner_locations ADD FOREIGN KEY (contact_id) REFERENCES lane_partner_contacts (id);
 
 
-ALTER TABLE lane ADD FOREIGN KEY (customer_location_id) REFERENCES customer_location (id);
+ALTER TABLE lanes ADD FOREIGN KEY (customer_location_id) REFERENCES customer_locations (id);
 
 
-ALTER TABLE lane ADD FOREIGN KEY (lane_partner_location_id) REFERENCES lane_partner_location (id);
+ALTER TABLE lanes ADD FOREIGN KEY (lane_partner_location_id) REFERENCES lane_partner_locations (id);
 
 
-ALTER TABLE lane_partner_location ADD FOREIGN KEY (lane_partner_id) REFERENCES lane_partner (id);
+ALTER TABLE lane_partner_locations ADD FOREIGN KEY (lane_partner_id) REFERENCES lane_partners (id);

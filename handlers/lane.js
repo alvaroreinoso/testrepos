@@ -1,6 +1,9 @@
 'use strict';
 const pool = require('.././db')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
+const User = require('../models/user')
+const Lane = require('../models/lane')
+
 
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
@@ -19,7 +22,12 @@ module.exports.getLane = async (event, context) => {
 
     const lane_id = event.pathParameters.lane_id
 
-    const results = await pool.query(`SELECT * FROM lane where id = ${lane_id}`)
+    const results = await pool.query(`SELECT * FROM lanes where id = ${lane_id}`)
+    // const results = await Lane.findAll({
+    //     where: {
+    //         id: lane_id
+    //     }
+    // })
     return {
         statusCode: 200,
         body: JSON.stringify(results.rows)
@@ -47,8 +55,18 @@ module.exports.addLane = async (event, context) => {
 
 
     const req = (JSON.parse(event.body))
-    console.log(req)
-    console.log(req.customer_location_id)
+    // console.log(req)
+    // console.log(req.customer_location_id)
+
+    const lane = await Lane.build({
+        id: 200,
+        customer_location_id: req.customer_location_id,
+        lane_partner_location_id: req.lane_partner_location_id,
+        customer_is_shipper: req.customer_is_shipper
+    })
+    console.log(lane.dataValues)
+
+    await lane.save()
 
     // console.log(req_lanes)
 
@@ -58,7 +76,7 @@ module.exports.addLane = async (event, context) => {
 
     // insert array of lanes
 
-    await pool.query(`INSERT into lane VALUES (customer_location_id=${req.customer_location_id}, lane_location_id=${req.lane_location_id}, customer_is_shipper=${req.customer_is_shipper})`)
+    // await pool.query(`INSERT into lanes VALUES (customer_location_id=${req.customer_location_id}, lane_location_id=${req.lane_location_id}, customer_is_shipper=${req.customer_is_shipper})`)
 
     return {
         statusCode: 204
