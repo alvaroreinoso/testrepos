@@ -49,6 +49,15 @@ pgcli postgresql://postgres:postgres@localhost:5432/my-db
     1. view all lanes
     ```
     select * from lanes
-    ``` 
+    ```
+
+### 6. Start the local server
+
+Run
+```
+sls offline start
+```
+
+You can now hit the routes locally
 
 
