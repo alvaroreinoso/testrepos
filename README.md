@@ -2,8 +2,10 @@
 
 
 ## Requirements
-1. Make sure you have docker installed
-1. Make sure you have npm installed
+1. Make sure you have docker installed https://docs.docker.com/get-docker/
+1. Make sure you have node and npm installed
+    Node: https://nodejs.org/en/download/
+    NPM: https://www.npmjs.com/get-npm
 
 ## Setup
 ### 1. Set up environment

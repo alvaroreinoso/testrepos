@@ -10,7 +10,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
 
-    const results = await pool.query(`SELECT * FROM lane where customer_location_id = ${user.brokerage_id}`)
+    const results = await pool.query(`SELECT * FROM lanes where customer_location_id = ${user.brokerage_id}`)
 
     return {
         statusCode: 200,
