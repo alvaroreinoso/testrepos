@@ -1,4 +1,4 @@
-const { User, Team, Brokerage } = require('./models')
+const { User, Team, Brokerage, Customer } = require('./models')
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op
 
@@ -12,6 +12,15 @@ const findTeamsWithUsers = async () => {
         }]
     });
     console.log("All teams with their associated users:", JSON.stringify(teams, null, 4));
+}
+
+const findUsersWithCustomers = async () => {
+    const teams = await User.findAll({
+        include: [{
+            model: Customer
+        }]
+    });
+    console.log("All users with their associated customers:", JSON.stringify(teams, null, 4));
 }
 
 const findUsersWithTeams = async () => {
@@ -35,6 +44,7 @@ const findBrokeragesWithTeams = async () => {
 
 const run = async () => {
     // await findTeamsWithUsers()
+    await findUsersWithCustomers()
     await findUsersWithTeams()
     // await findBrokeragesWithTeams()
     await process.exit()
