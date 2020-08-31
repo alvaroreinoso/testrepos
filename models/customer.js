@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
       Customer.belongsTo(models.Team, {
         foreignKey: 'teamId'
       })
+      Customer.hasMany(models.CustomerLocation, {
+        foreignKey: 'customerId'
+      })
     }
   };
   Customer.init({
