@@ -10,6 +10,7 @@ module.exports = {
       },
       customerId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Customers',
           key: 'id',
@@ -18,6 +19,7 @@ module.exports = {
       },
       contactId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'CustomerContacts',
           key: 'id',
@@ -25,13 +27,15 @@ module.exports = {
         }
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       address2: {
         type: Sequelize.STRING
       },
       zipcode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       lnglat: {
         type: Sequelize.STRING
@@ -43,10 +47,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       isHQ: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
       isShippingReceiving: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

@@ -9,10 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       username: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       brokerageId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Brokerages',
           key: 'id',
@@ -21,6 +23,7 @@ module.exports = {
       },
       teamId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
         references: {
           model: 'Teams',
           key: 'id',
@@ -28,19 +31,24 @@ module.exports = {
         }
       },
       title: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       phone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
