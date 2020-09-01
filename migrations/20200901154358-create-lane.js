@@ -20,11 +20,6 @@ module.exports = {
       lanePartnerLocationId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        // references: {
-        //   model: 'LanePartnerLocations',
-        //   key: 'id',
-        //   as: 'lanePartnerLocationId'
-        // }
       },
       truckType: {
         type: Sequelize.STRING

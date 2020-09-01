@@ -21,6 +21,15 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('LanePartnerLocations', 'lanePartnerId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'LanePartners',
+          key: 'id',
+          as: 'lanePartnerId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('LanePartners');

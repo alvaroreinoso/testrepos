@@ -11,20 +11,10 @@ module.exports = {
       lanePartnerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        references: {
-          model: 'LanePartners',
-          key: 'id',
-          as: 'lanePartnerId'
-        }
       },
       contactId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'LanePartnerContacts',
-          key: 'id',
-          as: 'contactId'
-        }
+        allowNull: false
       },
       address: {
         type: Sequelize.STRING,
@@ -63,6 +53,15 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('Lanes', 'lanePartnerLocationId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'LanePartnerLocations',
+          key: 'id',
+          as: 'lanePartnerLocationId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('LanePartnerLocations');

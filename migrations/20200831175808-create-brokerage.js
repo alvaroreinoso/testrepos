@@ -47,7 +47,25 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }),
+    await queryInterface.changeColumn('Teams', 'brokerageId', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      refernces: {
+        model: 'Brokerages',
+        key: 'id',
+        as: 'brokerageId'
+      }
+    }),
+    await queryInterface.changeColumn('Users', 'brokerageId', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      refernces: {
+        model: 'Brokerages',
+        key: 'id',
+        as: 'brokerageId'
+      }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Brokerages');

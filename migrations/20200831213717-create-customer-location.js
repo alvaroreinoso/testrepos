@@ -19,12 +19,7 @@ module.exports = {
       },
       contactId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'CustomerContacts',
-          key: 'id',
-          as: 'contactId'
-        }
+        allowNull: false
       },
       address: {
         type: Sequelize.STRING,
