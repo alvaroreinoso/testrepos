@@ -1,49 +1,36 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('Customers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      brokerageId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+      industry: {
+        type: Sequelize.STRING
       },
-      teamId: {
+      userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Teams',
+          model: 'Users',
           key: 'id',
-          as: 'teamId',
+          as: 'userId'
         }
       },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      lastName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      phone: {
-        type: Sequelize.STRING,
-        allowNull: false
+      teamId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Teams',
+          key: 'id',
+          as: 'teamId'
+        }
       },
       createdAt: {
         allowNull: false,
@@ -56,6 +43,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('Customers');
   }
 };

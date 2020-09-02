@@ -1,49 +1,48 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('LanePartnerLocations', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      brokerageId: {
+      lanePartnerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      teamId: {
+      contactId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Teams',
-          key: 'id',
-          as: 'teamId',
-        }
+        allowNull: false
       },
-      title: {
+      address: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      firstName: {
+      address2: {
+        type: Sequelize.STRING
+      },
+      city: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      lastName: {
+      state: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      email: {
+      zipcode: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      phone: {
-        type: Sequelize.STRING,
-        allowNull: false
+      lnglat: {
+        type: Sequelize.STRING
+      },
+      open: {
+        type: Sequelize.STRING
+      },
+      close: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -54,8 +53,17 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('Lanes', 'lanePartnerLocationId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'LanePartnerLocations',
+          key: 'id',
+          as: 'lanePartnerLocationId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('LanePartnerLocations');
   }
 };

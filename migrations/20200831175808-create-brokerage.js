@@ -9,28 +9,35 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       pin: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       addres2: {
         type: Sequelize.STRING
       },
       city: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       state: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       zipcode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       phone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,
@@ -40,7 +47,25 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }),
+    await queryInterface.changeColumn('Teams', 'brokerageId', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      refernces: {
+        model: 'Brokerages',
+        key: 'id',
+        as: 'brokerageId'
+      }
+    }),
+    await queryInterface.changeColumn('Users', 'brokerageId', {
+      type: Sequelize.INTEGER,
+      allowNull: false,
+      refernces: {
+        model: 'Brokerages',
+        key: 'id',
+        as: 'brokerageId'
+      }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Brokerages');

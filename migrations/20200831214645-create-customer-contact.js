@@ -1,33 +1,12 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('CustomerContacts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
-      },
-      username: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      brokerageId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      teamId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Teams',
-          key: 'id',
-          as: 'teamId',
-        }
-      },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
       },
       firstName: {
         type: Sequelize.STRING,
@@ -37,11 +16,22 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      email: {
+      title: {
         type: Sequelize.STRING,
         allowNull: false
       },
       phone: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      phoneExt: {
+        type: Sequelize.STRING
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      contactLevel: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -54,8 +44,17 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('CustomerLocations', 'contactId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'CustomerContacts',
+          key: 'id',
+          as: 'contactId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('CustomerContacts');
   }
 };

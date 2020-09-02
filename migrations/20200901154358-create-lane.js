@@ -1,23 +1,31 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Teams', {
+    await queryInterface.createTable('Lanes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false
+      customerLocationId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'CustomerLocations',
+          key: 'id',
+          as: 'customerLocationId'
+        }
       },
-      brokerageId: {
+      lanePartnerLocationId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      icon: {
-        type: Sequelize.STRING,
+      truckType: {
+        type: Sequelize.STRING
+      },
+      customerIsShipper: {
+        type: Sequelize.BOOLEAN,
         allowNull: false
       },
       createdAt: {
@@ -31,6 +39,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Teams');
+    await queryInterface.dropTable('Lanes');
   }
 };

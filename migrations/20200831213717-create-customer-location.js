@@ -1,48 +1,52 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable('CustomerLocations', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      username: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      brokerageId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-      teamId: {
+      customerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Teams',
+          model: 'Customers',
           key: 'id',
-          as: 'teamId',
+          as: 'customerId'
         }
       },
-      title: {
+      contactId: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      address: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      firstName: {
+      address2: {
+        type: Sequelize.STRING
+      },
+      zipcode: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      lastName: {
-        type: Sequelize.STRING,
+      lnglat: {
+        type: Sequelize.STRING
+      },
+      open: {
+        type: Sequelize.INTEGER
+      },
+      close: {
+        type: Sequelize.INTEGER
+      },
+      isHQ: {
+        type: Sequelize.BOOLEAN,
         allowNull: false
       },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      phone: {
-        type: Sequelize.STRING,
+      isShippingReceiving: {
+        type: Sequelize.BOOLEAN,
         allowNull: false
       },
       createdAt: {
@@ -56,6 +60,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('CustomerLocations');
   }
 };
