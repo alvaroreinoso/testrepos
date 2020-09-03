@@ -35,14 +35,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      lnglat: {
-        type: Sequelize.STRING
-      },
       open: {
         type: Sequelize.STRING
       },
       close: {
         type: Sequelize.STRING
+      },
+      lnglat: {
+        type: Sequelize.STRING,
+        allowNull: false
       },
       createdAt: {
         allowNull: false,

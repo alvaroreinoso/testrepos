@@ -26,12 +26,14 @@ module.exports = (sequelize, DataTypes) => {
     contactId: DataTypes.INTEGER,
     address: DataTypes.STRING,
     address2: DataTypes.STRING,
+    city: DataTypes.STRING,
+    state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
-    lnglat: DataTypes.STRING,
-    open: DataTypes.INTEGER,
-    close: DataTypes.INTEGER,
+    open: DataTypes.STRING,
+    close: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
-    isShippingReceiving: DataTypes.BOOLEAN
+    isShippingReceiving: DataTypes.BOOLEAN,
+    lnglat: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'CustomerLocation',

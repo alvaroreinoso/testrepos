@@ -1,15 +1,10 @@
 'use strict';
 
+const customers = require("../data/customers");
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkInsert('Customers', [{
-      name: 'Pepsi',
-      industry: 'Food and Beverage',
-      userId: 1,
-      teamId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }], {});
+    await queryInterface.bulkInsert('Customers', customers, {});
   },
 
   down: async (queryInterface, Sequelize) => {
