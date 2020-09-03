@@ -1,4 +1,5 @@
 'use strict';
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('CustomerLocations', {
@@ -28,18 +29,23 @@ module.exports = {
       address2: {
         type: Sequelize.STRING
       },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      state: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       zipcode: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      lnglat: {
+      open: {
         type: Sequelize.STRING
       },
-      open: {
-        type: Sequelize.INTEGER
-      },
       close: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       isHQ: {
         type: Sequelize.BOOLEAN,
@@ -48,6 +54,9 @@ module.exports = {
       isShippingReceiving: {
         type: Sequelize.BOOLEAN,
         allowNull: false
+      },
+      lnglat: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

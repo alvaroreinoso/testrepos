@@ -26,9 +26,9 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
-    lnglat: DataTypes.STRING,
     open: DataTypes.STRING,
-    close: DataTypes.STRING
+    close: DataTypes.STRING,
+    lnglat: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'LanePartnerLocation',
