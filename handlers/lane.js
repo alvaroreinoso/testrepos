@@ -1,20 +1,43 @@
 'use strict';
-const pool = require('.././db')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const User = require('../models/user')
-const Lane = require('../models/lane')
+const { User, Team, Brokerage, Customer, CustomerLocation, Lane } = require('.././models')
 
 
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
+    console.log(user.id)
 
-    const results = await pool.query(`SELECT * FROM lanes where customer_location_id = ${user.brokerage_id}`)
+    const customers = await Customer.findAll({
+        where: {
+            userId: 1 //user.id
+        },
+        include: [{
+            model: CustomerLocation,
+            required: true,
+            include: [{
+                model: Lane,
+                required: true
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(results.rows)
+            }]
+        }]
+    })
+
+    console.log(customers.length)
+    if (customers.length != 0) {
+        const locations = await customers.map(cust => cust.CustomerLocations)
+        const lanes = await locations[0].map(loc => loc.Lanes)
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(lanes)
+        }
+    }
+    else {
+        return {
+            statusCode: 404
+        }
     }
 }
 
@@ -22,15 +45,14 @@ module.exports.getLane = async (event, context) => {
 
     const lane_id = event.pathParameters.lane_id
 
-    const results = await pool.query(`SELECT * FROM lanes where id = ${lane_id}`)
-    // const results = await Lane.findAll({
-    //     where: {
-    //         id: lane_id
-    //     }
-    // })
+    const results = await Lane.findOne({
+        where: {
+            id: lane_id
+        }
+    })
     return {
         statusCode: 200,
-        body: JSON.stringify(results.rows)
+        body: JSON.stringify(results)
     }
 };
 
@@ -40,45 +62,41 @@ module.exports.deleteLane = async (event, context) => {
 
     const lane_id = event.pathParameters.lane_id
 
-    await pool.query(`DELETE FROM lane where id = ${lane_id}`)
+    try {
+    await Lane.destroy({
+        where: {
+            id: lane_id
+        }
+    })
 
     return {
         statusCode: 200,
     }
+    }
+    catch {
+        return {
+            statusCode: 404
+        }
+    }
 };
 
 module.exports.addLane = async (event, context) => {
-    // let req_lanes = {}
-    // req_lanes.user_id = JSON.parse(event.body.user_id)
-    // req_lanes.team_id = JSON.parse(event.body.team_id)
-    // req_lanes.lane_id = JSON.parse(event.body.lane_id)
-
 
     const req = (JSON.parse(event.body))
-    // console.log(req)
-    // console.log(req.customer_location_id)
 
-    const lane = await Lane.build({
-        id: 200,
-        customer_location_id: req.customer_location_id,
-        lane_partner_location_id: req.lane_partner_location_id,
-        customer_is_shipper: req.customer_is_shipper
+    const lane = await Lane.build({ 
+        customerLocationId: req.customerLocationId,
+        lanePartnerLocationId: req.lanePartnerLocationId,
+        customerIsShipper: req.customerIsShipper
+    },
+    {
+        returning: true
     })
-    console.log(lane.dataValues)
 
-    await lane.save()
-
-    // console.log(req_lanes)
-
-    // parse multiple lane jsons
-
-    // add to array of lanes
-
-    // insert array of lanes
-
-    // await pool.query(`INSERT into lanes VALUES (customer_location_id=${req.customer_location_id}, lane_location_id=${req.lane_location_id}, customer_is_shipper=${req.customer_is_shipper})`)
+    lane.save()
 
     return {
-        statusCode: 204
+        statusCode: 204,
+        body: JSON.stringify(lane)
     }
 }
