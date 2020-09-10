@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane } = require('.././models')
+const { Customer, CustomerLocation, Lane, LanePartnerLocation, LanePartner } = require('.././models')
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
@@ -20,6 +20,13 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                     }
                 }]
 
+            }, {
+                model: LanePartnerLocation,
+                required: true,
+                include: [{
+                    model: LanePartner,
+                    required: true
+                }]
             }]
         });
 
@@ -63,6 +70,7 @@ module.exports.deleteLane = async (event, context) => {
 
     const lane_id = event.pathParameters.lane_id
 
+    // if lane belongs to user
     await Lane.destroy({
         where: {
             id: lane_id
