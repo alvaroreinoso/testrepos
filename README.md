@@ -2,34 +2,31 @@
 
 
 ## Requirements
-1. Make sure you have docker installed https://docs.docker.com/get-docker/
 1. Make sure you have node and npm installed
     Node: https://nodejs.org/en/download/
     NPM: https://www.npmjs.com/get-npm
 
-## Setup
-### 1. Set up environment
-Create a file in the project root with the name `.env` and copy the contents of `.env.sample` into the new file.
-
-### 2. Start database with docker-compose
-In the project root run
-```
-docker-compose up
-```
-
-### 3. Install dependencies
+### 2. Install dependencies
 In a separate terminal window, run
 ```
 npm install
 ```
 
-### 4. Seed database
-Run
+### 3. Start database with sequelize-cli
+1. In the project root run
 ```
-./seed.sh
+npm run db:start
+```
+2. Then seed
+```
+npm run db:seed
+```
+3. Then to stop
+```
+npm run db:stop
 ```
 
-### 5. Connect to database
+### 4. Connect to database
 1. For interacting with the database locally I recommend using `pgcli`
 
 To install it, run
@@ -53,11 +50,11 @@ pgcli postgresql://postgres:postgres@localhost:5432/my-db
     select * from lanes
     ```
 
-### 6. Start the local server
+### 5. Start the local server on Port 5000
 
 Run
 ```
-sls offline start
+sls offline --httpPort 5000
 ```
 
 You can now hit the routes locally. I recommend installing *** Insomnia *** to do this.

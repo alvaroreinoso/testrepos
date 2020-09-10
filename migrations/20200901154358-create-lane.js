@@ -20,6 +20,7 @@ module.exports = {
       lanePartnerLocationId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: true
       },
       truckType: {
         type: Sequelize.STRING
