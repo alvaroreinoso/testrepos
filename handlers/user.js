@@ -1,22 +1,30 @@
 'use strict';
 const db = require('../models/index')
+const jwt = require('jsonwebtoken')
 
 module.exports.getUser = async (event, context) => {
 
-    const req_username = event.queryStringParameters.username
+    try {
+        const token = event.headers.Authorization
 
-    console.log(req_username)
+        const cognitoUser = jwt.decode(token)
 
-    const user = await db.User.findOne({
-        where: {
-            username: req_username
+        const user = await db.User.findOne({
+            where: {
+                username: cognitoUser['cognito:username']
+            }
+        })
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify(user)
         }
-    })
 
-    console.log(user)
+    } catch (err) {
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(user)
+        return {
+            statusCode: 401
+        }
+
     }
 }
