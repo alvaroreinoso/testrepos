@@ -64,9 +64,8 @@ functions:
         - http:
             path: api/user
             method: get
-            request:
-              parameters:
-                username: true
+            headers:
+              - Authorization
 
 
 # Lane
