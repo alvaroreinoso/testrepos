@@ -68,6 +68,16 @@ functions:
               - Authorization
 
 
+# Customer
+  getCustomersByCurrentUser:
+    handler:
+      ./handlers/customer.getCustomersByCurrentUser
+    events:
+        - http:
+            path: api/customer
+            method: get
+            headers:
+              - Authorization
 # Lane
   getLanesByCurrentUser:
     handler:

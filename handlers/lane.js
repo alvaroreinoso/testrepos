@@ -4,9 +4,9 @@ const { Customer, CustomerLocation, Lane, LanePartnerLocation, LanePartner } = r
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
     try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
 
         const lanes = await Lane.findAll({
             include: [{

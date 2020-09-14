@@ -3,12 +3,20 @@ const db = require('../models/index')
 
 module.exports.getCurrentUser = async (token) => {
 
-    let cognito_user = jwt.decode(token)
+    try {
+        
+    const cognitoUser = jwt.decode(token)
 
         const results = await db.User.findOne({
             where: {
-                email: cognito_user.email
+                email: cognitoUser.email
             }
         })
         return results
+
+    } catch (error) {
+         
+        return error
+
+    }
 }
