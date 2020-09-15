@@ -10,19 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Lane.belongsTo(models.CustomerLocation, {
-        foreignKey: 'customerLocationId'
-      })
-      Lane.belongsTo(models.LanePartnerLocation, {
-        foreignKey: 'lanePartnerLocationId'
+      Lane.hasMany(models.CustomerLane, {
+        foreignKey: 'laneId'
       })
     }
   };
   Lane.init({
-    customerLocationId: DataTypes.INTEGER,
-    lanePartnerLocationId: DataTypes.INTEGER,
-    truckType: DataTypes.STRING,
-    customerIsShipper: DataTypes.BOOLEAN
+    origin: DataTypes.STRING,
+    destination: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Lane',

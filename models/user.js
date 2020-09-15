@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
     username: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
     teamId: DataTypes.INTEGER,
+    confirmed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     title: DataTypes.STRING,
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,

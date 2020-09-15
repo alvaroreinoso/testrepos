@@ -51,7 +51,10 @@ module.exports.getLane = async (event, context) => {
     const results = await Lane.findOne({
         where: {
             id: laneId
-        }
+        },
+        include: [{
+            model: CustomerLocation
+        }]
     })
 
     if (results != null) {
