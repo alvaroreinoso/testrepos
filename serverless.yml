@@ -78,6 +78,26 @@ functions:
             method: get
             headers:
               - Authorization
+  getCustomersByTeam:
+    handler:
+      ./handlers/customer.getCustomersByTeam
+    events:
+        - http:
+            path: api/customer/team
+            method: get
+            headers:
+              - Authorization
+  getCustomer:
+    handler:
+      ./handlers/customer.getCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
+
 # Lane
   getLanesByCurrentUser:
     handler:
@@ -93,33 +113,18 @@ functions:
       ./handlers/lane.getLane
     events:
         - http:
-            path: api/lane/{lane_id}
+            path: api/lane/{laneId}
             method: get
             headers:
               - Content-Type
               - Authorization
-            # authorizer:
-            #   arn: arn:aws:lambda:us-east-1:1234567890:function:auth
-            # identitySource:
-            #   - 'route.request.header.Auth'
-            #   - 'route.request.querystring.Auth'
-            # localAuthorizer:
-            #     name: "mylocalAuthProxyFn"
-            #     type: "request"
-
-            # authorizer:
-            # type: CUSTOM
-            # authorizerId: abcjfk
-            # localAuthorizer:
-            #   name: "mylocalAuthProxyFn"
-            #   type: "request"
 
   deleteLane:
     handler:
       ./handlers/lane.deleteLane
     events:
         - http:
-            path: api/lane/{lane_id}
+            path: api/lane/{laneId}
             method: delete
 
   addLane:
