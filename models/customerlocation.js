@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       CustomerLocation.belongsTo(models.CustomerContact, {
         foreignKey: 'contactId'
       })
-      CustomerLocation.hasMany(models.Lane, {
+      CustomerLocation.hasMany(models.CustomerLane, {
         foreignKey: 'customerLocationId'
       })
     }
