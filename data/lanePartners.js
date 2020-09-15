@@ -1,4 +1,25 @@
-const lanePartners = [
+const faker = require('faker');
+
+const lanePartners = [...Array(62)].map((user) => (
+    {
+      name: faker.company.companyName(),
+      address: faker.address.streetAddress(),
+      address2: faker.address.secondaryAddress(),
+      city: faker.address.city(),
+      state: faker.address.stateAbbr(),
+      zipcode: faker.address.zipCode(),
+      lnglat: `${faker.address.longitude()},${faker.address.latitude()}`,
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),  
+      title: faker.name.jobTitle(),
+      phone: faker.phone.phoneNumber(),
+      email: faker.internet.email(),
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+))
+  
+const lanePartnersBackup = [
 
     {
         name: 'ABC Plastics',

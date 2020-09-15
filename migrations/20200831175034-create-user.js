@@ -25,6 +25,11 @@ module.exports = {
           as: 'teamId',
         }
       },
+      confirmed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       title: {
         type: Sequelize.STRING,
         allowNull: false
