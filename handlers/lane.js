@@ -45,11 +45,12 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 
 module.exports.getLane = async (event, context) => {
 
-    const lane_id = event.pathParameters.lane_id
+    try {
+    const laneId = event.pathParameters.laneId
 
     const results = await Lane.findOne({
         where: {
-            id: lane_id
+            id: laneId
         }
     })
 
@@ -63,6 +64,13 @@ module.exports.getLane = async (event, context) => {
             statusCode: 404
         }
     }
+    }
+    catch (err) {
+
+        return {
+            statusCode: 401
+        }
+    }
 
 };
 
@@ -73,7 +81,7 @@ module.exports.deleteLane = async (event, context) => {
     // if lane belongs to user
     await Lane.destroy({
         where: {
-            id: lane_id
+            id: laneId
         }
     })
 
