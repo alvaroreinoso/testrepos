@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartnerLocation, LanePartner } = require('.././models')
+const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane } = require('.././models');
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
@@ -8,7 +8,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 
         const user = await getCurrentUser(event.headers.Authorization)
 
-        const lanes = await Lane.findAll({
+        const lanes = await CustomerLane.findAll({
             include: [{
                 model: CustomerLocation,
                 required: true,
@@ -19,14 +19,9 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                         userId: user.id
                     }
                 }]
-
             }, {
-                model: LanePartnerLocation,
-                required: true,
-                include: [{
-                    model: LanePartner,
-                    required: true
-                }]
+                model: LanePartner,
+                required: true
             }]
         });
 
@@ -46,27 +41,41 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 module.exports.getLane = async (event, context) => {
 
     try {
-    const laneId = event.pathParameters.laneId
 
-    const results = await Lane.findOne({
-        where: {
-            id: laneId
-        },
-        include: [{
-            model: CustomerLocation
-        }]
-    })
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    if (results != null) {
-        return {
-            statusCode: 200,
-            body: JSON.stringify(results)
+        const laneId = event.pathParameters.laneId
+
+        const results = await CustomerLane.findOne({
+            where: {
+                id: laneId
+            },
+            include: [{
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        userId: user.id
+                    }
+                }]
+            }, {
+                model: LanePartner,
+                required: true
+            }]
+        })
+
+        if (results != null) {
+            return {
+                statusCode: 200,
+                body: JSON.stringify(results)
+            }
+        } else {
+            return {
+                statusCode: 404
+            }
         }
-    } else {
-        return {
-            statusCode: 404
-        }
-    }
     }
     catch (err) {
 
@@ -79,17 +88,56 @@ module.exports.getLane = async (event, context) => {
 
 module.exports.deleteLane = async (event, context) => {
 
-    const lane_id = event.pathParameters.lane_id
 
-    // if lane belongs to user
-    await Lane.destroy({
-        where: {
-            id: laneId
+    const laneId = event.pathParameters.laneId
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    try {
+
+        const lane = await CustomerLane.findOne({
+            where: {
+                id: laneId
+            },
+            include: [{
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        userId: user.id
+                    }
+                }]
+            }, {
+                model: LanePartner,
+                required: true
+            }]
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404
+            }
         }
-    })
 
-    return {
-        statusCode: 200,
+        else {
+
+            lane.destroy()
+
+            return {
+                statusCode: 200,
+            }
+
+
+        }
+
+    }
+    catch (err) {
+        
+        return {
+            statusCode: 401
+        }
     }
 
 };
