@@ -66,6 +66,15 @@ functions:
             method: get
             headers:
               - Authorization
+  getTeams:
+    handler:
+      ./handlers/user.getTeams
+    events:
+        - http:
+            path: api/user/teams
+            method: get
+            headers:
+              - Authorization
 
 
 # Customer

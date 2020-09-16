@@ -8,21 +8,21 @@ const teams= [
     },
     {
         brokerageId: 1,
-        name: 'Team Lyles',
+        name: 'Team Jones',
         icon: '💼',
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
         brokerageId: 2,
-        name: 'Team Lyles',
+        name: 'Team Smith',
         icon: '🚛',
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
         brokerageId: 2,
-        name: 'Team Lyles',
+        name: 'Team Johnson',
         icon: '🌾',
         createdAt: new Date(),
         updatedAt: new Date()
