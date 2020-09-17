@@ -9,7 +9,7 @@ const customerLanes = [
     {
         customerLocationId: 1,
         lanePartnerId: 2,
-        laneId: 1 ,
+        laneId: 2 ,
         createdAt: new Date(),
         updatedAt: new Date()
     },

@@ -17,9 +17,19 @@ module.exports.getUser = async (event, context) => {
             }
         })
 
-        return {
-            statusCode: 200,
-            body: JSON.stringify(user)
+        if (user != null) {
+            
+            return {
+                statusCode: 200,
+                body: JSON.stringify(user)
+            }
+
+        } else {
+
+            return {
+                statusCode: 404
+            }
+            
         }
 
     } catch (err) {
