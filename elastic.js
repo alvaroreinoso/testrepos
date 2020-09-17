@@ -18,6 +18,15 @@ client.ping({
 });
 
 
+// Create elasticsearch instance - DONE
+
+// find best way to index necessary data programmatically
+
+// keep data in sync with db
+
+// restric query results by user and team access
+
+
 // client.indices.create({
 //     index: "user"
 // })
