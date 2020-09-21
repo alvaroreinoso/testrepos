@@ -1,5 +1,4 @@
 'use strict';
-// const db = require('../models/index')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User } = require('.././models');
@@ -18,7 +17,7 @@ module.exports.getUser = async (event, context) => {
         })
 
         if (user != null) {
-            
+
             return {
                 statusCode: 200,
                 body: JSON.stringify(user)
@@ -29,7 +28,7 @@ module.exports.getUser = async (event, context) => {
             return {
                 statusCode: 404
             }
-            
+
         }
 
     } catch (err) {
@@ -39,6 +38,61 @@ module.exports.getUser = async (event, context) => {
         }
 
     }
+}
+
+module.exports.createProfile = async (event, context) => {
+
+    const req = (JSON.parse(event.body))    
+
+    try {
+        await User.create({
+            username: req.username,
+            email: req.email,
+            brokerageId: req.brokerageId
+        })
+
+        return {
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        console.log(err)
+        return {
+            body: JSON.stringify(err),
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.updateProfile = async (event, context) => {
+
+    const req = (JSON.parse(event.body))
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    try {
+    
+    user.firstName = req.firstName
+    user.lastName = req.lastName
+    user.phone = req.phone
+    user.title = req.title
+    user.teamId = req.teamId
+    user.profileImage = req.profileImage
+    user.confirmed = true
+
+    await user.save()
+
+    return {
+        statusCode: 200
+    }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
 }
 
 module.exports.getTeams = async (event, context) => {

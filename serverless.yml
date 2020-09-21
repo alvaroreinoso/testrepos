@@ -75,6 +75,22 @@ functions:
             method: get
             headers:
               - Authorization
+  createProfile:
+    handler:
+      ./handlers/user.createProfile
+    events:
+        - http:
+            path: api/user
+            method: post
+  updateProfile:
+    handler:
+      ./handlers/user.updateProfile
+    events:
+        - http:
+            path: api/user
+            method: put
+            headers:
+              - Authorization
 
 
 # Customer
