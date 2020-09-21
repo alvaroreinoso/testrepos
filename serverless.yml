@@ -89,6 +89,8 @@ functions:
         - http:
             path: api/user
             method: put
+            headers:
+              - Authorization
 
 
 # Customer

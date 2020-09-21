@@ -1,5 +1,4 @@
 'use strict';
-// const db = require('../models/index')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User } = require('.././models');
@@ -43,16 +42,7 @@ module.exports.getUser = async (event, context) => {
 
 module.exports.createProfile = async (event, context) => {
 
-    // try {
-    const req = (JSON.parse(event.body))
-    // } catch (err) {
-
-    //     return {
-            
-    //         statusCode: 400
-    //     }
-    // }
-    
+    const req = (JSON.parse(event.body))    
 
     try {
         await User.create({
@@ -79,11 +69,7 @@ module.exports.updateProfile = async (event, context) => {
 
     const req = (JSON.parse(event.body))
 
-    const user = await User.findOne({
-        where: {
-            id: req.userId
-        }
-    })
+    const user = await getCurrentUser(event.headers.Authorization)
 
     try {
     
