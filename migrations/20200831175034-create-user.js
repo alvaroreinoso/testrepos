@@ -18,7 +18,6 @@ module.exports = {
       },
       teamId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'Teams',
           key: 'id',
@@ -32,15 +31,12 @@ module.exports = {
       },
       title: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       firstName: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       lastName: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       email: {
         type: Sequelize.STRING,
@@ -48,7 +44,9 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: false
+      },
+      profileImage: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
