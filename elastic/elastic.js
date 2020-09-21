@@ -47,17 +47,17 @@ async function seedCustomer() {
     const customers = await Customer.findAll()
 
     customers.forEach((cust) => {
-            client.create({ 
-                index: 'customer',
-                id: cust.id,
-                body: {
-                    name: cust.name,
-                    industry: cust.industry,
-                    userId: cust.userId,
-                    teamId: cust.teamId
-                }
-            })
+        client.create({
+            index: 'customer',
+            id: cust.id,
+            body: {
+                name: cust.name,
+                industry: cust.industry,
+                userId: cust.userId,
+                teamId: cust.teamId
+            }
         })
+    })
 }
 
 async function seedLanes() {
@@ -77,15 +77,15 @@ async function seedLanes() {
     const lanes = await Lane.findAll()
 
     lanes.forEach((lane) => {
-            client.create({ 
-                index: 'lane',
-                id: lane.id,
-                body: {
-                    origin: lane.origin,
-                    destination: lane.destination
-                }
-            })
+        client.create({
+            index: 'lane',
+            id: lane.id,
+            body: {
+                origin: lane.origin,
+                destination: lane.destination
+            }
         })
+    })
 }
 
 async function seedLanePartners() {
@@ -118,76 +118,35 @@ async function seedLanePartners() {
     const lanePartners = await LanePartner.findAll()
 
     lanePartners.forEach((partner) => {
-            client.create({ 
-                index: 'lane_partner',
-                id: partner.id,
-                body: {
-                    name: partner.name,
-                    address: partner.address,
-                    address2: partner.address2,
-                    city: partner.city,
-                    state: partner.state,
-                    zipcode: partner.zipcode,
-                    lnglat: partner.lnglat,
-                    open: partner.open,
-                    close: partner.close,
-                    firstName: partner.firstName,
-                    lastName: partner.lastName,
-                    title: partner.title,
-                    phone: partner.phone,
-                    phoneExt: partner.phoneExt,
-                    email: partner.email
-                }
-            })
+        client.create({
+            index: 'lane_partner',
+            id: partner.id,
+            body: {
+                name: partner.name,
+                address: partner.address,
+                address2: partner.address2,
+                city: partner.city,
+                state: partner.state,
+                zipcode: partner.zipcode,
+                lnglat: partner.lnglat,
+                open: partner.open,
+                close: partner.close,
+                firstName: partner.firstName,
+                lastName: partner.lastName,
+                title: partner.title,
+                phone: partner.phone,
+                phoneExt: partner.phoneExt,
+                email: partner.email
+            }
         })
+    })
 }
 
-// seedLanePartners()
-// seedLanes()
-// seedCustomer()
 
+async function setUp() {
+    await seedLanePartners()
+    await seedLanes()
+    await seedCustomer()
+}
 
-// client.indices.create({
-//     index: 'customer',
-//     body: {
-//         mappings: {
-//             properties: {
-//                 name: { "type": "text" },
-//                 industry: { "type": "text" },
-//                 userId: { "type": "integer" },
-//                 teamId: { "type": "integer" },
-//             }
-//         }
-//     }
-// })
-
-// customers.forEach((cust, i) => {
-//     client.create({ 
-//         index: 'customer',
-//         id: i,
-//         body: {
-//             name: cust.name,
-//             industry: cust.industry,
-//             userId: cust.userId,
-//             teamId: 1
-//         }
-//     })
-// })
-
-
-// client.create({
-//     index: 'user',
-//     id: 1,
-//     body: {
-//         tag: 'test',
-//         type: 'test',
-//         namespace: 'test',
-//         tid: 'test'
-//     }
-// })
-
-
-client.search({
-    index: '*',
-    q: 'John'
-})
+setUp()

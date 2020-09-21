@@ -7,7 +7,9 @@
     "test": "jest",
     "db:start": "npx sequelize-cli db:create && npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all",
-    "db:stop": "npx sequelize-cli db:drop"
+    "db:stop": "npx sequelize-cli db:drop",
+    "elastic:start": "node elastic/elastic.js",
+    "elastic:stop": "node elastic/deleteElastic.js"
   },
   "author": "",
   "license": "ISC",
