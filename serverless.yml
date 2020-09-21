@@ -56,6 +56,15 @@ plugins:
 
 functions:
 
+# Search
+  search:
+    handler:
+      ./handlers/search.search
+    events:
+        - http:
+            path: api/search
+            method: get
+
 # User
   getUser:
     handler:
