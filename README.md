@@ -1,29 +1,29 @@
 # Terralanes Backend
 
 
-## Requirements
-1. Make sure you have node and npm installed
+## 1. Requirements
+1. Make sure you have node and yarn installed
     Node: https://nodejs.org/en/download/
-    NPM: https://www.npmjs.com/get-npm
+    yarn: https://www.npmjs.com/get-yarn
 
 ### 2. Install dependencies
-In a separate terminal window, run
+Run
 ```
-npm install
+yarn install
 ```
 
 ### 3. Start database with sequelize-cli
 1. In the project root run
 ```
-npm run db:start
+yarn db:start
 ```
 2. Then seed
 ```
-npm run db:seed
+yarn db:seed
 ```
 3. Then to stop
 ```
-npm run db:stop
+yarn db:stop
 ```
 
 ### 4. Connect to database

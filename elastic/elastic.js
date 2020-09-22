@@ -4,8 +4,8 @@ var client = new elasticsearch.Client({
     log: 'trace',
     apiVersion: '7.7', // use the same version of your Elasticsearch instance
 });
-const customers = require('.././data/customers')
-const { Customer, Lane, LanePartner } = require('.././models');
+
+const { Customer, Lane, LanePartner, User } = require('.././models');
 const lane = require('../models/lane');
 
 client.ping({
@@ -44,7 +44,13 @@ async function seedCustomer() {
         }
     })
 
-    const customers = await Customer.findAll()
+    // const customers = await Customer.findAll({
+    //     include: [{
+    //         model: User,
+    //         required: true,
+    //         keys: userId
+    //     }]
+    // })
 
     customers.forEach((cust) => {
         client.create({
@@ -115,7 +121,11 @@ async function seedLanePartners() {
         }
     })
 
-    const lanePartners = await LanePartner.findAll()
+    const lanePartners = await LanePartner.findAll({
+        include: [{
+            models
+        }]
+    })
 
     lanePartners.forEach((partner) => {
         client.create({
@@ -144,9 +154,11 @@ async function seedLanePartners() {
 
 
 async function setUp() {
-    await seedLanePartners()
-    await seedLanes()
-    await seedCustomer()
+//     await seedLanePartners()
+//     await seedLanes()
+//     await seedCustomer()
 }
 
 setUp()
+
+
