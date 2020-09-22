@@ -1,6 +1,6 @@
 const users = [
     {
-        username: 'df5cdfae-107d-4ee1-824a-baa75750dcda',
+        username: '71dbcbef-e65d-47f2-a798-8e298ddb9958',
         brokerageId: 1,
         teamId: 1,
         title: 'Sales Manager',
@@ -12,7 +12,7 @@ const users = [
         updatedAt: new Date()
     },
     {
-        username: '444ce57b-2215-4957-86b1-46d899344bc9',
+        username: '67ba9128-fa0f-438b-bd11-44e7039c56f3',
         brokerageId: 1,
         teamId: 1,
         title: 'Account Executive',
@@ -24,7 +24,7 @@ const users = [
         updatedAt: new Date()
     },
     {
-        username: '5e449fcd-eff6-45a5-8707-06cda8415dbc',
+        username: 'e57f617c-0221-4f3a-8ad8-3d36c3bcb571',
         brokerageId: 1,
         teamId: 1,
         title: 'Account Manager',
@@ -60,7 +60,7 @@ const users = [
         updatedAt: new Date()
     },
     {
-        username: '88f496bb-fa83-4b94-9582-4b424f5150ca',
+        username: '66326057-dd61-4a0d-98ab-03e7ccec2c25',
         brokerageId: 1,
         teamId: 2,
         title: 'Account Executive',
@@ -72,7 +72,7 @@ const users = [
         updatedAt: new Date()
     },
     {
-        username: 'a1760f93-6382-4fe9-bd87-0705bd9d85cd',
+        username: '9aaf0410-8f72-4052-ae53-d04cf360f4c3',
         brokerageId: 1,
         teamId: 2,
         title: 'Account Manager',
