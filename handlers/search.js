@@ -14,10 +14,16 @@ module.exports.search = async (event, context) => {
     console.log(query)
 
     const results = await client.search({
-        index: '*',
-        q: query
+        index: 'customer',
+        q: query,
+        pretty: true
     })
 
+    // const final = await results.hits.hits.forEach(item => {
+    //     if (item._source.userId == 14) {
+
+    //     }
+    // })
     return {
         body: JSON.stringify(results.hits.hits),
         statusCode: 200
