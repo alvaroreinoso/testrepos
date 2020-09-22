@@ -2,14 +2,13 @@ var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: 'trace',
-    apiVersion: '7.7', // use the same version of your Elasticsearch instance
+    apiVersion: '7.7'
 });
 
-const { Customer, Lane, LanePartner, User } = require('.././models');
-const lane = require('../models/lane');
+const { Customer, Lane, LanePartner } = require('.././models');
 
 client.ping({
-    // ping usually has a 3000ms timeout
+
     requestTimeout: 1000
 }, function (error) {
     if (error) {
@@ -18,13 +17,6 @@ client.ping({
         console.log('All is well');
     }
 });
-
-
-// Create elasticsearch instance - DONE
-
-// find best way to index necessary data programmatically
-
-// keep data in sync with db
 
 // restric query results by user and team access
 
@@ -44,13 +36,7 @@ async function seedCustomer() {
         }
     })
 
-    // const customers = await Customer.findAll({
-    //     include: [{
-    //         model: User,
-    //         required: true,
-    //         keys: userId
-    //     }]
-    // })
+    const customers = await Customer.findAll()
 
     customers.forEach((cust) => {
         client.create({
@@ -154,9 +140,9 @@ async function seedLanePartners() {
 
 
 async function setUp() {
-//     await seedLanePartners()
-//     await seedLanes()
-//     await seedCustomer()
+    await seedLanePartners()
+    await seedLanes()
+    await seedCustomer()
 }
 
 setUp()

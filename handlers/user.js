@@ -57,9 +57,7 @@ module.exports.createProfile = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
         return {
-            body: JSON.stringify(err),
             statusCode: 500
         }
     }
