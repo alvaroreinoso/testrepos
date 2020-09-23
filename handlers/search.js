@@ -9,6 +9,8 @@ var client = new elasticsearch.Client({
 
 module.exports.search = async (event, context) => {
 
+    const userBrokerageId = 2 // should come from session storage or redis???
+
     const query = event.queryStringParameters.q
 
     const results = await client.search({
@@ -16,8 +18,10 @@ module.exports.search = async (event, context) => {
         q: `${query}*`
     })
 
+    const userResults = await results.hits.hits.filter(item => item._source.brokerageId == userBrokerageId)
+
     return {
-        body: JSON.stringify(results.hits.hits),
+        body: JSON.stringify(userResults),
         statusCode: 200
     }
 }
