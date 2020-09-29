@@ -1,7 +1,11 @@
 const lanePartnerLocations = [
     {
-        "lanePartnerId": 1,
-        "contactId": 1,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "2403 Kline Ave",
         "address2": "",
         "city": "Nashville",
@@ -14,8 +18,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 2,
-        "contactId": 2,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "386 Industrial Dr S",
         "address2": "",
         "city": "Morgantown",
@@ -28,8 +36,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 3,
-        "contactId": 3,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1859 Pacific Ave",
         "address2": "",
         "city": "Stockton",
@@ -42,8 +54,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 4,
-        "contactId": 4,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "523 Commerce Rd",
         "address2": "",
         "city": "Orem",
@@ -56,8 +72,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 5,
-        "contactId": 5,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "317 Nogalitos St",
         "address2": "",
         "city": "San Antonio",
@@ -70,8 +90,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 6,
-        "contactId": 6,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "8109 Lewis Rd",
         "address2": "",
         "city": "Minneapolis",
@@ -84,8 +108,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 7,
-        "contactId": 7,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "4441 Industrial Dr",
         "address2": "",
         "city": "Alton",
@@ -98,8 +126,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 8,
-        "contactId": 8,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "875 Skyway St",
         "address2": "",
         "city": "Presque Isle",
@@ -112,8 +144,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 9,
-        "contactId": 9,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "250 W Kensinger Dr",
         "address2": "Ste 100",
         "city": "Cranberry Twp",
@@ -126,8 +162,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 10,
-        "contactId": 10,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "101 N Omega St",
         "address2": "",
         "city": "Dexter",
@@ -140,8 +180,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 11,
-        "contactId": 11,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1197 US-82",
         "address2": "",
         "city": "Stamps",
@@ -154,8 +198,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 12,
-        "contactId": 12,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "2056 S, MO-19",
         "address2": "",
         "city": "Hermann",
@@ -168,8 +216,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 13,
-        "contactId": 13,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "398 Victory Ave",
         "address2": "",
         "city": "Twin Falls",
@@ -182,8 +234,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 14,
-        "contactId": 14,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "19780 Jack Tone Rd",
         "address2": "",
         "city": "Manteca",
@@ -196,8 +252,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 15,
-        "contactId": 15,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "5263 Poplar Dr",
         "address2": "",
         "city": "Memphis",
@@ -210,8 +270,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 16,
-        "contactId": 16,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "7500 W 135th St",
         "address2": "",
         "city": "Overland Park",
@@ -224,8 +288,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 17,
-        "contactId": 17,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "10289 SW Parkview Rd",
         "address2": "",
         "city": "Augusta",
@@ -238,8 +306,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 18,
-        "contactId": 18,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "100 Belmont St",
         "address2": "",
         "city": "Clinton",
@@ -252,8 +324,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 19,
-        "contactId": 19,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1599 Memorial Dr SE",
         "address2": "",
         "city": "Atlanta",
@@ -266,8 +342,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 20,
-        "contactId": 20,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "11400 IKEA Way",
         "address2": "",
         "city": "Fishers",
@@ -280,8 +360,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 21,
-        "contactId": 21,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "24635 John T Reid Pkwy",
         "address2": "",
         "city": "Scottsboro",
@@ -294,8 +378,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 22,
-        "contactId": 22,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "3101 Clark Butler Blvd",
         "address2": "",
         "city": "Gainesville",
@@ -308,8 +396,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 23,
-        "contactId": 23,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "14438 Lee Hwy",
         "address2": "",
         "city": "Bristol",
@@ -322,8 +414,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 24,
-        "contactId": 24,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1300 Loveridge Rd",
         "address2": "",
         "city": "Pittsburg",
@@ -336,8 +432,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 25,
-        "contactId": 25,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "803 Industrial Blvd",
         "address2": "",
         "city": "Smyrna",
@@ -350,8 +450,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 26,
-        "contactId": 26,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "69015 LA-59",
         "address2": "",
         "city": "Mandeville",
@@ -364,8 +468,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 27,
-        "contactId": 27,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "12310 Panama City Beach Pkwy",
         "address2": "",
         "city": "Panama City",
@@ -378,8 +486,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 28,
-        "contactId": 28,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "5848 N Stiles Rd",
         "address2": "",
         "city": "Ludington",
@@ -392,8 +504,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 29,
-        "contactId": 29,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1550 MS-30",
         "address2": "",
         "city": "Myrtle",
@@ -406,8 +522,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 30,
-        "contactId": 30,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "196 Concord St",
         "address2": "",
         "city": "Charleston",
@@ -420,8 +540,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 31,
-        "contactId": 31,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "218 Hill St",
         "address2": "",
         "city": "Santa Monica",
@@ -434,8 +558,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 32,
-        "contactId": 32,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1983 State Line Rd",
         "address2": "",
         "city": "Joplin",
@@ -448,8 +576,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 33,
-        "contactId": 33,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "100 Hersheypark Dr",
         "address2": "",
         "city": "Hershey",
@@ -462,8 +594,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 34,
-        "contactId": 34,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "2557 Florence Harllee Blvd",
         "address2": "",
         "city": "Florence",
@@ -476,8 +612,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 35,
-        "contactId": 35,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "5689 Quince Rd",
         "address2": "",
         "city": "Memphis",
@@ -490,8 +630,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 36,
-        "contactId": 36,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "900 E 11th St",
         "address2": "",
         "city": "Austin",
@@ -504,8 +648,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 37,
-        "contactId": 37,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "147 E Butler Ave",
         "address2": "",
         "city": "Memphis",
@@ -518,8 +666,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 38,
-        "contactId": 38,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "3425 Lathrop St",
         "address2": "",
         "city": "South Bend",
@@ -532,8 +684,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 39,
-        "contactId": 39,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "2667 Gundry Ave",
         "address2": "",
         "city": "Signal Hill",
@@ -546,8 +702,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 40,
-        "contactId": 40,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "959 Ridgeway Loop Rd",
         "address2": "",
         "city": "Memphis",
@@ -560,8 +720,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 41,
-        "contactId": 41,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1629 E Main St",
         "address2": "",
         "city": "Siloam Springs",
@@ -574,8 +738,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 42,
-        "contactId": 42,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "201 E Navajo Dr",
         "address2": "",
         "city": "Hobbs",
@@ -588,8 +756,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 43,
-        "contactId": 43,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "1950 Hidee Mine Rd",
         "address2": "",
         "city": "Central City",
@@ -602,8 +774,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 44,
-        "contactId": 44,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "21 MT-38",
         "address2": "",
         "city": "Philipsburg",
@@ -616,8 +792,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 45,
-        "contactId": 45,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "962 Kernan Rd",
         "address2": "",
         "city": "Oroville",
@@ -630,8 +810,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 46,
-        "contactId": 46,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "222 N Main St",
         "address2": "",
         "city": "Sudan",
@@ -644,8 +828,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 47,
-        "contactId": 47,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "5001 FM1912",
         "address2": "",
         "city": "Amarillo",
@@ -658,8 +846,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 48,
-        "contactId": 48,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "303 Co Rd 142",
         "address2": "",
         "city": "Sweetwater",
@@ -672,8 +864,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 49,
-        "contactId": 49,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "6305 S County Rd 1285",
         "address2": "",
         "city": "Midland",
@@ -686,8 +882,12 @@ const lanePartnerLocations = [
         updatedAt: new Date()
     },
     {
-        "lanePartnerId": 50,
-        "contactId": 50,
+        name: faker.company.companyName(),
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        title: faker.name.jobTitle(),
+        phone: faker.phone.phoneNumber(),
+        email: faker.internet.email(),
         "address": "11613 N, I-27",
         "address2": "",
         "city": "Lubbock",
