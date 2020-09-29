@@ -1,7 +1,8 @@
 'use strict';
+const getCurrentUser = require('.././helpers/user').getCurrentUser
 
-var elasticsearch = require('elasticsearch');
-var client = new elasticsearch.Client({
+const elasticsearch = require('elasticsearch');
+const client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: 'trace',
     apiVersion: '7.7'
@@ -9,7 +10,8 @@ var client = new elasticsearch.Client({
 
 module.exports.search = async (event, context) => {
 
-    const userBrokerageId = 2 // should come from session storage or redis???
+    try {
+    const user = await getCurrentUser(event.headers.Authorization)
 
     const query = event.queryStringParameters.q
 
@@ -18,10 +20,16 @@ module.exports.search = async (event, context) => {
         q: `*${query}*`
     })
 
-    const userResults = await results.hits.hits.filter(item => item._source.brokerageId == userBrokerageId)
+    const userResults = await results.hits.hits.filter(item => item._source.brokerageId == user.brokerageId)
 
     return {
         body: JSON.stringify(userResults),
         statusCode: 200
+    }
+    } catch (err) {
+
+        return {
+            statusCode:500
+        }
     }
 }

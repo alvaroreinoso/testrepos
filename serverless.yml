@@ -64,6 +64,8 @@ functions:
         - http:
             path: api/search
             method: get
+            headers:
+              - Authorization
 
 # User
   getUser:
