@@ -80,7 +80,8 @@ module.exports.getLane = async (event, context) => {
     catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 401,
+            body: JSON.stringify(err)
         }
     }
 
