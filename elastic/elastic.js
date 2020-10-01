@@ -5,7 +5,7 @@ var client = new elasticsearch.Client({
     apiVersion: '7.7'
 });
 
-const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, CustomerContact } = require('.././models');
+const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User } = require('.././models');
 
 client.ping({
 
@@ -25,6 +25,7 @@ async function seedCustomer() {
         body: {
             mappings: {
                 properties: {
+                    id: { "type": "integer"},
                     name: { "type": "text" },
                     industry: { "type": "text" },
                     userId: { "type": "integer" },
@@ -47,6 +48,7 @@ async function seedCustomer() {
             index: 'customer',
             id: cust.id,
             body: {
+                id: cust.id,
                 name: cust.name,
                 industry: cust.industry,
                 userId: cust.userId,
@@ -64,6 +66,7 @@ async function seedLanes() {
         body: {
             mappings: {
                 properties: {
+                    id: { "type": "integer"},
                     origin: { "type": "text" },
                     destination: { "type": "text" },
                     brokerageId: { "type": "integer" }
@@ -96,6 +99,7 @@ async function seedLanes() {
             index: 'lane',
             id: lane.id,
             body: {
+                id: lane.id,
                 origin: lane.origin,
                 destination: lane.destination,
                 brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId
@@ -110,6 +114,7 @@ async function seedTeams() {
         body: {
             mappings: {
                 properties: {
+                    id: { "type": "integer"},
                     name: { "type": "text" },
                     brokerageId: { "type": "integer" }
                 }
@@ -124,6 +129,7 @@ async function seedTeams() {
             index: 'team',
             id: team.id,
             body: {
+                id: team.id,
                 name: team.name,
                 brokerageId: team.brokerageId
             }
@@ -138,6 +144,7 @@ async function seedLanePartners() {
         body: {
             mappings: {
                 properties: {
+                    id: { "type": "integer"},
                     name: { "type": "text" },
                     address: { "type": "text" },
                     address2: { "type": "text" },
@@ -147,12 +154,7 @@ async function seedLanePartners() {
                     lnglat: { "type": "text" },
                     open: { "type": "text" },
                     close: { "type": "text" },
-                    firstName: { "type": "text" },
-                    lastName: { "type": "text" },
                     title: { "type": "text" },
-                    phone: { "type": "text" },
-                    phoneExt: { "type": "text" },
-                    email: { "type": "text" },
                     brokerageId: { "type": "text"}
                 }
             }
@@ -183,6 +185,7 @@ async function seedLanePartners() {
             index: 'lane_partner',
             id: partner.id,
             body: {
+                id: partner.id,
                 name: partner.name,
                 address: partner.address,
                 address2: partner.address2,
@@ -192,64 +195,8 @@ async function seedLanePartners() {
                 lnglat: partner.lnglat,
                 open: partner.open,
                 close: partner.close,
-                firstName: partner.firstName,
-                lastName: partner.lastName,
                 title: partner.title,
-                phone: partner.phone,
-                phoneExt: partner.phoneExt,
-                email: partner.email,
                 brokerageId: partner.CustomerLane.CustomerLocation.Customer.Team.brokerageId
-            }
-        })
-    })
-}
-
-async function seedCustomerContacts() {
-
-    await client.indices.create({
-        index: 'customer_contact',
-        body: {
-            mappings: {
-                properties: {
-                    firstName: { "type": "text" },
-                    lastName: { "type": "text" },
-                    title: { "type": "text" },
-                    phone: { "type": "text" },
-                    phoneExt: { "type": "text" },
-                    email: { "type": "text" },
-                    brokerageId: { "type": "integer"}
-                }
-            }
-        }
-    })
-
-    const contacts = await CustomerContact.findAll({
-        include: [{
-            model: CustomerLocation,
-            required: true,
-            include: [{
-                model: Customer,
-                required: true,
-                include: [{
-                    model: Team,
-                    required: true,
-                }]
-            }]
-        }]
-})
-
-    contacts.forEach((contact) => {
-        client.create({
-            index: 'customer_contact',
-            id: contact.id,
-            body: {
-                firstName: contact.firstName,
-                lastName: contact.lastName,
-                title: contact.title,
-                phone: contact.phone,
-                phoneExt: contact.phoneExt,
-                email: contact.email,
-                brokerageId: contact.CustomerLocations[0].Customer.Team.brokerageId
             }
         })
     })
@@ -262,6 +209,7 @@ async function seedCustomerLocatioins() {
         body: {
             mappings: {
                 properties: {
+                    id: { "type": "integer"},
                     address: { "type": "text" },
                     address2: { "type": "text" },
                     city: { "type": "text" },
@@ -289,6 +237,7 @@ async function seedCustomerLocatioins() {
             index: 'customer_location',
             id: location.id,
             body: {
+                id: location.id,
                 address: location.address,
                 address2: location.address2,
                 city: location.city,
@@ -300,14 +249,58 @@ async function seedCustomerLocatioins() {
     })
 }
 
+async function seedTeammates() {
+
+    await client.indices.create({
+        index: 'teammate',
+        body: {
+            mappings: {
+                properties: {
+                    id: { "type": "integer"},
+                    title: { "type": "text" },
+                    firstName: { "type": "text" },
+                    lastName: { "type": "text" },
+                    email: { "type": "text" },
+                    phone: { "type": "text" },
+                    brokerageId: { "type": "integer" }
+                }
+            }
+        }
+    })
+
+    const teammates = await User.findAll()
+
+    teammates.forEach((mate) => {
+        client.create({
+            index: 'teammate',
+            id: mate.id,
+            body: {
+                id: mate.id,
+                title: mate.title,
+                firstName: mate.firstName,
+                lastName: mate.lastName,
+                email: mate.email,
+                phone: mate.phone,
+                brokerageId: mate.brokerageId
+            }
+        })
+    })
+
+}
+
 
 async function setUp() {
+
+    await client.indices.delete({
+        index: '*'
+    })
+
+    await seedCustomer()
+    await seedCustomerLocatioins()
     await seedLanePartners()
     await seedLanes()
-    await seedCustomer()
     await seedTeams()
-    await seedCustomerContacts()
-    await seedCustomerLocatioins()
+    await seedTeammates()
 }
 
 setUp()

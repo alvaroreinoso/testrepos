@@ -1,4 +1,4 @@
-const laneHandler = require('../../handlers/lane')
+const laneHandler = require('../../../handlers/lane')
 
 describe('Test Get Lane by Id', () => {
 

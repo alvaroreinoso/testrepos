@@ -42,7 +42,10 @@ module.exports.getUser = async (event, context) => {
 
 module.exports.createProfile = async (event, context) => {
 
-    const req = (JSON.parse(event.body))    
+    
+    const req = await (JSON.parse(event.body))
+
+    // const req = event.body
 
     try {
         await User.create({

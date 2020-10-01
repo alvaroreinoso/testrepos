@@ -63,6 +63,31 @@ You can now hit the routes locally. I recommend installing *** Insomnia *** to d
 
 1. Open insomnia and import the `Insomnia.json` file for the project
 
+### 6. Elasticsearch
+1. Make sure you have the database up and running locally, and make sure you have the database seeded
+
+1. Install elasticsearch with brew
+https://www.elastic.co/guide/en/elasticsearch/reference/current/brew.html
+
+1. Follow instructions to configure elasticsearch
+https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html
+
+1. In an open terminal window, run
+```
+elasticsearch
+```
+
+1. You can hit localhost:9200 in your browser to verify that elasticsearch is running
+
+1. To setup elasticsearch with our indices and data, run 
+```
+yarn elastic:start
+```
+1. To stop elasticsearch, run
+```
+yarn elastic:stop
+```
+and ^c
 
 
 
