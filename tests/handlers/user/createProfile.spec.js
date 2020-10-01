@@ -10,7 +10,7 @@ describe('Test getUser Lambda', () => {
             // }
         }
 
-        const response = await userHandler.createProfile((request))
+        const response = await userHandler.createProfile(JSON.stringify(request))
 
         expect(response.statusCode).toStrictEqual(500)
     })
@@ -25,7 +25,9 @@ describe('Test getUser Lambda', () => {
             }
         }
 
-        const response = await userHandler.createProfile(request)
+        const req = JSON.stringify(request)
+
+        const response = await userHandler.createProfile(JSON.stringify(request))
 
         expect(response.statusCode).toStrictEqual(200)
     })

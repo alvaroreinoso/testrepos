@@ -17,7 +17,7 @@ module.exports.search = async (event, context) => {
 
     const results = await client.search({
         index: '*',
-        q: `*${query}*`
+        q: `${query}*`
     })
 
     const userResults = await results.hits.hits.filter(item => item._source.brokerageId == user.brokerageId)

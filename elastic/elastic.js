@@ -215,7 +215,9 @@ async function seedCustomerLocatioins() {
                     city: { "type": "text" },
                     state: { "type": "text" },
                     zipcode: { "type": "text" },
-                    brokerageId: { "type": "integer" }
+                    brokerageId: { "type": "integer" },
+                    customerName: { "type": "text" },
+                    customerId: { "type": "integer" }
                 }
             }
         }
@@ -243,7 +245,9 @@ async function seedCustomerLocatioins() {
                 city: location.city,
                 state: location.state,
                 zipcode: location.zipcode,
-                brokerageId: location.Customer.Team.brokerageId
+                brokerageId: location.Customer.Team.brokerageId,
+                customerName: location.Customer.name,
+                customerId: location.Customer.id
             }
         })
     })
