@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartnerLocation, LanePartner } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation } = require('.././models')
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
@@ -11,7 +11,14 @@ module.exports.getCustomersByCurrentUser = async (event, context) => {
         const customers = await Customer.findAll({
             where: {
                 userId: user.id
-            }
+            },
+            include: [{
+                model: CustomerLocation,
+                limit: 1,
+                include: [{
+                    model: CustomerContact
+                }]
+            }]
         });
 
         return {
@@ -21,6 +28,7 @@ module.exports.getCustomersByCurrentUser = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
         return {
             statusCode: 401
         }

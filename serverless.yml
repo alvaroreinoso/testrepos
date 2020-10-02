@@ -68,13 +68,31 @@ functions:
               - Authorization
 
 # Ledger
-  ledger:
+  getLedger:
     handler:
       ./handlers/ledger.getLedger
     events:
         - http:
             path: api/ledger/{id}
             method: get
+  writeMessage:
+    handler:
+      ./handlers/ledger.writeMessage
+    events:
+        - http:
+            path: api/ledger
+            method: post
+            headers:
+              - Authorization
+  deleteMessage:
+    handler:
+      ./handlers/ledger.deleteMessage
+    events:
+        - http:
+            path: api/ledger/message/{id}
+            method: delete
+            headers:
+              - Authorization
 
 # User
   getUser:
