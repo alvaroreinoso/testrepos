@@ -84,6 +84,15 @@ functions:
             method: post
             headers:
               - Authorization
+  deleteMessage:
+    handler:
+      ./handlers/ledger.deleteMessage
+    events:
+        - http:
+            path: api/ledger/message/{id}
+            method: delete
+            headers:
+              - Authorization
 
 # User
   getUser:

@@ -33,8 +33,6 @@ module.exports.getLedger = async (event, context) => {
 
 module.exports.writeMessage = async (event, context) => {
 
-
-
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
@@ -42,7 +40,7 @@ module.exports.writeMessage = async (event, context) => {
         return {
             statusCode: 401
         }
-        
+
     }
 
     try {
@@ -66,5 +64,46 @@ module.exports.writeMessage = async (event, context) => {
         }
 
     }
+
+}
+
+module.exports.deleteMessage = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+
+    }
+
+    try {
+
+    const messageId = event.pathParameters.id
+
+    await Message.destroy({
+        where: {
+            id: messageId,
+            userId: user.id
+        }
+    })
+
+    return {
+
+        statusCode: 200
+
+    }
+
+    } catch (err) {
+
+        return {
+
+            statusCode: 500
+        }
+
+    }
+
 
 }
