@@ -67,6 +67,15 @@ functions:
             headers:
               - Authorization
 
+# Ledger
+  ledger:
+    handler:
+      ./handlers/ledger.getLedger
+    events:
+        - http:
+            path: api/ledger/{id}
+            method: get
+
 # User
   getUser:
     handler:

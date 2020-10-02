@@ -13,7 +13,11 @@ module.exports.getUser = async (event, context) => {
         const user = await User.findOne({
             where: {
                 username: cognitoUser['cognito:username']
-            }
+            },
+            include: [{
+                model: Brokerage,
+                required: true
+            }]
         })
 
         if (user != null) {
