@@ -30,3 +30,41 @@ module.exports.getLedger = async (event, context) => {
 
 
 }
+
+module.exports.writeMessage = async (event, context) => {
+
+
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+        
+    }
+
+    try {
+
+        const request = JSON.parse(event.body)
+
+        const message = await Message.create({
+            userId: user.id,
+            ledgerId: request.ledgerId,
+            content: request.content
+        })
+
+        return {
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+
+    }
+
+}
