@@ -160,6 +160,16 @@ functions:
             headers:
               - Content-Type
               - Authorization
+  getTopCustomers:
+    handler:
+      ./handlers/customer.getTopCustomers
+    events:
+        - http:
+            path: api/customer/top
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
 
 # Lane
   getLanesByCurrentUser:

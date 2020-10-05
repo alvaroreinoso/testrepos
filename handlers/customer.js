@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation, CustomerLane } = require('.././models')
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
@@ -95,9 +95,44 @@ module.exports.getCustomer = async (event, context) => {
     }
 
 }
-module.exports.getLocationsByCustomer = async (event, context) => {
+module.exports.getTopCustomers = async (event, context) => {
 
-}
-module.exports.getCustomerById = async (event, context) => {
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+
+            statusCode: 401
+        }
+    }
+
+    try {
+
+        const customers = await Customer.findAll({
+            where: {
+                userId: user.id
+            },
+            include: [{
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: CustomerLane,
+                    required: true
+                }]
+            }]
+        })
+
+        return {
+            body: JSON.stringify(customers.sort()),
+            statusCode: 200
+        }
+
+    }   catch (error) {
+
+        return {
+            statusCode: 500
+        }
+    }
 
 }
