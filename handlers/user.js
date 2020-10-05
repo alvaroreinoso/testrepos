@@ -17,6 +17,9 @@ module.exports.getUser = async (event, context) => {
             include: [{
                 model: Brokerage,
                 required: true
+            }, {
+                model: Team,
+                required: true
             }]
         })
 
