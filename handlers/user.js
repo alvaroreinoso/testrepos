@@ -53,7 +53,7 @@ module.exports.createProfile = async (event, context) => {
 
     try {
 
-        const ledger = Ledger.create()
+        const ledger = await Ledger.create()
 
         await User.create({
             username: req.username,
