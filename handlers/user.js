@@ -63,7 +63,7 @@ module.exports.createProfile = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500
         }
