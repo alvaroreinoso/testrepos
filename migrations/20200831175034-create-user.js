@@ -24,6 +24,9 @@ module.exports = {
           as: 'teamId',
         }
       },
+      ledgerId: {
+        type: Sequelize.INTEGER
+      },
       confirmed: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

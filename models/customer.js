@@ -15,6 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       })
       Customer.hasMany(models.CustomerLocation, {
         foreignKey: 'customerId'
+      }),
+      Customer.belongsTo(models.Leger, {
+        foreignKey: 'ledgerId'
       })
     }
   };
@@ -22,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     industry: DataTypes.STRING,
     userId: DataTypes.INTEGER,
-    teamId: DataTypes.INTEGER
+    teamId: DataTypes.INTEGER,
+    ledgerId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Customer',

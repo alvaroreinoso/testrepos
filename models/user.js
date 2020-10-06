@@ -13,12 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       }),
       User.hasMany(models.Customer, {
         foreignKey: 'userId'
+      }),
+      User.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId'
       })
     }
   };
   User.init({
     username: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
+    ledgerId: DataTypes.INTEGER,
     teamId: DataTypes.INTEGER,
     confirmed: {
       type: DataTypes.BOOLEAN,
