@@ -75,6 +75,9 @@ functions:
         - http:
             path: api/ledger/{id}
             method: get
+            headers:
+              - Authorization
+              
   writeMessage:
     handler:
       ./handlers/ledger.writeMessage
