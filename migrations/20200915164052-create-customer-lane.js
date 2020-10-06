@@ -35,6 +35,9 @@ module.exports = {
           as: 'laneId'
         }
       },
+      routeGeometry: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

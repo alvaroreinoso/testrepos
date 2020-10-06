@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
 
-      Ledger.belongsTo(models.Customer, {
-        foreignKey: 'customerId'
+      Ledger.hasOne(models.Customer, {
+        foreignKey: 'ledgerId'
       })
-      Ledger.belongsTo(models.User, {
-        foreignKey: 'userId'
+      Ledger.hasOne(models.User, {
+        foreignKey: 'ledgerId'
       })
       Ledger.hasMany(models.Message, {
         foreignKey: 'ledgerId'
@@ -24,8 +24,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Ledger.init({
-    userId: DataTypes.INTEGER,
-    customerId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Ledger',

@@ -5,7 +5,8 @@ const customers = [
         userId: 1,
         teamId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 17
     },
     {
         name: 'Lopez Foods',
@@ -13,7 +14,8 @@ const customers = [
         userId: 1,
         teamId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 18
     },
     {
         name: 'DeRoyal Textiles',
@@ -21,7 +23,8 @@ const customers = [
         userId: 1,
         teamId: 1,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 19
     },
     {
         name: 'Caesarstone',
@@ -29,7 +32,8 @@ const customers = [
         userId: 6,
         teamId: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 20
     },
     {
         name: 'Inteplast Group',
@@ -37,7 +41,8 @@ const customers = [
         userId: 6,
         teamId: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 21
     },
     {
         name: 'Evoqua Water Technologies',
@@ -45,7 +50,8 @@ const customers = [
         userId: 6,
         teamId: 2,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 22
     },
     {
         name: 'Tosh Farms',
@@ -53,7 +59,8 @@ const customers = [
         userId: 13,
         teamId: 4,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 23
     },
     {
         name: 'Newly Weds Foods',
@@ -61,7 +68,8 @@ const customers = [
         userId: 14,
         teamId: 4,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 24
     },
     {
         name: 'Glencore PLC',
@@ -69,7 +77,8 @@ const customers = [
         userId: 13,
         teamId: 4,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 25
     },
     {
         name: 'Engelhart Commodities',
@@ -77,7 +86,8 @@ const customers = [
         userId: 13,
         teamId: 4,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ledgerId: 26
     },
 ]
 

@@ -8,24 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Users',
-          key: 'id',
-          as: 'userId'
-        }
-      },
-      customerId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Customers',
-          key: 'id',
-          as: 'customerId'
-        }
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
@@ -35,6 +17,24 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('Users', 'ledgerId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
+    })
+    await queryInterface.changeColumn('Customers', 'ledgerId', {
+      type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Ledgers');

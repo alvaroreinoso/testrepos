@@ -4,14 +4,16 @@
     "password": "postgres",
     "host": "localhost",
     "database": "my-db",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "test": {
     "username": "postgres",
     "password": "postgres",
     "database": "my-db",
     "host": "localhost",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "logging": false
   },
   "production": {
     "username": "postgres",

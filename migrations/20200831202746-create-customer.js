@@ -32,6 +32,9 @@ module.exports = {
           as: 'teamId'
         }
       },
+      ledgerId: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

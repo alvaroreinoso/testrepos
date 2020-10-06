@@ -24,6 +24,10 @@ module.exports = {
           as: 'teamId',
         }
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
       confirmed: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

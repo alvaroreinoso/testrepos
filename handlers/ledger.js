@@ -11,7 +11,7 @@ module.exports.getLedger = async (event, context) => {
     const ledgerId = event.pathParameters.id
 
 
-    const ledger = await Ledger.findAll({
+    const ledger = await Ledger.findOne({
         where: {
             id: ledgerId
         },
