@@ -49,7 +49,6 @@ describe('Test Get Lane by Id', () => {
         const response = await laneHandler.getLane(request)
 
         expect(response.statusCode).toStrictEqual(200)
-        expect(response.body).toContain('Lamont_Feil60@hotmail.com')
     })
 
     test('Get lane that doesnt exist', async () => {
