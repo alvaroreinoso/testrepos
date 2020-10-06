@@ -1,7 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
-const { Team, Brokerage, User } = require('.././models');
+const { Team, Brokerage, User, Ledger } = require('.././models');
 
 module.exports.getUser = async (event, context) => {
 
@@ -52,10 +52,14 @@ module.exports.createProfile = async (event, context) => {
     const req = await (JSON.parse(event.body))
 
     try {
+
+        const ledger = Ledger.create()
+
         await User.create({
             username: req.username,
             email: req.email,
-            brokerageId: req.brokerageId
+            brokerageId: req.brokerageId,
+            ledgerId: ledger.id
         })
 
         return {

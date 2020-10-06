@@ -25,7 +25,8 @@ module.exports = {
         }
       },
       ledgerId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true
       },
       confirmed: {
         type: Sequelize.BOOLEAN,
