@@ -184,6 +184,15 @@ functions:
             method: get
             headers:
               - Authorization
+  getLanesByUser:
+    handler:
+      ./handlers/lane.getLanesByUser
+    events:
+        - http:
+            path: api/lane/user/{id}
+            method: get
+            headers:
+              - Authorization
   getLane:
     handler:
       ./handlers/lane.getLane
