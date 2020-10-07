@@ -44,20 +44,14 @@ module.exports.getLanesByUser = async (event, context) => {
 
     const currentUser = await getCurrentUser(event.headers.Authorization)
 
-    const targetUser = await User.findOne({
-        where: {
-            id: targetUserId,
-            brokerageId: currentUser.brokerageId
-        }
-    })
-
-    if (targetUserId == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
     try {
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: currentUser.brokerageId
+            }
+        })
+
         const lanes = await CustomerLane.findAll({
             include: [{
                 model: CustomerLocation,
@@ -79,14 +73,14 @@ module.exports.getLanesByUser = async (event, context) => {
             body: JSON.stringify(lanes),
             statusCode: 200
         }
+
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 401
         }
+
     }
-
-
 }
 
 module.exports.getLane = async (event, context) => {
