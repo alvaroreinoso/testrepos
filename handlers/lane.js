@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane, User } = require('.././models');
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
@@ -35,6 +35,51 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         return {
             statusCode: 401
         }
+    }
+}
+
+module.exports.getLanesByUser = async (event, context) => {
+
+    const targetUserId = event.pathParameters.id
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+
+    try {
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: currentUser.brokerageId
+            }
+        })
+
+        const lanes = await CustomerLane.findAll({
+            include: [{
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        userId: targetUser.id
+                    }
+                }]
+            }, {
+                model: LanePartner,
+                required: true
+            }]
+        });
+
+        return {
+            body: JSON.stringify(lanes),
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 401
+        }
+
     }
 }
 
@@ -134,7 +179,7 @@ module.exports.deleteLane = async (event, context) => {
 
     }
     catch (err) {
-        
+
         return {
             statusCode: 401
         }

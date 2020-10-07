@@ -4,12 +4,9 @@ const { Ledger, Message, Customer, User } = require('.././models');
 
 module.exports.getLedger = async (event, context) => {
 
-    // ledger id included on customer drawer or user drawer
-
-    // sent as path parameter
-
     const ledgerId = event.pathParameters.id
 
+    const user = await getCurrentUser(event.headers.Authorization)
 
     const ledger = await Ledger.findOne({
         where: {
@@ -20,12 +17,61 @@ module.exports.getLedger = async (event, context) => {
             include: [{
                 model: User
             }]
-        }]
+        }, {
+            model: User,
+        },
+        {
+            model: Customer
+        }],
+        order: [
+            [Message, 'id', 'DESC']
+        ]
     })
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify(ledger)
+    try {
+
+    if (ledger.Customer == null) {
+
+        if (ledger.User.brokerageId == user.brokerageId) {
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(ledger)
+            }
+
+        } else {
+
+            return {
+                statusCode: 401
+            }
+
+        }
+    }
+
+    if (ledger.User == null) {
+
+        if (ledger.Customer.brokerageId == user.brokerageId) {
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(ledger)
+            }
+
+        } else {
+
+            return {
+                statusCode: 401
+            }
+
+        }
+    }
+
+    } catch {
+
+        return {
+            statusCode: 404
+        }
+
     }
 
 
@@ -81,20 +127,20 @@ module.exports.deleteMessage = async (event, context) => {
 
     try {
 
-    const messageId = event.pathParameters.id
+        const messageId = event.pathParameters.id
 
-    await Message.destroy({
-        where: {
-            id: messageId,
-            userId: user.id
+        await Message.destroy({
+            where: {
+                id: messageId,
+                userId: user.id
+            }
+        })
+
+        return {
+
+            statusCode: 200
+
         }
-    })
-
-    return {
-
-        statusCode: 200
-
-    }
 
     } catch (err) {
 
