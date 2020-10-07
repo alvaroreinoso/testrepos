@@ -107,6 +107,15 @@ functions:
             method: get
             headers:
               - Authorization
+  getUserById:
+    handler:
+      ./handlers/user.getUserById
+    events:
+        - http:
+            path: api/user/{id}
+            method: get
+            headers:
+              - Authorization
   getTeams:
     handler:
       ./handlers/user.getTeams
@@ -203,7 +212,6 @@ functions:
             headers:
               - Content-Type
               - Authorization
-
   deleteLane:
     handler:
       ./handlers/lane.deleteLane
