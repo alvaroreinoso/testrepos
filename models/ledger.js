@@ -20,10 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       Ledger.hasMany(models.Message, {
         foreignKey: 'ledgerId'
       })
+      Ledger.belongsTo(models.Brokerage, {
+        foreignKey: 'brokerageId'
+      })
 
     }
   };
   Ledger.init({
+    brokerageId: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Ledger',

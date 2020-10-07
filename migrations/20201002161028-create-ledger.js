@@ -8,6 +8,15 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      brokerageId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
