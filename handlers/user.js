@@ -97,7 +97,9 @@ module.exports.createProfile = async (event, context) => {
 
     try {
 
-        const ledger = await Ledger.create()
+        const ledger = await Ledger.create({
+            brokerageId: req.brokerageId
+        })
 
         await User.create({
             username: req.username,
@@ -111,10 +113,11 @@ module.exports.createProfile = async (event, context) => {
         }
 
     } catch (err) {
-        console.log(err)
+        
         return {
             statusCode: 500
         }
+        
     }
 }
 

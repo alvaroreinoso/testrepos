@@ -65,6 +65,8 @@ module.exports.writeMessage = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
+        console.log(request)
+
         const ledger = await Ledger.findOne({
             where: {
                 id: request.ledgerId,
@@ -85,7 +87,7 @@ module.exports.writeMessage = async (event, context) => {
         })
 
         return {
-            statusCode: 200
+            statusCode: 204
         }
 
     } catch (err) {
@@ -116,12 +118,21 @@ module.exports.deleteMessage = async (event, context) => {
 
         const messageId = event.pathParameters.id
 
-        await Message.destroy({
+        const message = await Message.findOne({
             where: {
                 id: messageId,
                 userId: user.id
             }
         })
+
+        if (message == null) {
+            
+            return {
+                statusCode: 401
+            }
+        }
+
+        await message.destroy()
 
         return {
 
@@ -137,6 +148,4 @@ module.exports.deleteMessage = async (event, context) => {
         }
 
     }
-
-
 }

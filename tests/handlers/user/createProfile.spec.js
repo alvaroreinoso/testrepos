@@ -13,7 +13,7 @@ describe('Test createProfile Lambda', () => {
 
     test('Create Profile with valid request body', async () => {
 
-        const request = {"body":'{"username":"test-test-test","email":"test@gmail.com","brokerageId":3}'}
+        const request = {"body":'{"username":"test-test-test","email":"test@gmail.com","brokerageId":2}'}
 
         const response = await userHandler.createProfile(request)
 
