@@ -4,76 +4,48 @@ const { Ledger, Message, Customer, User } = require('.././models');
 
 module.exports.getLedger = async (event, context) => {
 
-    const ledgerId = event.pathParameters.id
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    const ledger = await Ledger.findOne({
-        where: {
-            id: ledgerId
-        },
-        include: [{
-            model: Message,
-            include: [{
-                model: User
-            }]
-        }, {
-            model: User,
-        },
-        {
-            model: Customer
-        }],
-        order: [
-            [Message, 'id', 'DESC']
-        ]
-    })
-
     try {
+        const ledgerId = event.pathParameters.id
 
-    if (ledger.Customer == null) {
+        const user = await getCurrentUser(event.headers.Authorization)
 
-        if (ledger.User.brokerageId == user.brokerageId) {
+        const ledger = await Ledger.findOne({
+            where: {
+                id: ledgerId,
+                brokerageId: user.brokerageId
+            },
+            include: [{
+                model: Message,
+                include: [{
+                    model: User
+                }]
+            }, {
+                model: User,
+            },
+            {
+                model: Customer
+            }],
+            order: [
+                [Message, 'id', 'DESC']
+            ]
+        })
 
+        if (ledger == null) {
             return {
-                statusCode: 200,
-                body: JSON.stringify(ledger)
+                statusCode: 404
             }
-
-        } else {
-
-            return {
-                statusCode: 401
-            }
-
         }
-    }
-
-    if (ledger.User == null) {
-
-        if (ledger.Customer.brokerageId == user.brokerageId) {
-
-            return {
-                statusCode: 200,
-                body: JSON.stringify(ledger)
-            }
-
-        } else {
-
-            return {
-                statusCode: 401
-            }
-
-        }
-    }
-
-    } catch {
 
         return {
-            statusCode: 404
+            body: JSON.stringify(ledger),
+            statusCode: 200
         }
+    } catch (err) {
 
+        return {
+            statusCode: 401
+        }
     }
-
 
 }
 
@@ -93,6 +65,19 @@ module.exports.writeMessage = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
+        const ledger = await Ledger.findOne({
+            where: {
+                id: request.ledgerId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (ledger == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
         const message = await Message.create({
             userId: user.id,
             ledgerId: request.ledgerId,
@@ -104,6 +89,8 @@ module.exports.writeMessage = async (event, context) => {
         }
 
     } catch (err) {
+
+        console.log(err)
 
         return {
             statusCode: 500
