@@ -47,6 +47,50 @@ module.exports.getUser = async (event, context) => {
     }
 }
 
+module.exports.getUserById = async (event, context) => {
+
+    try {
+    
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+
+        const targetUserId = event.pathParameters.id
+
+        const user = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: currentUser.brokerageId
+            },
+            include: [{
+                model: Team,
+                required: true
+            },
+            {
+                model: Brokerage,
+                required: true
+            }]
+        })
+
+        if (user == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        return {
+            body: JSON.stringify(user),
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 401
+        }
+
+    }
+
+}
+
 module.exports.createProfile = async (event, context) => {
 
     const req = await (JSON.parse(event.body))
@@ -81,20 +125,20 @@ module.exports.updateProfile = async (event, context) => {
     const user = await getCurrentUser(event.headers.Authorization)
 
     try {
-    
-    user.firstName = req.firstName
-    user.lastName = req.lastName
-    user.phone = req.phone
-    user.title = req.title
-    user.teamId = req.teamId
-    user.profileImage = req.profileImage
-    user.confirmed = true
 
-    await user.save()
+        user.firstName = req.firstName
+        user.lastName = req.lastName
+        user.phone = req.phone
+        user.title = req.title
+        user.teamId = req.teamId
+        user.profileImage = req.profileImage
+        user.confirmed = true
 
-    return {
-        statusCode: 200
-    }
+        await user.save()
+
+        return {
+            statusCode: 200
+        }
     } catch (err) {
 
         return {
