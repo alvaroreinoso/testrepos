@@ -8,4 +8,17 @@ var client = new elasticsearch.Client({
     apiVersion: '7.7'
 });
 
-const { Message } = require('.././models');
+module.exports.updateMessage = async (message) => {
+
+    console.log(message.id, message.content)
+
+    client.update({
+        index: 'message',
+        id: message.id,
+        body: { doc:
+            {
+            content: message.content
+        }}
+    }
+    )
+}

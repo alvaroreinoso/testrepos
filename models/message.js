@@ -1,4 +1,6 @@
 'use strict';
+
+const updateMessage = require('../elastic/hooks/message').updateMessage
 const {
   Model
 } = require('sequelize');
@@ -25,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       afterSave: (message, options) => {
-        
+        updateMessage(message)
       }
     },
     sequelize,
