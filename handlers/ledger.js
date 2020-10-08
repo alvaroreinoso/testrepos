@@ -126,7 +126,7 @@ module.exports.deleteMessage = async (event, context) => {
         })
 
         if (message == null) {
-            
+
             return {
                 statusCode: 401
             }
@@ -148,4 +148,59 @@ module.exports.deleteMessage = async (event, context) => {
         }
 
     }
+}
+
+module.exports.editMessage = async (event, context) => {
+
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == undefined) {
+
+            return {
+                statusCode: 401
+            }
+        } 
+
+        const messageId = event.pathParameters.id
+
+        const request = JSON.parse(event.body)
+
+        if (request.content == null) {
+
+            return {
+                statusCode: 400
+            }
+        }
+
+        const message = await Message.findOne({
+            where: {
+                id: messageId,
+                userId: user.id
+            }
+        })
+
+        if (message == null) {
+
+            return {
+                statusCode: 404
+            }
+        }
+
+        message.update({
+            content: request.content
+        })
+
+        return {
+
+            statusCode: 200
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
 }
