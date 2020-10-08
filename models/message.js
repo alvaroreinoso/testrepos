@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER,
     content: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (message, options) => {
+        
+      }
+    },
     sequelize,
     modelName: 'Message',
   });
