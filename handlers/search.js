@@ -1,5 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
+const { Ledger } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -39,6 +40,20 @@ module.exports.searchLedger = async (event, context) => {
     const user = await getCurrentUser(event.headers.Authorization)
 
     const ledgerId = event.queryStringParameters.id
+
+    const ledger = await Ledger.findOne({
+        where: {
+            id: ledgerId,
+            brokerageId: user.brokerageId
+        }
+    })
+
+    if (ledger == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
 
     const query = event.queryStringParameters.q
 
