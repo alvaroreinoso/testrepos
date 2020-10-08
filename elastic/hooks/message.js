@@ -1,7 +1,7 @@
 var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
-    log : [{
+    log: [{
         type: 'stdio',
         levels: ['error']
     }],
@@ -12,13 +12,17 @@ module.exports.updateMessage = async (message) => {
 
     console.log(message.id, message.content)
 
-    client.update({
+    await client.update({
         index: 'message',
         id: message.id,
-        body: { doc:
-            {
-            content: message.content
-        }}
+        body: {
+            doc: {
+                content: message.content,
+                ledgerId: message.ledgerId,
+                userId: message.userId
+            },
+            doc_as_upsert: true
+        }
     }
     )
 }

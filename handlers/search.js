@@ -33,3 +33,24 @@ module.exports.search = async (event, context) => {
         }
     }
 }
+
+module.exports.searchLedger = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    const ledgerId = event.queryStringParameters.id
+
+    const query = event.queryStringParameters.q
+
+    const results = await client.search({
+        index: 'message',
+        q: `${query}*`
+    })
+
+    const ledgerResults = await results.hits.hits.filter(item => item._source.ledgerId == ledgerId)
+
+    return {
+        body: JSON.stringify(ledgerResults),
+        statusCode: 200
+    }
+}

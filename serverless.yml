@@ -66,6 +66,15 @@ functions:
             method: get
             headers:
               - Authorization
+  searchLedger:
+    handler:
+      ./handlers/search.searchLedger
+    events:
+        - http:
+            path: api/ledger/search
+            method: get
+            headers:
+              - Authorization
 
 # Ledger
   getLedger:
