@@ -10,8 +10,6 @@ var client = new elasticsearch.Client({
 
 module.exports.updateMessage = async (message) => {
 
-    console.log(message.id, message.content)
-
     await client.update({
         index: 'message',
         id: message.id,
@@ -23,6 +21,13 @@ module.exports.updateMessage = async (message) => {
             },
             doc_as_upsert: true
         }
-    }
-    )
+    })
+}
+
+module.exports.destroyMessage = async (message) => {
+
+    await client.delete({
+        index: 'message',
+        id: message.id
+    })
 }
