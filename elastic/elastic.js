@@ -1,11 +1,14 @@
 var elasticsearch = require('elasticsearch');
 var client = new elasticsearch.Client({
     host: 'localhost:9200',
-    log: 'trace',
+    log : [{
+        type: 'stdio',
+        levels: ['error']
+    }],
     apiVersion: '7.7'
 });
 
-const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User } = require('.././models');
+const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User, Message, Ledger } = require('.././models');
 
 client.ping({
 
@@ -57,8 +60,47 @@ async function seedCustomer() {
             }
         })
     })
+
+    console.log('Seeded Customers')
 }
 
+async function seedMessages() {
+    await client.indices.create({
+        index: 'message',
+        body: {
+            mappings: {
+                properties: {
+                    id: { "type": "integer"},
+                    content: { "type": "text" },
+                    brokerageId: { "type": "integer"},
+                    ledgerId: { "type": "integer"}
+                }
+            }
+        }
+    })
+
+    const messages = await Message.findAll({
+        include: [{
+            model: Ledger,
+            required: true
+        }]
+    })
+
+    messages.forEach(message => {
+        client.create({
+            index: 'message',
+            id: message.id,
+            body: {
+                id: message.id,
+                content: message.content,
+                ledgerId: message.ledgerId,
+                brokerageId: message.Ledger.brokerageId
+            }
+        })
+    })
+
+    console.log('Seeded Messages')
+}
 async function seedLanes() {
 
     await client.indices.create({
@@ -106,7 +148,10 @@ async function seedLanes() {
             }
         })
     })
+
+    console.log('Seeded Lanes')
 }
+
 async function seedTeams() {
 
     await client.indices.create({
@@ -135,6 +180,8 @@ async function seedTeams() {
             }
         })
     })
+
+    console.log('Seeded Teams')
 }
 
 async function seedLanePartners() {
@@ -200,6 +247,8 @@ async function seedLanePartners() {
             }
         })
     })
+
+    console.log('Seeded Lane Partners')
 }
 
 async function seedCustomerLocatioins() {
@@ -251,6 +300,8 @@ async function seedCustomerLocatioins() {
             }
         })
     })
+
+    console.log('Seeded Customer Locations')
 }
 
 async function seedTeammates() {
@@ -290,6 +341,7 @@ async function seedTeammates() {
         })
     })
 
+    console.log('Seeded Teammates')
 }
 
 
@@ -305,6 +357,7 @@ async function setUp() {
     await seedLanes()
     await seedTeams()
     await seedTeammates()
+    await seedMessages()
 }
 
 setUp()

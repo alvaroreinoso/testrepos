@@ -1,4 +1,6 @@
 'use strict';
+
+const updateMessage = require('../elastic/hooks/message').updateMessage
 const {
   Model
 } = require('sequelize');
@@ -23,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER,
     content: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (message, options) => {
+        updateMessage(message)
+      }
+    },
     sequelize,
     modelName: 'Message',
   });
