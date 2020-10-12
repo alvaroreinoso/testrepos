@@ -25,18 +25,6 @@ async function seedCustomer() {
 
     await client.indices.create({
         index: 'customer',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    name: { "type": "text" },
-                    industry: { "type": "text" },
-                    userId: { "type": "integer" },
-                    teamId: { "type": "integer" },
-                    brokerageId: { "type": "integer" }
-                }
-            }
-        }
     })
 
     const customers = await Customer.findAll({
@@ -67,16 +55,6 @@ async function seedCustomer() {
 async function seedMessages() {
     await client.indices.create({
         index: 'message',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    content: { "type": "text" },
-                    brokerageId: { "type": "integer"},
-                    ledgerId: { "type": "integer"}
-                }
-            }
-        }
     })
 
     const messages = await Message.findAll({
@@ -105,16 +83,6 @@ async function seedLanes() {
 
     await client.indices.create({
         index: 'lane',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    origin: { "type": "text" },
-                    destination: { "type": "text" },
-                    brokerageId: { "type": "integer" }
-                }
-            }
-        }
     })
 
     const lanes = await Lane.findAll({
@@ -156,16 +124,6 @@ async function seedTeams() {
 
     await client.indices.create({
         index: 'team',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    name: { "type": "text" },
-                    brokerageId: { "type": "integer" },
-                    icon: { "type": "text" }
-                }
-            }
-        }
     })
 
     const teams = await Team.findAll()
@@ -190,24 +148,6 @@ async function seedLanePartners() {
 
     await client.indices.create({
         index: 'lane_partner',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    name: { "type": "text" },
-                    address: { "type": "text" },
-                    address2: { "type": "text" },
-                    city: { "type": "text" },
-                    state: { "type": "text" },
-                    zipcode: { "type": "text" },
-                    lnglat: { "type": "text" },
-                    open: { "type": "text" },
-                    close: { "type": "text" },
-                    title: { "type": "text" },
-                    brokerageId: { "type": "text"}
-                }
-            }
-        }
     })
 
     const partners = await LanePartner.findAll({
@@ -257,21 +197,6 @@ async function seedCustomerLocatioins() {
 
     await client.indices.create({
         index: 'customer_location',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    address: { "type": "text" },
-                    address2: { "type": "text" },
-                    city: { "type": "text" },
-                    state: { "type": "text" },
-                    zipcode: { "type": "text" },
-                    brokerageId: { "type": "integer" },
-                    customerName: { "type": "text" },
-                    customerId: { "type": "integer" }
-                }
-            }
-        }
     })
 
     const locations = await CustomerLocation.findAll({
@@ -310,19 +235,6 @@ async function seedTeammates() {
 
     await client.indices.create({
         index: 'teammate',
-        body: {
-            mappings: {
-                properties: {
-                    id: { "type": "integer"},
-                    title: { "type": "text" },
-                    firstName: { "type": "text" },
-                    lastName: { "type": "text" },
-                    email: { "type": "text" },
-                    phone: { "type": "text" },
-                    brokerageId: { "type": "integer" }
-                }
-            }
-        }
     })
 
     const teammates = await User.findAll()
