@@ -1,4 +1,5 @@
 'use strict';
+const teamHook = require('../elastic/hooks/team')
 const {
   Model
 } = require('sequelize');
@@ -21,6 +22,14 @@ module.exports = (sequelize, DataTypes) => {
     brokerageId: DataTypes.INTEGER,
     icon: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (team, options) => {
+        teamHook.updateTeam(team)
+      },
+      afterDestroy: (team, options) => {
+        teamHook.destroyTeam(team)
+      }
+    },
     sequelize,
     modelName: 'Team',
   });

@@ -161,7 +161,8 @@ async function seedTeams() {
                 properties: {
                     id: { "type": "integer"},
                     name: { "type": "text" },
-                    brokerageId: { "type": "integer" }
+                    brokerageId: { "type": "integer" },
+                    icon: { "type": "text" }
                 }
             }
         }
@@ -176,7 +177,8 @@ async function seedTeams() {
             body: {
                 id: team.id,
                 name: team.name,
-                brokerageId: team.brokerageId
+                brokerageId: team.brokerageId,
+                icon: team.icon
             }
         })
     })
