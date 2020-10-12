@@ -1,4 +1,6 @@
 'use strict';
+
+const laneHook = require('../elastic/hooks/lane')
 const {
   Model
 } = require('sequelize');
@@ -14,6 +16,14 @@ module.exports = (sequelize, DataTypes) => {
     origin: DataTypes.STRING,
     destination: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (lane, options) => {
+        laneHook.updateLane(lane)
+      },
+      afterDestroy: (lane, options) => {
+        laneHook.destroyLane(lane)
+      }
+    },
     sequelize,
     modelName: 'Lane',
   });
