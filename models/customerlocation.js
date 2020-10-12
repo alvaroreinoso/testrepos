@@ -1,4 +1,7 @@
 'use strict';
+
+const customerLocationHook = require('../elastic/hooks/customerLocation')
+
 const {
   Model
 } = require('sequelize');
@@ -30,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
     isShippingReceiving: DataTypes.BOOLEAN,
     lnglat: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (customerLocation, options) => {
+        customerLocationHook.updateCusomerLocation(customerLocation)
+      },
+      afterDestroy: (customerLocation, options) => {
+        customerLocationHook.destroyCustomerLocation(customerLocation)
+      }
+    },
     sequelize,
     modelName: 'CustomerLocation',
   });
