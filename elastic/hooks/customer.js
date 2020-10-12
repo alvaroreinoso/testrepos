@@ -20,7 +20,6 @@ module.exports.updateCustomer = async (customer) => {
                 industry: customer.industry,
                 userId: customer.userId,
                 teamId: customer.teamId,
-                brokerageId: customer.Team.brokerageId
             },
             doc_as_upsert: true
         }
