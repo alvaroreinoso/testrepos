@@ -5,7 +5,10 @@ const { Ledger } = require('.././models');
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
     host: 'localhost:9200',
-    log: 'trace',
+    log: [{
+        type: 'stdio',
+        levels: ['error']
+    }],
     apiVersion: '7.7'
 });
 
