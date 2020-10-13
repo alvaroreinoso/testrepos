@@ -1,5 +1,5 @@
 'use strict';
-const customerHook = require('../elastic/hooks/customer')
+const elastic = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
@@ -31,10 +31,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       afterSave: (customer, options) => {
-        customerHook.updateCustomer(customer)
+        elastic.saveDocument(customer)
       },
       afterDestroy: (customer, options) => {
-        customerHook.destroyCustomer(customer)
+        elastic.deleteDocument(customer)
       }
     },
     sequelize,

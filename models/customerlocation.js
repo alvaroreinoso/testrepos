@@ -1,6 +1,6 @@
 'use strict';
 
-const customerLocationHook = require('../elastic/hooks/customerLocation')
+const elastic = require('../elastic/hooks')
 
 const {
   Model
@@ -35,10 +35,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       afterSave: (customerLocation, options) => {
-        customerLocationHook.updateCusomerLocation(customerLocation)
+        elastic.saveDocument(customerLocation)
       },
       afterDestroy: (customerLocation, options) => {
-        customerLocationHook.destroyCustomerLocation(customerLocation)
+        elastic.deleteDocument(customerLocation)
       }
     },
     sequelize,

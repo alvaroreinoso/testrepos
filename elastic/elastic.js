@@ -1,7 +1,7 @@
-var elasticsearch = require('elasticsearch');
-var client = new elasticsearch.Client({
+const elasticsearch = require('elasticsearch');
+const client = new elasticsearch.Client({
     host: 'localhost:9200',
-    log : [{
+    log: [{
         type: 'stdio',
         levels: ['error']
     }],
@@ -200,15 +200,15 @@ async function seedCustomerLocatioins() {
     })
 
     const locations = await CustomerLocation.findAll({
+        include: [{
+            model: Customer,
+            required: true,
             include: [{
-                model: Customer,
+                model: Team,
                 required: true,
-                include: [{
-                    model: Team,
-                    required: true,
-                }]
+            }]
         }]
-})
+    })
 
     locations.forEach((location) => {
         client.create({
