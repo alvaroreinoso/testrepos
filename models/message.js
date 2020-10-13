@@ -1,16 +1,12 @@
 'use strict';
 
-const messageHook = require('../elastic/hooks/message')
+const elastic = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Message extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+  
     static associate(models) {
       Message.belongsTo(models.User, {
         foreignKey: 'userId'
@@ -27,10 +23,10 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       afterSave: (message, options) => {
-        messageHook.updateMessage(message)
+        elastic.saveDocument(message)
       },
       afterDestroy: (message, options) => {
-        messageHook.destroyMessage(message)
+        elastic.deleteDocument(message)
       }
     },
     sequelize,
