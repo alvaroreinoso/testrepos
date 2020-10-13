@@ -1,4 +1,7 @@
 'use strict';
+
+const elastic = require('../elastic/hooks')
+
 const {
   Model
 } = require('sequelize');
@@ -30,6 +33,14 @@ module.exports = (sequelize, DataTypes) => {
     isShippingReceiving: DataTypes.BOOLEAN,
     lnglat: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (customerLocation, options) => {
+        elastic.saveDocument(customerLocation)
+      },
+      afterDestroy: (customerLocation, options) => {
+        elastic.deleteDocument(customerLocation)
+      }
+    },
     sequelize,
     modelName: 'CustomerLocation',
   });
