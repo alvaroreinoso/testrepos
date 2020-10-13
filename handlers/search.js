@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger, Message } = require('.././models');
+const { Ledger, Message, User } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -67,12 +67,16 @@ module.exports.searchLedger = async (event, context) => {
 
     const ledgerResults = await results.hits.hits.filter(item => item._source.ledgerId == ledgerId)
 
-    const dbResults = await ledgerResults.map(message => {
+    const dbResults = ledgerResults.map(message => {
 
         const results = Message.findOne({
             where: {
                 id: message._id
-            }
+            },
+            include: [{
+                model: User,
+                attributes: ['id', 'firstName', 'lastName', 'profileImage']
+            }]
         })
         
         return results
