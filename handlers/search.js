@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger } = require('.././models');
+const { Ledger, Message, User, Team } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -20,7 +20,7 @@ module.exports.search = async (event, context) => {
     const query = event.queryStringParameters.q
 
     const results = await client.search({
-        index: '*',
+        index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
         q: `${query}*`
     })
 
@@ -67,8 +67,34 @@ module.exports.searchLedger = async (event, context) => {
 
     const ledgerResults = await results.hits.hits.filter(item => item._source.ledgerId == ledgerId)
 
+    const dbResults = ledgerResults.map(message => {
+
+        const results = Message.findOne({
+            where: {
+                id: message._id
+            },
+            include: [{
+                model: User,
+                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId'],
+            }]
+        })
+        
+        return results
+    })
+
+    const response = await Promise.all(dbResults)
+
+    function compare(a, b) {
+        if (a.createdAt < b.createdAt) return 1;
+        if (b.createdAt > a.createdAt) return -1;
+      
+        return 0;
+    }
+
+    const test = response.sort(compare)
+
     return {
-        body: JSON.stringify(ledgerResults),
+        body: JSON.stringify(test),
         statusCode: 200
     }
 }

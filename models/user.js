@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       }),
       User.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId'
+      }),
+      User.belongsToMany(models.CustomerLane, {
+        through: 'LaneOwner',
+        foreignKey: 'userId'
       })
     }
   };
