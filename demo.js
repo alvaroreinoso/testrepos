@@ -3,10 +3,12 @@ const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane, User, LaneO
 async function run() {
 
 
-    await LaneOwner.create({
-        userId: 1,
-        customerLaneId: 1
-    })
+    // await LaneOwner.create({
+    //     userId: 1,
+    //     customerLaneId: 1
+    // })
+
+    
     const user = await User.findOne({
         where: {
             id: 1
