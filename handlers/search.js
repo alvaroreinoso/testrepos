@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger, Message, User } = require('.././models');
+const { Ledger, Message, User, Team } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -75,7 +75,7 @@ module.exports.searchLedger = async (event, context) => {
             },
             include: [{
                 model: User,
-                attributes: ['id', 'firstName', 'lastName', 'profileImage']
+                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId'],
             }]
         })
         
@@ -84,8 +84,17 @@ module.exports.searchLedger = async (event, context) => {
 
     const response = await Promise.all(dbResults)
 
+    function compare(a, b) {
+        if (a.createdAt < b.createdAt) return 1;
+        if (b.createdAt > a.createdAt) return -1;
+      
+        return 0;
+    }
+
+    const test = response.sort(compare)
+
     return {
-        body: JSON.stringify(response),
+        body: JSON.stringify(test),
         statusCode: 200
     }
 }

@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, CustomerLane } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation, CustomerLane, Team, LanePartner } = require('.././models')
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
@@ -134,5 +134,77 @@ module.exports.getTopCustomers = async (event, context) => {
             statusCode: 500
         }
     }
+
+}
+
+module.exports.getCustomersLanes = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    const customerId = event.pathParameters.customerId
+
+    console.log(customerId)
+
+    const customer = await Customer.findOne({
+        where: {
+            id: customerId
+        },
+        include: [{
+            model: Team,
+            required: true,
+            attributes: ['brokerageId'],
+            where: {
+                brokerageId: user.brokerageId
+            }
+        }]
+    })
+
+
+
+
+    const allLanes = await CustomerLane.findAll({
+        include: [{
+            model: CustomerLocation,
+            required: true,
+            include: [{
+                model: Customer,
+                required: true,
+                where: {
+                    id: customer.id
+                }
+            }]
+        }, {
+            model: LanePartner,
+            required: true
+        }]
+    });
+
+    const userLanes = await CustomerLane.findAll({
+        include: [{
+            model: CustomerLocation,
+            required: true,
+            include: [{
+                model: Customer,
+                required: true,
+                where: {
+                    userId: user.id
+                }
+            }]
+        }, {
+            model: LanePartner,
+            required: true
+        }]
+    });
+
+    const response = {
+        all: allLanes,
+        your: userLanes
+    }
+
+    return {
+        body: JSON.stringify(response),
+        statusCode: 200
+    }
+
 
 }
