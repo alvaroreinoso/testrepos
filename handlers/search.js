@@ -20,7 +20,7 @@ module.exports.search = async (event, context) => {
     const query = event.queryStringParameters.q
 
     const results = await client.search({
-        index: '*',
+        index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
         q: `${query}*`
     })
 
