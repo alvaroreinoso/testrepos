@@ -1,4 +1,6 @@
 const elasticsearch = require('elasticsearch');
+// import stateAbbreviations from 'states-abbreviations';
+const stateAbbreviations = require('states-abbreviations')
 const client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: [{
@@ -105,13 +107,27 @@ async function seedLanes() {
     })
 
     lanes.forEach((lane) => {
+
+        const chunks = lane.origin.split(' ')
+        const originStateCode = chunks[chunks.length - 1]
+        const originState = stateAbbreviations[originStateCode]
+
+        const destinationChunks = lane.destination.split(' ')
+        const destinationStateCode = destinationChunks[destinationChunks.length - 1]
+        const destinationState = stateAbbreviations[destinationStateCode]
+
+        console.log(originState)
+        console.log(destinationState)
+
         client.create({
             index: 'lane',
             id: lane.id,
             body: {
                 id: lane.id,
                 origin: lane.origin,
+                originStateName: originState,
                 destination: lane.destination,
+                destinationStateName: destinationState,
                 brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId
             }
         })
@@ -170,6 +186,9 @@ async function seedLanePartners() {
     })
 
     partners.forEach((partner) => {
+
+        const stateName = stateAbbreviations[partner.state]
+
         client.create({
             index: 'lane_partner',
             id: partner.id,
@@ -180,6 +199,7 @@ async function seedLanePartners() {
                 address2: partner.address2,
                 city: partner.city,
                 state: partner.state,
+                fullState: stateName,
                 zipcode: partner.zipcode,
                 lnglat: partner.lnglat,
                 open: partner.open,
@@ -211,6 +231,9 @@ async function seedCustomerLocatioins() {
     })
 
     locations.forEach((location) => {
+
+        const stateName = stateAbbreviations[location.state]
+
         client.create({
             index: 'customer_location',
             id: location.id,
@@ -220,6 +243,7 @@ async function seedCustomerLocatioins() {
                 address2: location.address2,
                 city: location.city,
                 state: location.state,
+                fullState: stateName,
                 zipcode: location.zipcode,
                 brokerageId: location.Customer.Team.brokerageId,
                 customerName: location.Customer.name,
