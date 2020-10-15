@@ -255,3 +255,10 @@ functions:
         - http:
             path: api/lane
             method: post
+  updateLane:
+    handler:
+      ./handlers/lane.updateLane
+    events:
+        - http:
+            path: api/lane/{laneId}
+            method: put
