@@ -30,6 +30,7 @@
     "inquirer": "^7.3.3",
     "pg": "^8.3.2",
     "pg-hstore": "^2.3.3",
-    "sequelize-auto": "^0.5.3"
+    "sequelize-auto": "^0.5.3",
+    "states-abbreviations": "^1.0.0"
   }
 }

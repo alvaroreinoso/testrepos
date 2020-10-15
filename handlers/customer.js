@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, CustomerLane, Team, LanePartner } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation, CustomerLane, Team, LanePartner, User } = require('.././models')
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
@@ -141,9 +141,15 @@ module.exports.getCustomersLanes = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
 
-    const customerId = event.pathParameters.customerId
+    if (user.id == null) {
 
-    console.log(customerId)
+        return {
+
+            statusCode: 401
+        }
+    }
+
+    const customerId = event.pathParameters.customerId
 
     const customer = await Customer.findOne({
         where: {
@@ -158,9 +164,6 @@ module.exports.getCustomersLanes = async (event, context) => {
             }
         }]
     })
-
-
-
 
     const allLanes = await CustomerLane.findAll({
         include: [{
@@ -187,9 +190,17 @@ module.exports.getCustomersLanes = async (event, context) => {
                 model: Customer,
                 required: true,
                 where: {
-                    userId: user.id
+                    id: customer.id
                 }
             }]
+        },
+            {
+            model: User,
+            required: true,
+            attributes: ['id'],
+            where: {
+                id: user.id
+            }
         }, {
             model: LanePartner,
             required: true
@@ -205,6 +216,4 @@ module.exports.getCustomersLanes = async (event, context) => {
         body: JSON.stringify(response),
         statusCode: 200
     }
-
-
 }

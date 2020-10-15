@@ -7049,6 +7049,11 @@ stack-utils@^2.0.2:
   dependencies:
     escape-string-regexp "^2.0.0"
 
+states-abbreviations@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/states-abbreviations/-/states-abbreviations-1.0.0.tgz#4b434fc055ea64a9ea9da243a575d3335aad6795"
+  integrity sha1-S0NPwFXqZKnqnaJDpXXTM1qtZ5U=
+
 static-extend@^0.1.1:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/static-extend/-/static-extend-0.1.2.tgz#60809c39cbff55337226fd5e0b520f341f1fb5c6"

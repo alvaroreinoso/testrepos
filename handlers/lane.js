@@ -211,3 +211,37 @@ module.exports.addLane = async (event, context) => {
 
     }
 }
+
+module.exports.updateLane = async (event, context) => {
+
+    const request = JSON.parse(event.body)
+
+    const laneId = event.pathParameters.laneId
+
+    try {
+
+        const lane = await CustomerLane.findOne({
+            where: {
+                id: laneId
+            }
+        })
+
+        lane.customerLocationId = request.customerLocationId
+        lane.lanePartnerId = request.lanePartnerId
+        lane.laneId = request.laneId
+        lane.routeGeometry = request.routeGeometry
+
+        await lane.save()
+
+        return {
+            statusCode: 204
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+
+    }
+}
