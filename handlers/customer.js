@@ -182,6 +182,40 @@ module.exports.getCustomersLanes = async (event, context) => {
         }]
     });
 
+    return {
+        body: JSON.stringify(allLanes),
+        statusCode: 200
+    }
+}
+
+module.exports.getCustomersLanesForUser = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+
+            statusCode: 401
+        }
+    }
+
+    const customerId = event.pathParameters.customerId
+
+    const customer = await Customer.findOne({
+        where: {
+            id: customerId
+        },
+        include: [{
+            model: Team,
+            required: true,
+            attributes: ['brokerageId'],
+            where: {
+                brokerageId: user.brokerageId
+            }
+        }]
+    })
+
     const userLanes = await CustomerLane.findAll({
         include: [{
             model: CustomerLocation,
@@ -190,7 +224,7 @@ module.exports.getCustomersLanes = async (event, context) => {
                 model: Customer,
                 required: true,
                 where: {
-                    id: customer.id
+                    id: 1
                 }
             }]
         },
@@ -207,13 +241,9 @@ module.exports.getCustomersLanes = async (event, context) => {
         }]
     });
 
-    const response = {
-        all: allLanes,
-        your: userLanes
-    }
-
     return {
-        body: JSON.stringify(response),
+        body: JSON.stringify(userLanes),
         statusCode: 200
     }
 }
+

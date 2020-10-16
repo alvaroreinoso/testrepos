@@ -210,6 +210,16 @@ functions:
             headers:
               - Content-Type
               - Authorization
+  getCustomersLanesForUser:
+    handler:
+      ./handlers/customer.getCustomersLanesForUser
+    events:
+        - http:
+            path: api/lanes/customer/{customerId}/user
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
 
 # Lane
   getLanesByCurrentUser:
