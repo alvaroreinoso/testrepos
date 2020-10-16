@@ -205,7 +205,7 @@ functions:
       ./handlers/customer.getCustomersLanes
     events:
         - http:
-            path: api/customer/{customerId}/lanes
+            path: api/lanes/customer/{customerId}
             method: get
             headers:
               - Content-Type
