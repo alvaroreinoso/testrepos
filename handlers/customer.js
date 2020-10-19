@@ -99,6 +99,8 @@ module.exports.getTopCustomers = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
 
+    const userId = event.pathParameters.userId
+
     if (user.id == null) {
 
         return {
@@ -109,9 +111,22 @@ module.exports.getTopCustomers = async (event, context) => {
 
     try {
 
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
         const customers = await Customer.findAll({
             where: {
-                userId: user.id
+                userId: targetUser.id
             },
             include: [{
                 model: CustomerLocation,
