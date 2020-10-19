@@ -63,6 +63,9 @@ async function seedMessages() {
         include: [{
             model: Ledger,
             required: true
+        }, {
+            model: User,
+            required: true
         }]
     })
 
@@ -74,7 +77,9 @@ async function seedMessages() {
                 id: message.id,
                 content: message.content,
                 ledgerId: message.ledgerId,
-                brokerageId: message.Ledger.brokerageId
+                brokerageId: message.Ledger.brokerageId,
+                userFirstName: message.User.firstName,
+                userLastName: message.User.lastName
             }
         })
     })
