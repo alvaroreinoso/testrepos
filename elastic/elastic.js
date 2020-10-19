@@ -23,6 +23,25 @@ client.ping({
     }
 });
 
+async function seedCustomerLanes() {
+    await client.indices.create({
+        index: 'customer_lane'
+    })
+
+    const customerLanes = await CustomerLane.findAll({
+        include: [{
+            model: Lane,
+            required: true
+        }]
+    })
+
+    customerLanes.forEach((customerLane) => {
+        client.create({
+            index: 'customer_lane',
+        })
+    })
+}
+
 async function seedCustomer() {
 
     await client.indices.create({
@@ -114,6 +133,12 @@ async function seedLanes() {
     lanes.forEach((lane) => {
 
         const chunks = lane.origin.split(' ')
+
+        const route = `${lane.origin} to ${lane.destination}`
+        
+        const fullChunks = route.split(' ')
+        const shortRoute = `${fullChunks[0]} to ${fullChunks[fullChunks.length - 2]}`
+
         const originStateCode = chunks[chunks.length - 1]
         const originState = stateAbbreviations[originStateCode]
 
@@ -121,8 +146,7 @@ async function seedLanes() {
         const destinationStateCode = destinationChunks[destinationChunks.length - 1]
         const destinationState = stateAbbreviations[destinationStateCode]
 
-        console.log(originState)
-        console.log(destinationState)
+        const customerLanes = lane.CustomerLanes
 
         client.create({
             index: 'lane',
@@ -133,7 +157,10 @@ async function seedLanes() {
                 originStateName: originState,
                 destination: lane.destination,
                 destinationStateName: destinationState,
-                brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId
+                brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId,
+                route: route,
+                shortRoute: shortRoute,
+                customerLanes: customerLanes
             }
         })
     })
