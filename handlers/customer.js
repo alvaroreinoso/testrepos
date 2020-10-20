@@ -71,8 +71,14 @@ module.exports.getCustomer = async (event, context) => {
         const results = await Customer.findOne({
             where: {
                 id: customerId,
-                userId: user.id
-            }
+            },
+            include: [{
+                model: Team,
+                required: true,
+                where: {
+                    brokerageId: user.brokerageId
+                }
+            }]
         })
 
         if (results != null) {
