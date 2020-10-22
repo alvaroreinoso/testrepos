@@ -46,7 +46,6 @@ module.exports = {
     });
     await queryInterface.changeColumn('CustomerLocations', 'contactId', {
       type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
           model: 'CustomerContacts',
           key: 'id',
