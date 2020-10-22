@@ -1,5 +1,5 @@
 const csvFilePath = 'clean.csv'
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation } = require('./models');
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane } = require('./models');
 const csv = require('csvtojson')
 
 async function parseCSV() {
@@ -8,7 +8,8 @@ async function parseCSV() {
 
     for (const json of jsonArray) {
 
-        // console.log(json)
+        const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
+        const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
 
         const existingLoad = await Load.findOne({
             where: {
@@ -50,7 +51,7 @@ async function parseCSV() {
                     }
                 })
 
-                // console.log('EXISTING LOCATION: ', existingLocation.toJSON())
+                
 
                 if (existingLocation == null) { // NEW CUSTOMER NEW LOCATION
 
@@ -65,6 +66,46 @@ async function parseCSV() {
                     console.log('New Location: ', customerLocation.toJSON())
 
                     await customerLocation.save()
+
+                    const existingLane = await Lane.findOne({
+                        where: {
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        }
+                    })
+
+                    if (existingLane == null) { // NEW CUSTOMER NEW LOCATION NEW LANE
+                        
+                        const newLane = await Lane.build({
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        })
+
+                        await newLane.save()
+
+                        console.log('New lane: ', newLane)
+                    }
+
+                } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
+
+                    const existingLane = await Lane.findOne({
+                        where: {
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        }
+                    })
+
+                    if (existingLane == null) {
+                        
+                        const newLane = await Lane.build({
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        })
+
+                        await newLane.save()
+
+                        console.log('New lane: ', newLane)
+                    }
                 }
 
             } else { // EXISTING CUSTOMERS
@@ -77,7 +118,7 @@ async function parseCSV() {
                     }
                 })
 
-                if (existingLocation == null) { // NEW LOCATION EXISTING CUSTOMERS
+                if (existingLocation == null) { // EXISTING CUSTOMER NEW LOCATION
 
                     const newLocation = await CustomerLocation.build({
                         customerId: existingCustomer.id,
@@ -90,7 +131,57 @@ async function parseCSV() {
                     console.log('New Location: ', newLocation.toJSON())
 
                     await newLocation.save()
-                }
+
+                    // const newCustLane = await CustomerLane.build({
+                    //     customerLocationId: newLocation.id,
+                    //     LanePartner: {
+
+                    //     },
+                    //     Lane: {
+
+                    //     }
+                    // })
+
+                    const existingLane = await Lane.findOne({
+                        where: {
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        }
+                    })
+
+                    if (existingLane == null) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
+                        
+                        const newLane = await Lane.build({
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        })
+
+                        await newLane.save()
+
+                        console.log('New lane: ', )
+                    }
+
+                } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
+
+                    const existingLane = await Lane.findOne({
+                        where: {
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        }
+                    })
+
+                    if (existingLane == null) {
+                        
+                        const newLane = await Lane.build({
+                            origin: jsonOrigin,
+                            destination: jsonDestination
+                        })
+
+                        await newLane.save()
+
+                        console.log('New lane: ', newLane)
+                    }
+                } 
 
             }
 
