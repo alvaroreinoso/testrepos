@@ -1,5 +1,5 @@
 const csvFilePath = 'clean.csv'
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane } = require('./models');
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('./models');
 const csv = require('csvtojson')
 
 async function parseCSV() {
@@ -51,11 +51,11 @@ async function parseCSV() {
                     }
                 })
 
-                
+
 
                 if (existingLocation == null) { // NEW CUSTOMER NEW LOCATION
 
-                    const customerLocation = await CustomerLocation.build({
+                    const newLocation = await CustomerLocation.build({
                         customerId: customer.id,
                         address: json['First Pick Address'],
                         city: json['First Pick City'],
@@ -63,9 +63,9 @@ async function parseCSV() {
                         zipcode: json['First Pick Postal']
                     })
 
-                    console.log('New Location: ', customerLocation.toJSON())
+                    console.log('New Location: ', newLocation.toJSON())
 
-                    await customerLocation.save()
+                    await newLocation.save()
 
                     const existingLane = await Lane.findOne({
                         where: {
@@ -75,7 +75,7 @@ async function parseCSV() {
                     })
 
                     if (existingLane == null) { // NEW CUSTOMER NEW LOCATION NEW LANE
-                        
+
                         const newLane = await Lane.build({
                             origin: jsonOrigin,
                             destination: jsonDestination
@@ -84,7 +84,28 @@ async function parseCSV() {
                         await newLane.save()
 
                         console.log('New lane: ', newLane)
+
+                        const newCustLane = await CustomerLane.build({
+                            customerLocationId: newLocation.id,
+                            laneId: newLane.id,
+                            LanePartner: {
+                                name: json['Last Drop Name'],
+                                address: json['Last Drop Address'],
+                                city: json['Last Drop City'],
+                                state: json['Last Drop State'],
+                                zipcode: json['Last Drop Postal']
+                            }
+                        }, {
+                            include: LanePartner
+                        })
+
+                        await newCustLane.save()
+
+                        console.log('New Lane added: ', newCustLane.toJSON())
                     }
+
+
+
 
                 } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
 
@@ -96,7 +117,7 @@ async function parseCSV() {
                     })
 
                     if (existingLane == null) {
-                        
+
                         const newLane = await Lane.build({
                             origin: jsonOrigin,
                             destination: jsonDestination
@@ -105,7 +126,26 @@ async function parseCSV() {
                         await newLane.save()
 
                         console.log('New lane: ', newLane)
+
+                        const newCustLane = await CustomerLane.build({
+                            customerLocationId: newLocation.id,
+                            laneId: newLane.id,
+                            LanePartner: {
+                                name: json['Last Drop Name'],
+                                address: json['Last Drop Address'],
+                                city: json['Last Drop City'],
+                                state: json['Last Drop State'],
+                                zipcode: json['Last Drop Postal']
+                            }
+                        }, {
+                            include: LanePartner
+                        })
+
+                        await newCustLane.save()
+
+                        console.log('New Lane added: ', newCustLane.toJSON())
                     }
+                    
                 }
 
             } else { // EXISTING CUSTOMERS
@@ -132,16 +172,6 @@ async function parseCSV() {
 
                     await newLocation.save()
 
-                    // const newCustLane = await CustomerLane.build({
-                    //     customerLocationId: newLocation.id,
-                    //     LanePartner: {
-
-                    //     },
-                    //     Lane: {
-
-                    //     }
-                    // })
-
                     const existingLane = await Lane.findOne({
                         where: {
                             origin: jsonOrigin,
@@ -150,7 +180,7 @@ async function parseCSV() {
                     })
 
                     if (existingLane == null) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
-                        
+
                         const newLane = await Lane.build({
                             origin: jsonOrigin,
                             destination: jsonDestination
@@ -158,7 +188,27 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', )
+                        console.log('New lane: ', newLane.toJSON())
+
+
+                        const newCustLane = await CustomerLane.build({
+                            customerLocationId: newLocation.id,
+                            laneId: newLane.id,
+                            LanePartner: {
+                                name: json['Last Drop Name'],
+                                address: json['Last Drop Address'],
+                                city: json['Last Drop City'],
+                                state: json['Last Drop State'],
+                                zipcode: json['Last Drop Postal']
+                            }
+                        }, {
+                            include: LanePartner
+                        })
+
+                        await newCustLane.save()
+
+                        console.log('New Lane added: ', newCustLane.toJSON())
+
                     }
 
                 } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
@@ -171,7 +221,7 @@ async function parseCSV() {
                     })
 
                     if (existingLane == null) {
-                        
+
                         const newLane = await Lane.build({
                             origin: jsonOrigin,
                             destination: jsonDestination
@@ -180,8 +230,26 @@ async function parseCSV() {
                         await newLane.save()
 
                         console.log('New lane: ', newLane)
+
+                        const newCustLane = await CustomerLane.build({
+                            customerLocationId: existingLocation.id,
+                            laneId: newLane.id,
+                            LanePartner: {
+                                name: json['Last Drop Name'],
+                                address: json['Last Drop Address'],
+                                city: json['Last Drop City'],
+                                state: json['Last Drop State'],
+                                zipcode: json['Last Drop Postal']
+                            }
+                        }, {
+                            include: LanePartner
+                        })
+
+                        await newCustLane.save()
+
+                        console.log('New Lane added: ', newCustLane.toJSON())
                     }
-                } 
+                }
 
             }
 
