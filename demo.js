@@ -19,8 +19,6 @@ async function parseCSV() {
 
         if (existingLoad == null) {
 
-            console.log('This Load Does not exist')
-
             const existingCustomer = await Customer.findOne({
                 where: {
                     name: json.Customer
@@ -110,11 +108,8 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad)
+                        console.log('New Load added: ', newLoad.toJSON())
                     }
-
-
-
 
                 } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
 
@@ -134,7 +129,7 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane)
+                        console.log('New lane: ', newLane.toJSON())
 
                         const newCustLane = await CustomerLane.build({
                             customerLocationId: newLocation.id,
@@ -161,7 +156,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad)
+                        console.log('New Load added: ', newLoad.toJSON())
                     }
                     
                 }
@@ -234,7 +229,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad)
+                        console.log('New Load added: ', newLoad.toJSON())
 
                     }
 
@@ -256,7 +251,7 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane)
+                        console.log('New lane: ', newLane.toJSON())
 
                         const newCustLane = await CustomerLane.build({
                             customerLocationId: existingLocation.id,
@@ -283,7 +278,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad)
+                        console.log('New Load added: ', newLoad.toJSON())
                     }
                 }
 
@@ -291,12 +286,14 @@ async function parseCSV() {
 
 
 
+        } else {
+
+            console.log('Load Already Added: ', existingLoad.toJSON())
+
         }
 
 
     }
 }
-// console.log(jsonArray)
-
 
 parseCSV()
