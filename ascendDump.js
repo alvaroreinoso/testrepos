@@ -49,8 +49,6 @@ async function parseCSV() {
                     }
                 })
 
-
-
                 if (existingLocation == null) { // NEW CUSTOMER NEW LOCATION
 
                     const newLocation = await CustomerLocation.build({
@@ -158,11 +156,10 @@ async function parseCSV() {
 
                         console.log('New Load added: ', newLoad.toJSON())
                     }
-                    
+
                 }
 
-            } else { // EXISTING CUSTOMERS
-
+            } else { // EXISTING CUSTOMER
 
                 const existingLocation = await CustomerLocation.findOne({
                     where: {
@@ -202,7 +199,6 @@ async function parseCSV() {
                         await newLane.save()
 
                         console.log('New lane: ', newLane.toJSON())
-
 
                         const newCustLane = await CustomerLane.build({
                             customerLocationId: newLocation.id,
@@ -284,14 +280,11 @@ async function parseCSV() {
 
             }
 
-
-
         } else {
 
             console.log('Load Already Added: ', existingLoad.toJSON())
 
         }
-
 
     }
 }
