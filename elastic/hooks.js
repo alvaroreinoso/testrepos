@@ -11,32 +11,42 @@ const client = new elasticsearch.Client({
 
 module.exports.saveDocument = async (item) => {
 
-    const indexName = await getIndex(item)
+    try {
+        const indexName = await getIndex(item)
 
-    const newProperties = item.changed()
+        const newProperties = item.changed()
 
-    const newValues = {}
+        const newValues = {}
 
-    for (const key of newProperties) {
-         newValues[key] = item[key]
+        for (const key of newProperties) {
+            newValues[key] = item[key]
+        }
+
+        await client.update({
+            index: indexName,
+            id: item.id,
+            body: {
+                doc: newValues,
+                doc_as_upsert: true
+            },
+        })
+    } catch (err) {
+
     }
 
-    await client.update({
-        index: indexName,
-        id: item.id,
-        body: {
-            doc: newValues,
-            doc_as_upsert: true
-        },
-    })
+
 }
 
 module.exports.deleteDocument = async (item) => {
 
-    const indexName = await getIndex(item)
+    try {
+        const indexName = await getIndex(item)
 
-    await client.delete({
-        index: indexName,
-        id: item.id
-    })
+        await client.delete({
+            index: indexName,
+            id: item.id
+        })
+    } catch (err) {
+
+    }
 }

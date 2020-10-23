@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     customerLocationId: DataTypes.INTEGER,
     lanePartnerId: DataTypes.INTEGER,
     laneId: DataTypes.INTEGER,
-    routeGeometry: DataTypes.STRING
+    routeGeometry: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'CustomerLane',

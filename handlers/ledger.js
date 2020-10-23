@@ -92,8 +92,6 @@ module.exports.writeMessage = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
-
         return {
             statusCode: 500
         }

@@ -195,7 +195,7 @@ functions:
       ./handlers/customer.getTopCustomers
     events:
         - http:
-            path: api/customer/top
+            path: api/customer/top/{userId}
             method: get
             headers:
               - Content-Type
@@ -205,7 +205,17 @@ functions:
       ./handlers/customer.getCustomersLanes
     events:
         - http:
-            path: api/customer/{customerId}/lanes
+            path: api/lanes/customer/{customerId}
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
+  getCustomersLanesForUser:
+    handler:
+      ./handlers/customer.getCustomersLanesForUser
+    events:
+        - http:
+            path: api/lanes/customer/{customerId}/user
             method: get
             headers:
               - Content-Type

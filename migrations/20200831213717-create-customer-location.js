@@ -20,7 +20,7 @@ module.exports = {
       },
       contactId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       address: {
         type: Sequelize.STRING,
@@ -49,11 +49,11 @@ module.exports = {
       },
       isHQ: {
         type: Sequelize.BOOLEAN,
-        allowNull: false
+        allowNull: false,
+        defaultValue: false
       },
       isShippingReceiving: {
         type: Sequelize.BOOLEAN,
-        allowNull: false
       },
       lnglat: {
         type: Sequelize.STRING
