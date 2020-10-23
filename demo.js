@@ -102,6 +102,15 @@ async function parseCSV() {
                         await newCustLane.save()
 
                         console.log('New Lane added: ', newCustLane.toJSON())
+
+                        const newLoad = await Load.build({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id
+                        })
+
+                        await newLoad.save()
+
+                        console.log('New Load added: ', newLoad)
                     }
 
 
@@ -144,6 +153,15 @@ async function parseCSV() {
                         await newCustLane.save()
 
                         console.log('New Lane added: ', newCustLane.toJSON())
+
+                        const newLoad = await Load.build({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id
+                        })
+
+                        await newLoad.save()
+
+                        console.log('New Load added: ', newLoad)
                     }
                     
                 }
@@ -209,6 +227,15 @@ async function parseCSV() {
 
                         console.log('New Lane added: ', newCustLane.toJSON())
 
+                        const newLoad = await Load.build({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id
+                        })
+
+                        await newLoad.save()
+
+                        console.log('New Load added: ', newLoad)
+
                     }
 
                 } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
@@ -248,6 +275,15 @@ async function parseCSV() {
                         await newCustLane.save()
 
                         console.log('New Lane added: ', newCustLane.toJSON())
+
+                        const newLoad = await Load.build({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id
+                        })
+
+                        await newLoad.save()
+
+                        console.log('New Load added: ', newLoad)
                     }
                 }
 
