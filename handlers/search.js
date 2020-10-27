@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger, Message, User, Team } = require('.././models');
+const { Ledger, Message, User } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -15,25 +15,25 @@ const client = new elasticsearch.Client({
 module.exports.search = async (event, context) => {
 
     try {
-    const user = await getCurrentUser(event.headers.Authorization)
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    const query = event.queryStringParameters.q
+        const query = event.queryStringParameters.q
 
-    const results = await client.search({
-        index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
-        q: `${query}*`
-    })
+        const results = await client.search({
+            index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
+            q: `${query}*`
+        })
 
-    const userResults = await results.hits.hits.filter(item => item._source.brokerageId == user.brokerageId)
+        const userResults = await results.hits.hits.filter(item => item._source.brokerageId == user.brokerageId)
 
-    return {
-        body: JSON.stringify(userResults),
-        statusCode: 200
-    }
+        return {
+            body: JSON.stringify(userResults),
+            statusCode: 200
+        }
     } catch (err) {
 
         return {
-            statusCode:500
+            statusCode: 500
         }
     }
 }
@@ -60,14 +60,29 @@ module.exports.searchLedger = async (event, context) => {
 
     const query = event.queryStringParameters.q
 
-    const results = await client.search({
+    const searchResults = await client.search({
         index: 'message',
-        q: `${query}*`
+        body: {
+            query: {
+                bool: {
+                    must: [
+                        {
+                            multi_match: {
+                                query: query,
+                                type: "phrase_prefix",
+                                fields: ["content", "userFirstName", "userLastName"]
+                            }
+                        },
+                    ],
+                    filter: [
+                        { "term": { "ledgerId": ledgerId } }
+                    ]
+                }
+            }
+        }
     })
 
-    const ledgerResults = await results.hits.hits.filter(item => item._source.ledgerId == ledgerId)
-
-    const dbResults = ledgerResults.map(message => {
+    const dbResults = searchResults.hits.hits.map(message => {
 
         const results = Message.findOne({
             where: {
@@ -78,7 +93,7 @@ module.exports.searchLedger = async (event, context) => {
                 attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId'],
             }]
         })
-        
+
         return results
     })
 
@@ -87,14 +102,14 @@ module.exports.searchLedger = async (event, context) => {
     function compare(a, b) {
         if (a.createdAt < b.createdAt) return 1;
         if (b.createdAt > a.createdAt) return -1;
-      
+
         return 0;
     }
 
-    const test = response.sort(compare)
+    const sortedResults = response.sort(compare)
 
     return {
-        body: JSON.stringify(test),
+        body: JSON.stringify(sortedResults),
         statusCode: 200
     }
 }
