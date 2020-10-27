@@ -3,11 +3,11 @@ const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = new elasticsearch.Client({
     host: 'localhost:9200',
-    log: 'trace',
-    // log: [{
-    //     type: 'stdio',
-    //     levels: ['error']
-    // }],
+    // log: 'trace',
+    log: [{
+        type: 'stdio',
+        levels: ['error']
+    }],
     apiVersion: '7.7'
 });
 
@@ -61,8 +61,7 @@ module.exports.saveDocument = async (item) => {
     } catch (err) {
 
     }
-
-
+    
 }
 
 module.exports.deleteDocument = async (item) => {
