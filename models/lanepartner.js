@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING
   }, {
     hooks: {
-      afterSave: (lanePartner, options) => {
+      afterBulkCreate: (lanePartner, options) => {
         elastic.saveDocument(lanePartner)
       },
       afterDestroy: (lanePartner, options) => {

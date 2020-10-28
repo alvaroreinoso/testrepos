@@ -5,7 +5,7 @@
     "host": "localhost",
     "database": "my-db",
     "dialect": "postgres",
-    "logging": false
+    "logging": true
   },
   "test": {
     "username": "postgres",

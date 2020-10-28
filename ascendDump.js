@@ -1,9 +1,8 @@
 const csvFilePath = 'clean.csv'
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('./models');
 const csv = require('csvtojson')
+const { newLoad, newCustomer, newLane, createLane, currentCustomer } = require('./helpers/csvDump/ascend')
 
-const { newLoad } = require('./helpers/csvDump/ascend')
-console.log(newLoad)
 
 async function parseCSV() {
 
@@ -11,34 +10,11 @@ async function parseCSV() {
 
     for (const json of jsonArray) {
 
-        const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
-        const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
-
-        const existingLoad = await Load.findOne({
-            where: {
-                loadId: json['Load ID']
-            }
-        })
-
-
         if (await newLoad(json)) {
-            console.log('New Load From Helper')
-        
 
-        // if (existingLoad == null) { // LOAD DOESNT EXIST IN DATABASE
+            if (await newCustomer(json)) { // NEW CUSTOMER
 
-            console.log('New load From OG Query')
-            const existingCustomer = await Customer.findOne({
-                where: {
-                    name: json.Customer
-                }
-            })
-
-            if (existingCustomer == null) { // NEW CUSTOMER
-
-                // console.log('The Customer did not exist')
-
-                const customer = await Customer.build({
+                const customer = await Customer.create({
                     name: json.Customer,
                     Ledger: {
                         brokerageId: 1
@@ -46,10 +22,6 @@ async function parseCSV() {
                 }, {
                     include: Ledger
                 })
-
-                await customer.save()
-
-                // console.log('New Customer:', customer.toJSON())
 
                 const existingLocation = await CustomerLocation.findOne({
                     where: {
@@ -72,23 +44,11 @@ async function parseCSV() {
 
                     await newLocation.save()
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
+                    if (await newLane(json)) { // NEW CUSTOMER NEW LOCATION NEW LANE
 
-                    if (existingLane == null) { // NEW CUSTOMER NEW LOCATION NEW LANE
+                        const newLane = await createLane(json)
 
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        // console.log('New lane: ', newLane)
+                        console.log('New lane: ', newLane)
 
                         const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
@@ -104,75 +64,27 @@ async function parseCSV() {
                             include: LanePartner
                         })
 
-                        // await newCustLane.save()
+                        // console.log('New Customer Lane added: ', newCustLane.toJSON())
 
-                        // console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
+                        const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id
                         })
 
-                        await newLoad.save()
-
                         // console.log('New Load added: ', newLoad.toJSON())
                     }
 
-                } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
-
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
-
-                    if (existingLane == null) {
-
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        // console.log('New lane: ', newLane.toJSON())
-
-                        const newCustLane = await CustomerLane.create({
-                            customerLocationId: newLocation.id,
-                            laneId: newLane.id,
-                            LanePartner: {
-                                name: json['Last Drop Name'],
-                                address: json['Last Drop Address'],
-                                city: json['Last Drop City'],
-                                state: json['Last Drop State'],
-                                zipcode: json['Last Drop Postal']
-                            },
-                        }, {
-                            include: LanePartner
-                        })
-
-                        // await newCustLane.save()
-
-                        // console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
-                            loadId: json['Load ID'],
-                            customerLaneId: newCustLane.id
-                        })
-
-                        await newLoad.save()
-
-                        // console.log('New Load added: ', newLoad.toJSON())
-                    }
-
+                } else {
+                    console.log('this is impossible')
                 }
 
             } else { // EXISTING CUSTOMER
 
+                const customer = await currentCustomer(json)
+
                 const existingLocation = await CustomerLocation.findOne({
                     where: {
-                        customerId: existingCustomer.id,
+                        customerId: customer.id,
                         address: json['First Pick Address']
                     }
                 })
@@ -180,7 +92,7 @@ async function parseCSV() {
                 if (existingLocation == null) { // EXISTING CUSTOMER NEW LOCATION
 
                     const newLocation = await CustomerLocation.build({
-                        customerId: existingCustomer.id,
+                        customerId: customer.id,
                         address: json['First Pick Address'],
                         city: json['First Pick City'],
                         state: json['First Pick State'],
@@ -191,23 +103,11 @@ async function parseCSV() {
 
                     await newLocation.save()
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
+                    if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
 
-                    if (existingLane == null) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
+                        const newLane = await createLane(json)
 
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        // console.log('New lane: ', newLane.toJSON())
+                        console.log('New lane: ', newLane.toJSON())
 
                         const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
@@ -223,40 +123,23 @@ async function parseCSV() {
                             include: LanePartner
                         })
 
-                        // await newCustLane.save()
-
                         // console.log('New Lane added: ', newCustLane.toJSON())
 
-                        const newLoad = await Load.build({
+                        const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id
                         })
 
-                        await newLoad.save()
-
                         // console.log('New Load added: ', newLoad.toJSON())
-
                     }
 
                 } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
+                    if (await newLane(json)) {
 
-                    if (existingLane == null) {
+                        const newLane = await createLane(json)
 
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        // console.log('New lane: ', newLane.toJSON())
+                        console.log('New lane: ', newLane.toJSON())
 
                         const newCustLane = await CustomerLane.create({
                             customerLocationId: existingLocation.id,
@@ -272,29 +155,24 @@ async function parseCSV() {
                             include: LanePartner
                         })
 
-                        // await newCustLane.save()
 
                         // console.log('New Lane added: ', newCustLane.toJSON())
 
-                        const newLoad = await Load.build({
+                        const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id
                         })
 
-                        await newLoad.save()
-
                         // console.log('New Load added: ', newLoad.toJSON())
                     }
                 }
-
             }
 
         } else {
 
-            console.log('Load Already Added: ', existingLoad.toJSON())
+            console.log('Load Already Added: ', json)
 
         }
-
     }
 }
 
