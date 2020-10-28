@@ -2,6 +2,9 @@ const csvFilePath = 'clean.csv'
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('./models');
 const csv = require('csvtojson')
 
+const { newLoad } = require('./helpers/csvDump/ascend')
+console.log(newLoad)
+
 async function parseCSV() {
 
     const jsonArray = await csv().fromFile(csvFilePath);
@@ -17,8 +20,14 @@ async function parseCSV() {
             }
         })
 
-        if (existingLoad == null) {
 
+        if (await newLoad(json)) {
+            console.log('New Load From Helper')
+        
+
+        // if (existingLoad == null) { // LOAD DOESNT EXIST IN DATABASE
+
+            console.log('New load From OG Query')
             const existingCustomer = await Customer.findOne({
                 where: {
                     name: json.Customer
@@ -27,7 +36,7 @@ async function parseCSV() {
 
             if (existingCustomer == null) { // NEW CUSTOMER
 
-                console.log('The Customer did not exist')
+                // console.log('The Customer did not exist')
 
                 const customer = await Customer.build({
                     name: json.Customer,
@@ -40,7 +49,7 @@ async function parseCSV() {
 
                 await customer.save()
 
-                console.log('New Customer:', customer.toJSON())
+                // console.log('New Customer:', customer.toJSON())
 
                 const existingLocation = await CustomerLocation.findOne({
                     where: {
@@ -59,7 +68,7 @@ async function parseCSV() {
                         zipcode: json['First Pick Postal']
                     })
 
-                    console.log('New Location: ', newLocation.toJSON())
+                    // console.log('New Location: ', newLocation.toJSON())
 
                     await newLocation.save()
 
@@ -79,9 +88,9 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane)
+                        // console.log('New lane: ', newLane)
 
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
                             laneId: newLane.id,
                             LanePartner: {
@@ -90,14 +99,14 @@ async function parseCSV() {
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal']
-                            }
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
+                        // await newCustLane.save()
 
-                        console.log('New Lane added: ', newCustLane.toJSON())
+                        // console.log('New Lane added: ', newCustLane.toJSON())
 
                         const newLoad = await Load.build({
                             loadId: json['Load ID'],
@@ -106,7 +115,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad.toJSON())
+                        // console.log('New Load added: ', newLoad.toJSON())
                     }
 
                 } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
@@ -127,9 +136,9 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane.toJSON())
+                        // console.log('New lane: ', newLane.toJSON())
 
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
                             laneId: newLane.id,
                             LanePartner: {
@@ -138,14 +147,14 @@ async function parseCSV() {
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal']
-                            }
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
+                        // await newCustLane.save()
 
-                        console.log('New Lane added: ', newCustLane.toJSON())
+                        // console.log('New Lane added: ', newCustLane.toJSON())
 
                         const newLoad = await Load.build({
                             loadId: json['Load ID'],
@@ -154,7 +163,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad.toJSON())
+                        // console.log('New Load added: ', newLoad.toJSON())
                     }
 
                 }
@@ -178,7 +187,7 @@ async function parseCSV() {
                         zipcode: json['First Pick Postal']
                     })
 
-                    console.log('New Location: ', newLocation.toJSON())
+                    // console.log('New Location: ', newLocation.toJSON())
 
                     await newLocation.save()
 
@@ -198,9 +207,9 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane.toJSON())
+                        // console.log('New lane: ', newLane.toJSON())
 
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
                             laneId: newLane.id,
                             LanePartner: {
@@ -209,14 +218,14 @@ async function parseCSV() {
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal']
-                            }
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
+                        // await newCustLane.save()
 
-                        console.log('New Lane added: ', newCustLane.toJSON())
+                        // console.log('New Lane added: ', newCustLane.toJSON())
 
                         const newLoad = await Load.build({
                             loadId: json['Load ID'],
@@ -225,7 +234,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad.toJSON())
+                        // console.log('New Load added: ', newLoad.toJSON())
 
                     }
 
@@ -247,9 +256,9 @@ async function parseCSV() {
 
                         await newLane.save()
 
-                        console.log('New lane: ', newLane.toJSON())
+                        // console.log('New lane: ', newLane.toJSON())
 
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: existingLocation.id,
                             laneId: newLane.id,
                             LanePartner: {
@@ -258,14 +267,14 @@ async function parseCSV() {
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal']
-                            }
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
+                        // await newCustLane.save()
 
-                        console.log('New Lane added: ', newCustLane.toJSON())
+                        // console.log('New Lane added: ', newCustLane.toJSON())
 
                         const newLoad = await Load.build({
                             loadId: json['Load ID'],
@@ -274,7 +283,7 @@ async function parseCSV() {
 
                         await newLoad.save()
 
-                        console.log('New Load added: ', newLoad.toJSON())
+                        // console.log('New Load added: ', newLoad.toJSON())
                     }
                 }
 

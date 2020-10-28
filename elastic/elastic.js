@@ -12,6 +12,8 @@ const client = new elasticsearch.Client({
 
 const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User, Message, Ledger } = require('.././models');
 
+console.log(LanePartner)
+
 client.ping({
 
     requestTimeout: 1000
@@ -23,24 +25,24 @@ client.ping({
     }
 });
 
-async function seedCustomerLanes() {
-    await client.indices.create({
-        index: 'customer_lane'
-    })
+// async function seedCustomerLanes() {
+//     await client.indices.create({
+//         index: 'customer_lane'
+//     })
 
-    const customerLanes = await CustomerLane.findAll({
-        include: [{
-            model: Lane,
-            required: true
-        }]
-    })
+//     const customerLanes = await CustomerLane.findAll({
+//         include: [{
+//             model: Lane,
+//             required: true
+//         }]
+//     })
 
-    customerLanes.forEach((customerLane) => {
-        client.create({
-            index: 'customer_lane',
-        })
-    })
-}
+//     customerLanes.forEach((customerLane) => {
+//         client.create({
+//             index: 'customer_lane',
+//         })
+//     })
+// }
 
 async function seedCustomer() {
 
@@ -160,7 +162,7 @@ async function seedLanes() {
                 brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId,
                 route: route,
                 shortRoute: shortRoute,
-                customerLanes: customerLanes
+                // customerLanes: customerLanes   
             }
         })
     })

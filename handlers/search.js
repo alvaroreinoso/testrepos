@@ -19,17 +19,33 @@ module.exports.search = async (event, context) => {
 
         const query = event.queryStringParameters.q
 
-        const results = await client.search({
+        const searchResults = await client.search({
             index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
-            q: `${query}*`
+            body: {
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                multi_match: {
+                                    query: query,
+                                    type: "phrase_prefix",
+                                    fields: '*'
+                                }
+                            },
+                        ],
+                        // filter: [
+                        //     { "term": { "brokerageId": user.brokerageId } }
+                        // ]
+                    }
+                }
+            }
         })
 
-        const userResults = await results.hits.hits.filter(item => item._source.brokerageId == user.brokerageId)
-
         return {
-            body: JSON.stringify(userResults),
+            body: JSON.stringify(searchResults.hits.hits),
             statusCode: 200
         }
+
     } catch (err) {
 
         return {
