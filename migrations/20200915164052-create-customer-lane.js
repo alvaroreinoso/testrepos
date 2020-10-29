@@ -19,7 +19,7 @@ module.exports = {
       },
       lanePartnerId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: 'LanePartners',
           key: 'id',

@@ -92,75 +92,84 @@ module.exports.saveDocument = async (item) => {
                 break;
             }
 
-            case 'lane_partner': {
+            // case 'lane_partner': {
 
-                console.log('\n')
-                console.log('\n')
-                console.log('\n')
-                console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
 
-                console.log(item)
+            //     console.log(item)
 
-                console.log(indexName)
+            //     console.log(indexName)
 
-                console.log(item.id)
+            //     console.log(item.id)
 
-                const lanePartner = await LanePartner.findOne({
-                    where: {
-                        id: item.id
-                    },
-                    include: [{
-                        model: CustomerLane,
-                        required: true,
-                    //     include: [{
-                    //         model: CustomerLocation,
-                    //         required: true,
-                    //         include: [{
-                    //             model: Customer,
-                    //             required: true,
-                    //             include: [{
-                    //                 model: Ledger,
-                    //                 required: true
-                    //             }]
-                    //         }]
-                    //     }]
-                    }]
-                })
+            //     // const lanePartner = await LanePartner.findOne({
+            //     //     where: {
+            //     //         id: item.id
+            //     //     },
+            //     //     include: [{
+            //     //         model: CustomerLane,
+            //     //         required: true,
+            //         //     include: [{
+            //         //         model: CustomerLocation,
+            //         //         required: true,
+            //         //         include: [{
+            //         //             model: Customer,
+            //         //             required: true,
+            //         //             include: [{
+            //         //                 model: Ledger,
+            //         //                 required: true
+            //         //             }]
+            //         //         }]
+            //         //     }]
+            //     //     }]
+            //     // })
 
-                console.log(await lanePartner.toJSON())
+            //     const custLane = await CustomerLane.findOne({
+            //         include: [{
+            //             model: LanePartner,
+            //             where: {
+            //                 id: item.id
+            //             },
+            //             required: true
+            //           }]
+            //     })
 
-                // const customerLane = await item.getCustomerLane()
+            //     console.log(await custLane.toJSON())
 
-                console.log('\n')
-                console.log('\n')
-                console.log('\n')
-                console.log('\n')
-                console.log('\n')
+            //     // const customerLane = await item.getCustomerLane()
 
-                // console.log(customerLane)
+            //     console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
+            //     console.log('\n')
 
-                // const location = await customerLane.getCustomerLocation()
+            //     // console.log(customerLane)
 
-                // const customer = await location.getCustomer()
+            //     // const location = await customerLane.getCustomerLocation()
 
-                // const ledger = await customer.getLedger()
+            //     // const customer = await location.getCustomer()
 
-                newValues.brokerageId = ledger.brokerageId
+            //     // const ledger = await customer.getLedger()
 
-                await client.update({
-                    index: indexName,
-                    id: item.id,
-                    body: {
-                        doc: newValues,
-                        doc_as_upsert: true
-                    },
-                })
+            //     newValues.brokerageId = ledger.brokerageId
 
-                break;
-            }
+            //     await client.update({
+            //         index: indexName,
+            //         id: item.id,
+            //         body: {
+            //             doc: newValues,
+            //             doc_as_upsert: true
+            //         },
+            //     })
+
+            //     break;
+            // }
 
             default: {
-                console.log(indexName)
 
                 await client.update({
                     index: indexName,

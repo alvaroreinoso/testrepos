@@ -15,7 +15,15 @@ const client = new elasticsearch.Client({
 module.exports.search = async (event, context) => {
 
     try {
+
         const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+
+            return {
+                statusCode: 401
+            }
+        }
 
         const query = event.queryStringParameters.q
 
@@ -33,9 +41,9 @@ module.exports.search = async (event, context) => {
                                 }
                             },
                         ],
-                        // filter: [
-                        //     { "term": { "brokerageId": user.brokerageId } }
-                        // ]
+                        filter: [
+                            { "term": { "brokerageId": user.brokerageId } }
+                        ]
                     }
                 }
             }

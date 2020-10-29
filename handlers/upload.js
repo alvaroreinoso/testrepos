@@ -1,10 +1,12 @@
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('./models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('./helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 
 const csvFilePath = 'clean.csv'
 
-async function parseCSV() {
+module.exports.ascendDump = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
 
     const jsonArray = await csv().fromFile(csvFilePath);
 
@@ -17,7 +19,7 @@ async function parseCSV() {
                 const customer = await Customer.create({
                     name: json.Customer,
                     Ledger: {
-                        brokerageId: 1
+                        brokerageId: user.brokerageId
                     }
                 }, {
                     include: Ledger
@@ -156,5 +158,3 @@ async function parseCSV() {
         }
     }
 }
-
-parseCSV()
