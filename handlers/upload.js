@@ -3,9 +3,9 @@ const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, g
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
-const csvFilePath = 'clean.csv'
-
 module.exports.ascendDump = async (event, context) => {
+
+    const jsonArray = await csv().fromString(event.body)
 
     const user = await getCurrentUser(event.headers.Authorization)
 
@@ -16,8 +16,6 @@ module.exports.ascendDump = async (event, context) => {
     }
 
     try {
-
-        const jsonArray = await csv().fromFile(csvFilePath);
 
         for (const json of jsonArray) {
 
