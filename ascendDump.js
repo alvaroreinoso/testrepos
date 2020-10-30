@@ -2,6 +2,7 @@ const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLoc
 const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('./helpers/csvDump/ascend')
 const csv = require('csvtojson')
 
+
 const csvFilePath = 'clean.csv'
 
 async function parseCSV() {

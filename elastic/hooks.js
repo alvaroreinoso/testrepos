@@ -58,6 +58,8 @@ module.exports.saveDocument = async (item) => {
 
                 newValues.brokerageId = ledger.brokerageId
 
+                newValues.id = item.id
+
                 await client.update({
                     index: indexName,
                     id: item.id,
