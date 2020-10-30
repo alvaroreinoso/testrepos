@@ -272,3 +272,11 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+  # CSV Upload
+  ascendDump:
+    handler:
+      ./handlers/upload.ascendDump
+    events:
+        - http:
+            path: api/upload/ascend
+            method: post

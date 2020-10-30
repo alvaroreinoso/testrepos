@@ -1,6 +1,9 @@
-const csvFilePath = 'clean.csv'
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('./models');
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('./helpers/csvDump/ascend')
 const csv = require('csvtojson')
+
+
+const csvFilePath = 'clean.csv'
 
 async function parseCSV() {
 
@@ -8,28 +11,11 @@ async function parseCSV() {
 
     for (const json of jsonArray) {
 
-        const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
-        const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
+        if (await newLoad(json)) {
 
-        const existingLoad = await Load.findOne({
-            where: {
-                loadId: json['Load ID']
-            }
-        })
+            if (await newCustomer(json)) { // NEW CUSTOMER
 
-        if (existingLoad == null) {
-
-            const existingCustomer = await Customer.findOne({
-                where: {
-                    name: json.Customer
-                }
-            })
-
-            if (existingCustomer == null) { // NEW CUSTOMER
-
-                console.log('The Customer did not exist')
-
-                const customer = await Customer.build({
+                const customer = await Customer.create({
                     name: json.Customer,
                     Ledger: {
                         brokerageId: 1
@@ -38,254 +24,137 @@ async function parseCSV() {
                     include: Ledger
                 })
 
-                await customer.save()
+                const cLlngLat = await getLngLat(json['First Pick Address'])
 
-                console.log('New Customer:', customer.toJSON())
-
-                const existingLocation = await CustomerLocation.findOne({
-                    where: {
-                        customerId: customer.id,
-                        address: json['First Pick Address']
-                    }
+                const newLocation = await CustomerLocation.create({
+                    customerId: customer.id,
+                    address: json['First Pick Address'],
+                    city: json['First Pick City'],
+                    state: json['First Pick State'],
+                    zipcode: json['First Pick Postal'],
+                    lnglat: cLlngLat
                 })
 
-                if (existingLocation == null) { // NEW CUSTOMER NEW LOCATION
+                const newLane = await createLane(json)
 
-                    const newLocation = await CustomerLocation.build({
-                        customerId: customer.id,
-                        address: json['First Pick Address'],
-                        city: json['First Pick City'],
-                        state: json['First Pick State'],
-                        zipcode: json['First Pick Postal']
-                    })
+                const lPlngLat = await getLngLat(json['Last Drop Address'])
+                const route = await getRoute(cLlngLat, lPlngLat)
 
-                    console.log('New Location: ', newLocation.toJSON())
+                const newCustLane = await CustomerLane.create({
+                    customerLocationId: newLocation.id,
+                    laneId: newLane.id,
+                    routeGeometry: route,
+                    LanePartner: {
+                        name: json['Last Drop Name'],
+                        address: json['Last Drop Address'],
+                        city: json['Last Drop City'],
+                        state: json['Last Drop State'],
+                        zipcode: json['Last Drop Postal'],
+                        lnglat: lPlngLat,
+                    },
+                }, {
+                    include: LanePartner
+                })
 
-                    await newLocation.save()
+                // console.log('New Customer Lane added: ', newCustLane.toJSON())
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
-
-                    if (existingLane == null) { // NEW CUSTOMER NEW LOCATION NEW LANE
-
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        console.log('New lane: ', newLane)
-
-                        const newCustLane = await CustomerLane.build({
-                            customerLocationId: newLocation.id,
-                            laneId: newLane.id,
-                            LanePartner: {
-                                name: json['Last Drop Name'],
-                                address: json['Last Drop Address'],
-                                city: json['Last Drop City'],
-                                state: json['Last Drop State'],
-                                zipcode: json['Last Drop Postal']
-                            }
-                        }, {
-                            include: LanePartner
-                        })
-
-                        await newCustLane.save()
-
-                        console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
-                            loadId: json['Load ID'],
-                            customerLaneId: newCustLane.id
-                        })
-
-                        await newLoad.save()
-
-                        console.log('New Load added: ', newLoad.toJSON())
-                    }
-
-                } else { // NEW CUSTOMER EXISTING LOCATION NEW LANE
-
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
-
-                    if (existingLane == null) {
-
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        console.log('New lane: ', newLane.toJSON())
-
-                        const newCustLane = await CustomerLane.build({
-                            customerLocationId: newLocation.id,
-                            laneId: newLane.id,
-                            LanePartner: {
-                                name: json['Last Drop Name'],
-                                address: json['Last Drop Address'],
-                                city: json['Last Drop City'],
-                                state: json['Last Drop State'],
-                                zipcode: json['Last Drop Postal']
-                            }
-                        }, {
-                            include: LanePartner
-                        })
-
-                        await newCustLane.save()
-
-                        console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
-                            loadId: json['Load ID'],
-                            customerLaneId: newCustLane.id
-                        })
-
-                        await newLoad.save()
-
-                        console.log('New Load added: ', newLoad.toJSON())
-                    }
-
-                }
+                const newLoad = await Load.create({
+                    loadId: json['Load ID'],
+                    customerLaneId: newCustLane.id
+                })
 
             } else { // EXISTING CUSTOMER
 
+                const customer = await currentCustomer(json)
+
                 const existingLocation = await CustomerLocation.findOne({
                     where: {
-                        customerId: existingCustomer.id,
+                        customerId: customer.id,
                         address: json['First Pick Address']
                     }
                 })
 
                 if (existingLocation == null) { // EXISTING CUSTOMER NEW LOCATION
 
-                    const newLocation = await CustomerLocation.build({
-                        customerId: existingCustomer.id,
+                    const cLlngLat = await getLngLat(json['First Pick Address'])
+
+                    const newLocation = await CustomerLocation.create({
+                        customerId: customer.id,
                         address: json['First Pick Address'],
                         city: json['First Pick City'],
                         state: json['First Pick State'],
-                        zipcode: json['First Pick Postal']
+                        zipcode: json['First Pick Postal'],
+                        lnglat: cLlngLat
                     })
 
-                    console.log('New Location: ', newLocation.toJSON())
+                    if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
 
-                    await newLocation.save()
+                        const newLane = await createLane(json)
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
+                        const lPlngLat = await getLngLat(json['Last Drop Address'])
+                        const route = await getRoute(cLlngLat, lPlngLat)
 
-                    if (existingLane == null) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
-
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
-
-                        await newLane.save()
-
-                        console.log('New lane: ', newLane.toJSON())
-
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
                             laneId: newLane.id,
+                            routeGeometry: route,
                             LanePartner: {
                                 name: json['Last Drop Name'],
                                 address: json['Last Drop Address'],
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
-                                zipcode: json['Last Drop Postal']
-                            }
+                                zipcode: json['Last Drop Postal'],
+                                lnglat: lPlngLat,
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
-
-                        console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
+                        const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id
                         })
-
-                        await newLoad.save()
-
-                        console.log('New Load added: ', newLoad.toJSON())
-
                     }
 
                 } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
 
-                    const existingLane = await Lane.findOne({
-                        where: {
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        }
-                    })
+                    if (await newLane(json)) {
 
-                    if (existingLane == null) {
+                        const newLane = await createLane(json)
 
-                        const newLane = await Lane.build({
-                            origin: jsonOrigin,
-                            destination: jsonDestination
-                        })
+                        const lPlngLat = await getLngLat(json['Last Drop Address'])
+                        const route = await getRoute(existingLocation.lnglat, lPlngLat)
 
-                        await newLane.save()
-
-                        console.log('New lane: ', newLane.toJSON())
-
-                        const newCustLane = await CustomerLane.build({
+                        const newCustLane = await CustomerLane.create({
                             customerLocationId: existingLocation.id,
                             laneId: newLane.id,
+                            routeGeometry: route,
                             LanePartner: {
                                 name: json['Last Drop Name'],
                                 address: json['Last Drop Address'],
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
-                                zipcode: json['Last Drop Postal']
-                            }
+                                zipcode: json['Last Drop Postal'],
+                                lnglat: lPlngLat,
+                            },
                         }, {
                             include: LanePartner
                         })
 
-                        await newCustLane.save()
-
-                        console.log('New Lane added: ', newCustLane.toJSON())
-
-                        const newLoad = await Load.build({
+                        const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id
                         })
 
-                        await newLoad.save()
-
-                        console.log('New Load added: ', newLoad.toJSON())
                     }
                 }
-
             }
 
         } else {
 
-            console.log('Load Already Added: ', existingLoad.toJSON())
+            console.log('Load Already Added: ', json)
 
         }
-
     }
 }
 
