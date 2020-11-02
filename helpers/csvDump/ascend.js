@@ -1,4 +1,4 @@
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('../../models');
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('../../models');
 require('dotenv').config()
 const fetch = require('node-fetch');
 
@@ -56,6 +56,22 @@ module.exports.newLane = async (json) => {
         return true
     } else {
 
+        return false
+    }
+
+}
+
+module.exports.newCarrier = async (json) => {
+
+    const existingCarrier = await Carrier.findOne({
+        where: {
+            name: json['Carrier']
+        }
+    })
+
+    if (existingCarrier == null) {
+        return true
+    } else {
         return false
     }
 

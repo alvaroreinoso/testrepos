@@ -1,5 +1,5 @@
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('.././helpers/csvDump/ascend')
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -65,12 +65,39 @@ module.exports.ascendDump = async (event, context) => {
                         include: LanePartner
                     })
 
-                    // console.log('New Customer Lane added: ', newCustLane.toJSON())
+                    if (await newCarrier(json)){ // NEW CARRIER
 
-                    const newLoad = await Load.create({
-                        loadId: json['Load ID'],
-                        customerLaneId: newCustLane.id
-                    })
+                        const carrier = await Carrier.create({
+                            name: json['Carrier']
+                        })
+
+                        const newLoad = await Load.create({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id,
+                            carrierId: carrier.id
+                        })
+
+                        console.log(newLoad.toJSON())
+
+                    } else { // EXISTING CARRIER
+
+                        const carrier = await Carrier.findOne({
+                            where: {
+                                name: json['Carrier']
+                            }
+                        })
+
+                        console.log('Existing Carrier: ', carrier.toJSON())
+
+                        const newLoad = await Load.create({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id,
+                            carrierId: carrier.id
+                        })
+
+                        console.log(newLoad.toJSON())
+
+                    }
 
                 } else { // EXISTING CUSTOMER
 
@@ -119,10 +146,39 @@ module.exports.ascendDump = async (event, context) => {
                                 include: LanePartner
                             })
 
-                            const newLoad = await Load.create({
-                                loadId: json['Load ID'],
-                                customerLaneId: newCustLane.id
-                            })
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
                         }
 
                     } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
@@ -150,10 +206,38 @@ module.exports.ascendDump = async (event, context) => {
                                 include: LanePartner
                             })
 
-                            const newLoad = await Load.create({
-                                loadId: json['Load ID'],
-                                customerLaneId: newCustLane.id
-                            })
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
 
                         }
                     }
