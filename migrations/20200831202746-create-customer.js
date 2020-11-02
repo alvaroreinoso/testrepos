@@ -15,6 +15,10 @@ module.exports = {
       industry: {
         type: Sequelize.STRING
       },
+      bio: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       userId: {
         type: Sequelize.INTEGER,
         references: {
