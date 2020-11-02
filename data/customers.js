@@ -11,7 +11,7 @@ const customers = [
     {
         name: 'Lopez Foods',
         industry: 'Food and Beverage',
-        userId: 1,
+        userId: 2,
         teamId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
