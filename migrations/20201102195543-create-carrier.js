@@ -1,23 +1,15 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Loads', {
+    await queryInterface.createTable('Carriers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      loadId: {
-        type: Sequelize.INTEGER,
-        unique: true
-      },
-      customerLaneId: {
-        type: Sequelize.INTEGER
-      },
-      carrierId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
+      name: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -28,8 +20,17 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+    await queryInterface.changeColumn('Loads', 'carrierId', {
+      type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Carriers',
+          key: 'id',
+          as: 'carrierId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Loads');
+    await queryInterface.dropTable('Carriers');
   }
 };
