@@ -1,5 +1,5 @@
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -71,10 +71,16 @@ module.exports.ascendDump = async (event, context) => {
                             name: json['Carrier']
                         })
 
+                        const dropDate = await getDropDate(json)
+
+                        console.log(dropDate)
+
                         const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id,
-                            carrierId: carrier.id
+                            carrierId: carrier.id,
+                            rate: json['Flat Rate i'],
+                            dropDate: dropDate
                         })
 
                         console.log(newLoad.toJSON())
@@ -89,10 +95,16 @@ module.exports.ascendDump = async (event, context) => {
 
                         console.log('Existing Carrier: ', carrier.toJSON())
 
+                        const dropDate = await getDropDate(json)
+
+                        console.log(dropDate)
+
                         const newLoad = await Load.create({
                             loadId: json['Load ID'],
                             customerLaneId: newCustLane.id,
-                            carrierId: carrier.id
+                            carrierId: carrier.id,
+                            rate: json['Flat Rate i'],
+                            dropDate: dropDate
                         })
 
                         console.log(newLoad.toJSON())
@@ -151,11 +163,17 @@ module.exports.ascendDump = async (event, context) => {
                                 const carrier = await Carrier.create({
                                     name: json['Carrier']
                                 })
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: newCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())
@@ -169,11 +187,17 @@ module.exports.ascendDump = async (event, context) => {
                                 })
 
                                 console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: newCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())
@@ -211,11 +235,15 @@ module.exports.ascendDump = async (event, context) => {
                                 const carrier = await Carrier.create({
                                     name: json['Carrier']
                                 })
+
+                                const dropDate = await getDropDate(json)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: newCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())
@@ -228,11 +256,17 @@ module.exports.ascendDump = async (event, context) => {
                                 })
 
                                 console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: newCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())
@@ -257,11 +291,17 @@ module.exports.ascendDump = async (event, context) => {
                                 const carrier = await Carrier.create({
                                     name: json['Carrier']
                                 })
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: existingCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())
@@ -274,11 +314,17 @@ module.exports.ascendDump = async (event, context) => {
                                 })
 
                                 console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
         
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: existingCustLane.id,
-                                    carrierId: carrier.id
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
                                 })
 
                                 console.log(newLoad.toJSON())

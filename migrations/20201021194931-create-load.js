@@ -19,9 +19,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
-      frequency: {
-        type: Sequelize.STRING,
-        allowNull: false
+      dropDate: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
       },
       carrierId: {
         type: Sequelize.INTEGER,

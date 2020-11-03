@@ -61,6 +61,16 @@ module.exports.newLane = async (json) => {
 
 }
 
+module.exports.getDropDate = async (json) => {
+
+    const dateString = json['Last Drop Date']
+
+    const dropDate = dateString.split(' ')[0]
+
+    return dropDate
+
+}
+
 module.exports.getLane = async (json) => {
 
     const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`

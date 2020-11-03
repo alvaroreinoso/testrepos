@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     customerLaneId: DataTypes.INTEGER,
     carrierId: DataTypes.INTEGER,
     rate: DataTypes.STRING,
-    frequency: DataTypes.STRING
+    dropDate: DataTypes.DATEONLY
   }, {
     sequelize,
     modelName: 'Load',
