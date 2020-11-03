@@ -1,5 +1,5 @@
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -232,6 +232,52 @@ module.exports.ascendDump = async (event, context) => {
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
+
+                        } else {  // EXISTING LANE
+
+                            // FIND CUSTOMER LANE WITH EXISTING LANE ID AS LANE ID AND EXISTING LOCATION ID AS CLOCATIONID
+
+                            const lane = await getLane(json)
+
+                            const existingCustLane = await CustomerLane.findOne({
+                                where: {
+                                    laneId: lane.id,
+                                    customerLocationId: existingLocation.id
+                                }
+                            })
+
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: existingCustLane.id,
+                                    carrierId: carrier.id
+                                })
+
+                                console.log(newLoad.toJSON())
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: existingCustLane.id,
                                     carrierId: carrier.id
                                 })
 

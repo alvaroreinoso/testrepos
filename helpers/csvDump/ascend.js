@@ -61,6 +61,21 @@ module.exports.newLane = async (json) => {
 
 }
 
+module.exports.getLane = async (json) => {
+
+    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
+    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
+
+    const existingLane = await Lane.findOne({
+        where: {
+            origin: jsonOrigin,
+            destination: jsonDestination
+        }
+    })
+
+    return existingLane
+}
+
 module.exports.newCarrier = async (json) => {
 
     const existingCarrier = await Carrier.findOne({
