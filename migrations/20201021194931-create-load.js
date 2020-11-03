@@ -15,6 +15,14 @@ module.exports = {
       customerLaneId: {
         type: Sequelize.INTEGER
       },
+      rate: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      frequency: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
       carrierId: {
         type: Sequelize.INTEGER,
         allowNull: true,

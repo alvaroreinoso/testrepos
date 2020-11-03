@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
   Load.init({
     loadId: DataTypes.INTEGER,
     customerLaneId: DataTypes.INTEGER,
-    carrierId: DataTypes.INTEGER
+    carrierId: DataTypes.INTEGER,
+    rate: DataTypes.STRING,
+    frequency: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Load',
