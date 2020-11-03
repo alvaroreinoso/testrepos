@@ -272,6 +272,15 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+
+  # Location
+  getCustomerLocation:
+    handler:
+      ./handlers/location.getCustomerLocation
+    events:
+        - http:
+            path: api/location/{id}
+            method: get
   # CSV Upload
   ascendDump:
     handler:
