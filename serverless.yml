@@ -222,6 +222,15 @@ functions:
               - Authorization
 
 # Lane
+  getCustomerLanesForLane:
+    handler:
+      ./handlers/lane.getCustomerLanesForLane
+    events:
+        - http:
+            path: api/lane/{id}/customerlanes
+            method: get
+            headers:
+              - Authorization
   getLanesByCurrentUser:
     handler:
       ./handlers/lane.getLanesByCurrentUser
