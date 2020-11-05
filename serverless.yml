@@ -222,6 +222,15 @@ functions:
               - Authorization
 
 # Lane
+  getCustomerLanesForLane:
+    handler:
+      ./handlers/lane.getCustomerLanesForLane
+    events:
+        - http:
+            path: api/lane/{id}/customerlanes
+            method: get
+            headers:
+              - Authorization
   getLanesByCurrentUser:
     handler:
       ./handlers/lane.getLanesByCurrentUser
@@ -272,6 +281,15 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+
+  # Location
+  getCustomerLocation:
+    handler:
+      ./handlers/location.getCustomerLocation
+    events:
+        - http:
+            path: api/location/{id}
+            method: get
   # CSV Upload
   ascendDump:
     handler:

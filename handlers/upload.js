@@ -1,11 +1,11 @@
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute } = require('.././helpers/csvDump/ascend')
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
-const csvFilePath = 'clean.csv'
-
 module.exports.ascendDump = async (event, context) => {
+
+    const jsonArray = await csv().fromString(event.body)
 
     const user = await getCurrentUser(event.headers.Authorization)
 
@@ -16,8 +16,6 @@ module.exports.ascendDump = async (event, context) => {
     }
 
     try {
-
-        const jsonArray = await csv().fromFile(csvFilePath);
 
         for (const json of jsonArray) {
 
@@ -43,7 +41,12 @@ module.exports.ascendDump = async (event, context) => {
                         city: json['First Pick City'],
                         state: json['First Pick State'],
                         zipcode: json['First Pick Postal'],
-                        lnglat: cLlngLat
+                        lnglat: cLlngLat,
+                        Ledger: {
+                            brokerageId: user.brokerageId
+                        }
+                    }, {
+                        include: Ledger
                     })
 
                     const newLane = await createLane(json)
@@ -67,12 +70,51 @@ module.exports.ascendDump = async (event, context) => {
                         include: LanePartner
                     })
 
-                    // console.log('New Customer Lane added: ', newCustLane.toJSON())
+                    if (await newCarrier(json)){ // NEW CARRIER
 
-                    const newLoad = await Load.create({
-                        loadId: json['Load ID'],
-                        customerLaneId: newCustLane.id
-                    })
+                        const carrier = await Carrier.create({
+                            name: json['Carrier']
+                        })
+
+                        const dropDate = await getDropDate(json)
+
+                        console.log(dropDate)
+
+                        const newLoad = await Load.create({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id,
+                            carrierId: carrier.id,
+                            rate: json['Flat Rate i'],
+                            dropDate: dropDate
+                        })
+
+                        console.log(newLoad.toJSON())
+
+                    } else { // EXISTING CARRIER
+
+                        const carrier = await Carrier.findOne({
+                            where: {
+                                name: json['Carrier']
+                            }
+                        })
+
+                        console.log('Existing Carrier: ', carrier.toJSON())
+
+                        const dropDate = await getDropDate(json)
+
+                        console.log(dropDate)
+
+                        const newLoad = await Load.create({
+                            loadId: json['Load ID'],
+                            customerLaneId: newCustLane.id,
+                            carrierId: carrier.id,
+                            rate: json['Flat Rate i'],
+                            dropDate: dropDate
+                        })
+
+                        console.log(newLoad.toJSON())
+
+                    }
 
                 } else { // EXISTING CUSTOMER
 
@@ -95,7 +137,12 @@ module.exports.ascendDump = async (event, context) => {
                             city: json['First Pick City'],
                             state: json['First Pick State'],
                             zipcode: json['First Pick Postal'],
-                            lnglat: cLlngLat
+                            lnglat: cLlngLat,
+                            Ledger: {
+                                brokerageId: user.brokerageId
+                            }
+                        }, {
+                            include: Ledger
                         })
 
                         if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
@@ -121,10 +168,51 @@ module.exports.ascendDump = async (event, context) => {
                                 include: LanePartner
                             })
 
-                            const newLoad = await Load.create({
-                                loadId: json['Load ID'],
-                                customerLaneId: newCustLane.id
-                            })
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
                         }
 
                     } else { // EXISTING CUSTOMER EXISTING LOCATION NEW LANE
@@ -152,10 +240,106 @@ module.exports.ascendDump = async (event, context) => {
                                 include: LanePartner
                             })
 
-                            const newLoad = await Load.create({
-                                loadId: json['Load ID'],
-                                customerLaneId: newCustLane.id
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+
+                                const dropDate = await getDropDate(json)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
+
+                        } else {  // EXISTING LANE
+
+                            // FIND CUSTOMER LANE WITH EXISTING LANE ID AS LANE ID AND EXISTING LOCATION ID AS CLOCATIONID
+
+                            const lane = await getLane(json)
+
+                            const existingCustLane = await CustomerLane.findOne({
+                                where: {
+                                    laneId: lane.id,
+                                    customerLocationId: existingLocation.id
+                                }
                             })
+
+                            if (await newCarrier(json)){ // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: existingCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+                            } else { // EXISTING CARRIER
+        
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                console.log('Existing Carrier: ', carrier.toJSON())
+
+                                const dropDate = await getDropDate(json)
+
+                                console.log(dropDate)
+        
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: existingCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                                console.log(newLoad.toJSON())
+        
+                            }
 
                         }
                     }

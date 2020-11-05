@@ -27,7 +27,8 @@ module.exports = (sequelize, DataTypes) => {
     industry: DataTypes.STRING,
     userId: DataTypes.INTEGER,
     teamId: DataTypes.INTEGER,
-    ledgerId: DataTypes.INTEGER
+    ledgerId: DataTypes.INTEGER,
+    bio: DataTypes.TEXT
   }, {
     hooks: {
       afterSave: (customer, options) => {

@@ -245,3 +245,46 @@ module.exports.updateLane = async (event, context) => {
 
     }
 }
+
+module.exports.getCustomerLanesForLane = async (event, context) => {
+
+    const laneId = event.pathParameters.id
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+
+        const results = await Lane.findOne({
+            where: {
+                id: laneId
+            },
+            include: [{
+                model: CustomerLane,
+                required: true
+            }]
+        })
+
+        if (results == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        return {
+            body: JSON.stringify(results),
+            statusCode: 200
+        }
+    } catch {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+}

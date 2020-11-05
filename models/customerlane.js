@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
         through: 'LaneOwner',
         foreignKey: 'customerLaneId'
       })
+      CustomerLane.hasMany(models.Load, {
+        foreignKey: 'customerLaneId'
+      })
     }
   };
   CustomerLane.init({

@@ -13,7 +13,24 @@ module.exports = {
         unique: true
       },
       customerLaneId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'CustomerLanes',
+          key: 'id',
+          as: 'customerLaneId'
+        }
+      },
+      rate: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      dropDate: {
+        type: Sequelize.DATEONLY,
+        allowNull: true
+      },
+      carrierId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,

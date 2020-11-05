@@ -12,6 +12,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-117.670320,33.96700",
+        ledgerId: 29,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -28,6 +29,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-96.414530,32.915380",
+        ledgerId: 30,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -44,6 +46,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-74.262140,40.594690",
+        ledgerId: 31,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -60,6 +63,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-97.109800,36.726320",
+        ledgerId: 32,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -76,6 +80,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-80.590009,34.243950",
+        ledgerId: 33,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -92,6 +97,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-83.578033,36.441920",
+        ledgerId: 34,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -108,6 +114,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-81.351324,31.874845",
+        ledgerId: 35,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -124,6 +131,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-80.175726,26.074884",
+        ledgerId: 36,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -140,6 +148,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-96.553125,28.794657",
+        ledgerId: 37,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -156,6 +165,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-83.951470,30.830527",
+        ledgerId: 38,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -172,6 +182,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-88.432239,36.189507",
+        ledgerId: 39,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -188,6 +199,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-90.033168,34.946122",
+        ledgerId: 40,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -204,6 +216,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-94.971498,33.099430",
+        ledgerId: 41,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -220,6 +233,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": false,
         "lnglat": "-87.729775,41.927475",
+        ledgerId: 42,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -236,6 +250,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-95.069059,29.602662",
+        ledgerId: 43,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -252,6 +267,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-96.700486,32.634068",
+        ledgerId: 44,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -268,6 +284,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-97.343010,32.817189",
+        ledgerId: 45,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -284,6 +301,7 @@ const customerLocations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-95.090895,29.710024",
+        ledgerId: 46,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -300,6 +318,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-86.750116,36.185708",
+        ledgerId: 47,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -316,6 +335,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-86.750116,36.185708",
+        ledgerId: 48,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -332,6 +352,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-74.008593,40.706002",
+        ledgerId: 49,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -348,6 +369,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-73.9852,40.74861",
+        ledgerId: 50,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -364,6 +386,7 @@ const customerLocations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-122.33676,47.622924",
+        ledgerId: 51,
         createdAt: new Date(),
         updatedAt: new Date()
     }

@@ -15,7 +15,3 @@ module.exports.getIndexName = async (model) => {
 
     return indexName
 }
-
-// const index = getIndexName('Messages')
-
-// console.log(index)

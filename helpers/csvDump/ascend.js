@@ -1,4 +1,4 @@
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner } = require('../../models');
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('../../models');
 require('dotenv').config()
 const fetch = require('node-fetch');
 
@@ -56,6 +56,47 @@ module.exports.newLane = async (json) => {
         return true
     } else {
 
+        return false
+    }
+
+}
+
+module.exports.getDropDate = async (json) => {
+
+    const dateString = json['Last Drop Date']
+
+    const dropDate = dateString.split(' ')[0]
+
+    return dropDate
+
+}
+
+module.exports.getLane = async (json) => {
+
+    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
+    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
+
+    const existingLane = await Lane.findOne({
+        where: {
+            origin: jsonOrigin,
+            destination: jsonDestination
+        }
+    })
+
+    return existingLane
+}
+
+module.exports.newCarrier = async (json) => {
+
+    const existingCarrier = await Carrier.findOne({
+        where: {
+            name: json['Carrier']
+        }
+    })
+
+    if (existingCarrier == null) {
+        return true
+    } else {
         return false
     }
 
