@@ -61,6 +61,13 @@ module.exports.newLane = async (json) => {
 
 }
 
+module.exports.getAddress = async (json) => {
+
+    const address = json['First Pick Address'].split(',')[0]
+
+    return address
+}
+
 module.exports.getDropDate = async (json) => {
 
     const dateString = json['Last Drop Date']

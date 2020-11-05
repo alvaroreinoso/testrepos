@@ -1,5 +1,5 @@
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -35,9 +35,11 @@ module.exports.ascendDump = async (event, context) => {
 
                     const cLlngLat = await getLngLat(json['First Pick Address'])
 
+                    const address = await getAddress(json)
+
                     const newLocation = await CustomerLocation.create({
                         customerId: customer.id,
-                        address: json['First Pick Address'],
+                        address: address,
                         city: json['First Pick City'],
                         state: json['First Pick State'],
                         zipcode: json['First Pick Postal'],
@@ -120,10 +122,12 @@ module.exports.ascendDump = async (event, context) => {
 
                     const customer = await currentCustomer(json)
 
+                    const address = await getAddress(json)
+
                     const existingLocation = await CustomerLocation.findOne({
                         where: {
                             customerId: customer.id,
-                            address: json['First Pick Address']
+                            address: address
                         }
                     })
 
@@ -133,7 +137,7 @@ module.exports.ascendDump = async (event, context) => {
 
                         const newLocation = await CustomerLocation.create({
                             customerId: customer.id,
-                            address: json['First Pick Address'],
+                            address: address,
                             city: json['First Pick City'],
                             state: json['First Pick State'],
                             zipcode: json['First Pick Postal'],
