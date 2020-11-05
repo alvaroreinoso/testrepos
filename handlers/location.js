@@ -30,7 +30,6 @@ module.exports.getCustomerLocation = async (event, context) => {
             }, {
                 model: Customer,
                 required: true,
-                attributes: ['teamId'],
                 include: [{
                     model: Team,
                     required: true,
