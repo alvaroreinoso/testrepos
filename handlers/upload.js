@@ -41,7 +41,12 @@ module.exports.ascendDump = async (event, context) => {
                         city: json['First Pick City'],
                         state: json['First Pick State'],
                         zipcode: json['First Pick Postal'],
-                        lnglat: cLlngLat
+                        lnglat: cLlngLat,
+                        Ledger: {
+                            brokerageId: user.brokerageId
+                        }
+                    }, {
+                        include: Ledger
                     })
 
                     const newLane = await createLane(json)
@@ -132,7 +137,12 @@ module.exports.ascendDump = async (event, context) => {
                             city: json['First Pick City'],
                             state: json['First Pick State'],
                             zipcode: json['First Pick Postal'],
-                            lnglat: cLlngLat
+                            lnglat: cLlngLat,
+                            Ledger: {
+                                brokerageId: user.brokerageId
+                            }
+                        }, {
+                            include: Ledger
                         })
 
                         if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
