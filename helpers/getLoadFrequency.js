@@ -1,11 +1,11 @@
 const dateFns = require('date-fns')
-const { Customer, Load, CustomerContact, CustomerLocation, CustomerLane, Team, LanePartner, User } = require('./models')
+const { CustomerLane } = require('./models')
 
-async function run() {
+module.exports.getFrequency = async (customerLaneId) => {
 
     const cLane = await CustomerLane.findOne({
         where: {
-            id: 51
+            id: customerLaneId
         },
     })
 
@@ -14,7 +14,6 @@ async function run() {
     const dates = loads.map(load => load.dropDate)
 
     const firstDate = dateFns.parseISO(dates[0])
-
     const lastDate = dateFns.parseISO(dates[dates.length - 1])
 
     const daysBetween = dateFns.differenceInDays(firstDate, lastDate)
@@ -25,22 +24,17 @@ async function run() {
 
         let frequency = count
 
-        console.log(frequency)
-
         return frequency
+
     } else {
 
         const numberOfWeeks = daysBetween / 7
 
-        console.log(Math.round(numberOfWeeks))
-
         const frequency = count / numberOfWeeks
 
-        console.log(frequency)
+        const roundedFrequency = Math.round(frequency)
 
-        return frequency
+        return roundedFrequency
     }
 
 }
-
-run()
