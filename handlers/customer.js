@@ -35,6 +35,52 @@ module.exports.getCustomersByCurrentUser = async (event, context) => {
     }
 }
 
+module.exports.updateCustomer = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+
+        const customerId = event.pathParameters.customerId
+
+        const request = JSON.parse(event.body)
+
+        const bio = request.bio
+
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId
+            }
+        })
+
+        customer.bio = bio
+
+        await customer.save()
+
+
+        return {
+            statusCode: 204
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+
+
+
+
+}
 module.exports.getCustomersByTeam = async (event, context) => {
 
     try {
@@ -149,7 +195,7 @@ module.exports.getTopCustomers = async (event, context) => {
             statusCode: 200
         }
 
-    }   catch (error) {
+    } catch (error) {
 
         return {
             statusCode: 500
@@ -249,7 +295,7 @@ module.exports.getCustomersLanesForUser = async (event, context) => {
                 }
             }]
         },
-            {
+        {
             model: User,
             required: true,
             attributes: ['id'],

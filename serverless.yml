@@ -180,6 +180,15 @@ functions:
             method: get
             headers:
               - Authorization
+  updateCustomer:
+    handler:
+      ./handlers/customer.updateCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}
+            method: put
+            headers:
+              - Authorization
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
