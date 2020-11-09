@@ -308,7 +308,11 @@ module.exports.getCustomerLanesForLane = async (event, context) => {
                 required: true,
                 include: [{
                     model: CustomerLocation,
-                    required: true
+                    required: true,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
                 }, 
                 {
                     model: LanePartner,
