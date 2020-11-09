@@ -83,7 +83,7 @@ module.exports.getLanesByUser = async (event, context) => {
     }
 }
 
-module.exports.getLane = async (event, context) => {
+module.exports.getCustomerLaneById = async (event, context) => {
 
     try {
 
@@ -130,6 +130,45 @@ module.exports.getLane = async (event, context) => {
     }
 
 };
+
+module.exports.getLaneById = async (event, context) => {
+
+    const laneId = event.pathParameters.laneId
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId
+            }
+        })
+
+        if (lane == null) {
+
+            return {
+                statusCode: 404
+            }
+        }
+
+        return {
+            body: JSON.stringify(lane),
+            statusCode: 200
+        }
+    } catch {
+
+        return {
+
+            statusCode: 500
+        }
+    }
+}
 
 module.exports.deleteLane = async (event, context) => {
 

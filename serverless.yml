@@ -258,12 +258,12 @@ functions:
             method: get
             headers:
               - Authorization
-  getLane:
+  getCustomerLaneById:
     handler:
-      ./handlers/lane.getLane
+      ./handlers/lane.getCustomerLaneById
     events:
         - http:
-            path: api/lane/{laneId}
+            path: api/customerlane/{laneId}
             method: get
             headers:
               - Content-Type
@@ -275,6 +275,15 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: delete
+  getLaneById:
+    handler:
+      ./handlers/lane.getLaneById
+    events:
+        - http:
+            path: api/lane/{laneId}
+            method: get
+            headers:
+              - Authorization
 
   addLane:
     handler:
