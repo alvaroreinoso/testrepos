@@ -1,6 +1,7 @@
 const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('../../models');
 require('dotenv').config()
 const fetch = require('node-fetch');
+const stringSimilarity = require('string-similarity');
 
 module.exports.newLoad = async (load) => {
 
@@ -19,6 +20,23 @@ module.exports.newLoad = async (load) => {
         return false
     }
 
+}
+
+module.exports.internalLane = async(json) => {
+
+
+    const firstPick = json['First Pick Name']
+    const lastDrop = json['Last Drop Name']
+
+    const likeness = stringSimilarity.compareTwoStrings(firstPick, lastDrop)
+
+    console.log('this function is running')
+
+    if (likeness > .6) {
+
+        console.log('true')
+        return true
+    }
 }
 
 module.exports.newCustomer = async (json) => {
