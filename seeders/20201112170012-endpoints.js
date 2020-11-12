@@ -4,13 +4,13 @@ const endpoints = require('../data/endpoints')
 module.exports = {
   up: async (queryInterface, Sequelize) => {
 
-    await queryInterface.bulkInsert('endpoints', endpoints, {});
+    await queryInterface.bulkInsert('Endpoints', endpoints, {});
 
   },
 
   down: async (queryInterface, Sequelize) => {
     
-    await queryInterface.bulkDelete('endpoints', null, {});
+    await queryInterface.bulkDelete('Endpoints', null, {});
     
   }
 };

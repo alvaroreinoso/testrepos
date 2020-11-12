@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'lanePartnerId'
       })
       CustomerLane.belongsToMany(models.CustomerLocation, {
-        through: 'endpoints',
+        through: 'Endpoint',
         foreignKey: 'customerLaneId'
       })
       CustomerLane.belongsToMany(models.User, {
