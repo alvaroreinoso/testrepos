@@ -1,16 +1,10 @@
 'use strict';
+const endpoints = require('../data/endpoints')
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
 
-    await queryInterface.bulkInsert('endpoints', [{
-      customerLaneId: 1,
-      customerLocationId: 1,
-    },
-  {
-    customerLaneId: 1,
-    customerLocationId: 2
-  }], {});
+    await queryInterface.bulkInsert('endpoints', endpoints, {});
 
   },
 

@@ -1,304 +1,304 @@
-const customerLanes = [
+const endpoints = [
     {
-        lanePartnerId: 1,
-        laneId: 1 ,
+        customerLaneId: 1,
+        customerLocationId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 2,
-        laneId: 2 ,
+        customerLaneId: 2,
+        customerLocationId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 3,
-        laneId: 3,
+        customerLaneId: 3,
+        customerLocationId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 4,
-        laneId: 4,
+        customerLaneId: 4,
+        customerLocationId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 5,
-        laneId: 5 ,
+        customerLaneId: 5,
+        customerLocationId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 6,
-        laneId: 6 ,
+        customerLaneId: 6,
+        customerLocationId: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 7,
-        laneId: 7  ,
+        customerLaneId: 7,
+        customerLocationId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 8,
-        laneId: 8  ,
+        customerLaneId: 8,
+        customerLocationId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 9,
-        laneId: 9  ,
+        customerLaneId: 9,
+        customerLocationId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 10,
-        laneId: 1 ,
+        customerLaneId: 10,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 11,
-        laneId: 1 ,
+        customerLaneId: 11,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 12,
-        laneId: 1 ,
+        customerLaneId: 12,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 13,
-        laneId: 1 ,
+        customerLaneId: 13,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 14,
-        laneId: 1 ,
+        customerLaneId: 14,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 15,
-        laneId: 1 ,
+        customerLaneId: 15,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 16,
-        laneId: 1 ,
+        customerLaneId: 16,
+        customerLocationId: 4,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 17,
-        laneId: 1 ,
+        customerLaneId: 17,
+        customerLocationId: 5,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 18,
-        laneId: 1 ,
+        customerLaneId: 18,
+        customerLocationId: 6,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 19,
-        laneId: 1 ,
+        customerLaneId: 19,
+        customerLocationId: 7,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 20,
-        laneId: 1 ,
+        customerLaneId: 20,
+        customerLocationId: 7,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 21,
-        laneId: 1 ,
+        customerLaneId: 21,
+        customerLocationId: 7,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 22,
-        laneId: 1 ,
+        customerLaneId: 22,
+        customerLocationId: 8,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 23,
-        laneId: 1 ,
+        customerLaneId: 23,
+        customerLocationId: 8,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 24,
-        laneId: 1 ,
+        customerLaneId: 24,
+        customerLocationId: 9,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 25,
-        laneId: 1 ,
+        customerLaneId: 25,
+        customerLocationId: 9,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 26,
-        laneId: 1 ,
+        customerLaneId: 26,
+        customerLocationId: 9,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 27,
-        laneId: 1 ,
+        customerLaneId: 27,
+        customerLocationId: 10,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 28,
-        laneId: 1 ,
+        customerLaneId: 28,
+        customerLocationId: 10,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 29,
-        laneId: 1 ,
+        customerLaneId: 29,
+        customerLocationId: 10,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 30,
-        laneId: 1 ,
+        customerLaneId: 30,
+        customerLocationId: 10,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 31,
-        laneId: 1 ,
+        customerLaneId: 31,
+        customerLocationId: 10,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 32,
-        laneId: 1 ,
+        customerLaneId: 32,
+        customerLocationId: 11,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 33,
-        laneId: 1 ,
+        customerLaneId: 33,
+        customerLocationId: 11,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 34,
-        laneId: 1 ,
+        customerLaneId: 34,
+        customerLocationId: 12,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 35,
-        laneId: 1 ,
+        customerLaneId: 35,
+        customerLocationId: 12,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 36,
-        laneId: 1 ,
+        customerLaneId: 36,
+        customerLocationId: 13,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 37,
-        laneId: 1 ,
+        customerLaneId: 37,
+        customerLocationId: 13,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 38,
-        laneId: 1 ,
+        customerLaneId: 38,
+        customerLocationId: 14,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 39,
-        laneId: 1 ,
+        customerLaneId: 39,
+        customerLocationId: 14,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 40,
-        laneId: 1 ,
+        customerLaneId: 40,
+        customerLocationId: 15,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 41,
-        laneId: 1 ,
+        customerLaneId: 41,
+        customerLocationId: 15,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 42,
-        laneId: 1 ,
+        customerLaneId: 42,
+        customerLocationId: 15,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 43,
-        laneId: 1 ,
+        customerLaneId: 43,
+        customerLocationId: 16,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 44,
-        laneId: 1 ,
+        customerLaneId: 44,
+        customerLocationId: 16,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 45,
-        laneId: 1 ,
+        customerLaneId: 45,
+        customerLocationId: 16,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 46,
-        laneId: 1 ,
+        customerLaneId: 46,
+        customerLocationId: 17,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 47,
-        laneId: 1 ,
+        customerLaneId: 47,
+        customerLocationId: 17,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 48,
-        laneId: 1 ,
+        customerLaneId: 48,
+        customerLocationId: 17,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 49,
-        laneId: 1 ,
+        customerLaneId: 49,
+        customerLocationId: 18,
         createdAt: new Date(),
         updatedAt: new Date()
     },
     {
-        lanePartnerId: 50,
-        laneId: 1 ,
+        customerLaneId: 50,
+        customerLocationId: 18,
         createdAt: new Date(),
         updatedAt: new Date()
     },
 ]
 
-module.exports = customerLanes
+module.exports = endpoints;

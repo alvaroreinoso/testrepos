@@ -9,30 +9,18 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         const user = await getCurrentUser(event.headers.Authorization)
 
         const lanes = await CustomerLane.findAll({
-            where: {
-                id: 1
-            },
             include: [{
                 model: CustomerLocation,
-                required: true
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        userId: user.id
+                    }
+                }]
             }, {
                 model: LanePartner,
-                required: true
             }]
-            // attributes: ['customerLocationId'] ,
-            // include: [{
-            //     model: CustomerLocation,
-            //     include: [{
-            //         model: Customer,
-            //         required: true,
-            //         where: {
-            //             userId: user.id
-            //         }
-            //     }]
-            // }, {
-            //     model: LanePartner,
-            //     // required: true
-            // }]
         });
         
         console.log(lanes)
@@ -69,7 +57,7 @@ module.exports.getLanesByUser = async (event, context) => {
         const lanes = await CustomerLane.findAll({
             include: [{
                 model: CustomerLocation,
-                // required: true,
+                required: true,
                 include: [{
                     model: Customer,
                     required: true,
@@ -79,7 +67,6 @@ module.exports.getLanesByUser = async (event, context) => {
                 }]
             }, {
                 model: LanePartner,
-                required: true
             }]
         });
 
@@ -121,7 +108,6 @@ module.exports.getCustomerLaneById = async (event, context) => {
                 }]
             }, {
                 model: LanePartner,
-                required: true
             }]
         })
 
@@ -209,7 +195,6 @@ module.exports.deleteLane = async (event, context) => {
                 }]
             }, {
                 model: LanePartner,
-                required: true
             }]
         })
 
@@ -279,8 +264,6 @@ module.exports.updateLane = async (event, context) => {
             }
         })
 
-        lane.customerLocationId = request.customerLocationId
-        lane.lanePartnerId = request.lanePartnerId
         lane.laneId = request.laneId
         lane.routeGeometry = request.routeGeometry
 
@@ -330,7 +313,6 @@ module.exports.getCustomerLanesForLane = async (event, context) => {
                 }, 
                 {
                     model: LanePartner,
-                    required: true
                 }]
             }]
         })

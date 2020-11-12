@@ -15,19 +15,43 @@ const lanes = [
     },
     {
       origin: 'Chino CA',
-      destination: faker.address.city(),
+      destination: 'Stockton CA',
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      origin: faker.address.city(),
-      destination: faker.address.city(),
+      origin: 'Rockwall TX',
+      destination: 'Orem UT',
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
-      origin: faker.address.city(),
-      destination: faker.address.city(),
+      origin: 'Rockwall TX',
+      destination: 'San Antonio TX',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      origin: 'Rockwall TX',
+      destination: 'Minneapolis MN',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      origin: 'Avenel NJ',
+      destination: 'Alton IL',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      origin: 'Presque Isle ME',
+      destination: 'Alton IL',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      origin: 'Avenel NJ',
+      destination: 'Cranberry Twp PA',
       createdAt: new Date(),
       updatedAt: new Date()
     },

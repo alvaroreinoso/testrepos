@@ -8,24 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      // customerLocationId: {
-      //   type: Sequelize.INTEGER,
-      //   allowNull: false,
-      //   references: {
-      //     model: 'CustomerLocations',
-      //     key: 'id',
-      //     as: 'customerLocationId'
-      //   }
-      // },
-      // secondCustomerLocationId: {
-      //   type: Sequelize.INTEGER,
-      //   allowNull: true,
-      //   references: {
-      //     model: 'CustomerLocations',
-      //     key: 'id',
-      //     as: 'secondCustomerLocationId'
-      //   }
-      // },
       lanePartnerId: {
         type: Sequelize.INTEGER,
         allowNull: true,
