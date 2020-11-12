@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       CustomerLane.belongsTo(models.CustomerLocation, {
         foreignKey: 'customerLocationId'
       })
+      CustomerLane.belongsTo(models.CustomerLocation, {
+        foreignKey: 'secondCustomerLocationId'
+      })
       CustomerLane.belongsToMany(models.User, {
         through: 'LaneOwner',
         foreignKey: 'customerLaneId'
@@ -25,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   CustomerLane.init({
     customerLocationId: DataTypes.INTEGER,
+    secondCustomerLocationId: DataTypes.INTEGER,
     lanePartnerId: DataTypes.INTEGER,
     laneId: DataTypes.INTEGER,
     routeGeometry: DataTypes.TEXT

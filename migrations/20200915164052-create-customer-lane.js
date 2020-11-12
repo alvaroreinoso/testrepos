@@ -17,6 +17,15 @@ module.exports = {
           as: 'customerLocationId'
         }
       },
+      secondCustomerLocationId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'CustomerLocations',
+          key: 'id',
+          as: 'secondCustomerLocationId'
+        }
+      },
       lanePartnerId: {
         type: Sequelize.INTEGER,
         allowNull: true,

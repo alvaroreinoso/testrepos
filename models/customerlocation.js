@@ -19,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       }),
       CustomerLocation.hasMany(models.CustomerLane, {
         foreignKey: 'customerLocationId'
+      }),
+      CustomerLocation.hasMany(models.CustomerLane, {
+        foreignKey: 'secondCustomerLocationId'
       })
     }
   };

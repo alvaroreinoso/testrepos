@@ -1,5 +1,5 @@
 const { Team, CustomerContact, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, internalLane } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -24,19 +24,12 @@ module.exports.ascendDump = async (event, context) => {
             i++
             console.log(i)
 
-            if (await internalLane(json)) {
-
-                // need to create function to see if internal lane 
-
-                console.log('Internal Lane here')
-
-
-                // Do not save a lane partner
-
-                //
-            }
-            
             if (await newLoad(json)) {
+
+                const dropDate = await getDropDate(json)
+                const address = await getAddress(json)
+                const cLlngLat = await getLngLat(json['First Pick Address'])
+                const lPlngLat = await getLngLat(json['Last Drop Address'])
 
                 if (await newCustomer(json)) { // NEW CUSTOMER
 
@@ -50,25 +43,75 @@ module.exports.ascendDump = async (event, context) => {
                         include: Ledger
                     })
 
-                    if (await internalLane(json)) {
 
-                        // need to create function to see if internal lane 
+                    // NEW CUSTOMER INTERNAL LANE
 
-                        console.log('Internal Lane here')
+                    if (await matchedInternalLane(json)) {
 
+                        const firstLocation = await CustomerLocation.create({
+                            customerId: customer.id,
+                            address: address,
+                            city: json['First Pick City'],
+                            state: json['First Pick State'],
+                            zipcode: json['First Pick Postal'],
+                            lnglat: cLlngLat,
+                            Ledger: {
+                                brokerageId: user.brokerageId
+                            }
+                        }, {
+                            include: Ledger
+                        })
 
-                        // Do not save a lane partner
+                        const secondLocation = await getOrCreateSecondLocation(json, customer, address, user, lPlngLat)
 
-                        //
+                        const route = await getRoute(cLlngLat, lPlngLat)
+                        const newLane = await createLane(json)
+
+                        const newCustLane = await CustomerLane.create({
+                            customerLocationId: firstLocation.id,
+                            secondCustomerLocationId: secondLocation.id,
+                            routeGeometry: route,
+                            laneId: newLane.id
+                        })
+
+                        if (await newCarrier(json)) { // NEW CARRIER
+
+                            const carrier = await Carrier.create({
+                                name: json['Carrier']
+                            })
+
+                            const newLoad = await Load.create({
+                                loadId: json['Load ID'],
+                                customerLaneId: newCustLane.id,
+                                carrierId: carrier.id,
+                                rate: json['Flat Rate i'],
+                                dropDate: dropDate
+                            })
+
+                        } else { // EXISTING CARRIER
+
+                            const carrier = await Carrier.findOne({
+                                where: {
+                                    name: json['Carrier']
+                                }
+                            })
+
+                            const newLoad = await Load.create({
+                                loadId: json['Load ID'],
+                                customerLaneId: newCustLane.id,
+                                carrierId: carrier.id,
+                                rate: json['Flat Rate i'],
+                                dropDate: dropDate
+                            })
+                        }
+
                     }
 
 
-                    //CHANGES START HERE
-                    //determine if customer is first pick or last drop
-                    if (json['First Pick Name'] === customer.name) { //customer is First Pick
-                        const cLlngLat = await getLngLat(json['First Pick Address'])
+                    // NEW CUSTOMER MATCH WITH FIRST PICK
 
-                        const address = await getAddress(json)
+                    //determine if customer is first pick or last drop
+                    else if (json['First Pick Name'] === customer.name) { //customer is First Pick
 
                         const newLocation = await CustomerLocation.create({
                             customerId: customer.id,
@@ -85,9 +128,8 @@ module.exports.ascendDump = async (event, context) => {
                         })
 
                         const newLane = await createLane(json)
-
-                        const lPlngLat = await getLngLat(json['Last Drop Address'])
                         const route = await getRoute(cLlngLat, lPlngLat)
+                        const lpAddress = await getLpAddress(json)
 
                         const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
@@ -95,7 +137,7 @@ module.exports.ascendDump = async (event, context) => {
                             routeGeometry: route,
                             LanePartner: {
                                 name: json['Last Drop Name'],
-                                address: json['Last Drop Address'],
+                                address: lpAddress,
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal'],
@@ -111,10 +153,6 @@ module.exports.ascendDump = async (event, context) => {
                                 name: json['Carrier']
                             })
 
-                            const dropDate = await getDropDate(json)
-
-                            // console.log(dropDate)
-
                             const newLoad = await Load.create({
                                 loadId: json['Load ID'],
                                 customerLaneId: newCustLane.id,
@@ -122,8 +160,6 @@ module.exports.ascendDump = async (event, context) => {
                                 rate: json['Flat Rate i'],
                                 dropDate: dropDate
                             })
-
-                            // console.log(newLoad.toJSON())
 
                         } else { // EXISTING CARRIER
 
@@ -133,12 +169,6 @@ module.exports.ascendDump = async (event, context) => {
                                 }
                             })
 
-                            // console.log('Existing Carrier: ', carrier.toJSON())
-
-                            const dropDate = await getDropDate(json)
-
-                            // console.log(dropDate)
-
                             const newLoad = await Load.create({
                                 loadId: json['Load ID'],
                                 customerLaneId: newCustLane.id,
@@ -146,20 +176,19 @@ module.exports.ascendDump = async (event, context) => {
                                 rate: json['Flat Rate i'],
                                 dropDate: dropDate
                             })
-
-                            // console.log(newLoad.toJSON())
-
                         }
                     }
+
+                    // NEW CUSTOMER MATCHED WITH LAST DROP
+
                     else if (json['Last Drop Name'] === customer.name) { //customer is Last Drop
                         console.log("CUSTOMER IS RECIEVER")
-                        const cLlngLat = await getLngLat(json['Last Drop Address'])
 
-                        const address = await getAddress(json)
+                        const rightAddress = await getLpAddress(json)
 
                         const newLocation = await CustomerLocation.create({
                             customerId: customer.id,
-                            address: address,
+                            address: lpAddress,
                             city: json['Last Drop City'],
                             state: json['Last Drop State'],
                             zipcode: json['Last Drop Postal'],
@@ -172,9 +201,8 @@ module.exports.ascendDump = async (event, context) => {
                         })
 
                         const newLane = await createLane(json)
-
-                        const lPlngLat = await getLngLat(json['First Pick Address'])
                         const route = await getRoute(cLlngLat, lPlngLat)
+                        const lpAddress = await getAddress(json)
 
                         const newCustLane = await CustomerLane.create({
                             customerLocationId: newLocation.id,
@@ -182,7 +210,7 @@ module.exports.ascendDump = async (event, context) => {
                             routeGeometry: route,
                             LanePartner: {
                                 name: json['First Pick Name'],
-                                address: json['First Pick Address'],
+                                address: lpAddress,
                                 city: json['First Pick City'],
                                 state: json['First Pick State'],
                                 zipcode: json['First Pick Postal'],
@@ -198,10 +226,6 @@ module.exports.ascendDump = async (event, context) => {
                                 name: json['Carrier']
                             })
 
-                            const dropDate = await getDropDate(json)
-
-                            // console.log(dropDate)
-
                             const newLoad = await Load.create({
                                 loadId: json['Load ID'],
                                 customerLaneId: newCustLane.id,
@@ -209,8 +233,6 @@ module.exports.ascendDump = async (event, context) => {
                                 rate: json['Flat Rate i'],
                                 dropDate: dropDate
                             })
-
-                            // console.log(newLoad.toJSON())
 
                         } else { // EXISTING CARRIER
 
@@ -222,10 +244,6 @@ module.exports.ascendDump = async (event, context) => {
 
                             console.log('Existing Carrier: ', carrier.toJSON())
 
-                            const dropDate = await getDropDate(json)
-
-                            // console.log(dropDate)
-
                             const newLoad = await Load.create({
                                 loadId: json['Load ID'],
                                 customerLaneId: newCustLane.id,
@@ -233,8 +251,6 @@ module.exports.ascendDump = async (event, context) => {
                                 rate: json['Flat Rate i'],
                                 dropDate: dropDate
                             })
-
-                            // console.log(newLoad.toJSON())
 
                         }
                     }
@@ -247,9 +263,6 @@ module.exports.ascendDump = async (event, context) => {
                 } else { // EXISTING CUSTOMER
 
                     const customer = await currentCustomer(json)
-
-                    const address = await getAddress(json)
-
                     const existingLocation = await CustomerLocation.findOne({
                         where: {
                             customerId: customer.id,
@@ -257,12 +270,81 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
+                    const lpAddress = await getLpAddress(json)
+
+                    const secondPossibleLoaction = await CustomerLocation.findOne({
+                        where: {
+                            customerId: customer.id,
+                            address: lpAddress
+                        }
+                    })
+
                     if (existingLocation == null) { // EXISTING CUSTOMER NEW LOCATION
 
-                        //CHANGES HERE
+                        if (await matchedInternalLane(json)) {
 
-                        if (json['First Pick Name'] === json.Customer) {
-                            const cLlngLat = await getLngLat(json['First Pick Address'])
+                            const firstLocation = await CustomerLocation.create({
+                                customerId: customer.id,
+                                address: address,
+                                city: json['First Pick City'],
+                                state: json['First Pick State'],
+                                zipcode: json['First Pick Postal'],
+                                lnglat: cLlngLat,
+                                Ledger: {
+                                    brokerageId: user.brokerageId
+                                }
+                            }, {
+                                include: Ledger
+                            })
+
+                            const lpAddress = await getLpAddress(json)
+
+                            const secondLocation = await getOrCreateSecondLocation(json, customer, lpAddress, user, lPlngLat)
+
+                            const route = await getRoute(cLlngLat, lPlngLat)
+                            const newLane = await createLane(json)
+
+                            const newCustLane = await CustomerLane.create({
+                                customerLocationId: firstLocation.id,
+                                secondCustomerLocationId: secondLocation.id,
+                                routeGeometry: route,
+                                laneId: newLane.id
+                            })
+
+                            if (await newCarrier(json)) { // NEW CARRIER
+
+                                const carrier = await Carrier.create({
+                                    name: json['Carrier']
+                                })
+
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+
+                            } else { // EXISTING CARRIER
+
+                                const carrier = await Carrier.findOne({
+                                    where: {
+                                        name: json['Carrier']
+                                    }
+                                })
+
+                                const newLoad = await Load.create({
+                                    loadId: json['Load ID'],
+                                    customerLaneId: newCustLane.id,
+                                    carrierId: carrier.id,
+                                    rate: json['Flat Rate i'],
+                                    dropDate: dropDate
+                                })
+                            }
+                        }
+
+
+                        else if (json['First Pick Name'] === json.Customer) {
 
                             const newLocation = await CustomerLocation.create({
                                 customerId: customer.id,
@@ -281,18 +363,16 @@ module.exports.ascendDump = async (event, context) => {
                             if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
 
                                 const newLane = await createLane(json)
-    
-                                const lPlngLat = await getLngLat(json['Last Drop Address'])
-                                console.log(cLlngLat, lPlngLat)
                                 const route = await getRoute(cLlngLat, lPlngLat)
-    
+                                const lpAddress = await getLpAddress(json)
+
                                 const newCustLane = await CustomerLane.create({
                                     customerLocationId: newLocation.id,
                                     laneId: newLane.id,
                                     routeGeometry: route,
                                     LanePartner: {
                                         name: json['Last Drop Name'],
-                                        address: json['Last Drop Address'],
+                                        address: lpAddress,
                                         city: json['Last Drop City'],
                                         state: json['Last Drop State'],
                                         zipcode: json['Last Drop Postal'],
@@ -301,17 +381,13 @@ module.exports.ascendDump = async (event, context) => {
                                 }, {
                                     include: LanePartner
                                 })
-    
+
                                 if (await newCarrier(json)) { // NEW CARRIER
-    
+
                                     const carrier = await Carrier.create({
                                         name: json['Carrier']
                                     })
-    
-                                    const dropDate = await getDropDate(json)
-    
-                                    // console.log(dropDate)
-    
+
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -319,23 +395,15 @@ module.exports.ascendDump = async (event, context) => {
                                         rate: json['Flat Rate i'],
                                         dropDate: dropDate
                                     })
-    
-                                    // console.log(newLoad.toJSON())
-    
+
                                 } else { // EXISTING CARRIER
-    
+
                                     const carrier = await Carrier.findOne({
                                         where: {
                                             name: json['Carrier']
                                         }
                                     })
-    
-                                    // console.log('Existing Carrier: ', carrier.toJSON())
-    
-                                    const dropDate = await getDropDate(json)
-    
-                                    // console.log(dropDate)
-    
+
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -343,22 +411,23 @@ module.exports.ascendDump = async (event, context) => {
                                         rate: json['Flat Rate i'],
                                         dropDate: dropDate
                                     })
-    
-                                    // console.log(newLoad.toJSON())
-    
                                 }
                             }
                         }
-                        else if (json['Last Drop Name'] === json.Customer) {
-                            const cLlngLat = await getLngLat(json['Last Drop Address'])
+
+                        else if (json['Last Drop Name'] === json.Customer && secondPossibleLoaction == null) {  /// This needs to be moved
+
+                            console.log('LASt drop name is customer name')
+
+                            const rightAddress = await getLpAddress(json)
 
                             const newLocation = await CustomerLocation.create({
                                 customerId: customer.id,
-                                address: address,
+                                address: rightAddress,
                                 city: json['Last Drop City'],
                                 state: json['Last Drop State'],
                                 zipcode: json['Last Drop Postal'],
-                                lnglat: cLlngLat,
+                                lnglat: lPlngLat,
                                 Ledger: {
                                     brokerageId: user.brokerageId
                                 }
@@ -369,37 +438,31 @@ module.exports.ascendDump = async (event, context) => {
                             if (await newLane(json)) { // EXISTING CUSTOMER NEW LOCATION NEW LANE
 
                                 const newLane = await createLane(json)
-    
-                                const lPlngLat = await getLngLat(json['Last Drop Address'])
-                                console.log(cLlngLat, lPlngLat)
                                 const route = await getRoute(cLlngLat, lPlngLat)
-    
+                                const lpAddress = await getAddress(json)
+
                                 const newCustLane = await CustomerLane.create({
                                     customerLocationId: newLocation.id,
                                     laneId: newLane.id,
                                     routeGeometry: route,
                                     LanePartner: {
-                                        name: json['Last Drop Name'],
-                                        address: json['Last Drop Address'],
-                                        city: json['Last Drop City'],
-                                        state: json['Last Drop State'],
-                                        zipcode: json['Last Drop Postal'],
-                                        lnglat: lPlngLat,
+                                        name: json['First Pick Name'],
+                                        address: lpAddress,
+                                        city: json['First Pick City'],
+                                        state: json['First Pick State'],
+                                        zipcode: json['First Pick Postal'],
+                                        lnglat: cLlngLat,
                                     },
                                 }, {
                                     include: LanePartner
                                 })
-    
+
                                 if (await newCarrier(json)) { // NEW CARRIER
-    
+
                                     const carrier = await Carrier.create({
                                         name: json['Carrier']
                                     })
-    
-                                    const dropDate = await getDropDate(json)
-    
-                                    // console.log(dropDate)
-    
+
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -407,23 +470,15 @@ module.exports.ascendDump = async (event, context) => {
                                         rate: json['Flat Rate i'],
                                         dropDate: dropDate
                                     })
-    
-                                    // console.log(newLoad.toJSON())
-    
+
                                 } else { // EXISTING CARRIER
-    
+
                                     const carrier = await Carrier.findOne({
                                         where: {
                                             name: json['Carrier']
                                         }
                                     })
-    
-                                    // console.log('Existing Carrier: ', carrier.toJSON())
-    
-                                    const dropDate = await getDropDate(json)
-    
-                                    // console.log(dropDate)
-    
+
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -431,14 +486,10 @@ module.exports.ascendDump = async (event, context) => {
                                         rate: json['Flat Rate i'],
                                         dropDate: dropDate
                                     })
-    
-                                    // console.log(newLoad.toJSON())
-    
                                 }
                             }
                         }
                         else {
-                            console.log("NOOOOO")
                             unmatchedLanes.push(json)
                         }
 
@@ -447,19 +498,69 @@ module.exports.ascendDump = async (event, context) => {
                         if (await newLane(json)) {
                             let newCustLane
 
-                            if (json['First Pick Name'] === json.Customer) {
+                            if (await matchedInternalLane(json)) {
+
+                                const firstLocation = existingLocation
+                                const lpAddress = await getLpAddress(json)
+
+                                const secondLocation = await getOrCreateSecondLocation(json, customer, lpAddress, user, lPlngLat)
+
+                                const route = await getRoute(cLlngLat, lPlngLat)
                                 const newLane = await createLane(json)
 
-                                const lPlngLat = await getLngLat(json['Last Drop Address'])
-                                const route = await getRoute(existingLocation.lnglat, lPlngLat)
+                                const newCustLane = await CustomerLane.create({
+                                    customerLocationId: firstLocation.id,
+                                    secondCustomerLocationId: secondLocation.id,
+                                    routeGeometry: route,
+                                    laneId: newLane.id
+                                })
 
-                                newCustLane = await CustomerLane.create({
+                                if (await newCarrier(json)) { // NEW CARRIER
+
+                                    const carrier = await Carrier.create({
+                                        name: json['Carrier']
+                                    })
+
+                                    const newLoad = await Load.create({
+                                        loadId: json['Load ID'],
+                                        customerLaneId: newCustLane.id,
+                                        carrierId: carrier.id,
+                                        rate: json['Flat Rate i'],
+                                        dropDate: dropDate
+                                    })
+
+                                } else { // EXISTING CARRIER
+
+                                    const carrier = await Carrier.findOne({
+                                        where: {
+                                            name: json['Carrier']
+                                        }
+                                    })
+
+                                    const newLoad = await Load.create({
+                                        loadId: json['Load ID'],
+                                        customerLaneId: newCustLane.id,
+                                        carrierId: carrier.id,
+                                        rate: json['Flat Rate i'],
+                                        dropDate: dropDate
+                                    })
+                                }
+                            }
+
+
+                            else if (json['First Pick Name'] === json.Customer) {
+
+                                const newLane = await createLane(json)
+                                const route = await getRoute(existingLocation.lnglat, lPlngLat)
+                                const lpAddress = await getLpAddress(json)
+
+                                const newCustLane = await CustomerLane.create({
                                     customerLocationId: existingLocation.id,
                                     laneId: newLane.id,
                                     routeGeometry: route,
                                     LanePartner: {
                                         name: json['Last Drop Name'],
-                                        address: json['Last Drop Address'],
+                                        address: lpAddress,
                                         city: json['Last Drop City'],
                                         state: json['Last Drop State'],
                                         zipcode: json['Last Drop Postal'],
@@ -475,8 +576,6 @@ module.exports.ascendDump = async (event, context) => {
                                         name: json['Carrier']
                                     })
 
-                                    const dropDate = await getDropDate(json)
-
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -485,7 +584,6 @@ module.exports.ascendDump = async (event, context) => {
                                         dropDate: dropDate
                                     })
 
-                                    // console.log(newLoad.toJSON())
                                 } else { // EXISTING CARRIER
 
                                     const carrier = await Carrier.findOne({
@@ -494,12 +592,6 @@ module.exports.ascendDump = async (event, context) => {
                                         }
                                     })
 
-                                    // console.log('Existing Carrier: ', carrier.toJSON())
-
-                                    const dropDate = await getDropDate(json)
-
-                                    // console.log(dropDate)
-
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -507,16 +599,14 @@ module.exports.ascendDump = async (event, context) => {
                                         rate: json['Flat Rate i'],
                                         dropDate: dropDate
                                     })
-
-                                    // console.log(newLoad.toJSON())
-
                                 }
                             }
-                            else if (json['Last Drop Name'] === json.Customer) {
-                                const newLane = await createLane(json)
 
-                                const lPlngLat = await getLngLat(json['First Pick Address'])
+                            else if (json['Last Drop Name'] === json.Customer) {
+
+                                const newLane = await createLane(json)
                                 const route = await getRoute(existingLocation.lnglat, lPlngLat)
+                                const lpAddress = await getAddress(json)
 
                                 newCustLane = await CustomerLane.create({
                                     customerLocationId: existingLocation.id,
@@ -524,11 +614,11 @@ module.exports.ascendDump = async (event, context) => {
                                     routeGeometry: route,
                                     LanePartner: {
                                         name: json['First Pick Name'],
-                                        address: json['First Pick Address'],
+                                        address: lpAddress,
                                         city: json['First Pick City'],
                                         state: json['First Pick State'],
                                         zipcode: json['First Pick Postal'],
-                                        lnglat: lPlngLat,
+                                        lnglat: cLlngLat,
                                     },
                                 }, {
                                     include: LanePartner
@@ -540,8 +630,6 @@ module.exports.ascendDump = async (event, context) => {
                                         name: json['Carrier']
                                     })
 
-                                    const dropDate = await getDropDate(json)
-
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -550,7 +638,6 @@ module.exports.ascendDump = async (event, context) => {
                                         dropDate: dropDate
                                     })
 
-                                    // console.log(newLoad.toJSON())
                                 } else { // EXISTING CARRIER
 
                                     const carrier = await Carrier.findOne({
@@ -559,12 +646,6 @@ module.exports.ascendDump = async (event, context) => {
                                         }
                                     })
 
-                                    // console.log('Existing Carrier: ', carrier.toJSON())
-
-                                    const dropDate = await getDropDate(json)
-
-                                    // console.log(dropDate)
-
                                     const newLoad = await Load.create({
                                         loadId: json['Load ID'],
                                         customerLaneId: newCustLane.id,
@@ -573,18 +654,13 @@ module.exports.ascendDump = async (event, context) => {
                                         dropDate: dropDate
                                     })
 
-                                    // console.log(newLoad.toJSON())
-
                                 }
                             }
                             else {
-                                console.log("AHHHHHH")
                                 unmatchedLanes.push(json)
                             }
 
                         } else {  // EXISTING LANE
-
-                            // FIND CUSTOMER LANE WITH EXISTING LANE ID AS LANE ID AND EXISTING LOCATION ID AS CLOCATIONID
 
                             const lane = await getLane(json)
 
@@ -601,10 +677,6 @@ module.exports.ascendDump = async (event, context) => {
                                     name: json['Carrier']
                                 })
 
-                                const dropDate = await getDropDate(json)
-
-                                // console.log(dropDate)
-
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: existingCustLane.id,
@@ -613,7 +685,6 @@ module.exports.ascendDump = async (event, context) => {
                                     dropDate: dropDate
                                 })
 
-                                // console.log(newLoad.toJSON())
                             } else { // EXISTING CARRIER
 
                                 const carrier = await Carrier.findOne({
@@ -622,12 +693,6 @@ module.exports.ascendDump = async (event, context) => {
                                     }
                                 })
 
-                                // console.log('Existing Carrier: ', carrier.toJSON())
-
-                                const dropDate = await getDropDate(json)
-
-                                // console.log(dropDate)
-
                                 const newLoad = await Load.create({
                                     loadId: json['Load ID'],
                                     customerLaneId: existingCustLane.id,
@@ -635,11 +700,7 @@ module.exports.ascendDump = async (event, context) => {
                                     rate: json['Flat Rate i'],
                                     dropDate: dropDate
                                 })
-
-                                // console.log(newLoad.toJSON())
-
                             }
-
                         }
                     }
                 }
@@ -651,7 +712,7 @@ module.exports.ascendDump = async (event, context) => {
             }
         }
 
-        // console.log("unmatched lanes", unmatchedLanes)
+        console.log("unmatched lanes", unmatchedLanes)
         const response = {
             statusCode: 200,
             headers: {
@@ -698,7 +759,7 @@ module.exports.customerUpload = async (event, context) => {
                 include: Ledger
             })
 
-            const address = row['block_address']
+            // const address = row['block_address']
             const streetAddress = address.split('\n')[0]
             const cityStateZip = address.split('\n')[1]
             const city = cityStateZip.split(',')[0]
@@ -735,7 +796,7 @@ module.exports.customerUpload = async (event, context) => {
 
         } else {
 
-            const address = row['block_address']
+            // const address = row['block_address']
             const streetAddress = address.split('\n')[0]
 
             const existingLocation = await CustomerLocation.findOne({
@@ -748,7 +809,7 @@ module.exports.customerUpload = async (event, context) => {
 
             if (existingLocation == null) {
 
-                const address = row['block_address']
+                // const address = row['block_address']
                 const streetAddress = address.split('\n')[0]
                 const cityStateZip = address.split('\n')[1]
                 const city = cityStateZip.split(',')[0]
