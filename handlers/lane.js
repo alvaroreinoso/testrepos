@@ -9,9 +9,9 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         const user = await getCurrentUser(event.headers.Authorization)
 
         const lanes = await CustomerLane.findAll({
+            attributes: ['customerLocationId'] ,
             include: [{
                 model: CustomerLocation,
-                required: true,
                 include: [{
                     model: Customer,
                     required: true,
@@ -21,9 +21,11 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                 }]
             }, {
                 model: LanePartner,
-                required: true
+                // required: true
             }]
         });
+        
+        console.log(lanes)
 
         return {
             statusCode: 200,
@@ -31,6 +33,8 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         }
 
     } catch (err) {
+
+        console.log(err)
 
         return {
             statusCode: 401
@@ -55,7 +59,7 @@ module.exports.getLanesByUser = async (event, context) => {
         const lanes = await CustomerLane.findAll({
             include: [{
                 model: CustomerLocation,
-                required: true,
+                // required: true,
                 include: [{
                     model: Customer,
                     required: true,

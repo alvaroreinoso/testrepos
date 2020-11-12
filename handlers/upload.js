@@ -712,7 +712,9 @@ module.exports.ascendDump = async (event, context) => {
             }
         }
 
-        console.log("unmatched lanes", unmatchedLanes)
+        // console.log("unmatched lanes", unmatchedLanes)
+
+        unmatchedLanes.forEach(x => console.log(x['Load ID']))
         const response = {
             statusCode: 200,
             headers: {
