@@ -9,20 +9,30 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         const user = await getCurrentUser(event.headers.Authorization)
 
         const lanes = await CustomerLane.findAll({
-            attributes: ['customerLocationId'] ,
+            where: {
+                id: 1
+            },
             include: [{
                 model: CustomerLocation,
-                include: [{
-                    model: Customer,
-                    required: true,
-                    where: {
-                        userId: user.id
-                    }
-                }]
+                required: true
             }, {
                 model: LanePartner,
-                // required: true
+                required: true
             }]
+            // attributes: ['customerLocationId'] ,
+            // include: [{
+            //     model: CustomerLocation,
+            //     include: [{
+            //         model: Customer,
+            //         required: true,
+            //         where: {
+            //             userId: user.id
+            //         }
+            //     }]
+            // }, {
+            //     model: LanePartner,
+            //     // required: true
+            // }]
         });
         
         console.log(lanes)
