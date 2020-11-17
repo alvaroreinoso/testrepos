@@ -1,23 +1,23 @@
 const laneOwners = [
     {
         userId: 1,
-        customerLaneId: 1
+        laneId: 1
     },
     {
         userId: 1,
-        customerLaneId: 3
+        laneId: 3
     },
     {
         userId: 1,
-        customerLaneId: 6
+        laneId: 6
     },
     {
         userId: 1,
-        customerLaneId: 8
+        laneId: 8
     },
     {
         userId: 1,
-        customerLaneId: 9
+        laneId: 9
     },
 ]
 

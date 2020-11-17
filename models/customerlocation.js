@@ -11,12 +11,6 @@ module.exports = (sequelize, DataTypes) => {
       CustomerLocation.belongsTo(models.Customer, {
         foreignKey: 'customerId'
       }),
-      CustomerLocation.belongsTo(models.CustomerContact, {
-        foreignKey: 'contactId'
-      })
-      CustomerLocation.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId'
-      })
       CustomerLocation.belongsToMany(models.Location, {
         foreignKey: 'locationId'
       })
@@ -24,9 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   CustomerLocation.init({
     customerId: DataTypes.INTEGER,
-    contactId: DataTypes.INTEGER,
     locationId: DataTypes.INTEGER,
-    ledgerId: DataTypes.INTEGER
   }, {
     hooks: {
       afterSave: (customerLocation, options) => {

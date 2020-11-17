@@ -23,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       Location.belongsTo(models.Lane, {
         foreignKey: 'originLocationId',
       })
+      Location.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
+      })
       Location.belongsTo(models.Lane, {
         foreignKey: 'destinationLocationId',
       })

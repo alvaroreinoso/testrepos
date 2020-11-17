@@ -11,6 +11,10 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      address2: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       city: {
         type: Sequelize.STRING
       },
@@ -20,8 +24,37 @@ module.exports = {
       zipcode: {
         type: Sequelize.STRING
       },
+      open: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      close: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      isHQ: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      isShippingReceiving: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true
+      },
+      lnglat: {
+        type: Sequelize.STRING
+      },
       contactId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
       },
       createdAt: {
         allowNull: false,
