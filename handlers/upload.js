@@ -1,5 +1,5 @@
 const { Team, CustomerContact, Endpoint, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, findOrCreateLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, createLane, findOrCreateLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress, getOriginAndDestination } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -15,29 +15,162 @@ module.exports.ascendDump = async (event, context) => {
         }
     }
 
+    try {
+
     const unmatchedLanes = []
 
     for (const json of jsonArray) {
 
         if (await newLoad(json)) {
 
-            // if matched internal
+            if (await matchedInternalLane(json)) {
 
-            if (await matchedInternalLane(json)){
+                const firstAddress = await getAddress(json)
+                const firstLngLat = await getLngLat(json['First Pick Address'])
+
+                const secondAddress = await getLpAddress(json)
+                const secondLngLat = await getLngLat(json['Last Drop Address'])
+
+                console.log(json['Last Drop Date'])
+
+                const dropDate = await getDropDate(json)
 
                 console.log('matched internal: ', json['Load ID'])
+
+                const [customer, wasCreated] = await Customer.findOrCreate({
+                    where: {
+                    name: json.Customer,
+                    teamId: user.teamId,
+                    },
+                })
+
+                if (wasCreated == true) {
+
+                    await customer.createLedger({
+                        brokerageId: user.brokerageId
+                    })
+                }
+
+                const [firstLocation, firstLocationWasCreated] = await CustomerLocation.findOrCreate({
+                    where: {
+                        customerId: customer.id,
+                            address: firstAddress,
+                            city: json['First Pick City'],
+                            state: json['First Pick State'],
+                            zipcode: json['First Pick Postal'],
+                            lnglat: firstLngLat,
+                    }
+                })
+
+                if (firstLocationWasCreated == true) {
+
+                    await firstLocation.createLedger({
+                        brokerageId: user.brokerageId
+                    })
+                }
+
+                const [secondLocation, secondLocationWasCreated] = await CustomerLocation.findOrCreate({
+                    where: {
+                        customerId: customer.id,
+                            address: secondAddress,
+                            city: json['Last Drop City'],
+                            state: json['Last Drop State'],
+                            zipcode: json['Last Drop Postal'],
+                            lnglat: secondLngLat,
+                    }
+                })
+
+                if (secondLocationWasCreated == true) {
+
+                    await secondLocation.createLedger({
+                        brokerageId: user.brokerageId
+                    })
+                }
+
+                const [origin, destination] = await getOriginAndDestination(json)
+
+                const lane = await Lane.findOrCreate({
+                    where: {
+                        origin: origin,
+                        destination: destination
+                    }
+                })
+
+                const route = await getRoute(firstLngLat, secondLngLat)
+
+                const customerLane = await CustomerLane.findOrCreate({
+                    where: {
+                    routeGeometry: route,
+                    laneId: lane.id
+                    }
+                })
+
+                const endpoint = await Endpoint.findOrCreate({
+                    customerLaneId: customerLane.id,
+                    customerLocationId: firstLocation.id
+                })
+
+                const secondEndpoint = await Endpoint.findOrCreate({
+                    customerLaneId: customerLane.id,
+                    customerLocationId: secondLocation.id
+                })
+
+                const carrier = await Carrier.findOrCreate({
+                    name: json['Carrier']
+                })
+
+                await Load.create({
+                    loadId: json['Load ID'],
+                    customerLaneId: customerLane.id,
+                    carrierId: carrier.id,
+                    rate: json['Flat Rate i'],
+                    dropDate: dropDate
+                })
+
+                console.log(Load.toJSON())
+
             }
 
-            // if customer first pick
+            else if (json['First Pick Name'] == json.Customer) {
 
-            else if (json['First Pick Name'] == customer.name) {
+                
+                const [customer, wasCreated] = await Customer.findOrCreate({
+                    where: {
+                    name: json.Customer,
+                    teamId: user.teamId,
+                    },
+                })
+
+                if (wasCreated == true) {
+
+                    console.log('just created', customer)
+
+                    await customer.createLedger({
+                        brokerageId: user.brokerageId
+                    })
+                }
             
                 console.log('first pick lane: ', json['Load ID'])
             }
 
-            // if customer last drop
+            else if (json['Last Drop Name'] == json.Customer) {
 
-            else if (json['Last Drop Name'] == customer.name) {
+
+                const [customer, wasCreated] = await Customer.findOrCreate({
+                    where: {
+                    name: json.Customer,
+                    teamId: user.teamId,
+                    },
+                })
+
+                if (wasCreated == true) {
+
+                    console.log('just created', customer)
+
+                    await customer.createLedger({
+                        brokerageId: user.brokerageId
+                    })
+                }
 
                 console.log('last drop lane: ', json['Load ID'])
             }
@@ -47,13 +180,23 @@ module.exports.ascendDump = async (event, context) => {
             else { //customer matching is not possible; return to user to assign
                 console.log("unmatched load", json['Load ID'])
                 unmatchedLanes.push(json)
-                return
             }
-
 
         }
 
     }
+
+    return {
+
+        statusCode: 200,
+        body: JSON.stringify(unmatchedLanes)
+
+    }
+
+} catch (err) {
+
+    console.log(err)
+}
 }
 
 

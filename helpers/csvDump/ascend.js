@@ -70,7 +70,7 @@ module.exports.matchedInternalLane = async (json) => {
 
         if (likeness > .7) {
 
-            console.log('true')
+            // console.log('true')
             return true
         }
     }
@@ -185,6 +185,8 @@ module.exports.getDropDate = async (json) => {
 
     const dateString = json['Last Drop Date']
 
+    console.log(dateString)
+
     const dropDate = dateString.split(' ')[0]
 
     return dropDate
@@ -204,6 +206,14 @@ module.exports.getLane = async (json) => {
     })
 
     return existingLane
+}
+
+module.exports.getOriginAndDestination = async (json) => {
+
+    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
+    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
+
+    return [jsonOrigin, jsonDestination]
 }
 
 module.exports.newCarrier = async (json) => {
