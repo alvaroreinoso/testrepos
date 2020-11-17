@@ -16,26 +16,17 @@ module.exports = (sequelize, DataTypes) => {
       })
       CustomerLocation.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId'
-      }),
-      CustomerLocation.belongsToMany(models.CustomerLane, {
-        through: 'Endpoint',
-        foreignKey: 'customerLocationId'
+      })
+      CustomerLocation.belongsToMany(models.Location, {
+        foreignKey: 'locationId'
       })
     }
   };
   CustomerLocation.init({
     customerId: DataTypes.INTEGER,
     contactId: DataTypes.INTEGER,
-    address: DataTypes.STRING,
-    address2: DataTypes.STRING,
-    city: DataTypes.STRING,
-    state: DataTypes.STRING,
-    zipcode: DataTypes.STRING,
-    open: DataTypes.STRING,
-    close: DataTypes.STRING,
-    isHQ: DataTypes.BOOLEAN,
-    isShippingReceiving: DataTypes.BOOLEAN,
-    lnglat: DataTypes.STRING
+    locationId: DataTypes.INTEGER,
+    ledgerId: DataTypes.INTEGER
   }, {
     hooks: {
       afterSave: (customerLocation, options) => {

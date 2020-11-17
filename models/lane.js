@@ -9,12 +9,25 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Lane.hasMany(models.CustomerLane, {
         foreignKey: 'laneId'
+      }),
+      Lane.hasMany(models.Load, {
+        foreignKey: 'laneId'
+      })
+      Lane.hasOne(models.Location, {
+        foreignKey: 'originLocationId',
+        as: 'origin'
+      })
+      Lane.hasOne(models.Location, {
+        foreignKey: 'destinationLocationId',
+        as: 'destination'
       })
     }
   };
   Lane.init({
-    origin: DataTypes.STRING,
-    destination: DataTypes.STRING
+    originLocationId: DataTypes.INTEGER,
+    destinationLocationId: DataTypes.INTEGER,
+    routeGeometry: DataTypes.STRING,
+    frequency: DataTypes.STRING
   }, {
     hooks: {
       afterSave: (lane, options) => {

@@ -17,13 +17,13 @@ module.exports = {
           as: 'userId'
         }
       },
-      customerLaneId: {
+      laneId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'CustomerLanes',
+          model: 'Lanes',
           key: 'id',
-          as: 'customerLaneId'
+          as: 'laneId'
         }
       }
     });

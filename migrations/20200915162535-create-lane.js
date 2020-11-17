@@ -8,11 +8,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      origin: {
-        type: Sequelize.STRING
+      originLocationId: {
+        type: Sequelize.INTEGER
       },
-      destination: {
-        type: Sequelize.STRING
+      destinationLocationId: {
+        type: Sequelize.INTEGER
+      },
+      routeGeometry: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      frequency: {
+        type: Sequelize.TEXT,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,
