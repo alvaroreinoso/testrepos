@@ -44,14 +44,6 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-    await queryInterface.changeColumn('CustomerLocations', 'contactId', {
-      type: Sequelize.INTEGER,
-        references: {
-          model: 'CustomerContacts',
-          key: 'id',
-          as: 'contactId'
-        }
-    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('CustomerContacts');

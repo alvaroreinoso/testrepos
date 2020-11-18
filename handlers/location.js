@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane, User, Team } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, Location, User, Team } = require('.././models');
 
 module.exports.getCustomerLocation = async (event, context) => {
 
@@ -9,7 +9,6 @@ module.exports.getCustomerLocation = async (event, context) => {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == undefined) {
-
             return {
                 statusCode: 401
             }
@@ -22,7 +21,7 @@ module.exports.getCustomerLocation = async (event, context) => {
                 id: customerLocationId
             },
             include: [{
-                model: CustomerLane,
+                model: Location,
                 include: [{
                     model: LanePartner,
                     required: true

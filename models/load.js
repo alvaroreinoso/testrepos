@@ -10,8 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Load.belongsTo(models.CustomerLane, {
-        foreignKey: 'customerLaneId'
+      Load.belongsTo(models.Lane, {
+        foreignKey: 'laneId'
       })
       Load.belongsTo(models.Carrier, {
         foreignKey: 'carrierId'
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Load.init({
     loadId: DataTypes.INTEGER,
-    customerLaneId: DataTypes.INTEGER,
+    laneId: DataTypes.INTEGER,
     carrierId: DataTypes.INTEGER,
     rate: DataTypes.STRING,
     dropDate: DataTypes.DATEONLY

@@ -180,6 +180,15 @@ functions:
             method: get
             headers:
               - Authorization
+  updateCustomer:
+    handler:
+      ./handlers/customer.updateCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}
+            method: put
+            headers:
+              - Authorization
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
@@ -210,27 +219,8 @@ functions:
             headers:
               - Content-Type
               - Authorization
-  getCustomersLanesForUser:
-    handler:
-      ./handlers/customer.getCustomersLanesForUser
-    events:
-        - http:
-            path: api/lanes/customer/{customerId}/user
-            method: get
-            headers:
-              - Content-Type
-              - Authorization
 
 # Lane
-  getCustomerLanesForLane:
-    handler:
-      ./handlers/lane.getCustomerLanesForLane
-    events:
-        - http:
-            path: api/lane/{id}/customerlanes
-            method: get
-            headers:
-              - Authorization
   getLanesByCurrentUser:
     handler:
       ./handlers/lane.getLanesByCurrentUser
@@ -249,31 +239,15 @@ functions:
             method: get
             headers:
               - Authorization
-  getLane:
+  getLaneById:
     handler:
-      ./handlers/lane.getLane
+      ./handlers/lane.getLaneById
     events:
         - http:
             path: api/lane/{laneId}
             method: get
             headers:
-              - Content-Type
               - Authorization
-  deleteLane:
-    handler:
-      ./handlers/lane.deleteLane
-    events:
-        - http:
-            path: api/lane/{laneId}
-            method: delete
-
-  addLane:
-    handler:
-      ./handlers/lane.addLane
-    events: 
-        - http:
-            path: api/lane
-            method: post
   updateLane:
     handler:
       ./handlers/lane.updateLane

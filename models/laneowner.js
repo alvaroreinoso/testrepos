@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   LaneOwner.init({
     userId: DataTypes.INTEGER,
-    customerLaneId: DataTypes.INTEGER
+    laneId: DataTypes.INTEGER
   }, {
     timestamps: false,
     sequelize,

@@ -11,47 +11,9 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
-      address: {
-        type: Sequelize.STRING
-      },
-      address2: {
-        type: Sequelize.STRING
-      },
-      city: {
-        type: Sequelize.STRING
-      },
-      state: {
-        type: Sequelize.STRING
-      },
-      zipcode: {
-        type: Sequelize.STRING
-      },
-      lnglat: {
-        type: Sequelize.STRING
-      },
-      open: {
-        type: Sequelize.STRING
-      },
-      close: {
-        type: Sequelize.STRING
-      },
-      firstName: {
-        type: Sequelize.STRING
-      },
-      lastName: {
-        type: Sequelize.STRING
-      },
-      title: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
-      },
-      phoneExt: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
+      locationId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

@@ -12,12 +12,12 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true
       },
-      customerLaneId: {
+      laneId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'CustomerLanes',
+          model: 'Lanes',
           key: 'id',
-          as: 'customerLaneId'
+          as: 'laneId'
         }
       },
       rate: {
