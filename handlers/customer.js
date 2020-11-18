@@ -246,7 +246,7 @@ module.exports.getCustomersLanes = async (event, context) => {
                     model: Customer,
                     required: true,
                     where: {
-                        id: customerId
+                        id: customer.id
                     }
                 }]
             },
@@ -263,7 +263,7 @@ module.exports.getCustomersLanes = async (event, context) => {
                     model: Customer,
                     required: true,
                     where: {
-                        id: customerId
+                        id: customer.id
                     }
                 }]
             },
