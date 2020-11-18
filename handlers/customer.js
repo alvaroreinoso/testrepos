@@ -4,10 +4,15 @@ const { Customer, CustomerContact, CustomerLocation, CustomerLane, Team, LanePar
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
     try {
-
-        const user = await getCurrentUser(event.headers.Authorization)
-
         const customers = await Customer.findAll({
             where: {
                 userId: user.id
@@ -28,9 +33,8 @@ module.exports.getCustomersByCurrentUser = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
         return {
-            statusCode: 401
+            statusCode: 500
         }
     }
 }
@@ -40,16 +44,13 @@ module.exports.updateCustomer = async (event, context) => {
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
-
         return {
             statusCode: 401
         }
     }
 
     try {
-
         const customerId = event.pathParameters.customerId
-
         const request = JSON.parse(event.body)
 
         const bio = request.bio
@@ -64,7 +65,6 @@ module.exports.updateCustomer = async (event, context) => {
 
         await customer.save()
 
-
         return {
             statusCode: 204
         }
@@ -75,18 +75,19 @@ module.exports.updateCustomer = async (event, context) => {
             statusCode: 500
         }
     }
-
-
-
-
-
 }
+
 module.exports.getCustomersByTeam = async (event, context) => {
 
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
     try {
-
-        const user = await getCurrentUser(event.headers.Authorization)
-
         const customers = await Customer.findAll({
             where: {
                 teamId: user.teamId
@@ -99,19 +100,23 @@ module.exports.getCustomersByTeam = async (event, context) => {
         }
 
     } catch (err) {
-
         return {
-            statusCode: 401
+            statusCode: 500
         }
     }
 }
 
 module.exports.getCustomer = async (event, context) => {
 
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
     try {
-
-        const user = await getCurrentUser(event.headers.Authorization)
-
         const customerId = event.pathParameters.customerId
 
         const results = await Customer.findOne({
@@ -139,13 +144,10 @@ module.exports.getCustomer = async (event, context) => {
         }
 
     } catch (err) {
-
         return {
-            statusCode: 401
+            statusCode: 500
         }
-
     }
-
 }
 module.exports.getTopCustomers = async (event, context) => {
 
