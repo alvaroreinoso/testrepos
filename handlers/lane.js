@@ -1,29 +1,58 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, CustomerLane, User } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
 
     try {
 
         const user = await getCurrentUser(event.headers.Authorization)
 
-        const lanes = await CustomerLane.findAll({
+        const lanes = await Lane.findAll({
             include: [{
-                model: CustomerLocation,
+                model: Location,
+                as: 'origin',
                 include: [{
-                    model: Customer,
-                    required: true,
-                    where: {
-                        userId: user.id
-                    }
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            userId: user.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
                 }]
             }, {
-                model: LanePartner,
-            }]
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            userId: user.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }
+            ]
         });
-        
-        console.log(lanes)
 
         return {
             statusCode: 200,
@@ -32,10 +61,8 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
-
         return {
-            statusCode: 401
+            statusCode: 500
         }
     }
 }
@@ -46,6 +73,13 @@ module.exports.getLanesByUser = async (event, context) => {
 
     const currentUser = await getCurrentUser(event.headers.Authorization)
 
+    if (currentUser.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
     try {
         const targetUser = await User.findOne({
             where: {
@@ -54,20 +88,41 @@ module.exports.getLanesByUser = async (event, context) => {
             }
         })
 
-        const lanes = await CustomerLane.findAll({
+        const lanes = await Lane.findAll({
             include: [{
-                model: CustomerLocation,
-                required: true,
+                model: Location,
+                as: 'origin',
                 include: [{
-                    model: Customer,
-                    required: true,
-                    where: {
-                        userId: targetUser.id
-                    }
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            userId: targetUser.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
                 }]
             }, {
-                model: LanePartner,
-            }]
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            userId: targetUser.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }
+            ]
         });
 
         return {
@@ -78,7 +133,7 @@ module.exports.getLanesByUser = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
 
     }
@@ -86,30 +141,52 @@ module.exports.getLanesByUser = async (event, context) => {
 
 module.exports.getCustomerLaneById = async (event, context) => {
 
-    try {
+    const user = await getCurrentUser(event.headers.Authorization)
 
-        const user = await getCurrentUser(event.headers.Authorization)
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+    
+    try {
 
         const laneId = event.pathParameters.laneId
 
-        const results = await CustomerLane.findOne({
+        const results = await Lane.findOne({
             where: {
                 id: laneId
             },
             include: [{
-                model: CustomerLocation,
-                required: true,
+                model: Location,
+                as: 'origin',
                 include: [{
-                    model: Customer,
-                    required: true,
-                    where: {
-                        userId: user.id
-                    }
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                    }]
+                },
+                {
+                    model: LanePartner
                 }]
             }, {
-                model: LanePartner,
-            }]
-        })
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }
+            ]
+        });
 
         if (results != null) {
             return {
@@ -125,7 +202,7 @@ module.exports.getCustomerLaneById = async (event, context) => {
     catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
     }
 
@@ -310,7 +387,7 @@ module.exports.getCustomerLanesForLane = async (event, context) => {
                         model: Customer,
                         required: true
                     }]
-                }, 
+                },
                 {
                     model: LanePartner,
                 }]

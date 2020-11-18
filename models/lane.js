@@ -7,19 +7,20 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Lane extends Model {
     static associate(models) {
-      Lane.hasMany(models.CustomerLane, {
-        foreignKey: 'laneId'
-      }),
       Lane.hasMany(models.Load, {
         foreignKey: 'laneId'
       })
-      Lane.hasOne(models.Location, {
+      Lane.belongsTo(models.Location, {
         foreignKey: 'originLocationId',
         as: 'origin'
       })
-      Lane.hasOne(models.Location, {
+      Lane.belongsTo(models.Location, {
         foreignKey: 'destinationLocationId',
         as: 'destination'
+      })
+      Lane.belongsToMany(models.User, {
+        through: 'LaneOwner',
+        foreignKey: 'laneId'
       })
     }
   };
