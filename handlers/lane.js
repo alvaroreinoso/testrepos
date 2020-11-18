@@ -18,6 +18,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         const lanes = await Lane.findAll({
             include: [{
                 model: Location,
+                required: true,
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
@@ -35,6 +36,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                 }]
             }, {
                 model: Location,
+                required: true,
                 as: 'destination',
                 include: [{
                     model: CustomerLocation,
@@ -91,6 +93,7 @@ module.exports.getLanesByUser = async (event, context) => {
             include: [{
                 model: Location,
                 as: 'origin',
+                required: true,
                 include: [{
                     model: CustomerLocation,
                     required: true,
@@ -107,6 +110,7 @@ module.exports.getLanesByUser = async (event, context) => {
                 }]
             }, {
                 model: Location,
+                required: true,
                 as: 'destination',
                 include: [{
                     model: CustomerLocation,
