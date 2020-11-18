@@ -15,8 +15,6 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
 
     try {
 
-        const user = await getCurrentUser(event.headers.Authorization)
-
         const lanes = await Lane.findAll({
             include: [{
                 model: Location,
@@ -139,75 +137,6 @@ module.exports.getLanesByUser = async (event, context) => {
     }
 }
 
-module.exports.getCustomerLaneById = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-
-        return {
-            statusCode: 401
-        }
-    }
-    
-    try {
-
-        const laneId = event.pathParameters.laneId
-
-        const results = await Lane.findOne({
-            where: {
-                id: laneId
-            },
-            include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }
-            ]
-        });
-
-        if (results != null) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(results)
-            }
-        } else {
-            return {
-                statusCode: 404
-            }
-        }
-    }
-    catch (err) {
-
-        return {
-            statusCode: 500
-        }
-    }
-
-};
-
 module.exports.getLaneById = async (event, context) => {
 
     const laneId = event.pathParameters.laneId
@@ -228,7 +157,6 @@ module.exports.getLaneById = async (event, context) => {
         })
 
         if (lane == null) {
-
             return {
                 statusCode: 404
             }
@@ -241,89 +169,8 @@ module.exports.getLaneById = async (event, context) => {
     } catch {
 
         return {
-
             statusCode: 500
         }
-    }
-}
-
-module.exports.deleteLane = async (event, context) => {
-
-
-    const laneId = event.pathParameters.laneId
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    try {
-
-        const lane = await CustomerLane.findOne({
-            where: {
-                id: laneId
-            },
-            include: [{
-                model: CustomerLocation,
-                required: true,
-                include: [{
-                    model: Customer,
-                    required: true,
-                    where: {
-                        userId: user.id
-                    }
-                }]
-            }, {
-                model: LanePartner,
-            }]
-        })
-
-        if (lane === null) {
-            return {
-                statusCode: 404
-            }
-        }
-
-        else {
-
-            lane.destroy()
-
-            return {
-                statusCode: 200,
-            }
-
-
-        }
-
-    }
-    catch (err) {
-
-        return {
-            statusCode: 401
-        }
-    }
-
-};
-
-module.exports.addLane = async (event, context) => {
-
-    const req = (JSON.parse(event.body))
-
-    try {
-        const lane = await Lane.create({
-            customerLocationId: req.customerLocationId,
-            lanePartnerLocationId: req.lanePartnerLocationId,
-            customerIsShipper: req.customerIsShipper
-        })
-
-        return {
-            statusCode: 204,
-            body: JSON.stringify(lane)
-        }
-
-    } catch (err) {
-
-        return {
-            statusCode: 500
-        }
-
     }
 }
 
@@ -335,13 +182,12 @@ module.exports.updateLane = async (event, context) => {
 
     try {
 
-        const lane = await CustomerLane.findOne({
+        const lane = await Lane.findOne({
             where: {
                 id: laneId
             }
         })
 
-        lane.laneId = request.laneId
         lane.routeGeometry = request.routeGeometry
 
         await lane.save()
@@ -357,58 +203,4 @@ module.exports.updateLane = async (event, context) => {
         }
 
     }
-}
-
-module.exports.getCustomerLanesForLane = async (event, context) => {
-
-    const laneId = event.pathParameters.id
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-
-        const results = await Lane.findOne({
-            where: {
-                id: laneId
-            },
-            include: [{
-                model: CustomerLane,
-                required: true,
-                include: [{
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner,
-                }]
-            }]
-        })
-
-        if (results == null) {
-            return {
-                statusCode: 404
-            }
-        }
-
-        return {
-            body: JSON.stringify(results),
-            statusCode: 200
-        }
-    } catch {
-
-        return {
-            statusCode: 500
-        }
-    }
-
 }
