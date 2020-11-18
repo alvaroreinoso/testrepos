@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, CustomerLane, Team, LanePartner, User } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation, Team, LanePartner, Location, Lane, User } = require('.././models')
 
 module.exports.getCustomersByCurrentUser = async (event, context) => {
 
@@ -234,25 +234,48 @@ module.exports.getCustomersLanes = async (event, context) => {
         }]
     })
 
-    const allLanes = await CustomerLane.findAll({
+    const lanes = await Lane.findAll({
         include: [{
-            model: CustomerLocation,
+            model: Location,
+            as: 'origin',
             required: true,
             include: [{
-                model: Customer,
+                model: CustomerLocation,
                 required: true,
-                where: {
-                    id: customer.id
-                }
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        id: customerId
+                    }
+                }]
+            },
+            {
+                model: LanePartner
             }]
         }, {
-            model: LanePartner,
-            required: true
-        }]
+            model: Location,
+            required: true,
+            as: 'destination',
+            include: [{
+                model: CustomerLocation,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    where: {
+                        id: customerId
+                    }
+                }]
+            },
+            {
+                model: LanePartner
+            }]
+        }
+        ]
     });
 
     return {
-        body: JSON.stringify(allLanes),
+        body: JSON.stringify(lanes),
         statusCode: 200
     }
 }
