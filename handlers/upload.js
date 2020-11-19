@@ -1,5 +1,5 @@
 const { Team, CustomerContact, Endpoint, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, newCustomer, newLane, createLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress, getOriginAndDestination } = require('.././helpers/csvDump/ascend')
+const { newLoad, newCustomer, newLane, firstPickIsCustomer, createLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress, getOriginAndDestination } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 
@@ -25,6 +25,8 @@ module.exports.ascendDump = async (event, context) => {
 
             if (await matchedInternalLane(json)) {
 
+                console.log('match lane')
+                
                 const firstAddress = await getAddress(json)
                 const firstLngLat = await getLngLat(json['First Pick Address'])
 
@@ -131,8 +133,9 @@ module.exports.ascendDump = async (event, context) => {
 
             }
 
-            else if (json['First Pick Name'] == json.Customer) {
+            else if (await firstPickIsCustomer(json)) {
 
+                console.log('First Pick Load')
                 
                 const [customer, wasCreated] = await Customer.findOrCreate({
                     where: {
