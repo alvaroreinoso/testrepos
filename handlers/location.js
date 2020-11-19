@@ -75,6 +75,10 @@ module.exports.getLanesForLocation = async (event, context) => {
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
                 },
                 {
                     model: LanePartner
@@ -84,6 +88,10 @@ module.exports.getLanesForLocation = async (event, context) => {
                 as: 'destination',
                 include: [{
                     model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
                 },
                 {
                     model: LanePartner
