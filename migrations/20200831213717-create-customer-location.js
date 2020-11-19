@@ -20,7 +20,7 @@ module.exports = {
       },
       locationId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
+        allowNull: true
       },
       createdAt: {
         allowNull: false,

@@ -65,24 +65,6 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-    await queryInterface.changeColumn('CustomerLocations', 'locationId', {
-      type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'locationId'
-        }
-    })
-    await queryInterface.changeColumn('LanePartners', 'locationId', {
-      type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'locationId'
-        }
-    })
     await queryInterface.changeColumn('Lanes', 'originLocationId', {
       type: Sequelize.INTEGER,
         allowNull: true,
@@ -99,6 +81,24 @@ module.exports = {
           model: 'Locations',
           key: 'id',
           as: 'destinationLocationId'
+        }
+    })
+    await queryInterface.changeColumn('LanePartners', 'locationId', {
+      type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Locations',
+          key: 'id',
+          as: 'locationId'
+        }
+    })
+    await queryInterface.changeColumn('CustomerLocations', 'locationId', {
+      type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Locations',
+          key: 'id',
+          as: 'locationId'
         }
     })
   },

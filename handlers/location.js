@@ -1,6 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, Location, User, Team } = require('.././models');
+const { Op } = require("sequelize");
 
 module.exports.getLocationById = async (event, context) => {
 
@@ -20,31 +21,67 @@ module.exports.getLocationById = async (event, context) => {
             where: {
                 id: locationId
             },
-            include: [{
-                model: CustomerLocation,
-                include: [{
-                    model: Customer
+            include: [
+                {
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner,
                 }]
-                }, {
-                model: LanePartner,
-            }]
         })
 
-        if (results != null) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(results)
-            }
-        } else {
-            return {
-                statusCode: 404
-            }
+        return {
+            body: JSON.stringify(results),
+            statusCode: 200
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
     }
 
 };
+
+module.exports.getLanesForLocation = async (event, context) => {
+
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == undefined) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const locationId = event.pathParameters.id
+
+        const lanes = await Lane.findAll({
+            where: {
+                [Op.or]: [
+                    { originLocationId: locationId },
+                    { destinationLocationId: locationId }
+                ]
+            }
+        })
+
+        return {
+            body: JSON.stringify(lanes),
+            statusCode: 200
+        }
+
+    } catch {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+} 
