@@ -69,7 +69,8 @@ module.exports.getLanesForLocation = async (event, context) => {
                     { originLocationId: locationId },
                     { destinationLocationId: locationId }
                 ]
-            }
+            },
+            include: ['origin', 'destination']
         })
 
         return {
