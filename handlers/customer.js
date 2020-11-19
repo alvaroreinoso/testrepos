@@ -201,7 +201,7 @@ module.exports.getTopCustomers = async (event, context) => {
 
 }
 
-module.exports.getCustomersLanes = async (event, context) => {
+module.exports.getLanesForCustomer = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
     if (user.id == null) {
