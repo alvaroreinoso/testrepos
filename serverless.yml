@@ -257,9 +257,9 @@ functions:
             method: put
 
   # Location
-  getCustomerLocation:
+  getLocationById:
     handler:
-      ./handlers/location.getCustomerLocation
+      ./handlers/location.getLocationById
     events:
         - http:
             path: api/location/{id}

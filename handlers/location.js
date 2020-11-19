@@ -2,7 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, Location, User, Team } = require('.././models');
 
-module.exports.getCustomerLocation = async (event, context) => {
+module.exports.getLocationById = async (event, context) => {
 
     try {
 
@@ -14,33 +14,21 @@ module.exports.getCustomerLocation = async (event, context) => {
             }
         }
 
-        const customerLocationId = event.pathParameters.id
+        const locationId = event.pathParameters.id
 
-        const results = await CustomerLocation.findOne({
+        const results = await Location.findOne({
             where: {
-                id: customerLocationId
+                id: locationId
             },
             include: [{
-                model: Location,
+                model: CustomerLocation,
                 include: [{
-                    model: LanePartner,
-                    required: true
+                    model: Customer
                 }]
-            }, {
-                model: Customer,
-                required: true,
-                include: [{
-                    model: Team,
-                    required: true,
-                    attributes: ['brokerageId'],
-                    where: {
-                        brokerageId: user.brokerageId
-                    }
-                }]
+                }, {
+                model: LanePartner,
             }]
         })
-
-        console.log(results.toJSON())
 
         if (results != null) {
             return {
@@ -54,9 +42,6 @@ module.exports.getCustomerLocation = async (event, context) => {
         }
     }
     catch (err) {
-
-        console.log(err)
-
         return {
             statusCode: 500
         }
