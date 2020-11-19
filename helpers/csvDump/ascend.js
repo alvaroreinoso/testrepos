@@ -32,7 +32,19 @@ module.exports.internalLane = async (json) => {
 
     if (likeness > .7) {
 
-        console.log('true')
+        return true
+    }
+}
+
+module.exports.firstPickIsCustomer = async (json) => {
+
+    const customer = json.Customer
+    const firstPickName = json['First Pick Name']
+
+    const likeness = stringSimilarity.compareTwoStrings(firstPickName, customer)
+
+    if (likeness > .7) {
+
         return true
     }
 }
