@@ -70,7 +70,25 @@ module.exports.getLanesForLocation = async (event, context) => {
                     { destinationLocationId: locationId }
                 ]
             },
-            include: ['origin', 'destination']
+            include: [{
+                model: Location,
+                as: 'origin',
+                include: [{
+                    model: CustomerLocation,
+                },
+                {
+                    model: LanePartner
+                }],
+            }, {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
         })
 
         return {
@@ -78,8 +96,8 @@ module.exports.getLanesForLocation = async (event, context) => {
             statusCode: 200
         }
 
-    } catch {
-
+    } catch(err) {
+        console.log(err)
         return {
             statusCode: 500
         }

@@ -53,83 +53,66 @@ module.exports.ascendDump = async (event, context) => {
                     })
                 }
 
-                const [firstLocation, firstLocationWasCreated] = await CustomerLocation.findOrCreate({
-                    where: {
-                        customerId: customer.id,
-                            address: firstAddress,
-                            city: json['First Pick City'],
-                            state: json['First Pick State'],
-                            zipcode: json['First Pick Postal'],
-                            lnglat: firstLngLat,
-                    }
-                })
+                // const [firstLocation, firstLocationWasCreated] = await CustomerLocation.findOrCreate({
+                //     where: {
+                //         customerId: customer.id,
+                //             address: firstAddress,
+                //             city: json['First Pick City'],
+                //             state: json['First Pick State'],
+                //             zipcode: json['First Pick Postal'],
+                //             lnglat: firstLngLat,
+                //     }
+                // })
 
-                if (firstLocationWasCreated == true) {
+                // if (firstLocationWasCreated == true) {
 
-                    await firstLocation.createLedger({
-                        brokerageId: user.brokerageId
-                    })
-                }
+                //     await firstLocation.createLedger({
+                //         brokerageId: user.brokerageId
+                //     })
+                // }
 
-                const [secondLocation, secondLocationWasCreated] = await CustomerLocation.findOrCreate({
-                    where: {
-                        customerId: customer.id,
-                            address: secondAddress,
-                            city: json['Last Drop City'],
-                            state: json['Last Drop State'],
-                            zipcode: json['Last Drop Postal'],
-                            lnglat: secondLngLat,
-                    }
-                })
+                // const [secondLocation, secondLocationWasCreated] = await CustomerLocation.findOrCreate({
+                //     where: {
+                //         customerId: customer.id,
+                //             address: secondAddress,
+                //             city: json['Last Drop City'],
+                //             state: json['Last Drop State'],
+                //             zipcode: json['Last Drop Postal'],
+                //             lnglat: secondLngLat,
+                //     }
+                // })
 
-                if (secondLocationWasCreated == true) {
+                // if (secondLocationWasCreated == true) {
 
-                    await secondLocation.createLedger({
-                        brokerageId: user.brokerageId
-                    })
-                }
+                //     await secondLocation.createLedger({
+                //         brokerageId: user.brokerageId
+                //     })
+                // }
 
-                const [origin, destination] = await getOriginAndDestination(json)
+                // const [origin, destination] = await getOriginAndDestination(json)
 
-                const lane = await Lane.findOrCreate({
-                    where: {
-                        origin: origin,
-                        destination: destination
-                    }
-                })
+                // const lane = await Lane.findOrCreate({
+                //     where: {
+                //         origin: origin,
+                //         destination: destination
+                //     }
+                // })
 
-                const route = await getRoute(firstLngLat, secondLngLat)
+                // const route = await getRoute(firstLngLat, secondLngLat)
 
-                const customerLane = await CustomerLane.findOrCreate({
-                    where: {
-                    routeGeometry: route,
-                    laneId: lane.id
-                    }
-                })
+                // const carrier = await Carrier.findOrCreate({
+                //     name: json['Carrier']
+                // })
 
-                const endpoint = await Endpoint.findOrCreate({
-                    customerLaneId: customerLane.id,
-                    customerLocationId: firstLocation.id
-                })
+                // await Load.create({
+                //     loadId: json['Load ID'],
+                //     customerLaneId: customerLane.id,
+                //     carrierId: carrier.id,
+                //     rate: json['Flat Rate i'],
+                //     dropDate: dropDate
+                // })
 
-                const secondEndpoint = await Endpoint.findOrCreate({
-                    customerLaneId: customerLane.id,
-                    customerLocationId: secondLocation.id
-                })
-
-                const carrier = await Carrier.findOrCreate({
-                    name: json['Carrier']
-                })
-
-                await Load.create({
-                    loadId: json['Load ID'],
-                    customerLaneId: customerLane.id,
-                    carrierId: carrier.id,
-                    rate: json['Flat Rate i'],
-                    dropDate: dropDate
-                })
-
-                console.log(Load.toJSON())
+                // console.log(Load.toJSON())
 
             }
 
