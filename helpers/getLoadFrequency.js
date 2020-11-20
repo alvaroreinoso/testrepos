@@ -1,15 +1,15 @@
 const dateFns = require('date-fns')
-const { CustomerLane } = require('./models')
+// const { Lane } = require('./models')
 
-module.exports.getFrequency = async (customerLaneId) => {
+module.exports.getFrequency = async (lane) => {
 
-    const cLane = await CustomerLane.findOne({
-        where: {
-            id: customerLaneId
-        },
-    })
+    // const cLane = await CustomerLane.findOne({
+    //     where: {
+    //         id: customerLaneId
+    //     },
+    // })
 
-    const loads = await cLane.getLoads()
+    const loads = await lane.getLoads()
 
     const dates = loads.map(load => load.dropDate)
 

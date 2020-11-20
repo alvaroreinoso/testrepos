@@ -2,11 +2,11 @@ const { Team, CustomerContact, Endpoint, Brokerage, User, Location, Ledger, Load
 const { newLoad, newCustomer, newLane, lastDropIsCustomer, firstPickIsCustomer, createLane, matchedInternalLane, getOrCreateSecondLocation, currentCustomer, getLngLat, getRoute, newCarrier, getLane, getDropDate, getAddress, getLpAddress, getOriginAndDestination } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.ascendDump = async (event, context) => {
 
     const jsonArray = await csv().fromString(event.body)
-
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
@@ -23,13 +23,13 @@ module.exports.ascendDump = async (event, context) => {
 
             if (await newLoad(json)) {
 
-                if (await matchedInternalLane(json)) {
+                const firstAddress = await getAddress(json)
+                const firstLngLat = await getLngLat(json['First Pick Address'])
+                const secondAddress = await getLpAddress(json)
+                const secondLngLat = await getLngLat(json['Last Drop Address'])
+                const dropDate = await getDropDate(json)
 
-                    const firstAddress = await getAddress(json)
-                    const firstLngLat = await getLngLat(json['First Pick Address'])
-                    const secondAddress = await getLpAddress(json)
-                    const secondLngLat = await getLngLat(json['Last Drop Address'])
-                    const dropDate = await getDropDate(json)
+                if (await matchedInternalLane(json)) {
 
                     // TODO fix drop date format
 
@@ -99,8 +99,6 @@ module.exports.ascendDump = async (event, context) => {
 
                     const route = await getRoute(firstLngLat, secondLngLat)
 
-                    // TODO calculate frequency
-
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
@@ -123,16 +121,14 @@ module.exports.ascendDump = async (event, context) => {
                         dropDate: dropDate
                     })
 
+                    const frequency = await getFrequency(lane)
+                    lane.frequency = frequency
+                    await lane.save()
+
                     console.log(newLoad.toJSON())
                 }
 
                 else if (await firstPickIsCustomer(json)) {
-
-                    const firstAddress = await getAddress(json)
-                    const firstLngLat = await getLngLat(json['First Pick Address'])
-                    const secondAddress = await getLpAddress(json)
-                    const secondLngLat = await getLngLat(json['Last Drop Address'])
-                    const dropDate = await getDropDate(json)
 
                     console.log('First Pick Load')
 
@@ -200,8 +196,6 @@ module.exports.ascendDump = async (event, context) => {
 
                     const route = await getRoute(firstLngLat, secondLngLat)
 
-                    // TODO calculate frequency
-
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
@@ -224,24 +218,21 @@ module.exports.ascendDump = async (event, context) => {
                         dropDate: dropDate
                     })
 
-                    console.log(newLoad.toJSON())
+                    const frequency = await getFrequency(lane)
+                    lane.frequency = frequency
+                    await lane.save()
 
+                    console.log(newLoad.toJSON())
                 }
 
                 else if (await lastDropIsCustomer(json)) {
 
                     console.log('last drop lane: ', json['Load ID'])
 
-                    const firstAddress = await getAddress(json)
-                    const firstLngLat = await getLngLat(json['First Pick Address'])
-                    const secondAddress = await getLpAddress(json)
-                    const secondLngLat = await getLngLat(json['Last Drop Address'])
-                    const dropDate = await getDropDate(json)
-
                     const [customer, wasCreated] = await Customer.findOrCreate({
                         where: {
-                        name: json.Customer,
-                        teamId: user.teamId,
+                            name: json.Customer,
+                            teamId: user.teamId,
                         },
                     })
 
@@ -302,8 +293,6 @@ module.exports.ascendDump = async (event, context) => {
 
                     const route = await getRoute(firstLngLat, secondLngLat)
 
-                    // TODO calculate frequency
-
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
@@ -326,10 +315,12 @@ module.exports.ascendDump = async (event, context) => {
                         dropDate: dropDate
                     })
 
+                    const frequency = await getFrequency(lane)
+                    lane.frequency = frequency
+                    await lane.save()
+
                     console.log(newLoad.toJSON())
                 }
-
-                // else unmatched
 
                 else { //customer matching is not possible; return to user to assign
                     console.log("unmatched load", json['Load ID'])
@@ -339,15 +330,15 @@ module.exports.ascendDump = async (event, context) => {
         }
 
         return {
-
             statusCode: 200,
             body: JSON.stringify(unmatchedLanes)
-
         }
 
     } catch (err) {
-
         console.log(err)
+        return {
+            statusCode: 500
+        }
     }
 }
 
