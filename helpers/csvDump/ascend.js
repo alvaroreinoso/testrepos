@@ -49,6 +49,19 @@ module.exports.firstPickIsCustomer = async (json) => {
     }
 }
 
+module.exports.lastDropIsCustomer = async (json) => {
+
+    const customer = json.Customer
+    const lastDropName = json['Last Drop Name']
+
+    const likeness = stringSimilarity.compareTwoStrings(lastDropName, customer)
+
+    if (likeness > .7) {
+
+        return true
+    }
+}
+
 module.exports.matchedInternalLane = async (json) => {
 
     const customer = json.Customer
