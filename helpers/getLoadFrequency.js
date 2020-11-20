@@ -1,22 +1,15 @@
 const dateFns = require('date-fns')
-// const { Lane } = require('./models')
 
 module.exports.getFrequency = async (lane) => {
-
-    // const cLane = await CustomerLane.findOne({
-    //     where: {
-    //         id: customerLaneId
-    //     },
-    // })
 
     const loads = await lane.getLoads()
 
     const dates = loads.map(load => load.dropDate)
 
-    const firstDate = dateFns.parseISO(dates[0])
-    const lastDate = dateFns.parseISO(dates[dates.length - 1])
+    const firstDate = dates[0]
+    const lastDate = dates[dates.length - 1]
 
-    const daysBetween = dateFns.differenceInDays(firstDate, lastDate)
+    const daysBetween = dateFns.differenceInDays(lastDate, firstDate)
 
     const count = dates.length
 
@@ -36,5 +29,4 @@ module.exports.getFrequency = async (lane) => {
 
         return roundedFrequency
     }
-
 }

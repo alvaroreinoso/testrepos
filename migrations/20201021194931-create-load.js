@@ -25,7 +25,7 @@ module.exports = {
         allowNull: true
       },
       dropDate: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.DATE,
         allowNull: true
       },
       carrierId: {

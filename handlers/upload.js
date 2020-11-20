@@ -1,4 +1,4 @@
-const { Team, CustomerContact, Endpoint, Brokerage, User, Location, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
+const { Team, CustomerContact, Brokerage, User, Location, Ledger, Load, Customer, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
 const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
@@ -30,8 +30,6 @@ module.exports.ascendDump = async (event, context) => {
                 const dropDate = await getDropDate(json)
 
                 if (await matchedInternalLane(json)) {
-
-                    // TODO fix drop date format
 
                     console.log('matched internal: ', json['Load ID'])
 

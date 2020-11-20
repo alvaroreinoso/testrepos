@@ -66,13 +66,12 @@ module.exports.lastDropIsCustomer = async (json) => {
 module.exports.matchedInternalLane = async (json) => {
 
     const customer = json.Customer
-
+    
     async function customerIsFirstPick(json) {
 
         if (customer === json['First Pick Name']) {
 
             return true
-
         }
     }
 
@@ -81,14 +80,10 @@ module.exports.matchedInternalLane = async (json) => {
         if (customer === json['Last Drop Name']) {
 
             return true
-
         }
-
     }
 
     async function internalLane(json) {
-
-
         const firstPick = json['First Pick Name']
         const lastDrop = json['Last Drop Name']
 
@@ -103,7 +98,6 @@ module.exports.matchedInternalLane = async (json) => {
 
     if (await customerIsFirstPick(json) || await customerIsLastDrop(json)) {
 
-
         if (await internalLane(json)) {
 
             return true
@@ -113,50 +107,9 @@ module.exports.matchedInternalLane = async (json) => {
             return false
         }
     }
-
-
-
 }
 
-module.exports.newCustomer = async (json) => {
 
-    const existingCustomer = await Customer.findOne({
-        where: {
-            name: json.Customer
-        }
-    })
-
-    if (existingCustomer == null) {
-
-        return true
-
-    } else {
-
-        return false
-    }
-
-}
-
-module.exports.newLane = async (json) => {
-
-    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
-    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
-
-    const existingLane = await Lane.findOne({
-        where: {
-            origin: jsonOrigin,
-            destination: jsonDestination
-        }
-    })
-
-    if (existingLane == null) {
-        return true
-    } else {
-
-        return false
-    }
-
-}
 
 
 module.exports.getAddress = async (json) => {
@@ -177,33 +130,11 @@ module.exports.getDropDate = async (json) => {
 
     const dateString = json['Last Drop Date']
 
-    console.log(dateFns.isDate(dateString))
+    const dropDate = dateString.split(' ')[0]
 
-    // // console.log(dateString)
+    const result = dateFns.parse(dropDate, 'MM/dd/yyyy', new Date())
 
-    // const dropDate = dateString.split(' ')[0]
-
-    // const date = dateFns.parseISO(dateString)
-
-    // console.log(date)
-
-    return dateString
-
-}
-
-module.exports.getLane = async (json) => {
-
-    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
-    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
-
-    const existingLane = await Lane.findOne({
-        where: {
-            origin: jsonOrigin,
-            destination: jsonDestination
-        }
-    })
-
-    return existingLane
+    return result
 }
 
 module.exports.getOriginAndDestination = async (json) => {
@@ -212,36 +143,6 @@ module.exports.getOriginAndDestination = async (json) => {
     const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
 
     return [jsonOrigin, jsonDestination]
-}
-
-module.exports.newCarrier = async (json) => {
-
-    const existingCarrier = await Carrier.findOne({
-        where: {
-            name: json['Carrier']
-        }
-    })
-
-    if (existingCarrier == null) {
-        return true
-    } else {
-        return false
-    }
-
-}
-
-module.exports.createLane = async (json) => {
-
-    const jsonOrigin = `${json['First Pick City']} ${json['First Pick State']}`
-    const jsonDestination = `${json['Last Drop City']} ${json['Last Drop State']}`
-
-    const newLane = await Lane.create({
-        origin: jsonOrigin,
-        destination: jsonDestination
-    })
-
-    return newLane
-
 }
 
 module.exports.currentCustomer = async (json) => {
@@ -275,96 +176,4 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
     const route = result.routes[0].geometry
 
     return route
-}
-
-module.exports.createInternalLane = async (json, customer) => {
-
-    const cLlngLat = await getLngLat(json['First Pick Address'])
-    const address = await getAddress(json)
-
-    const firstLocation = await CustomerLocation.create({
-        customerId: customer.id,
-        address: address,
-        city: json['First Pick City'],
-        state: json['First Pick State'],
-        zipcode: json['First Pick Postal'],
-        lnglat: cLlngLat,
-        Ledger: {
-            brokerageId: user.brokerageId
-        }
-    }, {
-        include: Ledger
-    })
-
-    const lPlngLat = await getLngLat(json['Last Drop Address'])
-
-    const secondLocation = await CustomerLocation.create({
-        customerId: customer.Id,
-        address: json['Last Drop Address'],
-        city: json['Last Drop City'],
-        state: json['Last Drop State'],
-        zipcode: json['Last Drop Postal'],
-        lnglat: lPlngLat,
-        Ledger: {
-            brokerageId: user.brokerageId
-        }
-    }, {
-        include: Ledger
-    })
-    const route = await getRoute(cLlngLat, lPlngLat)
-
-    const newLane = await createLane(json)
-
-    const newCustLane = await CustomerLane.create({
-        customerLocationId: firstLocation.id,
-        secondCustomerLocationId: secondLocation.id,
-        routeGeometry: route,
-        laneId: newLane.id
-    })
-
-    if (await newCarrier(json)) { // NEW CARRIER
-
-        const carrier = await Carrier.create({
-            name: json['Carrier']
-        })
-
-        const dropDate = await getDropDate(json)
-
-        // console.log(dropDate)
-
-        const newLoad = await Load.create({
-            loadId: json['Load ID'],
-            customerLaneId: newCustLane.id,
-            carrierId: carrier.id,
-            rate: json['Flat Rate i'],
-            dropDate: dropDate
-        })
-
-        // console.log(newLoad.toJSON())
-
-    } else { // EXISTING CARRIER
-
-        const carrier = await Carrier.findOne({
-            where: {
-                name: json['Carrier']
-            }
-        })
-
-        // console.log('Existing Carrier: ', carrier.toJSON())
-
-        const dropDate = await getDropDate(json)
-
-        // console.log(dropDate)
-
-        const newLoad = await Load.create({
-            loadId: json['Load ID'],
-            customerLaneId: newCustLane.id,
-            carrierId: carrier.id,
-            rate: json['Flat Rate i'],
-            dropDate: dropDate
-        })
-
-        // console.log(newLoad.toJSON())
-
-    }
 }
