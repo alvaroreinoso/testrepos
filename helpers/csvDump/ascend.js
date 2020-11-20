@@ -2,6 +2,7 @@ const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLoc
 require('dotenv').config()
 const fetch = require('node-fetch');
 const stringSimilarity = require('string-similarity');
+const dateFns = require('date-fns')
 
 module.exports.newLoad = async (load) => {
 
@@ -157,40 +158,6 @@ module.exports.newLane = async (json) => {
 
 }
 
-module.exports.getOrCreateSecondLocation = async (json, customer, address, user, lPlngLat) => {
-
-
-    const existingLocation = await CustomerLocation.findOne({
-        where: {
-            customerId: customer.id,
-            address: address
-        }
-    })
-
-    if (existingLocation == null) {
-
-        const newLocation = CustomerLocation.create({
-            customerId: customer.id,
-            address: json['Last Drop Address'],
-            city: json['Last Drop City'],
-            state: json['Last Drop State'],
-            zipcode: json['Last Drop Postal'],
-            lnglat: lPlngLat,
-            Ledger: {
-                brokerageId: user.brokerageId
-            }
-        }, {
-            include: Ledger
-        })
-
-        return newLocation
-    }
-
-    else {
-
-        return existingLocation
-    }
-}
 
 module.exports.getAddress = async (json) => {
 
@@ -210,11 +177,17 @@ module.exports.getDropDate = async (json) => {
 
     const dateString = json['Last Drop Date']
 
-    console.log(dateString)
+    console.log(dateFns.isDate(dateString))
 
-    const dropDate = dateString.split(' ')[0]
+    // // console.log(dateString)
 
-    return dropDate
+    // const dropDate = dateString.split(' ')[0]
+
+    // const date = dateFns.parseISO(dateString)
+
+    // console.log(date)
+
+    return dateString
 
 }
 
