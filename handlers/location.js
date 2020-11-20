@@ -1,8 +1,9 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, Location, User, Team } = require('.././models');
+const { Op } = require("sequelize");
 
-module.exports.getCustomerLocation = async (event, context) => {
+module.exports.getLocationById = async (event, context) => {
 
     try {
 
@@ -14,52 +15,100 @@ module.exports.getCustomerLocation = async (event, context) => {
             }
         }
 
-        const customerLocationId = event.pathParameters.id
+        const locationId = event.pathParameters.id
 
-        const results = await CustomerLocation.findOne({
+        const results = await Location.findOne({
             where: {
-                id: customerLocationId
+                id: locationId
             },
-            include: [{
-                model: Location,
-                include: [{
+            include: [
+                {
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
                     model: LanePartner,
-                    required: true
                 }]
-            }, {
-                model: Customer,
-                required: true,
-                include: [{
-                    model: Team,
-                    required: true,
-                    attributes: ['brokerageId'],
-                    where: {
-                        brokerageId: user.brokerageId
-                    }
-                }]
-            }]
         })
 
-        console.log(results.toJSON())
-
-        if (results != null) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(results)
-            }
-        } else {
-            return {
-                statusCode: 404
-            }
+        return {
+            body: JSON.stringify(results),
+            statusCode: 200
         }
     }
     catch (err) {
-
         console.log(err)
-
         return {
             statusCode: 500
         }
     }
 
 };
+
+module.exports.getLanesForLocation = async (event, context) => {
+
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == undefined) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const locationId = event.pathParameters.id
+
+        const lanes = await Lane.findAll({
+            where: {
+                [Op.or]: [
+                    { originLocationId: locationId },
+                    { destinationLocationId: locationId }
+                ]
+            },
+            include: [{
+                model: Location,
+                as: 'origin',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }, {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
+        })
+
+        return {
+            body: JSON.stringify(lanes),
+            statusCode: 200
+        }
+
+    } catch(err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+
+} 
