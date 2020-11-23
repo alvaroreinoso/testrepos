@@ -8,9 +8,6 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       
-      Customer.belongsTo(models.User, {
-        foreignKey: 'userId',
-      }),
       Customer.belongsTo(models.Team, {
         foreignKey: 'teamId'
       })
@@ -20,12 +17,15 @@ module.exports = (sequelize, DataTypes) => {
       Customer.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId'
       })
+      Customer.belongsToMany(models.User, {
+        through: 'TaggedCustomer',
+        foreignKey: 'customerId'
+      })
     }
   };
   Customer.init({
     name: DataTypes.STRING,
     industry: DataTypes.STRING,
-    userId: DataTypes.INTEGER,
     teamId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
     bio: DataTypes.TEXT

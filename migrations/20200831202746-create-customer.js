@@ -19,14 +19,6 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
-      userId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'id',
-          as: 'userId'
-        }
-      },
       teamId: {
         type: Sequelize.INTEGER,
         references: {

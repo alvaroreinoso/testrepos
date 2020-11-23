@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
       })
+      Location.belongsToMany(models.User, {
+        through: 'TaggedLocation',
+        foreignKey: 'locationId'
+      })
     }
   };
   Location.init({

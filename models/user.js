@@ -12,14 +12,19 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       }),
-      User.hasMany(models.Customer, {
-        foreignKey: 'userId'
-      }),
       User.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId'
       }),
       User.belongsToMany(models.Lane, {
         through: 'TaggedLane',
+        foreignKey: 'userId'
+      })
+      User.belongsToMany(models.Location, {
+        through: 'TaggedLocation',
+        foreignKey: 'userId'
+      })
+      User.belongsToMany(models.Customer, {
+        through: 'TaggedCustomer',
         foreignKey: 'userId'
       })
     }
