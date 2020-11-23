@@ -117,40 +117,6 @@ module.exports.getLanesByUser = async (event, context) => {
             ]
         })
 
-        // const lanes = await Lane.findAll({
-        //     include: [{
-        //                 model: Location,
-        //                 required: true,
-        //                 as: 'origin',
-        //                 include: [{
-        //                     model: CustomerLocation,
-        //                     required: true,
-        //                     include: [{
-        //                         model: Customer,
-        //                         required: true,
-        //                     }]
-        //                 },
-        //                 {
-        //                     model: LanePartner
-        //                 }]
-        //             }, {
-        //                 model: Location,
-        //                 required: true,
-        //                 as: 'destination',
-        //                 include: [{
-        //                     model: CustomerLocation,
-        //                     include: [{
-        //                         model: Customer,
-        //                         required: true,
-        //                     }]
-        //                 },
-        //                 {
-        //                     model: LanePartner
-        //                 }]
-        //             }
-        //             ]
-        // })
-
         return {
             body: JSON.stringify(lanes),
             statusCode: 200
