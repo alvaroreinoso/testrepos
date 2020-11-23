@@ -177,10 +177,7 @@ module.exports.getTopCustomers = async (event, context) => {
             }
         }
 
-        const customers = await Customer.findAll({
-            where: {
-                userId: targetUser.id
-            },
+        const customers = await targetUser.getCustomers({
             include: [{
                 model: CustomerLocation,
                 required: true,
@@ -193,7 +190,6 @@ module.exports.getTopCustomers = async (event, context) => {
         }
 
     } catch (err) {
-        console.log(err)
         return {
             statusCode: 500
         }
