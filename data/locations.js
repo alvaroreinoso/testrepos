@@ -10,7 +10,7 @@ const locations = [
         "close": "",
         "isHQ": true,
         "isShippingReceiving": true,
-        "lnglat": "-117.670320,33.96700",
+        "lnglat": "-117.67038,33.96662",
         ledgerId: 29,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -26,7 +26,7 @@ const locations = [
         "close": "",
         "isHQ": false,
         "isShippingReceiving": true,
-        "lnglat": "-96.414530,32.915380",
+        "lnglat": "-96.44419,32.81259",
         ledgerId: 30,
         createdAt: new Date(),
         updatedAt: new Date()
