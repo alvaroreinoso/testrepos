@@ -1,12 +1,21 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('LaneOwners', {
+    await queryInterface.createTable('TaggedCustomers', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      customerId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Customers',
+          key: 'id',
+          as: 'customerId'
+        }
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -16,19 +25,10 @@ module.exports = {
           key: 'id',
           as: 'userId'
         }
-      },
-      laneId: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Lanes',
-          key: 'id',
-          as: 'laneId'
-        }
       }
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('LaneOwners');
+    await queryInterface.dropTable('TaggedCustomers');
   }
 };

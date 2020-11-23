@@ -1,9 +1,0 @@
-_id,_rev,name,block_address,branches.0,phoneExt,phone,scratch,public_notes,mcNum,usdotNum,payment_terms,credit_limit,contactName,contactPhone,contactExt,contactFax,contactEmail,contactFlagLists,tags.0,contact_list.0.name,contact_list.0.phone,contact_list.0.phone_ext,contact_list.0.email,contact_list.0.fax,contact_list.0.flag_lists,locationType,locationCode,type,owner,created,id
-5466c21a3c55415a919d4cb9c4626f69,1-673022be9222e4a6a3e7911171c43659,Seymour House,"1030 Seymour Avenue
-Nashville, TN 37206",_main,,9014128906,lol omg idk rofl,the dudes who live here are chill as pho,,,120,250000,Houston Brown,6151234567,,,hbrown@seymourhouse.com,TRUE,customers,Houston Brown,6151234567,,hbrown@seymourhouse.com,,TRUE,[],[],location,afaabdc7277c44c2b7955d9a9fb398cb,1602011795474,5466c21a3c55415a919d4cb9c4626f69
-8e73a5ad5da647e5920d553b0dac8c28,1-6accd5b7e84a01ccc41dbb036e79a2da,Vans Off The Wall Skatepark,"7471 Center Ave
-Huntington Beach, CA 92647
-USA",_main,,+1 714-379-6666,Shred the Gnar dude,suh dude,,,30,250000,Skater Boi,+1 714-379-6666,,,skaterboi@vans.com,TRUE,customers,Skater Boi,+1 714-379-6666,,skaterboi@vans.com,,TRUE,[],[],location,afaabdc7277c44c2b7955d9a9fb398cb,1601678254536,8e73a5ad5da647e5920d553b0dac8c28
-9d24607372ce4af8b6ff2da10d6dd078,1-c07ab886961d6e0b8cbc535f7d9972b4,"Lollicup USA, Inc.","6185 Kimball Ave
-Chino, CA 91708
-USA",_main,,+1 800-857-1988,"Lots of revenue, little margin",,,,60,1000000,Miguel Vargas,+1 800-857-1988,,,miguel.vargas@lollicupusa.com,TRUE,customers,Miguel Vargas,+1 800-857-1988,,miguel.vargas@lollicupusa.com,,TRUE,[],[],location,afaabdc7277c44c2b7955d9a9fb398cb,1601677338457,9d24607372ce4af8b6ff2da10d6dd078

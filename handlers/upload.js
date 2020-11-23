@@ -4,7 +4,7 @@ const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
-module.exports.ascendDump = async (event, context) => {
+module.exports.ascendLoadsUpload = async (event, context) => {
 
     const jsonArray = await csv().fromString(event.body)
     const user = await getCurrentUser(event.headers.Authorization)
@@ -33,14 +33,14 @@ module.exports.ascendDump = async (event, context) => {
 
                     console.log('matched internal: ', json['Load ID'])
 
-                    const [customer, wasCreated] = await Customer.findOrCreate({
+                    const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
                             teamId: user.teamId,
                         },
                     })
 
-                    if (wasCreated == true) {
+                    if (customerWasCreated) {
 
                         await customer.createLedger({
                             brokerageId: user.brokerageId
@@ -57,7 +57,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (firstLocationWasCreated == true) {
+                    if (firstLocationWasCreated) {
 
                         await firstLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -81,7 +81,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (secondLocationWasCreated == true) {
+                    if (secondLocationWasCreated) {
 
                         await secondLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -130,14 +130,14 @@ module.exports.ascendDump = async (event, context) => {
 
                     console.log('First Pick Load')
 
-                    const [customer, wasCreated] = await Customer.findOrCreate({
+                    const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
                             teamId: user.teamId,
                         },
                     })
 
-                    if (wasCreated == true) {
+                    if (customerWasCreated) {
 
                         await customer.createLedger({
                             brokerageId: user.brokerageId
@@ -154,7 +154,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (firstLocationWasCreated == true) {
+                    if (firstLocationWasCreated) {
 
                         await firstLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -178,7 +178,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (secondLocationWasCreated == true) {
+                    if (secondLocationWasCreated) {
 
                         await secondLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -227,14 +227,14 @@ module.exports.ascendDump = async (event, context) => {
 
                     console.log('last drop lane: ', json['Load ID'])
 
-                    const [customer, wasCreated] = await Customer.findOrCreate({
+                    const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
                             teamId: user.teamId,
                         },
                     })
 
-                    if (wasCreated == true) {
+                    if (customerWasCreated) {
 
                         await customer.createLedger({
                             brokerageId: user.brokerageId
@@ -251,7 +251,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (firstLocationWasCreated == true) {
+                    if (firstLocationWasCreated) {
 
                         await firstLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -275,7 +275,7 @@ module.exports.ascendDump = async (event, context) => {
                         }
                     })
 
-                    if (secondLocationWasCreated == true) {
+                    if (secondLocationWasCreated) {
 
                         await secondLocation.createLedger({
                             brokerageId: user.brokerageId
@@ -320,7 +320,7 @@ module.exports.ascendDump = async (event, context) => {
                     console.log(newLoad.toJSON())
                 }
 
-                else { //customer matching is not possible; return to user to assign
+                else {
                     console.log("unmatched load", json['Load ID'])
                     unmatchedLanes.push(json)
                 }
@@ -343,129 +343,90 @@ module.exports.ascendDump = async (event, context) => {
 
 
 
-// module.exports.customerUpload = async (event, context) => {
+module.exports.ascendCustomerUpload = async (event, context) => {
 
-//     const customerCsv = await csv().fromFile('./customer.csv')
+    const user = await getCurrentUser(event.headers.Authorization)
 
-//     for (const row of customerCsv) {
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
 
-//         const user = await getCurrentUser(event.headers.Authorization)
+    try {
+        const customerCsv = await csv().fromString(event.body)
 
-//         const existingCustomer = await Customer.findOne({
-//             where: {
-//                 name: row['name']
-//             }
-//         })
+        for (const row of customerCsv) {
 
-//         if (existingCustomer == null) {
+            const [customer, customerWasCreated] = await Customer.findOrCreate({
+                where: {
+                    name: row['name'],
+                    teamId: user.teamId,
+                },
+            })
 
-//             const customer = await Customer.create({
-//                 name: row.name,
-//                 teamId: user.teamId,
-//                 Ledger: {
-//                     brokerageId: user.brokerageId
-//                 }
-//             }, {
-//                 include: Ledger
-//             })
+            if (customerWasCreated) {
+                await customer.createLedger({
+                    brokerageId: user.brokerageId
+                })
+            }
 
-//             // const address = row['block_address']
-//             const streetAddress = address.split('\n')[0]
-//             const cityStateZip = address.split('\n')[1]
-//             const city = cityStateZip.split(',')[0]
-//             const state = cityStateZip.split(',')[1].split(' ')[0]
-//             const zip = cityStateZip.split(',')[1].split(' ')[2]
-//             const firstName = row['contactName'].split(' ')[0]
-//             const lastName = row['contactName'].split(' ')[1]
-//             const lngLat = await getLngLat(row['block_address'])
+            const address = row['block_address']
+            const streetAddress = address.split('\n')[0]
+            const cityStateZip = address.split('\n')[1]
+            const city = cityStateZip.split(',')[0]
+            const state = cityStateZip.split(',')[1].split(' ')[1]
+            const zip = cityStateZip.split(',')[1].split(' ')[2]
+            const firstName = row['contactName'].split(' ')[0]
+            const lastName = row['contactName'].split(' ')[1]
+            const lngLat = await getLngLat(row['block_address'])
 
-//             const newLocation = await CustomerLocation.create({
-//                 customerId: customer.id,
-//                 address: streetAddress,
-//                 city: city,
-//                 state: state,
-//                 zipcode: zip,
-//                 lnglat: lngLat,
-//                 isHQ: true,
-//                 Ledger: {
-//                     brokerageId: user.brokerageId
-//                 },
-//                 CustomerContact: {
-//                     firstName: firstName,
-//                     lastName: lastName,
-//                     phone: row['contactPhone'],
-//                     email: row['contactEmail'],
-//                     title: 'HQ contact',
-//                     contactLevel: 1
-//                 }
-//             }, {
-//                 include: [Ledger, CustomerContact]
-//             })
+            const [location, locationWasCreated] = await Location.findOrCreate({
+                where: {
+                    address: streetAddress,
+                    city: city,
+                    state: state,
+                    zipcode: zip,
+                    lnglat: lngLat,
+                }
+            })
 
-//             console.log('New HQ from new customer: ', newLocation.toJSON())
+            if (locationWasCreated) {
+                await location.createLedger({
+                    brokerageId: user.brokerageId
+                })
+            }
 
-//         } else {
+            const [customerContact, contactWasCreated] = await CustomerContact.findOrCreate({
+                where: {
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: row['contactPhone'],
+                    email: row['contactEmail'],
+                    title: 'HQ contact',
+                    contactLevel: 1
+                }
+            })
 
-//             // const address = row['block_address']
-//             const streetAddress = address.split('\n')[0]
+            location.contactId = customerContact.id
+            location.isHQ = true
+            await location.save()
 
-//             const existingLocation = await CustomerLocation.findOne({
-//                 where: {
-//                     address: streetAddress
-//                 }
-//             })
+            const [customerLocation, customerLocationWasCreated] = await CustomerLocation.findOrCreate({
+                where: {
+                    locationId: location.id,
+                    customerId: customer.id
+                }
+            })
+        }
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
 
-//             console.log('An existing customer hq from the customer csv: ', existingLocation.toJSON())
-
-//             if (existingLocation == null) {
-
-//                 // const address = row['block_address']
-//                 const streetAddress = address.split('\n')[0]
-//                 const cityStateZip = address.split('\n')[1]
-//                 const city = cityStateZip.split(',')[0]
-//                 const state = cityStateZip.split(',')[1].split(' ')[0]
-//                 const zip = cityStateZip.split(',')[1].split(' ')[2]
-//                 const firstName = row['contactName'].split(' ')[0]
-//                 const lastName = row['contactName'].split(' ')[1]
-//                 const lngLat = await getLngLat(row['block_address'])
-
-//                 const newLocation = await CustomerLocation.create({
-//                     customerId: exisitngCustomer.id,
-//                     address: streetAddress,
-//                     city: city,
-//                     state: state,
-//                     zipcode: zip,
-//                     lnglat: lngLat,
-//                     isHQ: true,
-//                     Ledger: {
-//                         brokerageId: user.brokerageId
-//                     },
-//                     CustomerContact: {
-//                         firstName: firstName,
-//                         lastName: lastName,
-//                         phone: row['contactPhone'],
-//                         email: row['contactEmail'],
-//                         title: 'HQ contact',
-//                         contactLevel: 1
-//                     }
-//                 }, {
-//                     include: [Ledger, CustomerContact]
-//                 })
-
-//                 console.log('New HQ From Existing Customer: ', newLocation.toJSON())
-
-//             } else {
-
-//                 console.log('An existing customer hq from the customer csv: ', existingLocation.toJSON())
-
-//                 existingLocation.isHQ = true
-
-//                 await existingLocation.save()
-
-//                 console.log('Saved as HQ now: ', existingLocation.toJSON())
-
-//             }
-//         }
-//     }
-
-// }
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}

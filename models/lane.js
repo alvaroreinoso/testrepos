@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'destination'
       })
       Lane.belongsToMany(models.User, {
-        through: 'LaneOwner',
+        through: 'TaggedLane',
         foreignKey: 'laneId'
       })
     }
