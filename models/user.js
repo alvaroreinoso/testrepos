@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'ledgerId'
       }),
       User.belongsToMany(models.Lane, {
-        through: 'LaneOwner',
+        through: 'TaggedLane',
         foreignKey: 'userId'
       })
     }

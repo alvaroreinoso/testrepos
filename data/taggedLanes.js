@@ -1,4 +1,4 @@
-const laneOwners = [
+const taggedLanes = [
     {
         userId: 1,
         laneId: 1
@@ -21,4 +21,4 @@ const laneOwners = [
     },
 ]
 
-module.exports = laneOwners
+module.exports = taggedLanes
