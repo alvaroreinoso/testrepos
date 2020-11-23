@@ -21,7 +21,6 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
-                    required: true,
                     include: [{
                         model: Customer,
                         required: true,
@@ -90,7 +89,6 @@ module.exports.getLanesByUser = async (event, context) => {
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
-                    required: true,
                     include: [{
                         model: Customer,
                         required: true,
