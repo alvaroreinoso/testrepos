@@ -14,8 +14,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
     }
 
     try {
-
-        const lanes = await Lane.findAll({
+        const lanes = await user.getLanes({
             include: [{
                 model: Location,
                 required: true,
@@ -26,9 +25,6 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                     include: [{
                         model: Customer,
                         required: true,
-                        where: {
-                            userId: user.id
-                        }
                     }]
                 },
                 {
@@ -43,9 +39,6 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                     include: [{
                         model: Customer,
                         required: true,
-                        where: {
-                            userId: user.id
-                        }
                     }]
                 },
                 {
@@ -53,7 +46,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                 }]
             }
             ]
-        });
+        })
 
         return {
             statusCode: 200,
@@ -61,6 +54,7 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
         }
 
     } catch (err) {
+        console.log(err)
 
         return {
             statusCode: 500
