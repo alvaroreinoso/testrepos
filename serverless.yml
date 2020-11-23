@@ -162,24 +162,6 @@ functions:
 
 
 # Customer
-  getCustomersByCurrentUser:
-    handler:
-      ./handlers/customer.getCustomersByCurrentUser
-    events:
-        - http:
-            path: api/customer
-            method: get
-            headers:
-              - Authorization
-  getCustomersByTeam:
-    handler:
-      ./handlers/customer.getCustomersByTeam
-    events:
-        - http:
-            path: api/customer/team
-            method: get
-            headers:
-              - Authorization
   updateCustomer:
     handler:
       ./handlers/customer.updateCustomer

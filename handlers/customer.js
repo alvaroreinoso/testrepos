@@ -2,46 +2,6 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerContact, CustomerLocation, Team, LanePartner, Location, Lane, User } = require('.././models')
 
-module.exports.getCustomersByCurrentUser = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const customers = await Customer.findAll({
-            where: {
-                userId: user.id
-            },
-            include: [{
-                model: CustomerLocation,
-                limit: 1,
-                include: [{
-                    model: Location,
-                    include: [{
-                        model: CustomerContact
-                    }]
-                }]
-            }]
-        });
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(customers)
-        }
-
-    } catch (err) {
-        console.log(err)
-        return {
-            statusCode: 500
-        }
-    }
-}
-
 module.exports.updateCustomer = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
@@ -74,35 +34,6 @@ module.exports.updateCustomer = async (event, context) => {
 
     } catch (err) {
 
-        return {
-            statusCode: 500
-        }
-    }
-}
-
-module.exports.getCustomersByTeam = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const customers = await Customer.findAll({
-            where: {
-                teamId: user.teamId
-            }
-        });
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(customers)
-        }
-
-    } catch (err) {
         return {
             statusCode: 500
         }
