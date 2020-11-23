@@ -25,14 +25,15 @@ module.exports = {
         allowNull: false
       },
       phoneExt: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       email: {
         type: Sequelize.STRING,
         allowNull: false
       },
       contactLevel: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       createdAt: {

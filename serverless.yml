@@ -273,10 +273,17 @@ functions:
             method: get
 
   # CSV Upload
-  ascendDump:
+  ascendLoadsUpload:
     handler:
-      ./handlers/upload.ascendDump
+      ./handlers/upload.ascendLoadsUpload
     events:
         - http:
             path: api/upload/ascend
+            method: post
+  ascendCustomerUpload:
+    handler:
+      ./handlers/upload.ascendCustomerUpload
+    events:
+        - http:
+            path: api/upload/ascend/customers
             method: post
