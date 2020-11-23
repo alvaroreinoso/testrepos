@@ -21,7 +21,7 @@ const taggedCustomers = [
     },
     {
         customerId: 6,
-        userId: 6
+        userId: 8
     },
     {
         customerId: 7,
