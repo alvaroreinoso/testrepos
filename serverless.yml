@@ -75,6 +75,15 @@ functions:
             method: get
             headers:
               - Authorization
+  searchUsersInBrokerage:
+    handler:
+      ./handlers/search.searchUsersInBrokerage
+    events:
+        - http:
+            path: api/search/users
+            method: get
+            headers:
+              - Authorization
 
 # Ledger
   getLedger:
