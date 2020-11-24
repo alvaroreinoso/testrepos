@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, Team, LanePartner, Location, Lane, User } = require('.././models')
+const { Customer, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -217,7 +217,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
                 statusCode: 401
             }
         }
-        
+
         const customerId = event.pathParameters.customerId
 
         const customer = await Customer.findOne({
@@ -241,5 +241,39 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
     }
 
 
+}
+
+module.exports.addTeammateToCustomer = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const customerId = request.customerId
+        const userId = request.userId
+
+        await TaggedCustomer.findOrCreate({
+            where: {
+                customerId: customerId,
+                userId: userId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
 }
 

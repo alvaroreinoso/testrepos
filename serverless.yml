@@ -210,6 +210,15 @@ functions:
             method: get
             headers:
               - Authorization
+  addTeammateToCustomer:
+    handler:
+      ./handlers/customer.addTeammateToCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}/teammates
+            method: post
+            headers:
+              - Authorization
 
 # Lane
   getLanesByCurrentUser:
