@@ -206,3 +206,40 @@ module.exports.getLanesForCustomer = async (event, context) => {
     }
 }
 
+module.exports.getTeammatesForCustomer = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+        
+        const customerId = event.pathParameters.customerId
+
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId
+            }
+        })
+
+        const users = await customer.getUsers()
+
+        return {
+            body: JSON.stringify(users),
+            statusCode: 200
+        }
+    }
+    catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+
+}
+
