@@ -276,4 +276,33 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         }
     }
 }
+module.exports.deleteTeammateFromCustomer = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const taggedCustomerId = event.pathParameters.taggedCustomerId
+
+        await TaggedCustomer.destroy({
+            where: {
+                id: taggedCustomerId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
+}
 

@@ -219,6 +219,15 @@ functions:
             method: post
             headers:
               - Authorization
+  deleteTeammateFromCustomer:
+    handler:
+      ./handlers/customer.deleteTeammateFromCustomer
+    events:
+        - http:
+            path: api/customer/teammates/{taggedCustomerId}
+            method: delete
+            headers:
+              - Authorization
 
 # Lane
   getLanesByCurrentUser:
