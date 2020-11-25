@@ -1,4 +1,5 @@
 const elasticsearch = require('elasticsearch');
+const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
 const client = new elasticsearch.Client({
     host: 'localhost:9200',
@@ -60,11 +61,16 @@ module.exports.saveDocument = async (item) => {
 
                 newValues.id = item.id
 
+                const customer = {
+                    name: item.name,
+                    brokerageId: ledger.brokerageId
+                }
+
                 await client.update({
                     index: indexName,
                     id: item.id,
                     body: {
-                        doc: newValues,
+                        doc: customer,
                         doc_as_upsert: true
                     },
                 })
@@ -78,13 +84,25 @@ module.exports.saveDocument = async (item) => {
 
                 const ledger = await customer.getLedger()
 
-                newValues.brokerageId = ledger.brokerageId
+                const location = await item.getLocation()
+
+                const stateName = stateAbbreviations[location.state]
+
+                const customerLocation = {
+                    customerName: customer.name,
+                    address: location.address,
+                    city: location.city,
+                    state: location.state,
+                    fullState: stateName,
+                    zipcode: location.zipcode,
+                    brokerageId: ledger.brokerageId
+                }
 
                 await client.update({
                     index: indexName,
                     id: item.id,
                     body: {
-                        doc: newValues,
+                        doc: customerLocation,
                         doc_as_upsert: true
                     },
                 })
@@ -92,93 +110,120 @@ module.exports.saveDocument = async (item) => {
                 break;
             }
 
-            // case 'lane_partner': {
+            case 'lane_partner': {
 
-            //     console.log('\n')
-            //     console.log('\n')
-            //     console.log('\n')
-            //     console.log('\n')
+                const location = await item.getLocation()
 
-            //     console.log(item)
+                const ledger = await location.getLedger()
 
-            //     console.log(indexName)
+                const stateName = stateAbbreviations[location.state]
 
-            //     console.log(item.id)
-
-            //     // const lanePartner = await LanePartner.findOne({
-            //     //     where: {
-            //     //         id: item.id
-            //     //     },
-            //     //     include: [{
-            //     //         model: CustomerLane,
-            //     //         required: true,
-            //         //     include: [{
-            //         //         model: CustomerLocation,
-            //         //         required: true,
-            //         //         include: [{
-            //         //             model: Customer,
-            //         //             required: true,
-            //         //             include: [{
-            //         //                 model: Ledger,
-            //         //                 required: true
-            //         //             }]
-            //         //         }]
-            //         //     }]
-            //     //     }]
-            //     // })
-
-            //     const custLane = await CustomerLane.findOne({
-            //         include: [{
-            //             model: LanePartner,
-            //             where: {
-            //                 id: item.id
-            //             },
-            //             required: true
-            //           }]
-            //     })
-
-            //     console.log(await custLane.toJSON())
-
-            //     // const customerLane = await item.getCustomerLane()
-
-            //     console.log('\n')
-            //     console.log('\n')
-            //     console.log('\n')
-            //     console.log('\n')
-            //     console.log('\n')
-
-            //     // console.log(customerLane)
-
-            //     // const location = await customerLane.getCustomerLocation()
-
-            //     // const customer = await location.getCustomer()
-
-            //     // const ledger = await customer.getLedger()
-
-            //     newValues.brokerageId = ledger.brokerageId
-
-            //     await client.update({
-            //         index: indexName,
-            //         id: item.id,
-            //         body: {
-            //             doc: newValues,
-            //             doc_as_upsert: true
-            //         },
-            //     })
-
-            //     break;
-            // }
-
-            default: {
+                const lanePartner = {
+                    name: item.name,
+                    address: location.address,
+                    city: location.city,
+                    state: location.state,
+                    fullState: stateName,
+                    zipcode: location.zipcode,
+                    brokerageId: ledger.brokerageId
+                }
 
                 await client.update({
                     index: indexName,
                     id: item.id,
                     body: {
-                        doc: newValues,
+                        doc: lanePartner,
                         doc_as_upsert: true
                     },
                 })
+
+                break;
+            }
+
+            case 'lane': {
+
+                const origin = await item.getOrigin({
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true,
+                            include: [{
+                                model: Ledger,
+                                required: true
+                            }]
+                        }]
+                    }]
+                })
+
+                const destination = await item.getDestination({
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true,
+                            include: [{
+                                model: Ledger,
+                                required: true
+                            }]
+                        }]
+                    }]
+                })
+
+                let brokerageId = []
+
+                if (origin.CustomerLocation == null) {
+
+                    brokerageId.push(destination.CustomerLocation.Customer.Ledger.brokerageId)
+
+                } else {
+
+                    brokerageId.push(origin.CustomerLocation.Customer.Ledger.brokerageId)
+                }
+
+                const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
+                const shortRoute = `${origin.city} to ${destination.city}`
+
+                const originState = stateAbbreviations[origin.state]
+                const destinationState = stateAbbreviations[destination.state]
+
+                const lane = {
+                    id: item.id,
+                    origin: origin.city,
+                    originStateName: originState,
+                    destination: destination.city,
+                    destinationStateName: destinationState,
+                    route: route,
+                    shortRoute: shortRoute,
+                    brokerageId: brokerageId[0]
+                }
+
+                console.log(lane)
+
+                await client.update({
+                    index: indexName,
+                    id: item.id,
+                    body: {
+                        doc: lane,
+                        doc_as_upsert: true
+                    },
+                })
+
+                break
+            }
+
+            default: {
+
+                // await client.update({
+                //     index: indexName,
+                //     id: item.id,
+                //     body: {
+                //         doc: newValues,
+                //         doc_as_upsert: true
+                //     },
+                // })
+
+                console.log('Hit default: ', indexName)
             }
         }
 

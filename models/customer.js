@@ -31,9 +31,9 @@ module.exports = (sequelize, DataTypes) => {
     bio: DataTypes.TEXT
   }, {
     hooks: {
-      // afterSave: (customer, options) => {
-      //   elastic.saveDocument(customer)
-      // },
+      afterSave: (customer, options) => {
+        elastic.saveDocument(customer)
+      },
       afterDestroy: (customer, options) => {
         elastic.deleteDocument(customer)
       }
