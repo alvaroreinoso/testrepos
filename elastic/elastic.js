@@ -30,27 +30,26 @@ async function seedCustomer() {
         index: 'customer',
     })
 
-    // const customers = await Customer.findAll({
-    //     include: [{
-    //         model: Team,
-    //         required: true
-    //     }]
-    // })
+    const customers = await Customer.findAll({
+        include: [{
+            model: Team,
+            required: true
+        }]
+    })
 
-    // customers.forEach((cust) => {
-    //     client.create({
-    //         index: 'customer',
-    //         id: cust.id,
-    //         body: {
-    //             id: cust.id,
-    //             name: cust.name,
-    //             industry: cust.industry,
-    //             userId: cust.userId,
-    //             teamId: cust.teamId,
-    //             brokerageId: cust.Team.brokerageId
-    //         }
-    //     })
-    // })
+    customers.forEach((cust) => {
+
+        const customer = {
+            name: cust.name,
+            brokerageId: cust.Team.brokerageId
+        }
+
+        client.create({
+            index: 'customer',
+            id: cust.id,
+            body: customer
+        })
+    })
 
     console.log('Seeded Customers')
 }
@@ -60,30 +59,30 @@ async function seedMessages() {
         index: 'message',
     })
 
-    // const messages = await Message.findAll({
-    //     include: [{
-    //         model: Ledger,
-    //         required: true
-    //     }, {
-    //         model: User,
-    //         required: true
-    //     }]
-    // })
+    const messages = await Message.findAll({
+        include: [{
+            model: Ledger,
+            required: true
+        }, {
+            model: User,
+            required: true
+        }]
+    })
 
-    // messages.forEach(message => {
-    //     client.create({
-    //         index: 'message',
-    //         id: message.id,
-    //         body: {
-    //             id: message.id,
-    //             content: message.content,
-    //             ledgerId: message.ledgerId,
-    //             brokerageId: message.Ledger.brokerageId,
-    //             userFirstName: message.User.firstName,
-    //             userLastName: message.User.lastName
-    //         }
-    //     })
-    // })
+    messages.forEach(message => {
+        client.create({
+            index: 'message',
+            id: message.id,
+            body: {
+                id: message.id,
+                content: message.content,
+                ledgerId: message.ledgerId,
+                brokerageId: message.Ledger.brokerageId,
+                userFirstName: message.User.firstName,
+                userLastName: message.User.lastName
+            }
+        })
+    })
 
     console.log('Seeded Messages')
 }
@@ -93,58 +92,72 @@ async function seedLanes() {
         index: 'lane',
     })
 
-    // const lanes = await Lane.findAll({
-    //     include: [{
-    //         model: CustomerLane,
-    //         required: true,
-    //         include: [{
-    //             model: CustomerLocation,
-    //             required: true,
-    //             include: [{
-    //                 model: Customer,
-    //                 required: true,
-    //                 include: [{
-    //                     model: Team,
-    //                     required: true,
-    //                 }]
-    //             }]
-    //         }],
-    //     }]
-    // })
+    const lanes = await Lane.findAll()
 
-    // lanes.forEach((lane) => {
+    lanes.forEach(async (lane) => {
 
-    //     const chunks = lane.origin.split(' ')
+        const origin = await lane.getOrigin({
+            include: [{
+                model: CustomerLocation,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    include: [{
+                        model: Ledger,
+                        required: true
+                    }]
+                }]
+            }]
+        })
 
-    //     const route = `${lane.origin} to ${lane.destination}`
-        
-    //     const fullChunks = route.split(' ')
-    //     const shortRoute = `${fullChunks[0]} to ${fullChunks[fullChunks.length - 2]}`
+        const destination = await lane.getDestination({
+            include: [{
+                model: CustomerLocation,
+                include: [{
+                    model: Customer,
+                    required: true,
+                    include: [{
+                        model: Ledger,
+                        required: true
+                    }]
+                }]
+            }]
+        })
 
-    //     const originStateCode = chunks[chunks.length - 1]
-    //     const originState = stateAbbreviations[originStateCode]
+        let brokerageId = []
 
-    //     const destinationChunks = lane.destination.split(' ')
-    //     const destinationStateCode = destinationChunks[destinationChunks.length - 1]
-    //     const destinationState = stateAbbreviations[destinationStateCode]
+        if (origin.CustomerLocation == null) {
 
-    //     const customerLanes = lane.CustomerLanes
+            brokerageId.push(destination.CustomerLocation.Customer.Ledger.brokerageId)
 
-    //     client.create({
-    //         index: 'lane',
-    //         id: lane.id,
-    //         body: {
-    //             id: lane.id,
-    //             origin: lane.origin,
-    //             originStateName: originState,
-    //             destination: lane.destination,
-    //             destinationStateName: destinationState,
-    //             brokerageId: lane.CustomerLanes[0].CustomerLocation.Customer.Team.brokerageId,
-    //             route: route,
-    //             shortRoute: shortRoute,   
-    //         }
-    //     })
-    // })
+        } else {
+
+            brokerageId.push(origin.CustomerLocation.Customer.Ledger.brokerageId)
+        }
+
+        const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
+        const shortRoute = `${origin.city} to ${destination.city}`
+
+        const originState = stateAbbreviations[origin.state]
+        const destinationState = stateAbbreviations[destination.state]
+
+        const body = {
+            id: lane.id,
+            origin: origin.city,
+            originStateName: originState,
+            destination: destination.city,
+            destinationStateName: destinationState,
+            route: route,
+            shortRoute: shortRoute,
+            brokerageId: brokerageId[0]
+        }
+
+        client.create({
+            index: 'lane',
+            id: lane.id,
+            body: body
+        })
+    })
 
     console.log('Seeded Lanes')
 }
@@ -179,49 +192,30 @@ async function seedLanePartners() {
         index: 'lane_partner',
     })
 
-    // const partners = await LanePartner.findAll({
-    //     include: [{
-    //         model: CustomerLane,
-    //         required: true,
-    //         include: [{
-    //             model: CustomerLocation,
-    //             required: true,
-    //             include: [{
-    //                 model: Customer,
-    //                 required: true,
-    //                 include: [{
-    //                     model: Team,
-    //                     required: true,
-    //                 }]
-    //             }]
-    //         }],
-    //     }]
-    // })
+    const partners = await LanePartner.findAll()
 
-    // partners.forEach((partner) => {
+    partners.forEach(async (partner) => {
 
-    //     const stateName = stateAbbreviations[partner.state]
+        const location = await partner.getLocation()
+        const ledger = await location.getLedger()
+        const stateName = stateAbbreviations[location.state]
 
-    //     client.create({
-    //         index: 'lane_partner',
-    //         id: partner.id,
-    //         body: {
-    //             id: partner.id,
-    //             name: partner.name,
-    //             address: partner.address,
-    //             address2: partner.address2,
-    //             city: partner.city,
-    //             state: partner.state,
-    //             fullState: stateName,
-    //             zipcode: partner.zipcode,
-    //             lnglat: partner.lnglat,
-    //             open: partner.open,
-    //             close: partner.close,
-    //             title: partner.title,
-    //             brokerageId: partner.CustomerLane.CustomerLocation.Customer.Team.brokerageId
-    //         }
-    //     })
-    // })
+        const lanePartner = {
+            name: partner.name,
+            address: location.address,
+            city: location.city,
+            state: location.state,
+            fullState: stateName,
+            zipcode: location.zipcode,
+            brokerageId: ledger.brokerageId
+        }
+
+        client.create({
+            index: 'lane_partner',
+            id: partner.id,
+            body: lanePartner
+        })
+    })
 
     console.log('Seeded Lane Partners')
 }
@@ -232,38 +226,31 @@ async function seedCustomerLocatioins() {
         index: 'customer_location',
     })
 
-    // const locations = await CustomerLocation.findAll({
-    //     include: [{
-    //         model: Customer,
-    //         required: true,
-    //         include: [{
-    //             model: Team,
-    //             required: true,
-    //         }]
-    //     }]
-    // })
+    const customerLocations = await CustomerLocation.findAll()
 
-    // locations.forEach((location) => {
+    customerLocations.forEach(async (cLocation) => {
 
-    //     const stateName = stateAbbreviations[location.state]
+        const customer = await cLocation.getCustomer()
+        const ledger = await customer.getLedger()
+        const location = await cLocation.getLocation()
+        const stateName = stateAbbreviations[location.state]
 
-    //     client.create({
-    //         index: 'customer_location',
-    //         id: location.id,
-    //         body: {
-    //             id: location.id,
-    //             address: location.address,
-    //             address2: location.address2,
-    //             city: location.city,
-    //             state: location.state,
-    //             fullState: stateName,
-    //             zipcode: location.zipcode,
-    //             brokerageId: location.Customer.Team.brokerageId,
-    //             customerName: location.Customer.name,
-    //             customerId: location.Customer.id
-    //         }
-    //     })
-    // })
+        const customerLocation = {
+            customerName: customer.name,
+            address: location.address,
+            city: location.city,
+            state: location.state,
+            fullState: stateName,
+            zipcode: location.zipcode,
+            brokerageId: ledger.brokerageId
+        }
+
+        client.create({
+            index: 'customer_location',
+            id: cLocation.id,
+            body: customerLocation
+        })
+    })
 
     console.log('Seeded Customer Locations')
 }

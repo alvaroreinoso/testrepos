@@ -376,6 +376,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.7524704,36.11983926",
+        ledgerId: 52,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -388,6 +389,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.709192,37.207745",
+        ledgerId: 53,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -400,6 +402,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-121.311852,37.989843",
+        ledgerId: 54,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -412,6 +415,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-111.72863337,40.28782325",
+        ledgerId: 55,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -424,6 +428,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-98.50391514,29.40752816",
+        ledgerId: 56,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -436,6 +441,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-93.381863,44.987723",
+        ledgerId: 57,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -448,6 +454,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-90.18429631,38.92952737",
+        ledgerId: 58,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -460,6 +467,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-68.04158774,46.70009635",
+        ledgerId: 59,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -472,6 +480,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-80.11737812,40.71001957",
+        ledgerId: 60,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -484,6 +493,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-83.0617098,32.4345442",
+        ledgerId: 61,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -496,6 +506,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-93.494995,33.365568",
+        ledgerId: 62,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -508,6 +519,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-91.461885,38.497460",
+        ledgerId: 63,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -520,6 +532,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-114.48725327,42.55669131",
+        ledgerId: 64,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -532,6 +545,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-121.14276392,37.78000702",
+        ledgerId: 65,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -544,6 +558,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-89.885916,35.107648",
+        ledgerId: 66,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -556,6 +571,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-94.67316299,38.88457385",
+        ledgerId: 67,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -568,6 +584,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-96.852691,37.674979",
+        ledgerId: 68,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -580,6 +597,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-90.329521,32.342191",
+        ledgerId: 69,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -592,6 +610,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-84.335974,33.746212",
+        ledgerId: 70,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -604,6 +623,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.007374,39.953441",
+        ledgerId: 71,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -616,6 +636,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.009766,34.664641",
+        ledgerId: 72,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -628,6 +649,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-82.380786,29.625476",
+        ledgerId: 73,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -640,6 +662,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-82.099221,36.642715",
+        ledgerId: 74,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -652,6 +675,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-121.858218,38.018531",
+        ledgerId: 75,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -664,6 +688,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.571144,35.979856",
+        ledgerId: 76,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -676,6 +701,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-90.041855,30.435943",
+        ledgerId: 77,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -688,6 +714,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-85.829907,30.206657",
+        ledgerId: 78,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -700,6 +727,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.340455,44.061244",
+        ledgerId: 79,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -712,6 +740,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-89.158054,34.467086",
+        ledgerId: 80,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -724,6 +753,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-79.923799,32.781291",
+        ledgerId: 81,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -736,6 +766,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-118.481990,34.001214",
+        ledgerId: 82,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -748,6 +779,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-94.617788,37.074663",
+        ledgerId: 83,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -760,6 +792,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-76.657862,40.293104",
+        ledgerId: 84,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -772,6 +805,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-79.684989,34.268006",
+        ledgerId: 85,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -784,6 +818,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-89.87360852,35.08942255",
+        ledgerId: 86,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -796,6 +831,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-97.731266,30.270113",
+        ledgerId: 87,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -808,6 +844,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-90.05718244,35.13383755",
+        ledgerId: 88,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -820,6 +857,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-86.29798512,41.70827007",
+        ledgerId: 89,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -832,6 +870,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-118.17423422,33.80560095",
+        ledgerId: 90,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -844,6 +883,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-89.86423545,35.10612208",
+        ledgerId: 91,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -856,6 +896,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-94.52499951,36.18141866",
+        ledgerId: 92,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -868,6 +909,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-103.13527188,32.73943075",
+        ledgerId: 93,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -880,6 +922,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-105.5007428,39.7870643",
+        ledgerId: 94,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -892,6 +935,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-113.332456,46.247940",
+        ledgerId: 95,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -904,6 +948,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-119.4414694,48.9377534",
+        ledgerId: 96,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -916,6 +961,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-102.519609,34.073020",
+        ledgerId: 97,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -928,6 +974,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-101.656305,35.257680",
+        ledgerId: 98,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -940,6 +987,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-100.425521,32.454626",
+        ledgerId: 99,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -952,6 +1000,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-102.213661,31.880502",
+        ledgerId: 100,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -964,6 +1013,7 @@ const locations = [
         "open": "",
         "close": "",
         "lnglat": "-101.838864,33.712846",
+        ledgerId: 101,
         createdAt: new Date(),
         updatedAt: new Date()
     }

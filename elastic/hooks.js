@@ -57,10 +57,6 @@ module.exports.saveDocument = async (item) => {
 
                 const ledger = await item.getLedger()
 
-                newValues.brokerageId = ledger.brokerageId
-
-                newValues.id = item.id
-
                 const customer = {
                     name: item.name,
                     brokerageId: ledger.brokerageId
@@ -113,9 +109,7 @@ module.exports.saveDocument = async (item) => {
             case 'lane_partner': {
 
                 const location = await item.getLocation()
-
                 const ledger = await location.getLedger()
-
                 const stateName = stateAbbreviations[location.state]
 
                 const lanePartner = {
@@ -196,25 +190,6 @@ module.exports.saveDocument = async (item) => {
                     route: route,
                     shortRoute: shortRoute,
                     brokerageId: brokerageId[0]
-                }
-
-                await client.update({
-                    index: indexName,
-                    id: item.id,
-                    body: {
-                        doc: lane,
-                        doc_as_upsert: true
-                    },
-                })
-
-                break
-            }
-
-            case 'brokerage': {
-
-                const brokerage = {
-                    name: item.name,
-                    brokerageId: item.id
                 }
 
                 await client.update({
