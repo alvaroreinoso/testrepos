@@ -198,13 +198,67 @@ module.exports.saveDocument = async (item) => {
                     brokerageId: brokerageId[0]
                 }
 
-                console.log(lane)
+                await client.update({
+                    index: indexName,
+                    id: item.id,
+                    body: {
+                        doc: lane,
+                        doc_as_upsert: true
+                    },
+                })
+
+                break
+            }
+
+            case 'brokerage': {
+
+                const brokerage = {
+                    name: item.name,
+                    brokerageId: item.id
+                }
 
                 await client.update({
                     index: indexName,
                     id: item.id,
                     body: {
                         doc: lane,
+                        doc_as_upsert: true
+                    },
+                })
+
+                break
+            }
+
+            case 'team': {
+
+                const team = {
+                    name: item.name,
+                    brokerageId: item.brokerageId
+                }
+
+                await client.update({
+                    index: indexName,
+                    id: item.id,
+                    body: {
+                        doc: team,
+                        doc_as_upsert: true
+                    },
+                })
+
+                break
+            }
+            case 'brokerage': {
+
+                const brokerage = {
+                    name: item.name,
+                    brokerageId: item.id
+                }
+
+                await client.update({
+                    index: indexName,
+                    id: item.id,
+                    body: {
+                        doc: brokerage,
                         doc_as_upsert: true
                     },
                 })

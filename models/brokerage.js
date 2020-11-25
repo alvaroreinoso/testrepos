@@ -31,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
     zipcode: DataTypes.STRING,
     phone: DataTypes.STRING
   }, {
+    hooks: {
+      afterSave: (brokerage, options) => {
+        elastic.saveDocument(brokerage)
+      },
+      afterDestroy: (brokerage, options) => {
+        elastic.deleteDocument(brokerage)
+      }
+    },
     sequelize,
     modelName: 'Brokerage',
   });
