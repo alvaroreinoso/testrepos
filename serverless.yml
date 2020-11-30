@@ -233,7 +233,7 @@ functions:
       ./handlers/customer.deleteTeammateFromCustomer
     events:
         - http:
-            path: api/customer/teammates/{taggedCustomerId}
+            path: api/customer/teammates
             method: delete
             headers:
               - Authorization

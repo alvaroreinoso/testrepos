@@ -14,10 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   TaggedLocation.init({
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true
-    },
     locationId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER
   }, {

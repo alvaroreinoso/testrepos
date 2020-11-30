@@ -227,19 +227,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
             },
         })
 
-        const users = await customer.getUsers({
-            // include: [{
-                
-            //     model: TaggedCustomer
-            // }]
-        })
-
-        // const users = await TaggedCustomer.findAll({
-        //     where: {
-        //         customerId: customer.id,
-        //     },
-        //     attributes: ['id', 'userId', 'customerId']
-        // })
+        const users = await customer.getUsers()
 
         return {
             body: JSON.stringify(users),
@@ -301,11 +289,12 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
             }
         }
 
-        const taggedCustomerId = event.pathParameters.taggedCustomerId
+        const request = JSON.parse(event.body)
 
         await TaggedCustomer.destroy({
             where: {
-                id: taggedCustomerId
+                userId: request.userId,
+                customerId: request.customerId
             }
         })
 
