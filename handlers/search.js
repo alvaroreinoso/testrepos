@@ -183,10 +183,24 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
         }
     })
 
+    const dbResults = searchResults.hits.hits.map(user => {
+
+        const results = User.findOne({
+            where: {
+                id: user._id
+            }
+        })
+
+        return results
+    })
+
+    const response = await Promise.all(dbResults)
+
     return {
-        body: JSON.stringify(searchResults.hits.hits),
+        body: JSON.stringify(response),
         statusCode: 200
     }
+
     } catch (err) {
 
         console.log(err)

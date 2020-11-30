@@ -273,6 +273,16 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+  editLane:
+    handler:
+      ./handlers/lane.editLane
+    events: 
+        - http:
+            path: api/lane/{laneId}
+            method: patch
+            headers: 
+              - Authorization
+              - Content-Type
 
   # Location
   getLocationById:

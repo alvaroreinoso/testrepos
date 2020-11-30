@@ -19,6 +19,10 @@ module.exports = {
         allowNull: true
       },
       frequency: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      rate: {
         type: Sequelize.TEXT,
         allowNull: true
       },
