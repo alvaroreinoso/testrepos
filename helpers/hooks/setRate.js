@@ -1,9 +1,12 @@
-module.exports.getIndexName = async (lane) => {
+module.exports.setRate = async (lane) => {
 
-    const load = await lane.getLoads()
+    const loads = await lane.getLoads()
 
+    console.log(loads)
 
-    lane.rate = load.rate
+    if (loads != []) {
+    lane.rate = loads[0].rate
 
     await lane.save()
+    }
 }

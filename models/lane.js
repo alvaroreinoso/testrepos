@@ -1,6 +1,7 @@
 'use strict';
 
 const elastic = require('../elastic/hooks')
+const setRate = require('../helpers/hooks/setRate').setRate
 const {
   Model
 } = require('sequelize');
@@ -38,9 +39,9 @@ module.exports = (sequelize, DataTypes) => {
       afterDestroy: (lane, options) => {
         elastic.deleteDocument(lane)
       },
-      beforeCreate: (lane, options) => {
-        hooks.setRate(lane)
-      }
+      // beforeCreate: (lane, options) => {
+      //   setRate(lane)
+      // }
     },
     sequelize,
     modelName: 'Lane',

@@ -240,15 +240,6 @@ module.exports.editLane = async (event, context) => {
 
     const laneId = event.pathParameters.laneId
 
-    const id = request.id
-
-    if (laneId != id) {
-
-        return {
-            statusCode: 403
-        }
-    }
-
     const lane = await Lane.findOne({
         where: {
             id: laneId
@@ -256,6 +247,7 @@ module.exports.editLane = async (event, context) => {
     })
 
     lane.frequency = request.frequency
+    lane.rate = request.rate
 
     await lane.save()
 
