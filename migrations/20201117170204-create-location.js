@@ -43,10 +43,6 @@ module.exports = {
       lnglat: {
         type: Sequelize.STRING
       },
-      contactId: {
-        type: Sequelize.INTEGER,
-        allowNull: true
-      },
       ledgerId: {
         type: Sequelize.INTEGER,
         allowNull: true,

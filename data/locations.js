@@ -1,6 +1,6 @@
 const locations = [
     {
-        "contactId": 1,
+        //"contactId": 1,
         "address": "6185 Kimball Ave",
         "address2": "",
         "city": "Chino",
@@ -16,7 +16,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 2,
+        //"contactId": 2,
         "address": "3201 Capital Blvd",
         "address2": "",
         "city": "Rockwall",
@@ -32,7 +32,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 3,
+        //"contactId": 3,
         "address": "6C Terminal Way",
         "address2": "",
         "city": "Avenel",
@@ -48,7 +48,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "2000 Hall Blvd",
         "address2": "",
         "city": "Ponca City",
@@ -64,7 +64,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 5,
+        //"contactId": 5,
         "address": "125 E York St",
         "address2": "",
         "city": "Camden",
@@ -80,7 +80,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 6,
+        //"contactId": 6,
         "address": "420 Straight Creek Rd",
         "address2": "",
         "city": "New Tazewell",
@@ -96,7 +96,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 7,
+        //"contactId": 7,
         "address": "1 Caesarstone Dr",
         "address2": "",
         "city": "Midway",
@@ -112,7 +112,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 8,
+        //"contactId": 8,
         "address": "2551 SW 39th St",
         "address2": "",
         "city": "Fort Lauderdale",
@@ -128,7 +128,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 9,
+        //"contactId": 9,
         "address": "1010 Inteplast Blvd",
         "address2": "",
         "city": "Lolita",
@@ -144,7 +144,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 10,
+        //"contactId": 10,
         "address": "1828 Metcalf Ave",
         "address2": "",
         "city": "Thomasville",
@@ -160,7 +160,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 11,
+        //"contactId": 11,
         "address": "1586 Atlantic Ave",
         "address2": "",
         "city": "Henry",
@@ -176,7 +176,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 12,
+        //"contactId": 12,
         "address": "5980 Hurt Road",
         "address2": "",
         "city": "Horn Lake",
@@ -192,7 +192,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 13,
+        //"contactId": 13,
         "address": "4125 Farm Road 3417",
         "address2": "",
         "city": "Mount Pleasant",
@@ -208,7 +208,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 14,
+        //"contactId": 14,
         "address": "4125 W Wrightwood Ave",
         "address2": "",
         "city": "Chicago",
@@ -224,7 +224,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 15,
+        //"contactId": 15,
         "address": "9431 Bay Area Blvd",
         "address2": "",
         "city": "Pasadena",
@@ -240,7 +240,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 16,
+        //"contactId": 16,
         "address": "1011 S Interstate 45 Service Road",
         "address2": "",
         "city": "Hutchins",
@@ -256,7 +256,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 17,
+        //"contactId": 17,
         "address": "900 Terminal Road",
         "address2": "",
         "city": "Fort Worth",
@@ -272,7 +272,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 18,
+        //"contactId": 18,
         "address": "437 Independence Pkwy",
         "address2": "",
         "city": "La Porte",
@@ -288,7 +288,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "1030 Seymour Ave",
         "address2": "",
         "city": "Nasvhille",
@@ -304,7 +304,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "1030 Seymour Ave",
         "address2": "",
         "city": "Nasvhille",
@@ -320,7 +320,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "60 Wall Street",
         "address2": "",
         "city": "New York",
@@ -336,7 +336,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "20 W 34th St",
         "address2": "",
         "city": "New York",
@@ -352,7 +352,7 @@ const locations = [
         updatedAt: new Date()
     },
     {
-        "contactId": 4,
+        //"contactId": 4,
         "address": "440 Terry Ave N",
         "address2": "",
         "city": "Seattle",
