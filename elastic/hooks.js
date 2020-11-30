@@ -58,6 +58,7 @@ module.exports.saveDocument = async (item) => {
                 const ledger = await item.getLedger()
 
                 const customer = {
+                    id: item.id,
                     name: item.name,
                     brokerageId: ledger.brokerageId
                 }
@@ -85,6 +86,7 @@ module.exports.saveDocument = async (item) => {
                 const stateName = stateAbbreviations[location.state]
 
                 const customerLocation = {
+                    id: item.id,
                     customerName: customer.name,
                     address: location.address,
                     city: location.city,
@@ -113,6 +115,7 @@ module.exports.saveDocument = async (item) => {
                 const stateName = stateAbbreviations[location.state]
 
                 const lanePartner = {
+                    id: item.id,
                     name: item.name,
                     address: location.address,
                     city: location.city,
@@ -207,6 +210,7 @@ module.exports.saveDocument = async (item) => {
             case 'team': {
 
                 const team = {
+                    id: item.id,
                     name: item.name,
                     brokerageId: item.brokerageId
                 }
@@ -222,9 +226,33 @@ module.exports.saveDocument = async (item) => {
 
                 break
             }
+            case 'user': {
+
+                const user = {
+                    id: item.id,
+                    title: item.title,
+                    firstName: item.firstName,
+                    lastName: item.lastName,
+                    email: item.email,
+                    phone: item.phone,
+                    brokerageId: item.brokerageId
+                }
+
+                await client.update({
+                    index: indexName,
+                    id: item.id,
+                    body: {
+                        doc: user,
+                        doc_as_upsert: true
+                    },
+                })
+
+                break
+            }
             case 'brokerage': {
 
                 const brokerage = {
+                    id: item.id,
                     name: item.name,
                     brokerageId: item.id
                 }
@@ -242,15 +270,6 @@ module.exports.saveDocument = async (item) => {
             }
 
             default: {
-
-                // await client.update({
-                //     index: indexName,
-                //     id: item.id,
-                //     body: {
-                //         doc: newValues,
-                //         doc_as_upsert: true
-                //     },
-                // })
 
                 console.log('Hit default: ', indexName)
             }

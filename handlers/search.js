@@ -28,7 +28,7 @@ module.exports.search = async (event, context) => {
         const query = event.queryStringParameters.q
 
         const searchResults = await client.search({
-            index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
+            index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location'],
             body: {
                 query: {
                     bool: {
@@ -162,7 +162,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
     const query = event.queryStringParameters.q
 
     const searchResults = await client.search({
-        index: 'teammate',
+        index: 'user',
         body: {
             query: {
                 bool: {
@@ -171,7 +171,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
                             multi_match: {
                                 query: query,
                                 type: "phrase_prefix",
-                                fields: ["content", "userFirstName", "userLastName"]
+                                fields: ["firstName", "lastName"]
                             }
                         },
                     ],

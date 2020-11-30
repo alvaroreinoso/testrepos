@@ -256,14 +256,14 @@ async function seedCustomerLocatioins() {
 async function seedTeammates() {
 
     await client.indices.create({
-        index: 'teammate',
+        index: 'user',
     })
 
     const teammates = await User.findAll()
 
     teammates.forEach((mate) => {
         client.create({
-            index: 'teammate',
+            index: 'user',
             id: mate.id,
             body: {
                 id: mate.id,
@@ -277,7 +277,7 @@ async function seedTeammates() {
         })
     })
 
-    console.log('Seeded Teammates')
+    console.log('Seeded Users')
 }
 
 
