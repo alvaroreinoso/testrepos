@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   TaggedLane.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true
+    },
     userId: DataTypes.INTEGER,
     laneId: DataTypes.INTEGER
   }, {

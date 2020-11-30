@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   TaggedCustomer.init({
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true
+    },
     customerId: DataTypes.INTEGER,
     userId: DataTypes.INTEGER
   }, {

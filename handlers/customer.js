@@ -212,6 +212,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
 
         const user = await getCurrentUser(event.headers.Authorization)
 
+
         if (user.id == null) {
             return {
                 statusCode: 401
@@ -223,10 +224,22 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
         const customer = await Customer.findOne({
             where: {
                 id: customerId
-            }
+            },
         })
 
-        const users = await customer.getUsers()
+        const users = await customer.getUsers({
+            // include: [{
+                
+            //     model: TaggedCustomer
+            // }]
+        })
+
+        // const users = await TaggedCustomer.findAll({
+        //     where: {
+        //         customerId: customer.id,
+        //     },
+        //     attributes: ['id', 'userId', 'customerId']
+        // })
 
         return {
             body: JSON.stringify(users),
@@ -235,6 +248,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
     }
     catch (err) {
 
+        console.log(err)
         return {
             statusCode: 500
         }
