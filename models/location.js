@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         through: 'TaggedLocation',
         foreignKey: 'locationId'
       })
+      Location.belongsToMany(models.Contact, {
+        through: 'LocationContact',
+        foreignKey: 'locationId'
+      })
     }
   };
   Location.init({
