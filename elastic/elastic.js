@@ -11,8 +11,6 @@ const client = new elasticsearch.Client({
 
 const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User, Message, Ledger } = require('.././models');
 
-console.log(LanePartner)
-
 client.ping({
 
     requestTimeout: 1000

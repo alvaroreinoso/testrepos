@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Message.init({
     userId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
-    content: DataTypes.STRING
+    content: DataTypes.TEXT
   }, {
     hooks: {
       afterSave: (message, options) => {

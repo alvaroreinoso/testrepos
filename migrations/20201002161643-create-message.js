@@ -27,7 +27,7 @@ module.exports = {
         }
       },
       content: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: false
       },
       createdAt: {
