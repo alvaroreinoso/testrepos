@@ -114,7 +114,7 @@ module.exports.searchLedger = async (event, context) => {
             },
             include: [{
                 model: User,
-                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId'],
+                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId', 'title'],
             }]
         })
 
