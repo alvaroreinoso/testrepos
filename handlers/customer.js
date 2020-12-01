@@ -156,6 +156,9 @@ module.exports.getLanesForCustomer = async (event, context) => {
         })
 
         const lanes = await Lane.findAll({
+            order: [
+                ['frequency', 'DESC'],
+            ],
             include: [{
                 model: Location,
                 as: 'origin',
