@@ -1,12 +1,15 @@
-module.exports.setRate = async (lane) => {
+module.exports.setRate = async (load) => {
 
-    const loads = await lane.getLoads()
+    const lane = await load.getLane()
 
-    console.log(loads)
+    console.log(load)
 
-    if (loads != []) {
-    lane.rate = loads[0].rate
+    if (lane.userAddedRate == false) {
 
-    await lane.save()
+        console.log('made it here')
+
+        lane.rate = load.rate
+        
+        await lane.save()
     }
 }

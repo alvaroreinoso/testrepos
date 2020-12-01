@@ -26,6 +26,11 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
+      userAddedRate: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

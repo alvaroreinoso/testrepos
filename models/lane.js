@@ -34,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
     destinationLocationId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
-    rate: DataTypes.STRING
+    rate: DataTypes.STRING,
+    userAddedRate: DataTypes.BOOLEAN
   }, {
     hooks: {
       afterSave: (lane, options) => {
@@ -42,10 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       afterDestroy: (lane, options) => {
         elastic.deleteDocument(lane)
-      },
-      // beforeCreate: (lane, options) => {
-      //   setRate(lane)
-      // }
+      }
     },
     sequelize,
     modelName: 'Lane',

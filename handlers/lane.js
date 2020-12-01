@@ -208,6 +208,8 @@ module.exports.updateLane = async (event, context) => {
         })
 
         lane.routeGeometry = request.routeGeometry
+        lane.frequency = request.frequency
+        lane.rate = request.rate
 
         await lane.save()
 
@@ -221,43 +223,5 @@ module.exports.updateLane = async (event, context) => {
             statusCode: 500
         }
 
-    }
-}
-
-module.exports.editLane = async (event, context) => {
-
-    try {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    const request = JSON.parse(event.body)
-
-    const laneId = event.pathParameters.laneId
-
-    const lane = await Lane.findOne({
-        where: {
-            id: laneId
-        }
-    })
-
-    lane.frequency = request.frequency
-    lane.rate = request.rate
-
-    await lane.save()
-
-    return {
-        statusCode: 204
-    }
-    } catch (err) {
-        console.log(err)
-        return {
-            statusCode: 500
-        }
     }
 }
