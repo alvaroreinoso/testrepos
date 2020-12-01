@@ -292,6 +292,28 @@ functions:
         - http:
             path: api/location/{id}/lanes
             method: get
+  # Contact
+  getContacts:
+    handler:
+      ./handlers/contact.getContacts
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: get
+  addContact:
+    handler:
+      ./handlers/contact.addContact
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: post
+  editContact:
+    handler:
+      ./handlers/contact.editContact
+    events:
+        - http:
+            path: api/contact/{contactId}
+            method: put
 
   # CSV Upload
   ascendLoadsUpload:
