@@ -120,10 +120,11 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const frequency = await getFrequency(lane)
+
                     lane.frequency = frequency
                     await lane.save()
 
-                    console.log(newLoad.toJSON())
+                    // console.log(newLoad.toJSON())
                 }
 
                 else if (await firstPickIsCustomer(json)) {
@@ -217,10 +218,11 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const frequency = await getFrequency(lane)
+
                     lane.frequency = frequency
                     await lane.save()
 
-                    console.log(newLoad.toJSON())
+                    // console.log(newLoad.toJSON())
                 }
 
                 else if (await lastDropIsCustomer(json)) {
@@ -314,10 +316,11 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const frequency = await getFrequency(lane)
+
                     lane.frequency = frequency
                     await lane.save()
 
-                    console.log(newLoad.toJSON())
+                    // console.log(newLoad.toJSON())
                 }
 
                 else {

@@ -211,7 +211,16 @@ module.exports.updateLane = async (event, context) => {
         lane.frequency = request.frequency
         lane.rate = request.rate
 
-        await lane.save()
+        if (lane.rate != null) {
+
+            lane.userAddedRate = true
+
+            await lane.save()
+
+        } else {
+
+            await lane.save()
+        }
 
         return {
             statusCode: 204
@@ -222,6 +231,5 @@ module.exports.updateLane = async (event, context) => {
         return {
             statusCode: 500
         }
-
     }
 }
