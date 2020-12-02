@@ -209,3 +209,126 @@ module.exports.editContact = async (event, context) => {
     }
 
 }
+
+module.exports.deleteContact = async (event, context) => {
+
+    const request = JSON.parse(event.body)
+
+    const type = event.queryStringParameters.contactType
+
+    switch (type) {
+
+        case 'lane': {
+
+            const laneContact = await LaneContact.findOne({
+                where: {
+                    laneId: request.LaneContact.laneId,
+                    contactId: request.LaneContact.contactId
+                }
+            })
+
+            await laneContact.destroy()
+
+            const contact = await Contact.findOne({
+                where: {
+                    id: laneContact.contactId
+                },
+                include: { all: true }
+            })
+            
+            if (contact.Locations.length == 0 && contact.Customers.length == 0 && contact.Lanes.length == 0) {
+
+                await contact.destroy()
+
+                return {
+                    body: 'contact destroyed',
+                    statusCode: 200
+                }
+            } 
+
+            return {
+                body: JSON.stringify(contact),
+                statusCode: 200
+            }
+
+            break;
+
+        } case 'location': {
+
+            const locationContact = await LocationContact.findOne({
+                where: {
+                    locationId: request.LocationContact.locationId,
+                    contactId: request.LocationContact.contactId
+                }
+            })
+
+            await locationContact.destroy()
+
+            const contact = await Contact.findOne({
+                where: {
+                    id: locationContact.contactId
+                },
+                include: { all: true }
+            })
+
+            if (contact.Locations.length == 0 && contact.Customers.length == 0 && contact.Lanes.length == 0) {
+
+                await contact.destroy()
+
+                return {
+                    body: 'contact destroyed',
+                    statusCode: 200
+                }
+            } 
+
+            return {
+                body: JSON.stringify(contact),
+                statusCode: 200
+            }
+
+            break;
+
+        } case 'customer': {
+
+            const customerContact = await CustomerContact.findOne({
+                where: {
+                    customerId: request.CustomerContact.customerId,
+                    contactId: request.CustomerContact.contactId
+                }
+            })
+
+            await customerContact.destroy()
+
+            const contact = await Contact.findOne({
+                where: {
+                    id: customerContact.contactId
+                },
+                include: { all: true }
+            })
+
+            if (contact.Locations.length == 0 && contact.Customers.length == 0 && contact.Lanes.length == 0) {
+
+                await contact.destroy()
+
+                return {
+                    body: 'contact destroyed',
+                    statusCode: 200
+                }
+            } 
+
+            return {
+                body: JSON.stringify(contact),
+                statusCode: 200
+            }
+            break;
+
+        } default: {
+
+            return {
+                statusCode: 500
+            }
+        }
+    }
+    
+
+}
