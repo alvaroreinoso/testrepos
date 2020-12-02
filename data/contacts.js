@@ -15,7 +15,7 @@ const contacts = [
         title: 'Warehouse Admin',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -25,7 +25,7 @@ const contacts = [
         title: 'Warehouse Admin',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -55,7 +55,7 @@ const contacts = [
         title: 'Manager',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -65,7 +65,7 @@ const contacts = [
         title: 'Warehouse Admin',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -75,7 +75,7 @@ const contacts = [
         title: 'Transportation Manager',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -95,7 +95,7 @@ const contacts = [
         title: 'Warehouse Clerk',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -105,7 +105,7 @@ const contacts = [
         title: 'Warehouse Admin',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -165,7 +165,7 @@ const contacts = [
         title: 'Warehouse Clerk',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 2,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -175,7 +175,7 @@ const contacts = [
         title: 'Warehouse Clerk',
         phone: '865-262-6782',
         email: 'test51@gmail.com',
-        level: 1,
+        level: 3,
         createdAt: new Date(),
         updatedAt: new Date()
     },
