@@ -13,9 +13,6 @@ module.exports = (sequelize, DataTypes) => {
       Location.hasOne(models.CustomerLocation, {
         foreignKey: 'locationId'
       })
-      Location.belongsTo(models.CustomerContact, {
-        foreignKey: 'contactId'
-      })
       Location.hasOne(models.LanePartner, {
         foreignKey: 'locationId'
       }),
@@ -32,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         through: 'TaggedLocation',
         foreignKey: 'locationId'
       })
+      Location.belongsToMany(models.Contact, {
+        through: 'LocationContact',
+        foreignKey: 'locationId'
+      })
     }
   };
   Location.init({
@@ -39,7 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
-    contactId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
     lnglat: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,

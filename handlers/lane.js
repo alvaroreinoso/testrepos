@@ -21,7 +21,6 @@ module.exports.getLanesByCurrentUser = async (event, context) => {
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
-                    required: true,
                     include: [{
                         model: Customer,
                         required: true,
@@ -90,7 +89,6 @@ module.exports.getLanesByUser = async (event, context) => {
                 as: 'origin',
                 include: [{
                     model: CustomerLocation,
-                    required: true,
                     include: [{
                         model: Customer,
                         required: true,
@@ -116,40 +114,6 @@ module.exports.getLanesByUser = async (event, context) => {
             }
             ]
         })
-
-        // const lanes = await Lane.findAll({
-        //     include: [{
-        //                 model: Location,
-        //                 required: true,
-        //                 as: 'origin',
-        //                 include: [{
-        //                     model: CustomerLocation,
-        //                     required: true,
-        //                     include: [{
-        //                         model: Customer,
-        //                         required: true,
-        //                     }]
-        //                 },
-        //                 {
-        //                     model: LanePartner
-        //                 }]
-        //             }, {
-        //                 model: Location,
-        //                 required: true,
-        //                 as: 'destination',
-        //                 include: [{
-        //                     model: CustomerLocation,
-        //                     include: [{
-        //                         model: Customer,
-        //                         required: true,
-        //                     }]
-        //                 },
-        //                 {
-        //                     model: LanePartner
-        //                 }]
-        //             }
-        //             ]
-        // })
 
         return {
             body: JSON.stringify(lanes),
@@ -244,8 +208,19 @@ module.exports.updateLane = async (event, context) => {
         })
 
         lane.routeGeometry = request.routeGeometry
+        lane.frequency = request.frequency
+        lane.rate = request.rate
 
-        await lane.save()
+        if (lane.rate != null) {
+
+            lane.userAddedRate = true
+
+            await lane.save()
+
+        } else {
+
+            await lane.save()
+        }
 
         return {
             statusCode: 204
@@ -256,6 +231,5 @@ module.exports.updateLane = async (event, context) => {
         return {
             statusCode: 500
         }
-
     }
 }

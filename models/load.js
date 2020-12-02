@@ -1,4 +1,5 @@
 'use strict';
+const setRate = require('../helpers/hooks/setRate').setRate
 const {
   Model
 } = require('sequelize');
@@ -25,6 +26,11 @@ module.exports = (sequelize, DataTypes) => {
     rate: DataTypes.STRING,
     dropDate: DataTypes.DATEONLY
   }, {
+    hooks: {
+      afterSave: (load, options) => {
+        setRate(load)
+      },
+    },
     sequelize,
     modelName: 'Load',
   });

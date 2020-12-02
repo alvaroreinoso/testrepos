@@ -1,35 +1,30 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Lanes', {
+    await queryInterface.createTable('Contacts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      originLocationId: {
+      level: {
         type: Sequelize.INTEGER
       },
-      destinationLocationId: {
-        type: Sequelize.INTEGER
+      firstName: {
+        type: Sequelize.STRING
       },
-      routeGeometry: {
-        type: Sequelize.TEXT,
-        allowNull: true
+      lastName: {
+        type: Sequelize.STRING
       },
-      frequency: {
-        type: Sequelize.INTEGER,
-        allowNull: true
+      title: {
+        type: Sequelize.STRING
       },
-      rate: {
-        type: Sequelize.TEXT,
-        allowNull: true
+      phone: {
+        type: Sequelize.STRING
       },
-      userAddedRate: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false
+      email: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -42,6 +37,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Lanes');
+    await queryInterface.dropTable('Contacts');
   }
 };

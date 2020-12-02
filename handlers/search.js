@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger, Message, User } = require('.././models');
+const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -28,7 +28,7 @@ module.exports.search = async (event, context) => {
         const query = event.queryStringParameters.q
 
         const searchResults = await client.search({
-            index: ['lane_partner', 'customer', 'teammate', 'team', 'lane', 'customer_location'],
+            index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location'],
             body: {
                 query: {
                     bool: {
@@ -55,7 +55,7 @@ module.exports.search = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500
         }
@@ -114,7 +114,7 @@ module.exports.searchLedger = async (event, context) => {
             },
             include: [{
                 model: User,
-                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId'],
+                attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId', 'title'],
             }]
         })
 
@@ -135,5 +135,149 @@ module.exports.searchLedger = async (event, context) => {
     return {
         body: JSON.stringify(sortedResults),
         statusCode: 200
+    }
+}
+
+module.exports.searchUsersInBrokerage = async (event, context) => {
+
+    try {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: user.brokerageId
+        }
+    })
+
+    const brokerageId = brokerage.id
+
+    const query = event.queryStringParameters.q
+
+    const searchResults = await client.search({
+        index: 'user',
+        body: {
+            query: {
+                bool: {
+                    must: [
+                        {
+                            multi_match: {
+                                query: query,
+                                type: "phrase_prefix",
+                                fields: ["firstName", "lastName"]
+                            }
+                        },
+                    ],
+                    filter: [
+                        { "term": { "brokerageId": brokerageId } }
+                    ]
+                }
+            }
+        }
+    })
+
+    const dbResults = searchResults.hits.hits.map(user => {
+
+        const results = User.findOne({
+            where: {
+                id: user._id
+            }
+        })
+
+        return results
+    })
+
+    const response = await Promise.all(dbResults)
+
+    return {
+        body: JSON.stringify(response),
+        statusCode: 200
+    }
+
+    } catch (err) {
+
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.searchContacts = async (event, context) => {
+
+    try {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: user.brokerageId
+        }
+    })
+
+    const brokerageId = brokerage.id
+
+    const query = event.queryStringParameters.q
+
+    const searchResults = await client.search({
+        index: 'contact',
+        body: {
+            query: {
+                bool: {
+                    must: [
+                        {
+                            multi_match: {
+                                query: query,
+                                type: "phrase_prefix",
+                                fields: ["firstName", "lastName", "fullName"]
+                            }
+                        },
+                    ],
+                    filter: [
+                        { "term": { "brokerageId": brokerageId } }
+                    ]
+                }
+            }
+        }
+    })
+
+    const dbResults = searchResults.hits.hits.map(contact => {
+
+        const results = Contact.findOne({
+            where: {
+                id: contact._id
+            }
+        })
+
+        return results
+    })
+
+    const response = await Promise.all(dbResults)
+
+    return {
+        body: JSON.stringify(response),
+        statusCode: 200
+    }
+
+    } catch (err) {
+
+        console.log(err)
+        return {
+            statusCode: 500
+        }
     }
 }

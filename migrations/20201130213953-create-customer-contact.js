@@ -8,33 +8,23 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      firstName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      lastName: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      title: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      phone: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      phoneExt: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      email: {
-        type: Sequelize.STRING,
-        allowNull: false
-      },
-      contactLevel: {
+      customerId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Customers',
+          key: 'id',
+          as: 'customerId'
+        }
+      },
+      contactId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Contacts',
+          key: 'id',
+          as: 'contactId'
+        }
       },
       createdAt: {
         allowNull: false,

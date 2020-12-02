@@ -4,13 +4,18 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class CustomerContact extends Model {
+  class LaneContact extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
     static associate(models) {
       // define association here
     }
   };
-  CustomerContact.init({
-    customerId: DataTypes.INTEGER,
+  LaneContact.init({
+    laneId: DataTypes.INTEGER,
     contactId: DataTypes.INTEGER
   }, {
     hooks: {
@@ -19,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     sequelize,
-    modelName: 'CustomerContact',
+    modelName: 'LaneContact',
   });
-  return CustomerContact;
+  return LaneContact;
 };

@@ -1,6 +1,7 @@
 'use strict';
 
 const elastic = require('../elastic/hooks')
+const setRate = require('../helpers/hooks/setRate').setRate
 const {
   Model
 } = require('sequelize');
@@ -22,13 +23,19 @@ module.exports = (sequelize, DataTypes) => {
         through: 'TaggedLane',
         foreignKey: 'laneId'
       })
+      Lane.belongsToMany(models.Contact, {
+        through: 'LaneContact',
+        foreignKey: 'laneId'
+      })
     }
   };
   Lane.init({
     originLocationId: DataTypes.INTEGER,
     destinationLocationId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
-    frequency: DataTypes.STRING
+    frequency: DataTypes.INTEGER,
+    rate: DataTypes.STRING,
+    userAddedRate: DataTypes.BOOLEAN
   }, {
     hooks: {
       afterSave: (lane, options) => {

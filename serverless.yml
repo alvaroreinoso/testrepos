@@ -75,6 +75,24 @@ functions:
             method: get
             headers:
               - Authorization
+  searchUsersInBrokerage:
+    handler:
+      ./handlers/search.searchUsersInBrokerage
+    events:
+        - http:
+            path: api/search/users
+            method: get
+            headers:
+              - Authorization
+  searchContacts:
+    handler:
+      ./handlers/search.searchContacts
+    events:
+        - http:
+            path: api/search/contacts
+            method: get
+            headers:
+              - Authorization
 
 # Ledger
   getLedger:
@@ -162,24 +180,6 @@ functions:
 
 
 # Customer
-  getCustomersByCurrentUser:
-    handler:
-      ./handlers/customer.getCustomersByCurrentUser
-    events:
-        - http:
-            path: api/customer
-            method: get
-            headers:
-              - Authorization
-  getCustomersByTeam:
-    handler:
-      ./handlers/customer.getCustomersByTeam
-    events:
-        - http:
-            path: api/customer/team
-            method: get
-            headers:
-              - Authorization
   updateCustomer:
     handler:
       ./handlers/customer.updateCustomer
@@ -219,6 +219,33 @@ functions:
             headers:
               - Content-Type
               - Authorization
+  getTeammatesForCustomer:
+    handler:
+      ./handlers/customer.getTeammatesForCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}/teammates
+            method: get
+            headers:
+              - Authorization
+  addTeammateToCustomer:
+    handler:
+      ./handlers/customer.addTeammateToCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}/teammates
+            method: post
+            headers:
+              - Authorization
+  deleteTeammateFromCustomer:
+    handler:
+      ./handlers/customer.deleteTeammateFromCustomer
+    events:
+        - http:
+            path: api/customer/teammates
+            method: delete
+            headers:
+              - Authorization
 
 # Lane
   getLanesByCurrentUser:
@@ -255,6 +282,9 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+            headers:
+              - Authorization
+              - Content-Type
 
   # Location
   getLocationById:
@@ -271,6 +301,35 @@ functions:
         - http:
             path: api/location/{id}/lanes
             method: get
+  # Contact
+  getContacts:
+    handler:
+      ./handlers/contact.getContacts
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: get
+  addContact:
+    handler:
+      ./handlers/contact.addContact
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: post
+  editContact:
+    handler:
+      ./handlers/contact.editContact
+    events:
+        - http:
+            path: api/contact/{contactId}
+            method: put
+  deleteContact:
+    handler:
+      ./handlers/contact.deleteContact
+    events:
+        - http:
+            path: api/contact
+            method: delete
 
   # CSV Upload
   ascendLoadsUpload:

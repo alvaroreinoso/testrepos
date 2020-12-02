@@ -21,6 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         through: 'TaggedCustomer',
         foreignKey: 'customerId'
       })
+      Customer.belongsToMany(models.Contact, {
+        through: 'CustomerContact',
+        foreignKey: 'customerId'
+      })
     }
   };
   Customer.init({
@@ -31,9 +35,9 @@ module.exports = (sequelize, DataTypes) => {
     bio: DataTypes.TEXT
   }, {
     hooks: {
-      // afterSave: (customer, options) => {
-      //   elastic.saveDocument(customer)
-      // },
+      afterSave: (customer, options) => {
+        elastic.saveDocument(customer)
+      },
       afterDestroy: (customer, options) => {
         elastic.deleteDocument(customer)
       }
