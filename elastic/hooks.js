@@ -338,19 +338,13 @@ module.exports.saveContact = async (item) => {
 
     if (contact.Locations.length != 0) {
 
-        console.log('hit 1')
-
         brokerageId.push(contact.Locations[0].Ledger.brokerageId)
 
     } else if (contact.Lanes.length != 0) {
 
-        console.log('hit 2')
-
         brokerageId.push(contact.Lanes[0].origin.Ledger.brokerageId)
 
     } else if (contact.Customers.length != 0) {
-
-        console.log('hit 3')
 
         brokerageId.push(contact.Customers[0].Ledger.brokerageId)
     }
@@ -361,6 +355,25 @@ module.exports.saveContact = async (item) => {
         lastName: contact.lastName,
         fullName: `${contact.firstName} ${contact.lastName}`,
         brokerageId: brokerageId[0]
+    }
+
+    await client.update({
+        index: 'contact',
+        id: contact.id,
+        body: {
+            doc: doc,
+            doc_as_upsert: true
+        },
+    })
+}
+
+module.exports.editContact = async (contact) => {
+
+    const doc = {
+        id: contact.id,
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        fullName: `${contact.firstName} ${contact.lastName}`,
     }
 
     await client.update({

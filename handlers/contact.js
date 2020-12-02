@@ -1,6 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerContact, Ledger, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
+const elastic = require('.././elastic/hooks')
 
 module.exports.getContacts = async (event, context) => {
 
@@ -34,8 +35,6 @@ module.exports.getContacts = async (event, context) => {
                     statusCode: 200
                 }
 
-                break;
-
             } case 'location': {
 
                 const location = await Location.findOne({
@@ -51,8 +50,6 @@ module.exports.getContacts = async (event, context) => {
                     statusCode: 200
                 }
 
-                break;
-
             } case 'customer': {
 
                 const customer = await Customer.findOne({
@@ -67,8 +64,6 @@ module.exports.getContacts = async (event, context) => {
                     body: JSON.stringify(customerContacts),
                     statusCode: 200
                 }
-
-                break;
 
             } default: {
 
@@ -101,54 +96,109 @@ module.exports.addContact = async (event, context) => {
         const type = event.queryStringParameters.contactType
         const request = JSON.parse(event.body)
         const id = event.pathParameters.itemId
+        const existing = event.queryStringParameters.existing
 
-        const contact = await Contact.create({
-            firstName: request.firstName,
-            lastName: request.lastName,
-            phone: request.phone,
-            email: request.email,
-            level: request.contactLevel
-        })
-
-        switch (type) {
-
-            case 'lane': {
-
-                await LaneContact.create({
-                    laneId: id,
-                    contactId: contact.id
-                })
-
-                return {
-                    statusCode: 204
+        if (existing) {
+            const contact = await Contact.findOne({
+                where: {
+                    id: request.id
                 }
+            })
 
-            } case 'location': {
+            switch (type) {
 
-                await LocationContact.create({
-                    locationId: id,
-                    contactId: contact.id
-                })
+                case 'lane': {
 
-                return {
-                    statusCode: 204
+                    await LaneContact.create({
+                        laneId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } case 'location': {
+
+                    await LocationContact.create({
+                        locationId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } case 'customer': {
+
+                    await CustomerContact.create({
+                        customerId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } default: {
+
+                    return {
+                        statusCode: 500
+                    }
                 }
+            }
+        }
 
-            } case 'customer': {
+        else {
 
-                await CustomerContact.create({
-                    customerId: id,
-                    contactId: contact.id
-                })
+            const contact = await Contact.create({
+                firstName: request.firstName,
+                lastName: request.lastName,
+                phone: request.phone,
+                email: request.email,
+                level: request.contactLevel
+            })
 
-                return {
-                    statusCode: 204
-                }
+            switch (type) {
 
-            } default: {
+                case 'lane': {
 
-                return {
-                    statusCode: 500
+                    await LaneContact.create({
+                        laneId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } case 'location': {
+
+                    await LocationContact.create({
+                        locationId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } case 'customer': {
+
+                    await CustomerContact.create({
+                        customerId: id,
+                        contactId: contact.id
+                    })
+
+                    return {
+                        statusCode: 204
+                    }
+
+                } default: {
+
+                    return {
+                        statusCode: 500
+                    }
                 }
             }
         }
@@ -175,7 +225,6 @@ module.exports.editContact = async (event, context) => {
         }
 
         const request = JSON.parse(event.body)
-
         const id = event.pathParameters.contactId
 
         const contact = await Contact.findOne({
@@ -185,12 +234,14 @@ module.exports.editContact = async (event, context) => {
         })
 
         contact.firstName = request.firstName,
-        contact.lastName = request.lastName,
-        contact.phone = request.phone,
-        contact.email = request.email,
-        contact.level = request.contactLevel
+            contact.lastName = request.lastName,
+            contact.phone = request.phone,
+            contact.email = request.email,
+            contact.level = request.contactLevel
 
         await contact.save()
+
+        await elastic.editContact(contact)
 
         return {
             statusCode: 204
@@ -231,7 +282,7 @@ module.exports.deleteContact = async (event, context) => {
                 include: { all: true }
             })
 
-            
+
             if (contact.Locations.length == 0 && contact.Customers.length == 0 && contact.Lanes.length == 0) {
 
                 await contact.destroy()
@@ -239,14 +290,12 @@ module.exports.deleteContact = async (event, context) => {
                 return {
                     statusCode: 204
                 }
-            } 
+            }
 
             return {
                 body: JSON.stringify(contact),
                 statusCode: 200
             }
-
-            break;
 
         } case 'location': {
 
@@ -274,14 +323,12 @@ module.exports.deleteContact = async (event, context) => {
                     body: 'contact destroyed',
                     statusCode: 200
                 }
-            } 
+            }
 
             return {
                 body: JSON.stringify(contact),
                 statusCode: 200
             }
-
-            break;
 
         } case 'customer': {
 
@@ -309,13 +356,12 @@ module.exports.deleteContact = async (event, context) => {
                     body: 'contact destroyed',
                     statusCode: 200
                 }
-            } 
+            }
 
             return {
                 body: JSON.stringify(contact),
                 statusCode: 200
             }
-            break;
 
         } default: {
 
@@ -324,6 +370,6 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     }
-    
+
 
 }
