@@ -84,6 +84,15 @@ functions:
             method: get
             headers:
               - Authorization
+  searchContacts:
+    handler:
+      ./handlers/search.searchContacts
+    events:
+        - http:
+            path: api/search/contacts
+            method: get
+            headers:
+              - Authorization
 
 # Ledger
   getLedger:

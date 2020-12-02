@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
+const { Customer, CustomerContact, Ledger, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
 
 module.exports.getContacts = async (event, context) => {
 
@@ -99,9 +99,7 @@ module.exports.addContact = async (event, context) => {
         }
 
         const type = event.queryStringParameters.contactType
-
         const request = JSON.parse(event.body)
-
         const id = event.pathParameters.itemId
 
         const contact = await Contact.create({
@@ -116,7 +114,7 @@ module.exports.addContact = async (event, context) => {
 
             case 'lane': {
 
-                LaneContact.create({
+                await LaneContact.create({
                     laneId: id,
                     contactId: contact.id
                 })
@@ -125,11 +123,9 @@ module.exports.addContact = async (event, context) => {
                     statusCode: 204
                 }
 
-                break;
-
             } case 'location': {
 
-                LocationContact.create({
+                await LocationContact.create({
                     locationId: id,
                     contactId: contact.id
                 })
@@ -138,11 +134,9 @@ module.exports.addContact = async (event, context) => {
                     statusCode: 204
                 }
 
-                break;
-
             } case 'customer': {
 
-                CustomerContact.create({
+                await CustomerContact.create({
                     customerId: id,
                     contactId: contact.id
                 })
@@ -150,7 +144,6 @@ module.exports.addContact = async (event, context) => {
                 return {
                     statusCode: 204
                 }
-                break;
 
             } default: {
 
@@ -161,12 +154,14 @@ module.exports.addContact = async (event, context) => {
         }
     } catch (err) {
 
+        console.log(err)
+
         return {
             statusCode: 500
         }
     }
-
 }
+
 module.exports.editContact = async (event, context) => {
 
     try {
@@ -190,10 +185,10 @@ module.exports.editContact = async (event, context) => {
         })
 
         contact.firstName = request.firstName,
-            contact.lastName = request.lastName,
-            contact.phone = request.phone,
-            contact.email = request.email,
-            contact.level = request.contactLevel
+        contact.lastName = request.lastName,
+        contact.phone = request.phone,
+        contact.email = request.email,
+        contact.level = request.contactLevel
 
         await contact.save()
 
@@ -235,14 +230,14 @@ module.exports.deleteContact = async (event, context) => {
                 },
                 include: { all: true }
             })
+
             
             if (contact.Locations.length == 0 && contact.Customers.length == 0 && contact.Lanes.length == 0) {
 
                 await contact.destroy()
 
                 return {
-                    body: 'contact destroyed',
-                    statusCode: 200
+                    statusCode: 204
                 }
             } 
 

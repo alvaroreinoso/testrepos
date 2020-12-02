@@ -1,5 +1,6 @@
 const elasticsearch = require('elasticsearch');
 const stateAbbreviations = require('states-abbreviations')
+const { Customer, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = new elasticsearch.Client({
     host: 'localhost:9200',
     log: [{
@@ -8,8 +9,6 @@ const client = new elasticsearch.Client({
     }],
     apiVersion: '7.7'
 });
-
-const { Customer, Lane, LanePartner, Team, CustomerLane, CustomerLocation, User, Message, Ledger } = require('.././models');
 
 client.ping({
 
@@ -280,6 +279,79 @@ async function seedTeammates() {
     console.log('Seeded Users')
 }
 
+async function seedContacts() {
+
+    await client.indices.create({
+        index: 'contact',
+    })
+
+    const contacts = await Contact.findAll({
+        include: [{
+            model: Location,
+            include: [{
+                model: Ledger
+            }]
+        },
+        {
+            model: Customer,
+            include: [{
+                model: Ledger
+            }]
+        },
+        {
+            model: Lane,
+            include: [{
+                model: Location,
+                as: 'origin',
+                include: [{
+                    model: Ledger
+                }]
+            },
+            {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: Ledger
+                }]
+            }]
+        }]
+    })
+
+    contacts.forEach((contact) => {
+
+        let brokerageId = []
+
+        if (contact.Locations.length != 0) {
+
+            brokerageId.push(contact.Locations[0].Ledger.brokerageId)
+
+        } else if (contact.Lanes.length != 0) {
+
+            brokerageId.push(contact.Lanes[0].origin.Ledger.brokerageId)
+
+        } else if (contact.Customers.length != 0) {
+
+            brokerageId.push(contact.Customers[0].brokerageId)
+        }
+
+        const doc = {
+            id: contact.id,
+            firstName: contact.firstName,
+            lastName: contact.lastName,
+            fullName: `${contact.firstName} ${contact.lastName}`,
+            brokerageId: brokerageId[0]
+        }
+
+        client.create({
+            index: 'contact',
+            id: contact.id,
+            body: doc
+        })
+    })
+
+    console.log('Seeded Contacts')
+}
+
 
 async function setUp() {
 
@@ -287,6 +359,7 @@ async function setUp() {
         index: '*'
     })
 
+    await seedContacts()
     await seedCustomer()
     await seedCustomerLocatioins()
     await seedLanePartners()

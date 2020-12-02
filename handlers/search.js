@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Ledger, Message, User, Brokerage } = require('.././models');
+const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
 
 const elasticsearch = require('elasticsearch');
 const client = new elasticsearch.Client({
@@ -188,6 +188,78 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
         const results = User.findOne({
             where: {
                 id: user._id
+            }
+        })
+
+        return results
+    })
+
+    const response = await Promise.all(dbResults)
+
+    return {
+        body: JSON.stringify(response),
+        statusCode: 200
+    }
+
+    } catch (err) {
+
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.searchContacts = async (event, context) => {
+
+    try {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: user.brokerageId
+        }
+    })
+
+    const brokerageId = brokerage.id
+
+    const query = event.queryStringParameters.q
+
+    const searchResults = await client.search({
+        index: 'contact',
+        body: {
+            query: {
+                bool: {
+                    must: [
+                        {
+                            multi_match: {
+                                query: query,
+                                type: "phrase_prefix",
+                                fields: ["firstName", "lastName", "fullName"]
+                            }
+                        },
+                    ],
+                    filter: [
+                        { "term": { "brokerageId": brokerageId } }
+                    ]
+                }
+            }
+        }
+    })
+
+    const dbResults = searchResults.hits.hits.map(contact => {
+
+        const results = Contact.findOne({
+            where: {
+                id: contact._id
             }
         })
 
