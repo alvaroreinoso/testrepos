@@ -6,6 +6,24 @@ const customerContacts = [
         updatedAt: new Date()
     },
     {
+        customerId: 1,
+        contactId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        customerId: 1,
+        contactId: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        customerId: 1,
+        contactId: 4,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
         customerId: 2,
         contactId: 2,
         createdAt: new Date(),
