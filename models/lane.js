@@ -11,6 +11,9 @@ module.exports = (sequelize, DataTypes) => {
       Lane.hasMany(models.Load, {
         foreignKey: 'laneId'
       })
+      Lane.hasMany(models.MarketFeedback, {
+        foreignKey: 'laneId'
+      })
       Lane.belongsTo(models.Location, {
         foreignKey: 'originLocationId',
         as: 'origin'
