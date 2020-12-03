@@ -346,6 +346,34 @@ functions:
         - http:
             path: api/location/{id}/lanes
             method: get
+  getTeammatesForLocation:
+    handler:
+      ./handlers/location.getTeammatesForLocation
+    events:
+        - http:
+            path: api/location/{locationId}/teammates
+            method: get
+            headers:
+              - Authorization
+  addTeammatetoLocation:
+    handler:
+      ./handlers/location.addTeammateToLocation
+    events:
+        - http:
+            path: api/location/{locationId}/teammates
+            method: post
+            headers:
+              - Authorization
+  deleteTeammateFromLocation:
+    handler:
+      ./handlers/location.deleteTeammateFromLocation
+    events:
+        - http:
+            path: api/location/{locationId}/teammates
+            method: delete
+            headers:
+              - Authorization
+
   # Contact
   getContacts:
     handler:
