@@ -233,7 +233,7 @@ functions:
       ./handlers/customer.addTeammateToCustomer
     events:
         - http:
-            path: api/customer/{customerId}/teammates
+            path: api/customer/teammates
             method: post
             headers:
               - Authorization
@@ -317,7 +317,7 @@ functions:
       ./handlers/lane.addTeammateToLane
     events:
         - http:
-            path: api/lane/{laneId}/teammates
+            path: api/lane/teammates
             method: post
             headers:
               - Authorization
@@ -326,7 +326,7 @@ functions:
       ./handlers/lane.deleteTeammateFromLane
     events:
         - http:
-            path: api/lane/{laneId}/teammates
+            path: api/lane/teammates
             method: delete
             headers:
               - Authorization
@@ -360,7 +360,7 @@ functions:
       ./handlers/location.addTeammateToLocation
     events:
         - http:
-            path: api/location/{locationId}/teammates
+            path: api/location/teammates
             method: post
             headers:
               - Authorization
@@ -369,7 +369,7 @@ functions:
       ./handlers/location.deleteTeammateFromLocation
     events:
         - http:
-            path: api/location/{locationId}/teammates
+            path: api/location/teammates
             method: delete
             headers:
               - Authorization
