@@ -216,3 +216,36 @@ module.exports.addMarketFeedback = async (event, context) => {
         }
     }
 }
+
+module.exports.deleteMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const feedbackId = event.pathParameters.feedbackId
+
+        await MarketFeedback.destroy({
+            where: {
+                id: feedbackId,
+                laneId: laneId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}

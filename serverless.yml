@@ -294,6 +294,15 @@ functions:
             method: post
             headers:
               - Authorization
+  deleteMarketFeedback:
+    handler:
+      ./handlers/lane.deleteMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback/{feedbackId}
+            method: delete
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
