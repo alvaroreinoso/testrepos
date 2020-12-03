@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location, MarketFeedback } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const { Op } = require("sequelize");
 const query = require('.././helpers/getLanes')
 
@@ -244,6 +244,111 @@ module.exports.deleteMarketFeedback = async (event, context) => {
         }
     } catch (err) {
 
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getTeammatesForLane = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId
+            },
+        })
+
+        const users = await lane.getUsers()
+
+        return {
+            body: JSON.stringify(users),
+            statusCode: 200
+        }
+    }
+    catch (err) {
+
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+
+
+}
+
+module.exports.addTeammateToLane = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const laneId = request.laneId
+        const userId = request.userId
+
+        await TaggedLane.findOrCreate({
+            where: {
+                laneId: laneId,
+                userId: userId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.deleteTeammateFromLane = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        await TaggedLane.destroy({
+            where: {
+                userId: request.userId,
+                laneId: request.laneId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
         return {
             statusCode: 500
         }

@@ -303,6 +303,33 @@ functions:
             method: delete
             headers:
               - Authorization
+  getTeammatesForLane:
+    handler:
+      ./handlers/lane.getTeammatesForLane
+    events:
+        - http:
+            path: api/lane/{laneId}/teammates
+            method: get
+            headers:
+              - Authorization
+  addTeammatetoLane:
+    handler:
+      ./handlers/lane.addTeammateToLane
+    events:
+        - http:
+            path: api/lane/{laneId}/teammates
+            method: post
+            headers:
+              - Authorization
+  deleteTeammateFromLane:
+    handler:
+      ./handlers/lane.deleteTeammateFromLane
+    events:
+        - http:
+            path: api/lane/{laneId}/teammates
+            method: delete
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
