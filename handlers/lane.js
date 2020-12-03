@@ -1,6 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+const { Op } = require("sequelize");
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
@@ -82,7 +83,7 @@ module.exports.getLanesByUser = async (event, context) => {
             }
         })
 
-        const lanes = await targetUser.getLanes({
+        const userLanes = await targetUser.getLanes({
             include: [{
                 model: Location,
                 required: true,
@@ -115,13 +116,119 @@ module.exports.getLanesByUser = async (event, context) => {
             ]
         })
 
+        const customers = await targetUser.getCustomers()
+
+        let lanesFromCustomers = []
+
+        customers.forEach(async (customer) => {
+
+            const cLanes = await Lane.findAll({
+                order: [
+                    ['frequency', 'DESC'],
+                ],
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    required: true,
+                    include: [{
+                        model: CustomerLocation,
+                        required: true,
+                        include: [{
+                            model: Customer,
+                            required: true,
+                            where: {
+                                id: customer.id
+                            }
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }]
+                }, {
+                    model: Location,
+                    required: true,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true,
+                            where: {
+                                id: customer.id
+                            }
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }]
+                }]
+            });
+
+            lanesFromCustomers.push(cLanes)
+        })
+
+        const locations = await targetUser.getLocations()
+
+        let lanesFromLocations = []
+
+        locations.forEach(async (location) => {
+
+            const locationId = location.id
+            console.log(locationId)
+            console.log('test')
+
+            const lanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: locationId },
+                        { destinationLocationId: locationId }
+                    ]
+                },
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }]
+            })
+
+            console.log(typeof lanes)
+
+            lanesFromLocations.push(lanes)
+
+        })
+
+        const finalLanes = [...new Set([...userLanes,...lanesFromCustomers,...lanesFromLocations])]
+
         return {
-            body: JSON.stringify(lanes),
+            body: JSON.stringify(lanesFromLocations),
             statusCode: 200
         }
 
     } catch (err) {
 
+        console.log(err)
         return {
             statusCode: 500
         }

@@ -28,7 +28,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const laneContacts = await lane.getContacts()
+                const laneContacts = await lane.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(laneContacts),
@@ -43,7 +47,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const locationContacts = await location.getContacts()
+                const locationContacts = await location.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(locationContacts),
@@ -58,7 +66,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const customerContacts = await customer.getContacts()
+                const customerContacts = await customer.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(customerContacts),
@@ -234,10 +246,10 @@ module.exports.editContact = async (event, context) => {
         })
 
         contact.firstName = request.firstName,
-            contact.lastName = request.lastName,
-            contact.phone = request.phone,
-            contact.email = request.email,
-            contact.level = request.contactLevel
+        contact.lastName = request.lastName,
+        contact.phone = request.phone,
+        contact.email = request.email,
+        contact.level = request.level
 
         await contact.save()
 
