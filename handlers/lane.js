@@ -4,65 +4,6 @@ const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = requir
 const { Op } = require("sequelize");
 const query = require('.././helpers/getLanes')
 
-module.exports.getLanesByCurrentUser = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const lanes = await user.getLanes({
-            include: [{
-                model: Location,
-                required: true,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }
-            ]
-        })
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(lanes)
-        }
-
-    } catch (err) {
-        console.log(err)
-
-        return {
-            statusCode: 500
-        }
-    }
-}
-
 module.exports.getLanesByUser = async (event, context) => {
 
     const targetUserId = event.pathParameters.id
@@ -102,11 +43,9 @@ module.exports.getLanesByUser = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
         return {
             statusCode: 500
         }
-
     }
 }
 
