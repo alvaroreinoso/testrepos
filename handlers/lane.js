@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
 const { Op } = require("sequelize");
+const query = require('.././helpers/getLanes')
 
 module.exports.getLanesByCurrentUser = async (event, context) => {
 
@@ -69,7 +70,6 @@ module.exports.getLanesByUser = async (event, context) => {
     const currentUser = await getCurrentUser(event.headers.Authorization)
 
     if (currentUser.id == null) {
-
         return {
             statusCode: 401
         }
@@ -83,146 +83,20 @@ module.exports.getLanesByUser = async (event, context) => {
             }
         })
 
-        const userLanes = await targetUser.getLanes({
-            include: [{
-                model: Location,
-                required: true,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }
-            ]
-        })
-
+        const userLanes = await targetUser.getLanes()
         const customers = await targetUser.getCustomers()
-
-        let lanesFromCustomers = []
-
-        customers.forEach(async (customer) => {
-
-            const cLanes = await Lane.findAll({
-                order: [
-                    ['frequency', 'DESC'],
-                ],
-                include: [{
-                    model: Location,
-                    as: 'origin',
-                    required: true,
-                    include: [{
-                        model: CustomerLocation,
-                        required: true,
-                        include: [{
-                            model: Customer,
-                            required: true,
-                            where: {
-                                id: customer.id
-                            }
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }]
-                }, {
-                    model: Location,
-                    required: true,
-                    as: 'destination',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true,
-                            where: {
-                                id: customer.id
-                            }
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }]
-                }]
-            });
-
-            lanesFromCustomers.push(cLanes)
-        })
-
         const locations = await targetUser.getLocations()
+        
+        const laneIdsFromUser = userLanes.map(lane => lane.id)
+        const laneIdsFromLocations = await query.getLanesFromLocations(locations)
+        const laneIdsFromCustomers = await query.getLanesFromCustomers(customers)
+        
+        const laneIds = [...new Set([...laneIdsFromUser,...laneIdsFromCustomers,...laneIdsFromLocations])]
 
-        let lanesFromLocations = []
-
-        locations.forEach(async (location) => {
-
-            const locationId = location.id
-            console.log(locationId)
-            console.log('test')
-
-            const lanes = await Lane.findAll({
-                where: {
-                    [Op.or]: [
-                        { originLocationId: locationId },
-                        { destinationLocationId: locationId }
-                    ]
-                },
-                include: [{
-                    model: Location,
-                    as: 'origin',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }],
-                }, {
-                    model: Location,
-                    as: 'destination',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }],
-                }]
-            })
-
-            console.log(typeof lanes)
-
-            lanesFromLocations.push(lanes)
-
-        })
-
-        const finalLanes = [...new Set([...userLanes,...lanesFromCustomers,...lanesFromLocations])]
+        const allTaggedLanes = await query.getLanesFromIds(laneIds)
 
         return {
-            body: JSON.stringify(lanesFromLocations),
+            body: JSON.stringify(allTaggedLanes),
             statusCode: 200
         }
 
