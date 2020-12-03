@@ -285,6 +285,15 @@ functions:
             method: get
             headers:
               - Authorization
+  addMarketFeedback:
+    handler:
+      ./handlers/lane.addMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: post
+            headers:
+              - Authorization
 
   # Location
   getLocationById:

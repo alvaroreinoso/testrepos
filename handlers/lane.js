@@ -184,3 +184,35 @@ module.exports.getMarketFeedback = async (event, context) => {
         }
     }
 }
+
+module.exports.addMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const request = JSON.parse(event.body)
+
+        await MarketFeedback.create({
+            laneId: laneId,
+            rate: request.rate,
+            motorCarrierNumber: request.motorCarrierNumber,
+        })
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
