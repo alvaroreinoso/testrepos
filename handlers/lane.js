@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, User, Location, MarketFeedback } = require('.././models');
 const { Op } = require("sequelize");
 const query = require('.././helpers/getLanes')
 
@@ -27,12 +27,12 @@ module.exports.getLanesByUser = async (event, context) => {
         const userLanes = await targetUser.getLanes()
         const customers = await targetUser.getCustomers()
         const locations = await targetUser.getLocations()
-        
+
         const laneIdsFromUser = userLanes.map(lane => lane.id)
         const laneIdsFromLocations = await query.getLanesFromLocations(locations)
         const laneIdsFromCustomers = await query.getLanesFromCustomers(customers)
-        
-        const laneIds = [...new Set([...laneIdsFromUser,...laneIdsFromCustomers,...laneIdsFromLocations])]
+
+        const laneIds = [...new Set([...laneIdsFromUser, ...laneIdsFromCustomers, ...laneIdsFromLocations])]
 
         const allTaggedLanes = await query.getLanesFromIds(laneIds)
 
@@ -146,6 +146,37 @@ module.exports.updateLane = async (event, context) => {
             statusCode: 204
         }
 
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const feedback = await MarketFeedback.findAll({
+            where: {
+                laneId: laneId
+            }
+        })
+
+        return {
+            body: JSON.stringify(feedback),
+            statusCode: 200
+        }
     } catch (err) {
 
         return {

@@ -276,6 +276,15 @@ functions:
             headers:
               - Authorization
               - Content-Type
+  getMarketFeedback:
+    handler:
+      ./handlers/lane.getMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: get
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
