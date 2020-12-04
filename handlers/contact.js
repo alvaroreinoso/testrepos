@@ -110,7 +110,8 @@ module.exports.addContact = async (event, context) => {
         const id = event.pathParameters.itemId
         const existing = event.queryStringParameters.existing
 
-        if (existing) {
+        if (existing == 'true') {
+
             const contact = await Contact.findOne({
                 where: {
                     id: request.id
@@ -168,7 +169,8 @@ module.exports.addContact = async (event, context) => {
                 lastName: request.lastName,
                 phone: request.phone,
                 email: request.email,
-                level: request.contactLevel
+                level: request.level,
+                title: request.title
             })
 
             switch (type) {
@@ -270,6 +272,8 @@ module.exports.editContact = async (event, context) => {
 
 module.exports.deleteContact = async (event, context) => {
 
+    try {
+    
     const request = JSON.parse(event.body)
 
     const type = event.queryStringParameters.contactType
@@ -403,6 +407,12 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     }
+} catch (err) {
+
+    return {
+        statusCode: 500
+    }
+}
 
 
 }
