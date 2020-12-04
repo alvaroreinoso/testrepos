@@ -122,36 +122,30 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
-                    await LaneContact.create({
+                    await LaneContact.findOrCreate({
                         laneId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } case 'location': {
 
-                    await LocationContact.create({
+                    await LocationContact.findOrCreate({
                         locationId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } case 'customer': {
 
-                    await CustomerContact.create({
+                    await CustomerContact.findOrCreate({
                         customerId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } default: {
 
@@ -159,6 +153,10 @@ module.exports.addContact = async (event, context) => {
                         statusCode: 500
                     }
                 }
+            }
+
+            return {
+                statusCode: 204
             }
         }
 
@@ -182,9 +180,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } case 'location': {
 
@@ -193,9 +189,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } case 'customer': {
 
@@ -204,9 +198,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } default: {
 
@@ -214,11 +206,14 @@ module.exports.addContact = async (event, context) => {
                         statusCode: 500
                     }
                 }
+                
+            }
+
+            return {
+                statusCode: 204
             }
         }
     } catch (err) {
-
-        console.log(err)
 
         return {
             statusCode: 500

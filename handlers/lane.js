@@ -20,9 +20,20 @@ module.exports.getLanesByUser = async (event, context) => {
         const targetUser = await User.findOne({
             where: {
                 id: targetUserId,
-                brokerageId: currentUser.brokerageId
             }
         })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
 
         const userLanes = await targetUser.getLanes()
         const customers = await targetUser.getCustomers()
