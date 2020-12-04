@@ -1,7 +1,7 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerLocation, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
+const { getCurrentUser } = require('.././helpers/user')
 
 module.exports.getLocationById = async (event, context) => {
 

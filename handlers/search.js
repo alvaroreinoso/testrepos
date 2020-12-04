@@ -1,21 +1,11 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
-
-const elasticsearch = require('elasticsearch');
-const client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    log: [{
-        type: 'stdio',
-        levels: ['error']
-    }],
-    apiVersion: '7.7'
-});
+const client = require('.././elastic/client')
+const { getCurrentUser } = require('.././helpers/user')
 
 module.exports.search = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {

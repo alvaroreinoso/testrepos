@@ -285,6 +285,13 @@ module.exports.deleteContact = async (event, context) => {
                 }
             })
 
+            if (laneContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
+
             await laneContact.destroy()
 
             const contact = await Contact.findOne({
@@ -318,6 +325,13 @@ module.exports.deleteContact = async (event, context) => {
                 }
             })
 
+            if (locationContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
+
             await locationContact.destroy()
 
             const contact = await Contact.findOne({
@@ -350,6 +364,13 @@ module.exports.deleteContact = async (event, context) => {
                     contactId: request.CustomerContact.contactId
                 }
             })
+
+            if (customerContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
 
             await customerContact.destroy()
 
