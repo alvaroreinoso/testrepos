@@ -50,9 +50,7 @@ module.exports.getLocationById = async (event, context) => {
 
 module.exports.getLanesForLocation = async (event, context) => {
 
-
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == undefined) {
