@@ -7,14 +7,16 @@ describe('Test write message lambda', () => {
 
     test('Write message returns 401 with no auth', async () => {
 
+        const body = {
+            ledgerId: 1,
+            content: 'test'
+        }
+
         const request = {
             headers: {
                 Authorization: '',
             },
-            body: {
-                "ledgerId": 1,
-                "content": "hey man what's goin on"
-            } 
+            body: JSON.stringify(body)
         }
 
         const response = await ledgerHandler.writeMessage(request)
@@ -22,33 +24,41 @@ describe('Test write message lambda', () => {
         expect(response.statusCode).toBe(401)
     })
 
-    // test('Write message returns 401 when attempting to write to ledger outside of brokerage', async () => {
+    test('Write message returns 401 when attempting to write to ledger outside of brokerage', async () => {
 
-    //     const request = {
-    //         headers: {
-    //             Authorization: token,
-    //         },
-    //         body: {
-    //             "ledgerId": 10,
-    //             "content": "hey man what's goin on"
-    //         } 
-    //     }
+        const body = {
+            ledgerId: 10,
+            content: 'test'
+        }
 
-    //     const response = await ledgerHandler.writeMessage(request)
+        const request = {
+            headers: {
+                Authorization: token,
+            },
+            body: JSON.stringify(body)
+        }
 
-    //     expect(response.statusCode).toBe(401)
-    // })
+        const response = await ledgerHandler.writeMessage(request)
 
-    // test('Write message returns 204 when successfully writing to ledger', async () => {
+        expect(response.statusCode).toBe(401)
+    })
 
-    //     const request = {"headers": '{Authorization: token}' , "body": '{"ledgerId": 1, "content": "hey man whats goin on"}'}
+    test('Write message returns 204 when successfully writing to ledger', async () => {
 
-    //     const reqstr = await request.toString()
+        const body = {
+            ledgerId: 1,
+            content: 'yo whats up'
+        }
 
-    //     console.log(reqstr)
+        const request = {
+            headers: {
+                Authorization: token,
+            },
+            body: JSON.stringify(body)
+        }
 
-    //     const response = await ledgerHandler.writeMessage(request)
+        const response = await ledgerHandler.writeMessage(request)
 
-    //     expect(response.statusCode).toBe(204)
-    // }) 
+        expect(response.statusCode).toBe(204)
+    }) 
 })

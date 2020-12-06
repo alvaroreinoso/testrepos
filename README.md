@@ -104,5 +104,13 @@ and ^c
 
 Our searchable data models are designed to stay up to date with `sequelize hooks`. After one of these models saves to the database, is updated, or deleted, search results should reflect these changes.
 
+### Tests
+At the moment our test setup relies on the database being up and running from initial setup. 
+
+To run tests, run
+```
+yarn test
+```
+
 
 

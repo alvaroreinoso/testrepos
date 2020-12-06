@@ -2,7 +2,7 @@ const userHandler = require('../../../handlers/user')
 
 describe('Test getTeams Lambda', () => {
 
-    test('Get User with no token', async () => {
+    test('returns 401 with no token', async () => {
 
         const request = {
             headers: {
@@ -15,7 +15,7 @@ describe('Test getTeams Lambda', () => {
         expect(response.statusCode).toStrictEqual(401)
     })
 
-    test('Get User with valid token', async () => {
+    test('returns 200 with teams response', async () => {
 
         const request = {
             headers: {
