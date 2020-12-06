@@ -2,7 +2,7 @@
 
 
 ## Run the backend locally
-Our backend development enviorenment relies on the following services:
+Our backend development environment relies on the following services:
 1. Postgres database
 2. SLS offline server
 3. Elasticsearch
@@ -105,7 +105,7 @@ and ^c
 Our searchable data models are designed to stay up to date with `sequelize hooks`. After one of these models saves to the database, is updated, or deleted, search results should reflect these changes.
 
 ### Tests
-At the moment our test setup relies on the database being up and running from initial setup. 
+At the moment, our test setup relies on the database being up and running from initial setup. 
 
 To run tests, run
 ```
