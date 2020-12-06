@@ -233,7 +233,7 @@ functions:
       ./handlers/customer.addTeammateToCustomer
     events:
         - http:
-            path: api/customer/{customerId}/teammates
+            path: api/customer/teammates
             method: post
             headers:
               - Authorization
@@ -248,15 +248,6 @@ functions:
               - Authorization
 
 # Lane
-  getLanesByCurrentUser:
-    handler:
-      ./handlers/lane.getLanesByCurrentUser
-    events:
-        - http:
-            path: api/lane
-            method: get
-            headers:
-              - Authorization
   getLanesByUser:
     handler:
       ./handlers/lane.getLanesByUser
@@ -285,6 +276,60 @@ functions:
             headers:
               - Authorization
               - Content-Type
+  getMarketFeedback:
+    handler:
+      ./handlers/lane.getMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: get
+            headers:
+              - Authorization
+  addMarketFeedback:
+    handler:
+      ./handlers/lane.addMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: post
+            headers:
+              - Authorization
+  deleteMarketFeedback:
+    handler:
+      ./handlers/lane.deleteMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback/{feedbackId}
+            method: delete
+            headers:
+              - Authorization
+  getTeammatesForLane:
+    handler:
+      ./handlers/lane.getTeammatesForLane
+    events:
+        - http:
+            path: api/lane/{laneId}/teammates
+            method: get
+            headers:
+              - Authorization
+  addTeammatetoLane:
+    handler:
+      ./handlers/lane.addTeammateToLane
+    events:
+        - http:
+            path: api/lane/teammates
+            method: post
+            headers:
+              - Authorization
+  deleteTeammateFromLane:
+    handler:
+      ./handlers/lane.deleteTeammateFromLane
+    events:
+        - http:
+            path: api/lane/teammates
+            method: delete
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
@@ -301,6 +346,34 @@ functions:
         - http:
             path: api/location/{id}/lanes
             method: get
+  getTeammatesForLocation:
+    handler:
+      ./handlers/location.getTeammatesForLocation
+    events:
+        - http:
+            path: api/location/{locationId}/teammates
+            method: get
+            headers:
+              - Authorization
+  addTeammatetoLocation:
+    handler:
+      ./handlers/location.addTeammateToLocation
+    events:
+        - http:
+            path: api/location/teammates
+            method: post
+            headers:
+              - Authorization
+  deleteTeammateFromLocation:
+    handler:
+      ./handlers/location.deleteTeammateFromLocation
+    events:
+        - http:
+            path: api/location/teammates
+            method: delete
+            headers:
+              - Authorization
+
   # Contact
   getContacts:
     handler:

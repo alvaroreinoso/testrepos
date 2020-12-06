@@ -28,7 +28,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const laneContacts = await lane.getContacts()
+                const laneContacts = await lane.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(laneContacts),
@@ -43,7 +47,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const locationContacts = await location.getContacts()
+                const locationContacts = await location.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(locationContacts),
@@ -58,7 +66,11 @@ module.exports.getContacts = async (event, context) => {
                     }
                 })
 
-                const customerContacts = await customer.getContacts()
+                const customerContacts = await customer.getContacts({
+                    order: [
+                        ['level', 'ASC'],
+                    ],
+                })
 
                 return {
                     body: JSON.stringify(customerContacts),
@@ -98,7 +110,8 @@ module.exports.addContact = async (event, context) => {
         const id = event.pathParameters.itemId
         const existing = event.queryStringParameters.existing
 
-        if (existing) {
+        if (existing == 'true') {
+
             const contact = await Contact.findOne({
                 where: {
                     id: request.id
@@ -109,36 +122,30 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
-                    await LaneContact.create({
+                    await LaneContact.findOrCreate({
                         laneId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } case 'location': {
 
-                    await LocationContact.create({
+                    await LocationContact.findOrCreate({
                         locationId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } case 'customer': {
 
-                    await CustomerContact.create({
+                    await CustomerContact.findOrCreate({
                         customerId: id,
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break;
 
                 } default: {
 
@@ -146,6 +153,10 @@ module.exports.addContact = async (event, context) => {
                         statusCode: 500
                     }
                 }
+            }
+
+            return {
+                statusCode: 204
             }
         }
 
@@ -156,7 +167,8 @@ module.exports.addContact = async (event, context) => {
                 lastName: request.lastName,
                 phone: request.phone,
                 email: request.email,
-                level: request.contactLevel
+                level: request.level,
+                title: request.title
             })
 
             switch (type) {
@@ -168,9 +180,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } case 'location': {
 
@@ -179,9 +189,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } case 'customer': {
 
@@ -190,9 +198,7 @@ module.exports.addContact = async (event, context) => {
                         contactId: contact.id
                     })
 
-                    return {
-                        statusCode: 204
-                    }
+                    break
 
                 } default: {
 
@@ -200,11 +206,14 @@ module.exports.addContact = async (event, context) => {
                         statusCode: 500
                     }
                 }
+                
+            }
+
+            return {
+                statusCode: 204
             }
         }
     } catch (err) {
-
-        console.log(err)
 
         return {
             statusCode: 500
@@ -234,10 +243,10 @@ module.exports.editContact = async (event, context) => {
         })
 
         contact.firstName = request.firstName,
-            contact.lastName = request.lastName,
-            contact.phone = request.phone,
-            contact.email = request.email,
-            contact.level = request.contactLevel
+        contact.lastName = request.lastName,
+        contact.phone = request.phone,
+        contact.email = request.email,
+        contact.level = request.level
 
         await contact.save()
 
@@ -258,6 +267,8 @@ module.exports.editContact = async (event, context) => {
 
 module.exports.deleteContact = async (event, context) => {
 
+    try {
+    
     const request = JSON.parse(event.body)
 
     const type = event.queryStringParameters.contactType
@@ -272,6 +283,13 @@ module.exports.deleteContact = async (event, context) => {
                     contactId: request.LaneContact.contactId
                 }
             })
+
+            if (laneContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
 
             await laneContact.destroy()
 
@@ -306,6 +324,13 @@ module.exports.deleteContact = async (event, context) => {
                 }
             })
 
+            if (locationContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
+
             await locationContact.destroy()
 
             const contact = await Contact.findOne({
@@ -339,6 +364,13 @@ module.exports.deleteContact = async (event, context) => {
                 }
             })
 
+            if (customerContact === null) {
+
+                return {
+                    statusCode: 404
+                }
+            }
+
             await customerContact.destroy()
 
             const contact = await Contact.findOne({
@@ -370,6 +402,12 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     }
+} catch (err) {
+
+    return {
+        statusCode: 500
+    }
+}
 
 
 }

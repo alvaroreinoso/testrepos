@@ -1,65 +1,8 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
-
-module.exports.getLanesByCurrentUser = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const lanes = await user.getLanes({
-            include: [{
-                model: Location,
-                required: true,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }
-            ]
-        })
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(lanes)
-        }
-
-    } catch (err) {
-        console.log(err)
-
-        return {
-            statusCode: 500
-        }
-    }
-}
+const { Customer, CustomerLocation, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
+const { Op } = require("sequelize");
+const query = require('.././helpers/getLanes')
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -68,7 +11,6 @@ module.exports.getLanesByUser = async (event, context) => {
     const currentUser = await getCurrentUser(event.headers.Authorization)
 
     if (currentUser.id == null) {
-
         return {
             statusCode: 401
         }
@@ -78,45 +20,35 @@ module.exports.getLanesByUser = async (event, context) => {
         const targetUser = await User.findOne({
             where: {
                 id: targetUserId,
-                brokerageId: currentUser.brokerageId
             }
         })
 
-        const lanes = await targetUser.getLanes({
-            include: [{
-                model: Location,
-                required: true,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
+        if (targetUser == null) {
+            return {
+                statusCode: 404
             }
-            ]
-        })
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const userLanes = await targetUser.getLanes()
+        const customers = await targetUser.getCustomers()
+        const locations = await targetUser.getLocations()
+
+        const laneIdsFromUser = userLanes.map(lane => lane.id)
+        const laneIdsFromLocations = await query.getLanesFromLocations(locations)
+        const laneIdsFromCustomers = await query.getLanesFromCustomers(customers)
+
+        const laneIds = [...new Set([...laneIdsFromUser, ...laneIdsFromCustomers, ...laneIdsFromLocations])]
+
+        const allTaggedLanes = await query.getLanesFromIds(laneIds)
 
         return {
-            body: JSON.stringify(lanes),
+            body: JSON.stringify(allTaggedLanes),
             statusCode: 200
         }
 
@@ -125,7 +57,6 @@ module.exports.getLanesByUser = async (event, context) => {
         return {
             statusCode: 500
         }
-
     }
 }
 
@@ -228,6 +159,207 @@ module.exports.updateLane = async (event, context) => {
 
     } catch (err) {
 
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const feedback = await MarketFeedback.findAll({
+            where: {
+                laneId: laneId
+            }
+        })
+
+        return {
+            body: JSON.stringify(feedback),
+            statusCode: 200
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.addMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const request = JSON.parse(event.body)
+
+        await MarketFeedback.create({
+            laneId: laneId,
+            rate: request.rate,
+            motorCarrierNumber: request.motorCarrierNumber,
+        })
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.deleteMarketFeedback = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const laneId = event.pathParameters.laneId
+
+        const feedbackId = event.pathParameters.feedbackId
+
+        await MarketFeedback.destroy({
+            where: {
+                id: feedbackId,
+                laneId: laneId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getTeammatesForLane = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId
+            },
+        })
+
+        const users = await lane.getUsers()
+
+        return {
+            body: JSON.stringify(users),
+            statusCode: 200
+        }
+    }
+    catch (err) {
+
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+
+
+}
+
+module.exports.addTeammateToLane = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const laneId = request.laneId
+        const userId = request.userId
+
+        await TaggedLane.findOrCreate({
+            where: {
+                laneId: laneId,
+                userId: userId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.deleteTeammateFromLane = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        await TaggedLane.destroy({
+            where: {
+                userId: request.userId,
+                laneId: request.laneId
+            }
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
         return {
             statusCode: 500
         }

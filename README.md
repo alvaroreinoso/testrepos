@@ -1,7 +1,13 @@
 # Terralanes Backend
 
 
-## 1. Requirements
+## Run the backend locally
+Our backend development environment relies on the following services:
+1. Postgres database
+2. SLS offline server
+3. Elasticsearch
+
+### 1. Requirements
 1. Make sure you have node and yarn installed
     Node: https://nodejs.org/en/download/
     yarn: https://www.npmjs.com/get-yarn
@@ -12,7 +18,7 @@ Run
 yarn install
 ```
 
-### 3. Start database with sequelize-cli
+### 3. To run the database locally
 1. In the project root run
 ```
 yarn db:start
@@ -25,9 +31,14 @@ yarn db:seed
 ```
 yarn db:stop
 ```
+4. To restart and reseed the database, run
+```
+yarn db:restart
+```
+This is often necessary when testing csv upload.
 
 ### 4. Connect to database
-1. For interacting with the database locally I recommend using `pgcli`
+1. If you need to interact with the database locally, I recommend using `pgcli`
 
 To install it, run
 ```
@@ -88,6 +99,18 @@ yarn elastic:start
 yarn elastic:stop
 ```
 and ^c
+
+### Elasticsearch Hooks
+
+Our searchable data models are designed to stay up to date with `sequelize hooks`. After one of these models saves to the database, is updated, or deleted, search results should reflect these changes.
+
+### Tests
+At the moment, our test setup relies on the database being up and running from initial setup. 
+
+To run tests, run
+```
+yarn test
+```
 
 
 

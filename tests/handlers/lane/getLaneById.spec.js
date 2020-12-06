@@ -2,7 +2,7 @@ const laneHandler = require('../../../handlers/lane')
 
 describe('Test Get Lane by Id', () => {
 
-    test('Get lane by Id with no token', async () => {
+    test('returns 401 with no token', async () => {
 
         const request = {
             headers: {
@@ -13,29 +13,12 @@ describe('Test Get Lane by Id', () => {
             }
         }
 
-        const response = await laneHandler.getLane(request)
+        const response = await laneHandler.getLaneById(request)
 
         expect(response.statusCode).toStrictEqual(401)
-    }
-    )
-
-    test('Get lane by Id with auth but wrong lane', async () => {
-
-        const request = {
-            headers: {
-                Authorization: 'eyJraWQiOiJtZEtBYzdQZlkrNENLc2xrb0o4UTZTZmtcL2JDMTIyTlVFNUlyTmJZNDRxMD0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3MGNmYzJlOS04NTA3LTQzNDktYWRlZS01YWUwMzUyZTQyMGMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfV2dwRFdTdzlVIiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjp0cnVlLCJjb2duaXRvOnVzZXJuYW1lIjoiNzBjZmMyZTktODUwNy00MzQ5LWFkZWUtNWFlMDM1MmU0MjBjIiwiYXVkIjoiMmI4YzBtZzdmM2psNXNvMmI3YThycHF2NGIiLCJldmVudF9pZCI6IjE0OWE1NGJjLTQ4YzItNGNjNS04NTc5LWJkOTNkYmQyNDZjMyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNTk5NjYxODg3LCJwaG9uZV9udW1iZXIiOiIrMTYxNTEyMzQ1NzQiLCJleHAiOjE1OTk2NjU0ODcsImlhdCI6MTU5OTY2MTg4NywiZW1haWwiOiJ0ZmF5bmVAb3BsLmNvbSJ9.o7OvpDKEBe03KrgG-NbtZoCRa_XYEYrfu4R0L0I5Azn5QsrA1JgDGrvZSxfAGtts_V0nyy9gi3Q1uFxSMwyMJjsAl6D_W51r7OJ0Z6eyCQUQg6J26mZ2EF1ydJvcLTw86s9og2o2AbvhlBO3oblX4j-3qArAJF6BAULBHZxfg2xZpcJteOg9zNa_auZtWwIh5oqI8gdKRuAVgdKYS8UsWbiujNuWfV2sB4V7bGCWwXvNSRaTj2ZPIfZ9HFmHJhdPy7dP9XRzKWojxkYceRT9_Fctpons0uW6I3PqlLIos3u5gTyRDlH4HEyHLTrAQrRFsNc8vLYk_5k1JiOc74MwrA'
-            },
-            pathParameters: {
-                laneId: 1
-            }
-        }
-
-        const response = await laneHandler.getLane(request)
-
-        expect(response.statusCode).toStrictEqual(404)
     })
 
-    test('Get lane by Id with auth and correct lane', async () => {
+    test('returns lane with origin and destination', async () => {
 
         const request = {
             headers: {
@@ -46,12 +29,19 @@ describe('Test Get Lane by Id', () => {
             }
         }
 
-        const response = await laneHandler.getLane(request)
+        const response = await laneHandler.getLaneById(request)
 
         expect(response.statusCode).toStrictEqual(200)
+
+        const body = JSON.parse(response.body)
+
+        expect(body).toHaveProperty('origin')
+        expect(body).toHaveProperty('destination')
+        expect(body.origin).not.toBeNull()
+        expect(body.destination).not.toBeNull()
     })
 
-    test('Get lane that doesnt exist', async () => {
+    test('returns 404 for nonexistent lane Id', async () => {
 
         const request = {
             headers: {
@@ -62,7 +52,7 @@ describe('Test Get Lane by Id', () => {
             }
         }
 
-        const response = await laneHandler.getLane(request)
+        const response = await laneHandler.getLaneById(request)
 
         expect(response.statusCode).toStrictEqual(404)
     })

@@ -85,10 +85,10 @@ module.exports.getCustomer = async (event, context) => {
 }
 module.exports.getTopCustomers = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+    const currentUser = await getCurrentUser(event.headers.Authorization)
     const userId = event.pathParameters.userId
 
-    if (user.id == null) {
+    if (currentUser.id == null) {
         return {
             statusCode: 401
         }
@@ -98,13 +98,18 @@ module.exports.getTopCustomers = async (event, context) => {
         const targetUser = await User.findOne({
             where: {
                 id: userId,
-                brokerageId: user.brokerageId
             }
         })
 
         if (targetUser == null) {
             return {
                 statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
             }
         }
 
@@ -212,9 +217,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
 module.exports.getTeammatesForCustomer = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -239,13 +242,10 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
     }
     catch (err) {
 
-        console.log(err)
         return {
             statusCode: 500
         }
     }
-
-
 }
 
 module.exports.addTeammateToCustomer = async (event, context) => {
