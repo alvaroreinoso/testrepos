@@ -224,7 +224,7 @@ functions:
       ./handlers/customer.getLocationsForCustomer
     events:
         - http:
-            path: api/locations/customer/{customerId}
+            path: api/customer/{customerId}/locations
             method: get
             headers:
               - Content-Type
