@@ -331,20 +331,21 @@ const lanes = [
     {
       originLocationId: 17,
       destinationLocationId: 71,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      originLocationId: 18,
-      destinationLocationId: 72,
       ledgerId: 99,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       originLocationId: 18,
-      destinationLocationId: 73,
+      destinationLocationId: 72,
       ledgerId: 100,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      originLocationId: 18,
+      destinationLocationId: 73,
+      ledgerId: 101,
       createdAt: new Date(),
       updatedAt: new Date()
     },
