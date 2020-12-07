@@ -214,6 +214,43 @@ module.exports.getLanesForCustomer = async (event, context) => {
     }
 }
 
+module.exports.getLocationsForCustomer = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const customerId = event.pathParameters.customerId
+
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId
+            },
+        })
+
+        const customerLocations = await customer.getCustomerLocations({
+            include: Location
+        })
+
+        return {
+            body: JSON.stringify(customerLocations),
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+}
+
 module.exports.getTeammatesForCustomer = async (event, context) => {
 
     try {

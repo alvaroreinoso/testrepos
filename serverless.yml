@@ -219,6 +219,16 @@ functions:
             headers:
               - Content-Type
               - Authorization
+  getLocationsForCustomer:
+    handler:
+      ./handlers/customer.getLocationsForCustomer
+    events:
+        - http:
+            path: api/locations/customer/{customerId}
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
   getTeammatesForCustomer:
     handler:
       ./handlers/customer.getTeammatesForCustomer
