@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     destinationLocationId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
-    rate: DataTypes.STRING,
+    rate: DataTypes.INTEGER,
     userAddedRate: DataTypes.BOOLEAN
   }, {
     hooks: {

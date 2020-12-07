@@ -27,7 +27,7 @@ module.exports = {
         allowNull: true
       },
       rate: {
-        type: Sequelize.TEXT,
+        type: Sequelize.INTEGER,
         allowNull: true
       },
       userAddedRate: {
