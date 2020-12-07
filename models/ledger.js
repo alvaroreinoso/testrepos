@@ -17,10 +17,13 @@ module.exports = (sequelize, DataTypes) => {
       Ledger.hasOne(models.User, {
         foreignKey: 'ledgerId'
       })
-      Ledger.hasOne(models.Location, {
+      Ledger.hasOne(models.CustomerLocation, {
         foreignKey: 'ledgerId'
       })
       Ledger.hasMany(models.Message, {
+        foreignKey: 'ledgerId'
+      })
+      Ledger.hasOne(models.Lane, {
         foreignKey: 'ledgerId'
       })
       Ledger.belongsTo(models.Brokerage, {

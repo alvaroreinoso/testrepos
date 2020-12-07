@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       }),
       CustomerLocation.belongsTo(models.Location, {
         foreignKey: 'locationId'
+      }),
+      CustomerLocation.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
       })
     }
   };

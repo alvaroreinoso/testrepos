@@ -19,9 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       Location.hasMany(models.Lane, {
         foreignKey: 'originLocationId',
       })
-      Location.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId',
-      })
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
       })
@@ -40,7 +37,6 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
-    ledgerId: DataTypes.INTEGER,
     lnglat: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
     isShippingReceiving: DataTypes.BOOLEAN

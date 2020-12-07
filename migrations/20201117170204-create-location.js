@@ -43,15 +43,6 @@ module.exports = {
       lnglat: {
         type: Sequelize.STRING
       },
-      ledgerId: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Ledgers',
-          key: 'id',
-          as: 'ledgerId'
-        }
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
