@@ -120,6 +120,11 @@ module.exports.getTopCustomers = async (event, context) => {
             }]
         })
 
+        for (customer in customers) {
+
+                
+        }
+
         return {
             body: JSON.stringify(customers.sort()),
             statusCode: 200
