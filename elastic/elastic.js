@@ -30,7 +30,8 @@ async function seedCustomer() {
 
         const customer = {
             name: cust.name,
-            brokerageId: cust.Team.brokerageId
+            brokerageId: cust.Team.brokerageId,
+            id: cust.id
         }
 
         client.create({
