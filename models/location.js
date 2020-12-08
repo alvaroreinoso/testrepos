@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         through: 'LocationContact',
         foreignKey: 'locationId'
       })
+      Location.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
+      })
     }
   };
   Location.init({
@@ -38,6 +41,7 @@ module.exports = (sequelize, DataTypes) => {
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
     phone: DataTypes.STRING,
+    ledgerId: DataTypes.INTEGER,
     lnglat: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
     isShippingReceiving: DataTypes.BOOLEAN

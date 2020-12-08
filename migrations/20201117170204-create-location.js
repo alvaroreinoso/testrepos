@@ -27,6 +27,15 @@ module.exports = {
       phone: {
         type: Sequelize.STRING
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
+      },
       isHQ: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

@@ -10,6 +10,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-117.67038,33.96662",
+        ledgerId: 29,
         phone: faker.phone.phoneNumber(),
         createdAt: new Date(),
         updatedAt: new Date()
@@ -23,6 +24,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-96.44419,32.81259",
+        ledgerId: 30,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -38,7 +40,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-74.262140,40.594690",
-        // ledgerId: 31,
+        ledgerId: 31,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -54,7 +56,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-97.109800,36.726320",
-        // ledgerId: 32,
+        ledgerId: 32,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -70,7 +72,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-80.590009,34.243950",
-        // ledgerId: 33,
+        ledgerId: 33,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -86,7 +88,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-83.578033,36.441920",
-        // ledgerId: 34,
+        ledgerId: 34,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -102,7 +104,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-81.351324,31.874845",
-        // ledgerId: 35,
+        ledgerId: 35,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -118,7 +120,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-80.175726,26.074884",
-        // ledgerId: 36,
+        ledgerId: 36,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -134,7 +136,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-96.553125,28.794657",
-        // ledgerId: 37,
+        ledgerId: 37,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -150,7 +152,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-83.951470,30.830527",
-        // ledgerId: 38,
+        ledgerId: 38,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -166,7 +168,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-88.432239,36.189507",
-        // ledgerId: 39,
+        ledgerId: 39,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -182,7 +184,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-90.033168,34.946122",
-        // ledgerId: 40,
+        ledgerId: 40,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -198,7 +200,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-94.971498,33.099430",
-        // ledgerId: 41,
+        ledgerId: 41,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -214,7 +216,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": false,
         "lnglat": "-87.729775,41.927475",
-        // ledgerId: 42,
+        ledgerId: 42,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -230,7 +232,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-95.069059,29.602662",
-        // ledgerId: 43,
+        ledgerId: 43,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -246,7 +248,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-96.700486,32.634068",
-        // ledgerId: 44,
+        ledgerId: 44,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -262,7 +264,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-97.343010,32.817189",
-        // ledgerId: 45,
+        ledgerId: 45,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -278,7 +280,7 @@ const locations = [
         "isHQ": false,
         "isShippingReceiving": true,
         "lnglat": "-95.090895,29.710024",
-        // ledgerId: 46,
+        ledgerId: 46,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -294,7 +296,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-86.750116,36.185708",
-        // ledgerId: 47,
+        ledgerId: 47,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -310,7 +312,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-86.750116,36.185708",
-        // ledgerId: 48,
+        ledgerId: 48,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -326,7 +328,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-74.008593,40.706002",
-        // ledgerId: 49,
+        ledgerId: 49,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -342,7 +344,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-73.9852,40.74861",
-        // ledgerId: 50,
+        ledgerId: 50,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -358,7 +360,7 @@ const locations = [
         "isHQ": true,
         "isShippingReceiving": true,
         "lnglat": "-122.33676,47.622924",
-        // ledgerId: 51,
+        ledgerId: 51,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -371,7 +373,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.7524704,36.11983926",
-        // ledgerId: 52,
+        ledgerId: 52,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -384,7 +386,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.709192,37.207745",
-        // ledgerId: 53,
+        ledgerId: 53,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -397,7 +399,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-121.311852,37.989843",
-        // ledgerId: 54,
+        ledgerId: 54,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -410,7 +412,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-111.72863337,40.28782325",
-        // ledgerId: 55,
+        ledgerId: 55,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -423,7 +425,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-98.50391514,29.40752816",
-        // ledgerId: 56,
+        ledgerId: 56,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -436,7 +438,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-93.381863,44.987723",
-        // ledgerId: 57,
+        ledgerId: 57,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -449,7 +451,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-90.18429631,38.92952737",
-        // ledgerId: 58,
+        ledgerId: 58,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -462,7 +464,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-68.04158774,46.70009635",
-        // ledgerId: 59,
+        ledgerId: 59,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -475,7 +477,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-80.11737812,40.71001957",
-        // ledgerId: 60,
+        ledgerId: 60,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -488,7 +490,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-83.0617098,32.4345442",
-        // ledgerId: 61,
+        ledgerId: 61,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -501,7 +503,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-93.494995,33.365568",
-        // ledgerId: 62,
+        ledgerId: 62,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -514,7 +516,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-91.461885,38.497460",
-        // ledgerId: 63,
+        ledgerId: 63,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -527,7 +529,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-114.48725327,42.55669131",
-        // ledgerId: 64,
+        ledgerId: 64,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -540,7 +542,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-121.14276392,37.78000702",
-        // ledgerId: 65,
+        ledgerId: 65,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -553,7 +555,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-89.885916,35.107648",
-        // ledgerId: 66,
+        ledgerId: 66,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -566,7 +568,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-94.67316299,38.88457385",
-        // ledgerId: 67,
+        ledgerId: 67,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -579,7 +581,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-96.852691,37.674979",
-        // ledgerId: 68,
+        ledgerId: 68,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -592,7 +594,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-90.329521,32.342191",
-        // ledgerId: 69,
+        ledgerId: 69,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -605,7 +607,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-84.335974,33.746212",
-        // ledgerId: 70,
+        ledgerId: 70,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -618,7 +620,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.007374,39.953441",
-        // ledgerId: 71,
+        ledgerId: 71,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -631,7 +633,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.009766,34.664641",
-        // ledgerId: 72,
+        ledgerId: 72,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -644,7 +646,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-82.380786,29.625476",
-        // ledgerId: 73,
+        ledgerId: 73,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -657,7 +659,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-82.099221,36.642715",
-        // ledgerId: 74,
+        ledgerId: 74,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -670,7 +672,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-121.858218,38.018531",
-        // ledgerId: 75,
+        ledgerId: 75,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -683,7 +685,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.571144,35.979856",
-        // ledgerId: 76,
+        ledgerId: 76,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -696,7 +698,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-90.041855,30.435943",
-        // ledgerId: 77,
+        ledgerId: 77,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -709,7 +711,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-85.829907,30.206657",
-        // ledgerId: 78,
+        ledgerId: 78,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -722,7 +724,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.340455,44.061244",
-        // ledgerId: 79,
+        ledgerId: 79,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -735,7 +737,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-89.158054,34.467086",
-        // ledgerId: 80,
+        ledgerId: 80,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -748,7 +750,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-79.923799,32.781291",
-        // ledgerId: 81,
+        ledgerId: 81,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -761,7 +763,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-118.481990,34.001214",
-        // ledgerId: 82,
+        ledgerId: 82,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -774,7 +776,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-94.617788,37.074663",
-        // ledgerId: 83,
+        ledgerId: 83,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -787,7 +789,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-76.657862,40.293104",
-        // ledgerId: 84,
+        ledgerId: 84,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -800,7 +802,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-79.684989,34.268006",
-        // ledgerId: 85,
+        ledgerId: 85,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -813,7 +815,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-89.87360852,35.08942255",
-        // ledgerId: 86,
+        ledgerId: 86,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -826,7 +828,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-97.731266,30.270113",
-        // ledgerId: 87,
+        ledgerId: 87,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -839,7 +841,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-90.05718244,35.13383755",
-        // ledgerId: 88,
+        ledgerId: 88,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -852,7 +854,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-86.29798512,41.70827007",
-        // ledgerId: 89,
+        ledgerId: 89,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -865,7 +867,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-118.17423422,33.80560095",
-        // ledgerId: 90,
+        ledgerId: 90,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -878,7 +880,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-89.86423545,35.10612208",
-        // ledgerId: 91,
+        ledgerId: 91,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -891,7 +893,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-94.52499951,36.18141866",
-        // ledgerId: 92,
+        ledgerId: 92,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -904,7 +906,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-103.13527188,32.73943075",
-        // ledgerId: 93,
+        ledgerId: 93,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -917,7 +919,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-105.5007428,39.7870643",
-        // ledgerId: 94,
+        ledgerId: 94,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -930,7 +932,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-113.332456,46.247940",
-        // ledgerId: 95,
+        ledgerId: 95,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -943,7 +945,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-119.4414694,48.9377534",
-        // ledgerId: 96,
+        ledgerId: 96,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -956,7 +958,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-102.519609,34.073020",
-        // ledgerId: 97,
+        ledgerId: 97,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -969,7 +971,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-101.656305,35.257680",
-        // ledgerId: 98,
+        ledgerId: 98,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -982,7 +984,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-100.425521,32.454626",
-        // ledgerId: 99,
+        ledgerId: 99,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -995,7 +997,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-102.213661,31.880502",
-        // ledgerId: 100,
+        ledgerId: 100,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -1008,7 +1010,7 @@ const locations = [
         // "open": "",
         // "close": "",
         "lnglat": "-101.838864,33.712846",
-        // ledgerId: 101,
+        ledgerId: 101,
         phone: faker.phone.phoneNumber(), createdAt: new Date(),
         updatedAt: new Date()
     }
