@@ -19,9 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     contactId: DataTypes.INTEGER
   }, {
     hooks: {
-      afterSave: (contact, options) => {
-          elastic.saveContact(contact)
-      },
+
     },
     sequelize,
     modelName: 'LaneContact',

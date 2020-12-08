@@ -295,66 +295,15 @@ module.exports.deleteDocument = async (item) => {
     }
 }
 
-module.exports.saveContact = async (item) => {
-
-    const { Customer, Lane, Location, Contact, Ledger } = require('.././models');
-
-    const contact = await Contact.findOne({
-        where: {
-            id: item.contactId
-        },
-        include: [{
-            model: Location,
-            include: [{
-                model: Ledger
-            }]
-        },
-        {
-            model: Customer,
-            include: [{
-                model: Ledger
-            }]
-        },
-        {
-            model: Lane,
-            include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: Ledger
-                }]
-            },
-            {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: Ledger
-                }]
-            }]
-        }]
-    })
-
-    let brokerageId = []
-
-    if (contact.Locations.length != 0) {
-
-        brokerageId.push(contact.Locations[0].Ledger.brokerageId)
-
-    } else if (contact.Lanes.length != 0) {
-
-        brokerageId.push(contact.Lanes[0].origin.Ledger.brokerageId)
-
-    } else if (contact.Customers.length != 0) {
-
-        brokerageId.push(contact.Customers[0].Ledger.brokerageId)
-    }
+module.exports.saveContact = async (contact, brokerageId) => {
 
     const doc = {
         id: contact.id,
         firstName: contact.firstName,
         lastName: contact.lastName,
         fullName: `${contact.firstName} ${contact.lastName}`,
-        brokerageId: brokerageId[0]
+        title: contact.title,
+        brokerageId: brokerageId
     }
 
     await client.update({

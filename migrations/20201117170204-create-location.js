@@ -24,13 +24,8 @@ module.exports = {
       zipcode: {
         type: Sequelize.STRING
       },
-      open: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      close: {
-        type: Sequelize.STRING,
-        allowNull: true
+      phone: {
+        type: Sequelize.STRING
       },
       isHQ: {
         type: Sequelize.BOOLEAN,

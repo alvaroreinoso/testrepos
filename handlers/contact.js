@@ -171,6 +171,8 @@ module.exports.addContact = async (event, context) => {
                 title: request.title
             })
 
+            await elastic.saveContact(contact, user.brokerageId)
+
             switch (type) {
 
                 case 'lane': {
