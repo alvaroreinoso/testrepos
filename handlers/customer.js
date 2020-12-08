@@ -114,14 +114,57 @@ module.exports.getTopCustomers = async (event, context) => {
         }
 
         const customers = await targetUser.getCustomers({
-            include: [{
-                model: CustomerLocation,
-                required: true,
-            }]
+            // include: [{
+            //     model: CustomerLocation,
+            //     required: true,
+            //     include: [{
+            //         model: Location,
+            //         required: true,
+            //         include: [{
+            //             model: Lane,
+            //             // required: true
+            //         }]
+            //     }]
+            // }]
         })
 
-        for (customer in customers) {
+        for (const customer of customers) {
 
+            const locations = await customer.getCustomerLocations()
+
+            console.log('test')
+
+            const spends = await locations.map(async cLocation => {
+
+                    const location = await cLocation.getLocation()
+
+                    const lanes = await location.getLanes()
+
+                    await lanes.forEach(async lane => {
+                        
+                        console.log(lane.id)
+                        const spend = lane.frequency * lane.rate
+
+                        console.log(spend)
+    
+                        return spend
+                    })
+            })
+
+            const final = await Promise.all(spends)
+
+            console.log(final)
+
+            // console.log(locations)
+
+            // iterate through lanes to 
+
+            // const sorted = {
+            //     spend: spend,
+            //     customer: customer
+            // }
+
+            // sortedCustomers.push(sorted)
                 
         }
 
@@ -131,6 +174,7 @@ module.exports.getTopCustomers = async (event, context) => {
         }
 
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
