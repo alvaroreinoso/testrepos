@@ -218,15 +218,15 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
         const customersResolved = await Promise.all(customersWithSpend)
 
-        const customersSorted = customersResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
-
-        return {
-            body: JSON.stringify(customersSorted),
+        const response = {
+            body: JSON.stringify(customersResolved.sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })),
             statusCode: 200
         }
 
+        return response
+
     } catch (err) {
-        console.log(err)
+        
         return {
             statusCode: 500
         }
@@ -277,15 +277,15 @@ module.exports.getTopLanesForUser = async (event, context) => {
 
         const lanesResolved = await Promise.all(lanesWithSpend)
 
-        const lanesSorted = lanesResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
-
-        return {
-            body: JSON.stringify(lanesSorted),
+        const response = {
+            body: JSON.stringify(lanesResolved.sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })),
             statusCode: 200
         }
 
+        return response
+
     } catch (err) {
-        console.log(err)
+        
         return {
             statusCode: 500
         }
