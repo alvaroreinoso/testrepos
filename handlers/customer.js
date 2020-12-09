@@ -128,11 +128,11 @@ module.exports.getTopCustomers = async (event, context) => {
             }]
         })
 
+        let customerSpend = []
+
         for (const customer of customers) {
 
             const locations = await customer.getCustomerLocations()
-
-            console.log('test')
 
             const spendForLocation = await locations.map(async cLocation => {
 
@@ -152,25 +152,25 @@ module.exports.getTopCustomers = async (event, context) => {
 
             const final = await Promise.all(spendForLocation)
 
-            console.log(final)
+            // console.log(final)
 
-            // console.log(final.reduce((a, b) => a+ b, 0))
+            const sumPerLocation = final.map( item => item.reduce((a, b) => a+ b, 0))
 
-            // console.log(locations)
+            const sum = sumPerLocation.reduce((a, b) => a+ b, 0)
 
-            // iterate through lanes to 
+            // console.log(sum)
+            
+            customer.spend = sum
 
-            // const sorted = {
-            //     spend: spend,
-            //     customer: customer
-            // }
+            customerSpend.push(sum)
 
-            // sortedCustomers.push(sorted)
-                
         }
 
+        // console.log(customerSpend)
+
+
         return {
-            body: JSON.stringify(customers.sort()),
+            body: JSON.stringify(customersWithSpend),
             statusCode: 200
         }
 
