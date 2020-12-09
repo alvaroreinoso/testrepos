@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Ledger } = require('.././models');
+const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 
 module.exports.getUser = async (event, context) => {
 
@@ -171,6 +172,122 @@ module.exports.getTeams = async (event, context) => {
 
         return {
             statusCode: 401
+        }
+    }
+
+}
+
+module.exports.getTopCustomersForUser = async (event, context) => {
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+    const userId = event.pathParameters.userId
+
+    if (currentUser.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const customers = await targetUser.getCustomers()
+
+        const customersWithSpend = await customers.map(async customer => {
+
+            customer.dataValues.spend = await getCustomerSpend(customer)
+
+            return customer
+        })
+
+        const customersResolved = await Promise.all(customersWithSpend)
+
+        const customersSorted = customersResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
+
+        return {
+            body: JSON.stringify(customersSorted),
+            statusCode: 200
+        }
+
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+
+}
+
+module.exports.getTopLanesForUser = async (event, context) => {
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+    const userId = event.pathParameters.userId
+
+    if (currentUser.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const lanes = await targetUser.getLanes()
+
+        const lanesWithSpend = await lanes.map(lane => {
+
+            const spend = lane.frequency * lane.rate
+
+            lane.dataValues.spend = spend
+
+            return lane
+        })
+
+        const lanesResolved = await Promise.all(lanesWithSpend)
+
+        const lanesSorted = lanesResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
+
+        return {
+            body: JSON.stringify(lanesSorted),
+            statusCode: 200
+        }
+
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
         }
     }
 

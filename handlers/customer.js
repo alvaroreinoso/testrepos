@@ -1,7 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
-const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -83,62 +82,6 @@ module.exports.getCustomer = async (event, context) => {
             statusCode: 500
         }
     }
-}
-module.exports.getTopCustomers = async (event, context) => {
-
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-    const userId = event.pathParameters.userId
-
-    if (currentUser.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const targetUser = await User.findOne({
-            where: {
-                id: userId,
-            }
-        })
-
-        if (targetUser == null) {
-            return {
-                statusCode: 404
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
-            return {
-                statusCode: 401
-            }
-        }
-
-        const customers = await targetUser.getCustomers()
-
-        const customersWithSpend = await customers.map(async customer => {
-
-            customer.dataValues.spend = await getCustomerSpend(customer)
-
-            return customer
-        })
-
-        const customersResolved = await Promise.all(customersWithSpend)
-
-        const customersSorted = customersResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
-
-        return {
-            body: JSON.stringify(customersSorted),
-            statusCode: 200
-        }
-
-    } catch (err) {
-        console.log(err)
-        return {
-            statusCode: 500
-        }
-    }
-
 }
 
 module.exports.getLanesForCustomer = async (event, context) => {

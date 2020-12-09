@@ -177,6 +177,25 @@ functions:
             method: put
             headers:
               - Authorization
+  getTopCustomersForUser:
+    handler:
+      ./handlers/user.getTopCustomersForUser
+    events:
+        - http:
+            path: api/customer/top/{userId}
+            method: get
+            headers:
+              - Content-Type
+              - Authorization
+  getTopLanesForUser:
+    handler:
+      ./handlers/user.getTopLanesForUser
+    events:
+        - http:
+            path: api/lane/top/{userId}
+            method: get
+            headers:
+              - Authorization
 
 
 # Customer
@@ -195,16 +214,6 @@ functions:
     events:
         - http:
             path: api/customer/{customerId}
-            method: get
-            headers:
-              - Content-Type
-              - Authorization
-  getTopCustomers:
-    handler:
-      ./handlers/customer.getTopCustomers
-    events:
-        - http:
-            path: api/customer/top/{userId}
             method: get
             headers:
               - Content-Type
