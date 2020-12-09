@@ -113,64 +113,43 @@ module.exports.getTopCustomers = async (event, context) => {
             }
         }
 
-        const customers = await targetUser.getCustomers({
-            include: [{
-                model: CustomerLocation,
-                required: true,
-            //     include: [{
-            //         model: Location,
-            //         required: true,
-            //         include: [{
-            //             model: Lane,
-            //             // required: true
-            //         }]
-            //     }]
-            }]
-        })
+        const customers = await targetUser.getCustomers()
 
-        let customerSpend = []
-
-        for (const customer of customers) {
+        const customersWithSpend = await customers.map(async customer => {
 
             const locations = await customer.getCustomerLocations()
 
             const spendForLocation = await locations.map(async cLocation => {
 
-                    const location = await cLocation.getLocation()
+                const location = await cLocation.getLocation()
 
-                    const lanes = await location.getLanes()
+                const lanes = await location.getLanes()
 
-                    const spendForLane = lanes.map( lane => {
-                        
-                        const spend = lane.frequency * lane.rate
+                const spendForLane = lanes.map(lane => {
 
-                        return spend
-                    })
+                    const spend = lane.frequency * lane.rate
 
-                    return spendForLane
+                    return spend
+                })
+
+                return spendForLane
             })
 
             const final = await Promise.all(spendForLocation)
 
-            // console.log(final)
+            const sumPerLocation = final.map(item => item.reduce((a, b) => a + b, 0))
 
-            const sumPerLocation = final.map( item => item.reduce((a, b) => a+ b, 0))
+            const sum = sumPerLocation.reduce((a, b) => a + b, 0)
 
-            const sum = sumPerLocation.reduce((a, b) => a+ b, 0)
+            customer.dataValues.spend = sum
 
-            // console.log(sum)
-            
-            customer.spend = sum
+            return customer
+        })
 
-            customerSpend.push(sum)
-
-        }
-
-        // console.log(customerSpend)
-
+        const customersFinal = await Promise.all(customersWithSpend)
 
         return {
-            body: JSON.stringify(customersWithSpend),
+            body: JSON.stringify(customersFinal.sort((a, b) => a.spend > b.spend ? 1: -1)),
             statusCode: 200
         }
 
