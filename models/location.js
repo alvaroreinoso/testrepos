@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
       Location.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
       })
+      Location.belongsToMany(models.Tag, {
+        through: 'LocationTag',
+        foreignKey: 'locationId'
+      })
     }
   };
   Location.init({

@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
         through: 'LaneContact',
         foreignKey: 'laneId'
       })
+      Lane.belongsToMany(models.Tag, {
+        through: 'LaneTag',
+        foreignKey: 'laneId'
+      })
     }
   };
   Lane.init({
