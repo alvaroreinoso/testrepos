@@ -114,9 +114,9 @@ module.exports.getTopCustomers = async (event, context) => {
         }
 
         const customers = await targetUser.getCustomers({
-            // include: [{
-            //     model: CustomerLocation,
-            //     required: true,
+            include: [{
+                model: CustomerLocation,
+                required: true,
             //     include: [{
             //         model: Location,
             //         required: true,
@@ -125,7 +125,7 @@ module.exports.getTopCustomers = async (event, context) => {
             //             // required: true
             //         }]
             //     }]
-            // }]
+            }]
         })
 
         for (const customer of customers) {
@@ -134,26 +134,27 @@ module.exports.getTopCustomers = async (event, context) => {
 
             console.log('test')
 
-            const spends = await locations.map(async cLocation => {
+            const spendForLocation = await locations.map(async cLocation => {
 
                     const location = await cLocation.getLocation()
 
                     const lanes = await location.getLanes()
 
-                    await lanes.forEach(async lane => {
+                    const spendForLane = lanes.map( lane => {
                         
-                        console.log(lane.id)
                         const spend = lane.frequency * lane.rate
 
-                        console.log(spend)
-    
                         return spend
                     })
+
+                    return spendForLane
             })
 
-            const final = await Promise.all(spends)
+            const final = await Promise.all(spendForLocation)
 
             console.log(final)
+
+            // console.log(final.reduce((a, b) => a+ b, 0))
 
             // console.log(locations)
 
