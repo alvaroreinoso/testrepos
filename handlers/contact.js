@@ -245,10 +245,11 @@ module.exports.editContact = async (event, context) => {
             }
         })
 
-        contact.firstName = request.firstName,
-        contact.lastName = request.lastName,
-        contact.phone = request.phone,
-        contact.email = request.email,
+        contact.firstName = request.firstName
+        contact.lastName = request.lastName
+        contact.phoneExt = request.phoneExt
+        contact.phone = request.phone
+        contact.email = request.email
         contact.level = request.level
 
         await contact.save()

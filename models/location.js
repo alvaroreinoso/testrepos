@@ -43,6 +43,8 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     ledgerId: DataTypes.INTEGER,
     lnglat: DataTypes.STRING,
+    open: DataTypes.STRING,
+    close: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
     isShippingReceiving: DataTypes.BOOLEAN
   }, {

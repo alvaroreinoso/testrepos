@@ -47,6 +47,12 @@ module.exports = {
       lnglat: {
         type: Sequelize.STRING
       },
+      open: {
+        type: Sequelize.STRING
+      },
+      close: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
