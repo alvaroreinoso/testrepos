@@ -139,9 +139,9 @@ module.exports.getTopCustomers = async (event, context) => {
 
             const sumPerLocation = final.map(item => item.reduce((a, b) => a + b, 0))
 
-            const sum = sumPerLocation.reduce((a, b) => a + b, 0)
+            const sumForCusomter = sumPerLocation.reduce((a, b) => a + b, 0)
 
-            customer.dataValues.spend = sum
+            customer.dataValues.spend = sumForCusomter
 
             return customer
         })
