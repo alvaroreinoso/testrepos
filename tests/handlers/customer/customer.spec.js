@@ -78,7 +78,8 @@ describe('Test Customer Handler', () => {
 
         customers.forEach(customer => {
             expect(customer).toHaveProperty('name')
-            expect(customer.CustomerLocations.length).not.toBe(0)
+            expect(customer).toHaveProperty('spend')
+            expect(customer.spend).not.toBeNull()
         })
     })
 
