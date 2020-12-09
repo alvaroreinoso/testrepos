@@ -20,6 +20,9 @@ module.exports = {
       title: {
         type: Sequelize.STRING
       },
+      phoneExt: {
+        type: Sequelize.STRING
+      },
       phone: {
         type: Sequelize.STRING
       },

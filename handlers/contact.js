@@ -165,6 +165,7 @@ module.exports.addContact = async (event, context) => {
             const contact = await Contact.create({
                 firstName: request.firstName,
                 lastName: request.lastName,
+                phoneExt: request.phoneExt,
                 phone: request.phone,
                 email: request.email,
                 level: request.level,
