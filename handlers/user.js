@@ -1,7 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
-const { Team, Brokerage, User, Ledger } = require('.././models');
+const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 
 module.exports.getUser = async (event, context) => {
@@ -264,7 +264,19 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }
         }
 
-        const lanes = await targetUser.getLanes()
+        const lanes = await targetUser.getLanes({
+            include: [{
+                model: Location,
+                as: 'origin',
+                attributes: ['city', 'state'],
+                required: true
+            }, {
+                model: Location,
+                as: 'destination',
+                attributes: ['city', 'state'],
+                required: true
+            }]
+        })
 
         const lanesWithSpend = await lanes.map(lane => {
 
