@@ -1,6 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -117,39 +118,17 @@ module.exports.getTopCustomers = async (event, context) => {
 
         const customersWithSpend = await customers.map(async customer => {
 
-            const locations = await customer.getCustomerLocations()
-
-            const spendForLocation = await locations.map(async cLocation => {
-
-                const location = await cLocation.getLocation()
-
-                const lanes = await location.getLanes()
-
-                const spendForLane = lanes.map(lane => {
-
-                    const spend = lane.frequency * lane.rate
-
-                    return spend
-                })
-
-                return spendForLane
-            })
-
-            const final = await Promise.all(spendForLocation)
-
-            const sumPerLocation = final.map(item => item.reduce((a, b) => a + b, 0))
-
-            const sumForCusomter = sumPerLocation.reduce((a, b) => a + b, 0)
-
-            customer.dataValues.spend = sumForCusomter
+            customer.dataValues.spend = await getCustomerSpend(customer)
 
             return customer
         })
 
-        const customersFinal = await Promise.all(customersWithSpend)
+        const customersResolved = await Promise.all(customersWithSpend)
+
+        const customersSorted = customersResolved.sort((a, b) => a.spend > b.spend ? 1: -1)
 
         return {
-            body: JSON.stringify(customersFinal.sort((a, b) => a.spend > b.spend ? 1: -1)),
+            body: JSON.stringify(customersSorted),
             statusCode: 200
         }
 
