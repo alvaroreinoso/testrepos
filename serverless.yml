@@ -393,6 +393,28 @@ functions:
             headers:
               - Authorization
 
+  # Tag
+  getTags:
+    handler:
+      ./handlers/tag.getTags
+    events:
+        - http:
+            path: api/tag/{itemId}
+            method: get
+  addTag:
+    handler:
+      ./handlers/tag.addTag
+    events:
+        - http:
+            path: api/tag/{itemId}
+            method: post
+  deleteTag:
+    handler:
+      ./handlers/tag.deleteTag
+    events:
+        - http:
+            path: api/tag
+            method: delete
   # Contact
   getContacts:
     handler:
