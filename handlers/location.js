@@ -1,5 +1,5 @@
 'use strict';
-const { Customer, CustomerLocation, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
+const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
 const { getCurrentUser } = require('.././helpers/user')
 
@@ -166,6 +166,12 @@ module.exports.addTeammateToLocation = async (event, context) => {
         const locationId = request.locationId
         const userId = request.userId
 
+        const location = await Location.findOne({
+            where: {
+                id: locationId
+            }
+        })
+
         await TaggedLocation.findOrCreate({
             where: {
                 locationId: locationId,
@@ -173,11 +179,24 @@ module.exports.addTeammateToLocation = async (event, context) => {
             }
         })
 
+        const lanes = await location.getLanes()
+
+        for (const lane of lanes) {
+
+            await TaggedLane.findOrCreate({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
+
         return {
             statusCode: 204
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
