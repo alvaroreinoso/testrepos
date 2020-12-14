@@ -102,7 +102,7 @@ module.exports.addTag = async (event, context) => {
 
             const tag = await Tag.findOne({
                 where: {
-                    id: request.id
+                    id: request.tagId
                 }
             })
 
@@ -111,8 +111,10 @@ module.exports.addTag = async (event, context) => {
                 case 'lane': {
 
                     await LaneTag.findOrCreate({
+                        where: {
                         laneId: id,
                         tagId: tag.id
+                        }
                     })
 
                     break;
@@ -120,8 +122,10 @@ module.exports.addTag = async (event, context) => {
                 } case 'location': {
 
                     await LocationTag.findOrCreate({
+                        where: {
                         locationId: id,
                         tagId: tag.id
+                        }
                     })
 
                     break;
@@ -129,8 +133,10 @@ module.exports.addTag = async (event, context) => {
                 } case 'customer': {
 
                     await CustomerTag.findOrCreate({
+                        where: {
                         customerId: id,
                         tagId: tag.id
+                        }
                     })
 
                     break;

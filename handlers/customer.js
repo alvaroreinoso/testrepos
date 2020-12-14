@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -252,6 +252,77 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         const customerId = request.customerId
         const userId = request.userId
 
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId
+            }
+        })
+
+        const lanes = await Lane.findAll({
+            order: [
+                ['frequency', 'DESC'],
+            ],
+            include: [{
+                model: Location,
+                as: 'origin',
+                required: true,
+                include: [{
+                    model: CustomerLocation,
+                    required: true,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            id: customer.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }, {
+                model: Location,
+                required: true,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            id: customer.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }]
+        });
+
+        for (const lane of lanes) {
+
+            await TaggedLane.findOrCreate({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
+
+        const customerLocations = await customer.getCustomerLocations({
+            include: Location
+        })
+
+        for (const cL of customerLocations) {
+
+            await TaggedLocation.findOrCreate({
+                where: {
+                    locationId: cL.Location.id,
+                    userId: userId
+                }
+            })
+        }
         await TaggedCustomer.findOrCreate({
             where: {
                 customerId: customerId,
@@ -264,6 +335,7 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
