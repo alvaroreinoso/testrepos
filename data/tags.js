@@ -419,6 +419,24 @@ const tags = [
         createdAt: new Date(),
         updatedAt: new Date()
     },
+    {
+        type: 'Load',
+        content: 'Full Load',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        type: 'Load',
+        content: 'Partial Load',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
+    {
+        type: 'Equipment',
+        content: 'Team Drivers',
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
 ]
 
 module.exports = tags;
