@@ -6,7 +6,6 @@ const { getCurrentUser } = require('.././helpers/user')
 module.exports.getLocationById = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == undefined) {
@@ -17,7 +16,7 @@ module.exports.getLocationById = async (event, context) => {
 
         const locationId = event.pathParameters.id
 
-        const results = await Location.findOne({
+        const location = await Location.findOne({
             where: {
                 id: locationId
             },
@@ -34,9 +33,38 @@ module.exports.getLocationById = async (event, context) => {
                 }]
         })
 
-        return {
-            body: JSON.stringify(results),
-            statusCode: 200
+        const lanes = await location.getLanes()
+
+        if (lanes.length != 0) {
+
+            const lanesWithSpend = await lanes.map(lane => {
+
+                const spend = lane.frequency * lane.rate
+
+                lane.dataValues.spend = spend
+
+                return lane.dataValues
+            })
+
+            const lanesResolved = await Promise.all(lanesWithSpend)
+
+            const totalSpend = await lanesResolved.reduce((a, b) => ({ spend: a.spend + b.spend }))
+            const totalLanes = lanesResolved.length
+
+            location.dataValues.spend = totalSpend.spend
+            location.dataValues.laneCount = totalLanes
+
+            return {
+                body: JSON.stringify(location),
+                statusCode: 200
+            }
+        } else {
+
+            return {
+                body: JSON.stringify(location),
+                statusCode: 200
+            }
+
         }
     }
     catch (err) {
@@ -102,7 +130,7 @@ module.exports.getLanesForLocation = async (event, context) => {
             statusCode: 200
         }
 
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         return {
             statusCode: 500
