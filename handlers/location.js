@@ -49,10 +49,19 @@ module.exports.getLocationById = async (event, context) => {
             const lanesResolved = await Promise.all(lanesWithSpend)
 
             const totalSpend = await lanesResolved.reduce((a, b) => ({ spend: a.spend + b.spend }))
-            const totalLanes = lanesResolved.length
+            
+            const loadCounts = await lanes.map(async lane => {
 
+                const loads = await lane.getLoads()
+
+                return loads.length
+            })
+
+            const loadsResolved = await Promise.all(loadCounts)
+            const totalLoads = loadsResolved.reduce((a, b) => {return a + b})
+
+            location.dataValues.totalLoads = totalLoads
             location.dataValues.spend = totalSpend.spend
-            location.dataValues.laneCount = totalLanes
 
             return {
                 body: JSON.stringify(location),
@@ -60,11 +69,13 @@ module.exports.getLocationById = async (event, context) => {
             }
         } else {
 
+            location.dataValues.totalLoads = 0
+            location.dataValues.spend = 0
+
             return {
                 body: JSON.stringify(location),
                 statusCode: 200
             }
-
         }
     }
     catch (err) {
