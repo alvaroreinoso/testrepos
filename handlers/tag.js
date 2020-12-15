@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
+const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
 
 module.exports.getTags = async (event, context) => {
 
@@ -109,8 +110,6 @@ module.exports.getTags = async (event, context) => {
 
             } default: {
 
-                console.log(err)
-
                 return {
                     statusCode: 500
                 }
@@ -119,7 +118,6 @@ module.exports.getTags = async (event, context) => {
 
     } catch (err) {
 
-        console.log(err)
         return {
             statusCode: 500
         }
@@ -195,6 +193,8 @@ module.exports.addTag = async (event, context) => {
                             tagId: tag.id
                         }
                     })
+
+                    break;
                 }
                 case 'location': {
 
@@ -267,7 +267,42 @@ module.exports.addTag = async (event, context) => {
 
                     break
 
-                } default: {
+                } 
+                
+                case 'user': {
+
+                    await UserTag.findOrCreate({
+                        where: {
+                            userId: id,
+                            tagId: tag.id
+                        }
+                    })
+
+                    break;
+
+                } case 'brokerage': {
+
+                    await BrokerageTag.findOrCreate({
+                        where: {
+                            brokerageId: id,
+                            tagId: tag.id
+                        }
+                    })
+
+                    break
+                }
+                case 'team': {
+
+                    await TeamTag.findOrCreate({
+                        where: {
+                            teamId: id,
+                            tagId: tag.id
+                        }
+                    })
+
+                    break;
+                }
+                default: {
 
                     return {
                         statusCode: 500
@@ -281,8 +316,6 @@ module.exports.addTag = async (event, context) => {
             }
         }
     } catch (err) {
-
-        console.log(err)
 
         return {
             statusCode: 500
@@ -325,25 +358,14 @@ module.exports.deleteTag = async (event, context) => {
                     include: { all: true }
                 })
 
+                if (await noOtherAssoications(tag)) {
 
-                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+                    await tag.destroy()
 
-                    if (tag.id > 70) {
-                        await tag.destroy()
-
-                        return {
-                            statusCode: 204
-                        }
-                    } else {
-                        return {
-                            statusCode: 204
-                        }
-                    }
                 }
 
                 return {
-                    body: JSON.stringify(tag),
-                    statusCode: 200
+                    statusCode: 204
                 }
 
             } case 'location': {
@@ -371,27 +393,18 @@ module.exports.deleteTag = async (event, context) => {
                     include: { all: true }
                 })
 
-                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+                if (await noOtherAssoications(tag)) {
 
-                    if (tag.id > 70) {
-                        await tag.destroy()
+                    await tag.destroy()
 
-                        return {
-                            statusCode: 204
-                        }
-                    } else {
-                        return {
-                            statusCode: 204
-                        }
-                    }
                 }
 
                 return {
-                    body: JSON.stringify(tag),
-                    statusCode: 200
+                    statusCode: 204
                 }
 
-            } case 'customer': {
+            } 
+            case 'customer': {
 
                 const customerTag = await CustomerTag.findOne({
                     where: {
@@ -416,35 +429,130 @@ module.exports.deleteTag = async (event, context) => {
                     include: { all: true }
                 })
 
-                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+                if (await noOtherAssoications(tag)) {
 
-                    if (tag.id > 70) {
-                        await tag.destroy()
+                    await tag.destroy()
 
-                        return {
-                            statusCode: 204
-                        }
-                    } else {
-                        return {
-                            statusCode: 204
-                        }
-                    }
                 }
 
                 return {
-                    body: JSON.stringify(tag),
-                    statusCode: 200
+                    statusCode: 204
                 }
 
-            } default: {
+            } 
+            case 'user': {
 
+                const userTag = await UserTag.findOne({
+                    where: {
+                        userId: request.UserTag.userId,
+                        tagId: request.UserTag.tagId
+                    }
+                })
+
+                if (userTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
+                }
+
+                await userTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: userTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+                if (await noOtherAssoications(tag)) {
+
+                    await tag.destroy()
+                }
+
+                return {
+                    statusCode: 204
+                }
+
+            } 
+            case 'brokerage': {
+
+                const brokerageTag = await BrokerageTag.findOne({
+                    where: {
+                        brokerageId: request.BrokerageTag.brokerageId,
+                        tagId: request.BrokerageTag.tagId
+                    }
+                })
+
+                if (brokerageTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
+                }
+
+                await brokerageTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: brokerageTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+                if (await noOtherAssoications(tag)) {
+
+                    await tag.destroy()
+                }
+
+                return {
+                    statusCode: 204
+                }
+
+            } 
+            case 'team': {
+
+                const teamTag = await TeamTag.findOne({
+                    where: {
+                        teamId: request.TeamTag.teamId,
+                        tagId: request.TeamTag.tagId
+                    }
+                })
+
+                if (brokerageTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
+                }
+
+                await teamTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: teamTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+                if (await noOtherAssoications(tag)) {
+
+                    await tag.destroy()
+                }
+
+                return {
+                    statusCode: 204
+                }
+
+            } 
+            default: {
                 return {
                     statusCode: 500
                 }
             }
         }
     } catch (err) {
-        console.log(err)
+
         return {
             statusCode: 500
         }

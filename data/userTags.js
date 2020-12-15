@@ -53,6 +53,12 @@ const userTags = [
         createdAt: new Date(),
         updatedAt: new Date()
     },
+    {
+        userId: 1,
+        tagId: 52,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
 ]
 
 module.exports = userTags;

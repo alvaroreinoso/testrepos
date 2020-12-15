@@ -53,6 +53,12 @@ const laneTags = [
         createdAt: new Date(),
         updatedAt: new Date()
     },
+    {
+        laneId: 1,
+        tagId: 14,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
 ]
 
 module.exports = laneTags;

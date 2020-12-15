@@ -53,6 +53,12 @@ const teamTags = [
         createdAt: new Date(),
         updatedAt: new Date()
     },
+    {
+        teamId: 1,
+        tagId: 51,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
 ]
 
 module.exports = teamTags;

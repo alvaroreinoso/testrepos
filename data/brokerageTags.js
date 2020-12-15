@@ -53,6 +53,12 @@ const brokerageTags = [
         createdAt: new Date(),
         updatedAt: new Date()
     },
+    {
+        brokerageId: 1,
+        tagId: 53,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    },
 ]
 
 module.exports = brokerageTags;
