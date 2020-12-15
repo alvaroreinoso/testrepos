@@ -9,10 +9,22 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       brokerageId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        }
       },
       tagId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Tags',
+          key: 'id',
+          as: 'tagId'
+        }
       },
       createdAt: {
         allowNull: false,

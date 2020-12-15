@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       Brokerage.hasMany(models.Ledger, {
         foreignKey: 'brokerageId'
       })
+      Brokerage.belongsToMany(models.Tag, {
+        through: 'BrokerageTag',
+        foreignKey: 'brokerageId'
+      })
+
     }
   };
   Brokerage.init({

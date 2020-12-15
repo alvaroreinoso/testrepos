@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
         through: 'TaggedCustomer',
         foreignKey: 'userId'
       })
+      User.belongsToMany(models.Tag, {
+        through: 'UserTag',
+        foreignKey: 'userId'
+      })
     }
   };
   User.init({
