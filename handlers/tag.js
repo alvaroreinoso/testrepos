@@ -112,8 +112,8 @@ module.exports.addTag = async (event, context) => {
 
                     await LaneTag.findOrCreate({
                         where: {
-                        laneId: id,
-                        tagId: tag.id
+                            laneId: id,
+                            tagId: tag.id
                         }
                     })
 
@@ -123,8 +123,8 @@ module.exports.addTag = async (event, context) => {
 
                     await LocationTag.findOrCreate({
                         where: {
-                        locationId: id,
-                        tagId: tag.id
+                            locationId: id,
+                            tagId: tag.id
                         }
                     })
 
@@ -134,8 +134,8 @@ module.exports.addTag = async (event, context) => {
 
                     await CustomerTag.findOrCreate({
                         where: {
-                        customerId: id,
-                        tagId: tag.id
+                            customerId: id,
+                            tagId: tag.id
                         }
                     })
 
@@ -196,7 +196,7 @@ module.exports.addTag = async (event, context) => {
                         statusCode: 500
                     }
                 }
-                
+
             }
 
             return {
@@ -216,146 +216,162 @@ module.exports.addTag = async (event, context) => {
 module.exports.deleteTag = async (event, context) => {
 
     try {
-    
-    const request = JSON.parse(event.body)
 
-    const type = event.queryStringParameters.tagType
+        const request = JSON.parse(event.body)
 
-    switch (type) {
+        const type = event.queryStringParameters.tagType
 
-        case 'lane': {
+        switch (type) {
 
-            const laneTag = await LaneTag.findOne({
-                where: {
-                    laneId: request.LaneTag.laneId,
-                    tagId: request.LaneTag.tagId
+            case 'lane': {
+
+                const laneTag = await LaneTag.findOne({
+                    where: {
+                        laneId: request.LaneTag.laneId,
+                        tagId: request.LaneTag.tagId
+                    }
+                })
+
+                if (laneTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
                 }
-            })
 
-            if (laneTag === null) {
+                await laneTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: laneTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+
+                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+
+                    if (tag.id > 70) {
+                        await tag.destroy()
+
+                        return {
+                            statusCode: 204
+                        }
+                    } else {
+                        return {
+                            statusCode: 204
+                        }
+                    }
+                }
 
                 return {
-                    statusCode: 404
-                }
-            }
-
-            await laneTag.destroy()
-
-            const tag = await Tag.findOne({
-                where: {
-                    id: laneTag.tagId
-                },
-                include: { all: true }
-            })
-
-
-            if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
-
-                await tag.destroy()
-
-                return {
-                    statusCode: 204
-                }
-            }
-
-            return {
-                body: JSON.stringify(tag),
-                statusCode: 200
-            }
-
-        } case 'location': {
-
-            const locationTag = await LocationTag.findOne({
-                where: {
-                    locationId: request.LocationTag.locationId,
-                    tagId: request.LocationTag.tagId
-                }
-            })
-
-            if (locationTag === null) {
-
-                return {
-                    statusCode: 404
-                }
-            }
-
-            await locationTag.destroy()
-
-            const tag = await Tag.findOne({
-                where: {
-                    id: locationTag.tagId
-                },
-                include: { all: true }
-            })
-
-            if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
-
-                await tag.destroy()
-
-                return {
-                    body: 'tag destroyed',
+                    body: JSON.stringify(tag),
                     statusCode: 200
                 }
-            }
 
-            return {
-                body: JSON.stringify(tag),
-                statusCode: 200
-            }
+            } case 'location': {
 
-        } case 'customer': {
+                const locationTag = await LocationTag.findOne({
+                    where: {
+                        locationId: request.LocationTag.locationId,
+                        tagId: request.LocationTag.tagId
+                    }
+                })
 
-            const customerTag = await CustomerTag.findOne({
-                where: {
-                    customerId: request.CustomerTag.customerId,
-                    tagId: request.CustomerTag.tagId
+                if (locationTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
                 }
-            })
 
-            if (customerTag === null) {
+                await locationTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: locationTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+
+                    if (tag.id > 70) {
+                        await tag.destroy()
+
+                        return {
+                            statusCode: 204
+                        }
+                    } else {
+                        return {
+                            statusCode: 204
+                        }
+                    }
+                }
 
                 return {
-                    statusCode: 404
-                }
-            }
-
-            await customerTag.destroy()
-
-            const tag = await Tag.findOne({
-                where: {
-                    id: customerTag.tagId
-                },
-                include: { all: true }
-            })
-
-            if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
-
-                await tag.destroy()
-
-                return {
-                    body: 'tag destroyed',
+                    body: JSON.stringify(tag),
                     statusCode: 200
                 }
-            }
 
-            return {
-                body: JSON.stringify(tag),
-                statusCode: 200
-            }
+            } case 'customer': {
 
-        } default: {
+                const customerTag = await CustomerTag.findOne({
+                    where: {
+                        customerId: request.CustomerTag.customerId,
+                        tagId: request.CustomerTag.tagId
+                    }
+                })
 
-            return {
-                statusCode: 500
+                if (customerTag === null) {
+
+                    return {
+                        statusCode: 404
+                    }
+                }
+
+                await customerTag.destroy()
+
+                const tag = await Tag.findOne({
+                    where: {
+                        id: customerTag.tagId
+                    },
+                    include: { all: true }
+                })
+
+                if (tag.Locations.length == 0 && tag.Customers.length == 0 && tag.Lanes.length == 0) {
+
+                    if (tag.id > 70) {
+                        await tag.destroy()
+
+                        return {
+                            statusCode: 204
+                        }
+                    } else {
+                        return {
+                            statusCode: 204
+                        }
+                    }
+                }
+
+                return {
+                    body: JSON.stringify(tag),
+                    statusCode: 200
+                }
+
+            } default: {
+
+                return {
+                    statusCode: 500
+                }
             }
         }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
     }
-} catch (err) {
-    console.log(err)
-    return {
-        statusCode: 500
-    }
-}
 
 
 }
