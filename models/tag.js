@@ -22,6 +22,18 @@ module.exports = (sequelize, DataTypes) => {
         through: 'LaneTag',
         foreignKey: 'tagId'
       })
+      Tag.belongsToMany(models.User, {
+        through: 'UserTag',
+        foreignKey: 'tagId'
+      })
+      Tag.belongsToMany(models.Brokerage, {
+        through: 'BrokerageTag',
+        foreignKey: 'tagId'
+      })
+      Tag.belongsToMany(models.Team, {
+        through: 'TeamTag',
+        foreignKey: 'tagId'
+      })
     }
   };
   Tag.init({

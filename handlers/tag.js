@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerTag, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
+const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
 
 module.exports.getTags = async (event, context) => {
@@ -64,8 +64,52 @@ module.exports.getTags = async (event, context) => {
                     body: JSON.stringify(customerTags),
                     statusCode: 200
                 }
+            } case 'user': {
+
+                const user = await User.findOne({
+                    where: {
+                        id: id
+                    }
+                })
+
+                const userTags = await user.getTags()
+
+                return {
+                    body: JSON.stringify(userTags),
+                    statusCode: 200
+                }
+            } case 'brokerage': {
+
+                const brokerage = await Brokerage.findOne({
+                    where: {
+                        id: id
+                    }
+                })
+
+                const brokerageTags = await brokerage.getTags()
+
+                return {
+                    body: JSON.stringify(brokerageTags),
+                    statusCode: 200
+                }
+            } case 'team': {
+
+                const team = await Team.findOne({
+                    where: {
+                        id: id
+                    }
+                })
+
+                const teamTags = await team.getTags()
+
+                return {
+                    body: JSON.stringify(teamTags),
+                    statusCode: 200
+                }
 
             } default: {
+
+                console.log(err)
 
                 return {
                     statusCode: 500
@@ -75,6 +119,7 @@ module.exports.getTags = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
         return {
             statusCode: 500
         }
@@ -119,7 +164,39 @@ module.exports.addTag = async (event, context) => {
 
                     break;
 
-                } case 'location': {
+                }
+                case 'user': {
+
+                    await UserTag.findOrCreate({
+                        where: {
+                            userId: id,
+                            tagId: tag.id
+                        }
+                    })
+
+                    break;
+
+                } case 'brokerage': {
+
+                    await BrokerageTag.findOrCreate({
+                        where: {
+                            brokerageId: id,
+                            tagId: tag.id
+                        }
+                    })
+
+                    break
+                }
+                case 'team': {
+
+                    await TeamTag.findOrCreate({
+                        where: {
+                            teamId: id,
+                            tagId: tag.id
+                        }
+                    })
+                }
+                case 'location': {
 
                     await LocationTag.findOrCreate({
                         where: {
