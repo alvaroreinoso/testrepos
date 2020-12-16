@@ -4,6 +4,11 @@ module.exports.getFrequency = async (lane) => {
 
     const loads = await lane.getLoads()
 
+    if (loads.length == 0) {
+
+        return 0
+    }
+
     const dates = loads.map(load => load.dropDate)
 
     const firstDate = dates[0]

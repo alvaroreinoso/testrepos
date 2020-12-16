@@ -2,6 +2,8 @@
 const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
 const { getCurrentUser } = require('.././helpers/user')
+const dateFns = require('date-fns')
+const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.getLocationById = async (event, context) => {
 
@@ -37,9 +39,11 @@ module.exports.getLocationById = async (event, context) => {
 
         if (lanes.length != 0) {
 
-            const lanesWithSpend = await lanes.map(lane => {
+            const lanesWithSpend = await lanes.map(async lane => {
 
-                const spend = lane.frequency * lane.rate
+                const frequency = await getFrequency(lane)
+
+                const spend = frequency * lane.rate
 
                 lane.dataValues.spend = spend
 
@@ -49,16 +53,32 @@ module.exports.getLocationById = async (event, context) => {
             const lanesResolved = await Promise.all(lanesWithSpend)
 
             const totalSpend = await lanesResolved.reduce((a, b) => ({ spend: a.spend + b.spend }))
-            
+
             const loadCounts = await lanes.map(async lane => {
 
-                const loads = await lane.getLoads()
+                const d = new Date();
+
+                const monthAgo = d.setMonth(d.getMonth() - 1);
+
+                const monthAgoDate = dateFns.toDate(monthAgo)
+
+                console.log(new Date())
+
+                console.log(monthAgoDate)
+
+                const loads = await lane.getLoads({
+                    // where: {
+                    //     createdAt: {
+                    //         $between: [monthAgoDate,  new Date()]
+                    //     }
+                    // }
+                })
 
                 return loads.length
             })
 
             const loadsResolved = await Promise.all(loadCounts)
-            const totalLoads = loadsResolved.reduce((a, b) => {return a + b})
+            const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
 
             location.dataValues.totalLoads = totalLoads
             location.dataValues.spend = totalSpend.spend

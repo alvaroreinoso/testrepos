@@ -1,6 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const dateFns = require('date-fns')
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -110,7 +111,9 @@ module.exports.getCustomer = async (event, context) => {
 
         const lanesWithSpend = await lanes.map(lane => {
 
-            const spend = lane.frequency * lane.rate
+            const frequency = await getFrequency(lane)
+
+            const spend = frequency * lane.rate
 
             lane.dataValues.spend = spend
 
@@ -123,16 +126,16 @@ module.exports.getCustomer = async (event, context) => {
         
         const loadCounts = await lanes.map(async lane => {
 
-            var d = new Date();
+            let d = new Date();
 
             d.setMonth(d.getMonth() - 1);
 
             const loads = await lane.getLoads({
-                where: {
-                    createdAt: {
-                        $between: [d, new Date()]
-                    }
-                }
+                // where: {
+                //     createdAt: {
+                //         $between: [d, new Date()]
+                //     }
+                // }
             })
 
             return loads.length
