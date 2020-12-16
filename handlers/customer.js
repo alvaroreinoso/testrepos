@@ -53,7 +53,7 @@ module.exports.getCustomer = async (event, context) => {
     try {
         const customerId = event.pathParameters.customerId
 
-        const results = await Customer.findOne({
+        const customer = await Customer.findOne({
             where: {
                 id: customerId,
             },
@@ -66,10 +66,88 @@ module.exports.getCustomer = async (event, context) => {
             }]
         })
 
-        if (results != null) {
+        const lanes = await Lane.findAll({
+            order: [
+                ['frequency', 'DESC'],
+            ],
+            include: [{
+                model: Location,
+                as: 'origin',
+                required: true,
+                include: [{
+                    model: CustomerLocation,
+                    required: true,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            id: customer.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }, {
+                model: Location,
+                required: true,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true,
+                        where: {
+                            id: customer.id
+                        }
+                    }]
+                },
+                {
+                    model: LanePartner
+                }]
+            }]
+        });
+
+        const lanesWithSpend = await lanes.map(lane => {
+
+            const spend = lane.frequency * lane.rate
+
+            lane.dataValues.spend = spend
+
+            return lane.dataValues
+        })
+
+        const lanesResolved = await Promise.all(lanesWithSpend)
+
+        const totalSpend = await lanesResolved.reduce((a, b) => ({ spend: a.spend + b.spend }))
+        
+        const loadCounts = await lanes.map(async lane => {
+
+            var d = new Date();
+
+            d.setMonth(d.getMonth() - 1);
+
+            const loads = await lane.getLoads({
+                where: {
+                    createdAt: {
+                        $between: [d, new Date()]
+                    }
+                }
+            })
+
+            return loads.length
+        })
+
+        const loadsResolved = await Promise.all(loadCounts)
+        const totalLoads = loadsResolved.reduce((a, b) => {return a + b})
+
+        customer.dataValues.totalLoads = totalLoads
+        customer.dataValues.spend = totalSpend.spend
+
+        if (customer != null) {
             return {
                 statusCode: 200,
-                body: JSON.stringify(results)
+                body: JSON.stringify(customer)
             }
         } else {
             return {
@@ -78,6 +156,8 @@ module.exports.getCustomer = async (event, context) => {
         }
 
     } catch (err) {
+
+        console.log(err)
         return {
             statusCode: 500
         }
