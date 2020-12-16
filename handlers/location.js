@@ -56,32 +56,24 @@ module.exports.getLocationById = async (event, context) => {
 
             const loadCounts = await lanes.map(async lane => {
 
-                const d = new Date();
+                const loads = await lane.getLoads()
 
-                const monthAgo = d.setMonth(d.getMonth() - 1);
+                const frequency = await getFrequency(lane)
 
-                const monthAgoDate = dateFns.toDate(monthAgo)
+                if (frequency == 0) {
+                    return 0
+                }
 
-                console.log(new Date())
+                const loadsPerMonth = loads.length / frequency
 
-                console.log(monthAgoDate)
-
-                const loads = await lane.getLoads({
-                    // where: {
-                    //     createdAt: {
-                    //         $between: [monthAgoDate,  new Date()]
-                    //     }
-                    // }
-                })
-
-                return loads.length
+                return loadsPerMonth
             })
 
             const loadsResolved = await Promise.all(loadCounts)
             const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
 
-            location.dataValues.totalLoads = totalLoads
-            location.dataValues.spend = totalSpend.spend
+            location.dataValues.loadsPerMonth = totalLoads
+            location.dataValues.spendPerMonth = totalSpend.spend
 
             return {
                 body: JSON.stringify(location),

@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 const dateFns = require('date-fns')
+const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -109,7 +110,7 @@ module.exports.getCustomer = async (event, context) => {
             }]
         });
 
-        const lanesWithSpend = await lanes.map(lane => {
+        const lanesWithSpend = await lanes.map(async lane => {
 
             const frequency = await getFrequency(lane)
 
@@ -126,26 +127,24 @@ module.exports.getCustomer = async (event, context) => {
         
         const loadCounts = await lanes.map(async lane => {
 
-            let d = new Date();
+            const loads = await lane.getLoads()
 
-            d.setMonth(d.getMonth() - 1);
+            const frequency = await getFrequency(lane)
 
-            const loads = await lane.getLoads({
-                // where: {
-                //     createdAt: {
-                //         $between: [d, new Date()]
-                //     }
-                // }
-            })
+            if (frequency == 0) {
+                return 0
+            }
 
-            return loads.length
+            const loadsPerMonth =  loads.length / frequency
+
+            return loadsPerMonth
         })
 
         const loadsResolved = await Promise.all(loadCounts)
         const totalLoads = loadsResolved.reduce((a, b) => {return a + b})
 
-        customer.dataValues.totalLoads = totalLoads
-        customer.dataValues.spend = totalSpend.spend
+        customer.dataValues.loadsPerMonth = totalLoads
+        customer.dataValues.spendPerMonth = totalSpend.spend
 
         if (customer != null) {
             return {
