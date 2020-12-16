@@ -39,20 +39,7 @@ module.exports.getLocationById = async (event, context) => {
 
         if (lanes.length != 0) {
 
-            const lanesWithSpend = await lanes.map(async lane => {
-
-                const frequency = await getFrequency(lane)
-
-                const spend = frequency * lane.rate
-
-                lane.dataValues.spend = spend
-
-                return lane.dataValues
-            })
-
-            const lanesResolved = await Promise.all(lanesWithSpend)
-
-            const totalSpend = await lanesResolved.reduce((a, b) => ({ spend: a.spend + b.spend }))
+            const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
             const loadCounts = await lanes.map(async lane => {
 
