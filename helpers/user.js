@@ -12,11 +12,20 @@ module.exports.getCurrentUser = async (token) => {
                 email: cognitoUser.email
             }
         })
+
+        if (results === null) {
+
+            return {
+                statusCode: 401
+            }
+        }
         return results
 
     } catch (error) {
          
-        return error
+        return {
+            statusCode: 401
+        }
 
     }
 }

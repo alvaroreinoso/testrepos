@@ -359,6 +359,35 @@ functions:
             headers:
               - Authorization
 
+  # Team
+  getLanesForTeam:
+    handler:
+      ./handlers/team.getLanesForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/lanes
+            method: get
+            headers:
+              - Authorization
+  getTeammatesForTeam:
+    handler:
+      ./handlers/team.getTeammatesForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/teammates
+            method: get
+            headers:
+              - Authorization
+  getTopCustomersForTeam:
+    handler:
+      ./handlers/team.getTopCustomersForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/customers
+            method: get
+            headers:
+              - Authorization
+
   # Location
   getLocationById:
     handler:

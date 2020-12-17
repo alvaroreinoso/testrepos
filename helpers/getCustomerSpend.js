@@ -7,12 +7,7 @@ module.exports.getCustomerSpend = async (customer) => {
 
         const lanes = await location.getLanes()
 
-        const spendForLane = lanes.map(lane => {
-
-            const spend = lane.frequency * lane.rate
-
-            return spend
-        })
+        const spendForLane = lanes.map(lane => lane.spend)
 
         return spendForLane
     })
