@@ -4,6 +4,50 @@ const { Customer, CustomerLocation, Team, LanePartner, Location, Lane } = requir
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { Op } = require("sequelize");
 
+module.exports.getTeamById = async (event, context) => {
+
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const teamId = event.pathParameters.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId
+            }
+        })
+
+        if (team === null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (team.brokerageId != user.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        return {
+            body: JSON.stringify(team),
+            statusCode: 200
+        }
+    } catch {
+
+        return {
+            statusCode: 500
+        }
+    }
+
+}
 module.exports.getLanesForTeam = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)

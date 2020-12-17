@@ -360,6 +360,15 @@ functions:
               - Authorization
 
   # Team
+  getTeamById: 
+    handler:
+      ./handlers/team.getTeamById
+    events:
+        - http:
+            path: api/team/{teamId}
+            method: get
+            headers:
+              - Authorization
   getLanesForTeam:
     handler:
       ./handlers/team.getLanesForTeam
