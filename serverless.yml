@@ -349,6 +349,15 @@ functions:
             method: delete
             headers:
               - Authorization
+  getTopCarriers:
+    handler:
+      ./handlers/lane.getTopCarriers
+    events:
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: get
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
