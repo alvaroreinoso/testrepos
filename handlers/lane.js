@@ -106,35 +106,6 @@ module.exports.getLaneById = async (event, context) => {
             }]
         })
 
-        const loads = await lane.getLoads({
-            include: [{
-                model: Carrier,
-                required: true
-            }]
-        })
-
-        const carriers = await loads.map(load => load.Carrier.name)
-
-        let counts = {};
-
-        for (var i = 0; i < carriers.length; i++) {
-            var num = carriers[i];
-            counts[num] = counts[num] ? counts[num] + 1 : 1;
-        }
-
-        console.log(counts)
-
-        
-
-        // const carriers = await loads.map(async load => {
-
-        //     const carriers = await load.getCarriers()
-
-        //     return carriers
-        // })
-
-        // console.log(carriers)
-
         if (lane == null) {
             return {
                 statusCode: 404
