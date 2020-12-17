@@ -369,6 +369,15 @@ functions:
             method: get
             headers:
               - Authorization
+  getTeammatesForTeam:
+    handler:
+      ./handlers/team.getTeammatesForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/teammates
+            method: get
+            headers:
+              - Authorization
 
   # Location
   getLocationById:

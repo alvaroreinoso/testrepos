@@ -53,7 +53,7 @@ module.exports.getLanesForTeam = async (event, context) => {
                     as: 'origin',
                     include: [{
                         model: CustomerLocation
-                    },{
+                    }, {
                         model: LanePartner
                     }]
                 },
@@ -62,7 +62,7 @@ module.exports.getLanesForTeam = async (event, context) => {
                     as: 'destination',
                     include: [{
                         model: CustomerLocation
-                    },{
+                    }, {
                         model: LanePartner
                     }]
                 }]
@@ -79,6 +79,44 @@ module.exports.getLanesForTeam = async (event, context) => {
         }
 
     } catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getTeammatesForTeam = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+        const teamId = event.pathParameters.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId,
+            }
+        })
+
+        if (team === null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (team.brokerageId != user.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const teammates = await team.getUsers()
+
+        return {
+            body: JSON.stringify(teammates),
+            statusCode: 200
+        }
+    } catch {
+
         return {
             statusCode: 500
         }
