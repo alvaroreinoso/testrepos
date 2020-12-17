@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     loadId: DataTypes.INTEGER,
     laneId: DataTypes.INTEGER,
     carrierId: DataTypes.INTEGER,
-    rate: DataTypes.STRING,
+    rate: DataTypes.INTEGER,
     dropDate: DataTypes.DATEONLY
   }, {
     hooks: {
