@@ -2,7 +2,6 @@
 const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
 const { getCurrentUser } = require('.././helpers/user')
-const dateFns = require('date-fns')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.getLocationById = async (event, context) => {

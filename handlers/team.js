@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Team, LanePartner, Location, Lane } = require('.././models')
+const { Customer, Ledger, CustomerLocation, Team, LanePartner, Location, Lane } = require('.././models')
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { Op } = require("sequelize");
 
@@ -237,10 +237,14 @@ module.exports.addTeam = async (event, context) => {
         
         const request = JSON.parse(event.body)
 
-        await Team.create({
+        const team = await Team.create({
             icon: request.icon,
             name: request.name,
-            brokerageId: request.brokerageId
+            brokerageId: request.brokerageId,
+        })
+
+        await team.createLedger({
+            brokerageId: team.brokerageId
         })
 
         return {
@@ -248,6 +252,7 @@ module.exports.addTeam = async (event, context) => {
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
