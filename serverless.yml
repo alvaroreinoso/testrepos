@@ -360,6 +360,15 @@ functions:
               - Authorization
 
   # Team
+  addTeam:
+    handler:
+      ./handlers/team.addTeam
+    events:
+        - http:
+            path: api/team
+            method: post
+            headers:
+              - Authorization
   getTeamById: 
     handler:
       ./handlers/team.getTeamById

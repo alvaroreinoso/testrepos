@@ -222,3 +222,34 @@ module.exports.getTopCustomersForTeam = async (event, context) => {
         }
     }
 }
+
+module.exports.addTeam = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+        
+        const request = JSON.parse(event.body)
+
+        await Team.create({
+            icon: request.icon,
+            name: request.name,
+            brokerageId: request.brokerageId
+        })
+
+        return {
+            statusCode: 204
+        }
+    }
+    catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
+}
