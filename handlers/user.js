@@ -24,6 +24,10 @@ module.exports.getUser = async (event, context) => {
             }]
         })
 
+        const customers = await user.getCustomers()
+        
+        user.dataValues.customerCount = customers.length
+
         if (user != null) {
 
             return {
