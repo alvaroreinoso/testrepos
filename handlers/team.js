@@ -38,49 +38,54 @@ module.exports.getTeamById = async (event, context) => {
         const teammates = await team.getUsers({
             include: [{
                 model: Customer,
-                through: {attributes: []},
+                attributes: ['id'],
+                through: { attributes: [] },
                 include: [{
                     model: CustomerLocation,
                     include: [{
                         model: Location,
                         include: [{
-                            model: Lane
+                            model: Lane,
+                            attributes: ['id']
                         }]
                     }]
                 }]
             }, {
-                model: Lane
+                model: Lane,
+                attributes: ['id']
             }, {
                 model: Location,
                 include: [{
-                    model: Lane
+                    model: Lane,
+                    attributes: ['id']
                 }]
             }]
         })
 
         let customerIds = []
         let laneIds = []
-        for (const teammate of teammates) {
-            for (const cust of teammate.Customers) {
+        teammates.forEach(teammate => {
+            teammate.Customers.forEach(cust => {   
                 customerIds.push(cust.id)
-                for (const location of cust.CustomerLocations) {
-                    for (const lane of location.Location.Lanes) {
+
+                cust.CustomerLocations.forEach(location => {
+
+                    location.Location.Lanes.forEach(lane => {
                         laneIds.push(lane.id)
-                    }
-                }
-            }
-            for (const lane of teammate.Lanes) {
+                    })
+                })
+            })
+            teammate.Lanes.forEach(lane => {
                 laneIds.push(lane.id)
-            }
-            for (const loc of teammate.Locations) {
+            })
+            teammate.Locations.forEach(loc => {
                 for (const locLane of loc.Lanes) {
                     laneIds.push(locLane.id)
                 }
-            }
-        }
+            })
+        })
 
         const uniqueLaneIds = new Set(laneIds)
-        console.log(uniqueLaneIds.size)
         const lanes = await [...uniqueLaneIds].map(async laneId => {
 
             const lane = await Lane.findOne({
@@ -122,27 +127,28 @@ module.exports.getTeamById = async (event, context) => {
 
         const uniqueCustomerIds = new Set(customerIds)
 
-        // const customers = await [...uniqueCustomerIds].map(async id => {
+        const customers = await [...uniqueCustomerIds].map(async id => {
 
-        //     const customer = await Customer.findOne({
-        //         where: {
-        //             id: id
-        //         }
-        //     })
+            const customer = await Customer.findOne({
+                where: {
+                    id: id
+                }
+            })
 
-        //     customer.dataValues.spend = await getCustomerSpend(customer)
+            customer.dataValues.spend = await getCustomerSpend(customer)
 
-        //     return customer
-        // })
+            return customer
+        })
 
-        // const customersResolved = await Promise.all(customers)
-        // const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
+        const customersResolved = await Promise.all(customers)
+        const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
 
         team.dataValues.customerCount = uniqueCustomerIds.size
-        // team.dataValues.topCusomers = topCustomers
 
         const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
         team.dataValues.loadsPerWeek = loadsPerWeek.frequency
+
+        team.dataValues.topCustomers = topCustomers
         team.dataValues.Lanes = lanesResolved
 
         return {
