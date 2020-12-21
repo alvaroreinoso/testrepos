@@ -25,8 +25,15 @@ module.exports.getUser = async (event, context) => {
         })
 
         const customers = await user.getCustomers()
-        
         user.dataValues.customerCount = customers.length
+
+        const lanes = await user.getLanes()
+        const laneSpend = await lanes.map(lane => lane.spend)
+        const revenue = await laneSpend.reduce((a, b) => (a + b))
+        user.dataValues.revenue = revenue
+
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         if (user != null) {
 
@@ -46,7 +53,7 @@ module.exports.getUser = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
 
     }

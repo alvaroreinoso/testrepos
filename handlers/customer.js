@@ -1,7 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
-const dateFns = require('date-fns')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.updateCustomer = async (event, context) => {
