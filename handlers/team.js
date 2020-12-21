@@ -65,7 +65,7 @@ module.exports.getTeamById = async (event, context) => {
         let customerIds = []
         let laneIds = []
         teammates.forEach(teammate => {
-            teammate.Customers.forEach(cust => {   
+            teammate.Customers.forEach(cust => {
                 customerIds.push(cust.id)
 
                 cust.CustomerLocations.forEach(location => {
@@ -92,30 +92,6 @@ module.exports.getTeamById = async (event, context) => {
                 where: {
                     id: laneId
                 },
-                include: [{
-                    model: Location,
-                    as: 'origin',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer
-                        }]
-                    }, {
-                        model: LanePartner
-                    }]
-                },
-                {
-                    model: Location,
-                    as: 'destination',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer
-                        }]
-                    }, {
-                        model: LanePartner
-                    }]
-                }]
             })
             return lane
         })
@@ -149,7 +125,6 @@ module.exports.getTeamById = async (event, context) => {
         team.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         team.dataValues.topCustomers = topCustomers
-        team.dataValues.Lanes = lanesResolved
 
         return {
             body: JSON.stringify(team),
@@ -201,7 +176,7 @@ module.exports.getTeammatesForTeam = async (event, context) => {
     }
 }
 
-module.exports.getTopCustomersForTeam = async (event, context) => {
+module.exports.getLanesForTeam = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -220,23 +195,91 @@ module.exports.getTopCustomersForTeam = async (event, context) => {
             }
         }
 
-        const customers = await Customer.findAll({
-            where: {
-                teamId: team.id
-            }
+        const teammates = await team.getUsers({
+            include: [{
+                model: Customer,
+                attributes: ['id'],
+                through: { attributes: [] },
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Location,
+                        include: [{
+                            model: Lane,
+                            attributes: ['id']
+                        }]
+                    }]
+                }]
+            }, {
+                model: Lane,
+                attributes: ['id']
+            }, {
+                model: Location,
+                include: [{
+                    model: Lane,
+                    attributes: ['id']
+                }]
+            }]
         })
 
-        const customersWithSpend = await customers.map(async customer => {
-
-            customer.dataValues.spend = await getCustomerSpend(customer)
-
-            return customer
+        let laneIds = []
+        teammates.forEach(teammate => {
+            teammate.Customers.forEach(cust => {
+                cust.CustomerLocations.forEach(location => {
+                    location.Location.Lanes.forEach(lane => {
+                        laneIds.push(lane.id)
+                    })
+                })
+            })
+            teammate.Lanes.forEach(lane => {
+                laneIds.push(lane.id)
+            })
+            teammate.Locations.forEach(loc => {
+                loc.Lanes.forEach(locLane => {
+                    laneIds.push(locLane.id)
+                })
+            })
         })
 
-        const customersResolved = await Promise.all(customersWithSpend)
+        const uniqueLaneIds = new Set(laneIds)
+        const lanes = await [...uniqueLaneIds].map(async laneId => {
+
+            const lane = await Lane.findOne({
+                where: {
+                    id: laneId
+                },
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer
+                        }]
+                    }, {
+                        model: LanePartner
+                    }]
+                },
+                {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer
+                        }]
+                    }, {
+                        model: LanePartner
+                    }]
+                }]
+            })
+            return lane
+        })
+
+        const lanesResolved = await Promise.all(lanes)
 
         const response = {
-            body: JSON.stringify(customersResolved.sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })),
+            body: JSON.stringify(lanesResolved),
             statusCode: 200
         }
 

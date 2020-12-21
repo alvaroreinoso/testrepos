@@ -396,15 +396,6 @@ functions:
             method: get
             headers:
               - Authorization
-  getTopCustomersForTeam:
-    handler:
-      ./handlers/team.getTopCustomersForTeam
-    events:
-        - http:
-            path: api/team/{teamId}/customers
-            method: get
-            headers:
-              - Authorization
 
   # Location
   getLocationById:
