@@ -81,11 +81,35 @@ module.exports.getTeamById = async (event, context) => {
 
         const uniqueLaneIds = new Set(laneIds)
         const lanes = await [...uniqueLaneIds].map(async laneId => {
-             
+
             const lane = await Lane.findOne({
                 where: {
                     id: laneId
-                }
+                },
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer
+                        }]
+                    }, {
+                        model: LanePartner
+                    }]
+                },
+                {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer
+                        }]
+                    }, {
+                        model: LanePartner
+                    }]
+                }]
             })
             return lane
         })
@@ -98,14 +122,15 @@ module.exports.getTeamById = async (event, context) => {
         const uniqueCustomerIds = new Set(customerIds)
         team.dataValues.customerCount = uniqueCustomerIds.size
 
-        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
         team.dataValues.loadsPerWeek = loadsPerWeek.frequency
+        team.dataValues.Lanes = lanesResolved
 
         return {
             body: JSON.stringify(team),
             statusCode: 200
         }
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         return {
             statusCode: 500
@@ -299,7 +324,7 @@ module.exports.addTeam = async (event, context) => {
                 statusCode: 401
             }
         }
-        
+
         const request = JSON.parse(event.body)
 
         const team = await Team.create({
