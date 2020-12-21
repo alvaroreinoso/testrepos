@@ -38,6 +38,7 @@ module.exports.getTeamById = async (event, context) => {
         const teammates = await team.getUsers({
             include: [{
                 model: Customer,
+                through: {attributes: []},
                 include: [{
                     model: CustomerLocation,
                     include: [{
@@ -79,6 +80,7 @@ module.exports.getTeamById = async (event, context) => {
         }
 
         const uniqueLaneIds = new Set(laneIds)
+        console.log(uniqueLaneIds.size)
         const lanes = await [...uniqueLaneIds].map(async laneId => {
 
             const lane = await Lane.findOne({
@@ -119,7 +121,25 @@ module.exports.getTeamById = async (event, context) => {
         team.dataValues.revenue = teamSpend
 
         const uniqueCustomerIds = new Set(customerIds)
+
+        // const customers = await [...uniqueCustomerIds].map(async id => {
+
+        //     const customer = await Customer.findOne({
+        //         where: {
+        //             id: id
+        //         }
+        //     })
+
+        //     customer.dataValues.spend = await getCustomerSpend(customer)
+
+        //     return customer
+        // })
+
+        // const customersResolved = await Promise.all(customers)
+        // const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
+
         team.dataValues.customerCount = uniqueCustomerIds.size
+        // team.dataValues.topCusomers = topCustomers
 
         const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
         team.dataValues.loadsPerWeek = loadsPerWeek.frequency
