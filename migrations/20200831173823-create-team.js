@@ -12,6 +12,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
       brokerageId: {
         type: Sequelize.INTEGER,
         allowNull: false,

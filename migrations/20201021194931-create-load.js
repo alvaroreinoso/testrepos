@@ -21,7 +21,7 @@ module.exports = {
         }
       },
       rate: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: true
       },
       dropDate: {

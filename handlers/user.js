@@ -1,7 +1,8 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
-const { Team, Brokerage, User, Ledger } = require('.././models');
+const { Team, Brokerage, User, Ledger, Location } = require('.././models');
+const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 
 module.exports.getUser = async (event, context) => {
 
@@ -23,6 +24,17 @@ module.exports.getUser = async (event, context) => {
             }]
         })
 
+        const customers = await user.getCustomers()
+        user.dataValues.customerCount = customers.length
+
+        const lanes = await user.getLanes()
+        const laneSpend = await lanes.map(lane => lane.spend)
+        const revenue = await laneSpend.reduce((a, b) => (a + b))
+        user.dataValues.revenue = revenue
+
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
+
         if (user != null) {
 
             return {
@@ -41,7 +53,7 @@ module.exports.getUser = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
 
     }
@@ -171,6 +183,125 @@ module.exports.getTeams = async (event, context) => {
 
         return {
             statusCode: 401
+        }
+    }
+
+}
+
+module.exports.getTopCustomersForUser = async (event, context) => {
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+    const userId = event.pathParameters.userId
+
+    if (currentUser.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const customers = await targetUser.getCustomers()
+
+        const customersWithSpend = await customers.map(async customer => {
+
+            customer.dataValues.spend = await getCustomerSpend(customer)
+
+            return customer
+        })
+
+        const customersResolved = await Promise.all(customersWithSpend)
+        const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
+
+        const response = {
+            body: JSON.stringify(topCustomers),
+            statusCode: 200
+        }
+
+        return response
+
+    } catch (err) {
+        
+        return {
+            statusCode: 500
+        }
+    }
+
+}
+
+module.exports.getTopLanesForUser = async (event, context) => {
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+    const userId = event.pathParameters.userId
+
+    if (currentUser.id == null) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+            }
+        })
+
+        if (targetUser == null) {
+            return {
+                statusCode: 404
+            }
+        }
+
+        if (targetUser.brokerageId != currentUser.brokerageId) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const lanes = await targetUser.getLanes({
+            include: [{
+                model: Location,
+                as: 'origin',
+                attributes: ['city', 'state'],
+                required: true
+            }, {
+                model: Location,
+                as: 'destination',
+                attributes: ['city', 'state'],
+                required: true
+            }]
+        })
+
+        const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
+
+        const response = {
+            body: JSON.stringify(sortedLanes),
+            statusCode: 200
+        }
+
+        return response
+
+    } catch (err) {
+        return {
+            statusCode: 500
         }
     }
 

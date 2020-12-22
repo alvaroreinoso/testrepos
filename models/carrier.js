@@ -1,4 +1,5 @@
 'use strict';
+const Sequelize = require('sequelize');
 const {
   Model
 } = require('sequelize');
@@ -16,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Carrier.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Carrier',

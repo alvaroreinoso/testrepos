@@ -18,6 +18,10 @@ module.exports = {
           as: 'customerId'
         }
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
       locationId: {
         type: Sequelize.INTEGER,
         allowNull: true

@@ -1,6 +1,8 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
+const { Op } = require("sequelize");
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -53,23 +55,16 @@ module.exports.getCustomer = async (event, context) => {
     try {
         const customerId = event.pathParameters.customerId
 
-        const results = await Customer.findOne({
+        const customer = await Customer.findOne({
             where: {
                 id: customerId,
-            },
-            include: [{
-                model: Team,
-                required: true,
-                where: {
-                    brokerageId: user.brokerageId
-                }
-            }]
+            }
         })
 
-        if (results != null) {
+        if (customer != null) {
             return {
                 statusCode: 200,
-                body: JSON.stringify(results)
+                body: JSON.stringify(customer)
             }
         } else {
             return {
@@ -78,140 +73,161 @@ module.exports.getCustomer = async (event, context) => {
         }
 
     } catch (err) {
+
+        console.log(err)
         return {
             statusCode: 500
         }
     }
-}
-module.exports.getTopCustomers = async (event, context) => {
-
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-    const userId = event.pathParameters.userId
-
-    if (currentUser.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
-    try {
-        const targetUser = await User.findOne({
-            where: {
-                id: userId,
-            }
-        })
-
-        if (targetUser == null) {
-            return {
-                statusCode: 404
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
-            return {
-                statusCode: 401
-            }
-        }
-
-        const customers = await targetUser.getCustomers({
-            include: [{
-                model: CustomerLocation,
-                required: true,
-            }]
-        })
-
-        return {
-            body: JSON.stringify(customers.sort()),
-            statusCode: 200
-        }
-
-    } catch (err) {
-        return {
-            statusCode: 500
-        }
-    }
-
 }
 
 module.exports.getLanesForCustomer = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
+
     if (user.id == null) {
-
         return {
-
             statusCode: 401
         }
     }
 
     try {
         const customerId = event.pathParameters.customerId
+
         const customer = await Customer.findOne({
             where: {
                 id: customerId
             },
+        })
+
+        const locations = await customer.getCustomerLocations({
             include: [{
-                model: Team,
-                required: true,
-                attributes: ['brokerageId'],
-                where: {
-                    brokerageId: user.brokerageId
-                }
+                model: Location,
             }]
         })
 
-        const lanes = await Lane.findAll({
-            order: [
-                ['frequency', 'DESC'],
-            ],
-            include: [{
-                model: Location,
-                as: 'origin',
-                required: true,
-                include: [{
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
+        let lanes = []
+        for (const location of locations) {
+            const locationLanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: location.Location.id },
+                        { destinationLocationId: location.Location.id }
+                    ]
                 },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
+                order: [
+                    ['frequency', 'DESC'],
+                ],
                 include: [{
-                    model: CustomerLocation,
+                    model: Location,
+                    as: 'origin',
                     include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
                 }]
-            }]
-        });
+            })
+
+            for (const lane of locationLanes) {
+                lanes.push(lane)
+            }
+        }
+
+        const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+        const loadCounts = await lanes.map(async lane => {
+
+            const loads = await lane.getLoads()
+
+            const frequency = await getFrequency(lane)
+
+            if (frequency == 0) {
+                return 0
+            }
+
+            const loadsPerWeek = loads.length / frequency
+
+            return loadsPerWeek
+        })
+
+        const loadsResolved = await Promise.all(loadCounts)
+        const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+
+        customer.dataValues.loadsPerMonth = totalLoads
+        customer.dataValues.spendPerMonth = totalSpend.spend
+
+        const body = {
+            loadsPerWeek: totalLoads,
+            spend: totalSpend.spend,
+            Lanes: lanes
+        }
 
         return {
-            body: JSON.stringify(lanes),
+            body: JSON.stringify(body),
             statusCode: 200
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
     }
+}
+
+module.exports.getLocationsForCustomer = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        const customerId = event.pathParameters.customerId
+
+        const customerLocations = await CustomerLocation.findAll({
+            where: {
+                customerId: customerId
+            },
+            include: [{
+                model: Location
+            }]
+        })
+
+        return {
+            body: JSON.stringify(customerLocations),
+            statusCode: 200
+        }
+
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+
 }
 
 module.exports.getTeammatesForCustomer = async (event, context) => {
@@ -264,6 +280,81 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         const customerId = request.customerId
         const userId = request.userId
 
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId
+            }
+        })
+
+        const locations = await customer.getCustomerLocations({
+            include: Location
+        })
+
+        let lanes = []
+        for (const location of locations) {
+            const locationLanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: location.Location.id },
+                        { destinationLocationId: location.Location.id }
+                    ]
+                },
+                order: [
+                    ['frequency', 'DESC'],
+                ],
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }]
+            })
+
+            for (const lane of locationLanes) {
+                lanes.push(lane)
+            }
+        }
+
+        for (const lane of lanes) {
+
+            await TaggedLane.findOrCreate({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
+
+        for (const cL of locations) {
+
+            await TaggedLocation.findOrCreate({
+                where: {
+                    locationId: cL.Location.id,
+                    userId: userId
+                }
+            })
+        }
         await TaggedCustomer.findOrCreate({
             where: {
                 customerId: customerId,
@@ -276,6 +367,7 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }

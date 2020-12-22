@@ -1,5 +1,5 @@
 'use strict';
-
+const Sequelize = require('sequelize');
 const elastic = require('../elastic/hooks')
 const setRate = require('../helpers/hooks/setRate').setRate
 const {
@@ -22,12 +22,19 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'destinationLocationId',
         as: 'destination'
       })
+      Lane.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
+      })
       Lane.belongsToMany(models.User, {
         through: 'TaggedLane',
         foreignKey: 'laneId'
       })
       Lane.belongsToMany(models.Contact, {
         through: 'LaneContact',
+        foreignKey: 'laneId'
+      })
+      Lane.belongsToMany(models.Tag, {
+        through: 'LaneTag',
         foreignKey: 'laneId'
       })
     }
@@ -37,8 +44,14 @@ module.exports = (sequelize, DataTypes) => {
     destinationLocationId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
-    rate: DataTypes.STRING,
-    userAddedRate: DataTypes.BOOLEAN
+    rate: DataTypes.INTEGER,
+    userAddedRate: DataTypes.BOOLEAN,
+    spend: {
+      type: Sequelize.VIRTUAL,
+      get () {
+        return this.getDataValue('frequency') * this.getDataValue('rate')
+      }
+    }
   }, {
     hooks: {
       afterSave: (lane, options) => {

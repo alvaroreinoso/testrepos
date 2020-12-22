@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
+const { Customer, Load, CustomerLocation, Carrier, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const { Op } = require("sequelize");
 const query = require('.././helpers/getLanes')
 
@@ -116,8 +116,79 @@ module.exports.getLaneById = async (event, context) => {
             body: JSON.stringify(lane),
             statusCode: 200
         }
-    } catch {
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500
+        }
+    }
+}
 
+module.exports.getTopCarriers = async (event, context) => {
+
+    try {
+
+    const laneId = event.pathParameters.laneId
+
+    const lane = await Lane.findOne({
+        where: {
+            id: laneId
+        }
+    })
+
+    if (lane === null) {
+        return {
+            statusCode: 404
+        }
+    }
+
+    const loads = await lane.getLoads({
+        include: [{
+            model: Carrier,
+            required: true
+        }]
+    })
+
+    const carriers = await loads.map(load => load.Carrier.name)
+
+    let counts = {}
+
+    for (let i = 0; i < carriers.length; i++) {
+        let num = carriers[i];
+        counts[num] = counts[num] ? counts[num] + 1 : 1;
+    }
+
+    const sorted = Object.fromEntries(
+        Object.entries(counts).sort(([,a],[,b]) => b-a)
+    );
+    
+    const topCarriers = Object.keys(sorted).map(async item => {
+
+        const carrier = await Carrier.findOne({
+            where: {
+                name: item
+            },
+        })
+
+        const loads = await carrier.getLoads()
+
+        const rates = await loads.map(load => load.rate)
+        const rateSum = await rates.reduce((a, b) => { return a + b })
+        const historicalRate = rateSum / rates.length
+        
+        carrier.dataValues.historicalRate = historicalRate
+
+        return carrier
+    })
+
+    const results = await Promise.all(topCarriers)
+
+    return {
+        body: JSON.stringify(results),
+        statusCode: 200
+    }
+    } catch(err) {
+        console.log(err)
         return {
             statusCode: 500
         }

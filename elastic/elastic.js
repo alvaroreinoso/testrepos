@@ -30,7 +30,8 @@ async function seedCustomer() {
 
         const customer = {
             name: cust.name,
-            brokerageId: cust.Team.brokerageId
+            brokerageId: cust.Team.brokerageId,
+            id: cust.id
         }
 
         client.create({
@@ -192,6 +193,7 @@ async function seedLanePartners() {
         const lanePartner = {
             name: partner.name,
             address: location.address,
+            id: location.id,
             city: location.city,
             state: location.state,
             fullState: stateName,
@@ -226,6 +228,7 @@ async function seedCustomerLocatioins() {
 
         const customerLocation = {
             customerName: customer.name,
+            id: location.id,
             address: location.address,
             city: location.city,
             state: location.state,

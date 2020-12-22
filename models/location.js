@@ -19,9 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       Location.hasMany(models.Lane, {
         foreignKey: 'originLocationId',
       })
-      Location.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId',
-      })
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
       })
@@ -33,6 +30,13 @@ module.exports = (sequelize, DataTypes) => {
         through: 'LocationContact',
         foreignKey: 'locationId'
       })
+      Location.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
+      })
+      Location.belongsToMany(models.Tag, {
+        through: 'LocationTag',
+        foreignKey: 'locationId'
+      })
     }
   };
   Location.init({
@@ -40,8 +44,11 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
+    phone: DataTypes.STRING,
     ledgerId: DataTypes.INTEGER,
     lnglat: DataTypes.STRING,
+    open: DataTypes.STRING,
+    close: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
     isShippingReceiving: DataTypes.BOOLEAN
   }, {

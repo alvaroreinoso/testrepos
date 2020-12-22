@@ -1,12 +1,12 @@
 'use strict';
-const { Customer, CustomerLocation, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
+const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
 const { getCurrentUser } = require('.././helpers/user')
+const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 
 module.exports.getLocationById = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == undefined) {
@@ -17,7 +17,7 @@ module.exports.getLocationById = async (event, context) => {
 
         const locationId = event.pathParameters.id
 
-        const results = await Location.findOne({
+        const location = await Location.findOne({
             where: {
                 id: locationId
             },
@@ -34,9 +34,46 @@ module.exports.getLocationById = async (event, context) => {
                 }]
         })
 
-        return {
-            body: JSON.stringify(results),
-            statusCode: 200
+        const lanes = await location.getLanes()
+
+        if (lanes.length != 0) {
+
+            const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+            const loadCounts = await lanes.map(async lane => {
+
+                const loads = await lane.getLoads()
+
+                const frequency = await getFrequency(lane)
+
+                if (frequency == 0) {
+                    return 0
+                }
+
+                const loadsPerMonth = loads.length / frequency
+
+                return loadsPerMonth
+            })
+
+            const loadsResolved = await Promise.all(loadCounts)
+            const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+
+            location.dataValues.loadsPerMonth = totalLoads
+            location.dataValues.spendPerMonth = totalSpend.spend
+
+            return {
+                body: JSON.stringify(location),
+                statusCode: 200
+            }
+        } else {
+
+            location.dataValues.totalLoads = 0
+            location.dataValues.spend = 0
+
+            return {
+                body: JSON.stringify(location),
+                statusCode: 200
+            }
         }
     }
     catch (err) {
@@ -102,7 +139,7 @@ module.exports.getLanesForLocation = async (event, context) => {
             statusCode: 200
         }
 
-    } catch(err) {
+    } catch (err) {
         console.log(err)
         return {
             statusCode: 500
@@ -166,6 +203,12 @@ module.exports.addTeammateToLocation = async (event, context) => {
         const locationId = request.locationId
         const userId = request.userId
 
+        const location = await Location.findOne({
+            where: {
+                id: locationId
+            }
+        })
+
         await TaggedLocation.findOrCreate({
             where: {
                 locationId: locationId,
@@ -173,11 +216,24 @@ module.exports.addTeammateToLocation = async (event, context) => {
             }
         })
 
+        const lanes = await location.getLanes()
+
+        for (const lane of lanes) {
+
+            await TaggedLane.findOrCreate({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
+
         return {
             statusCode: 204
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }

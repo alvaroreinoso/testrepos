@@ -15,12 +15,20 @@ module.exports = (sequelize, DataTypes) => {
       Team.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })
+      Team.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId',
+      })
+      Team.belongsToMany(models.Tag, {
+        through: 'TeamTag',
+        foreignKey: 'teamId'
+      })
     }
   };
   Team.init({
     name: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
-    icon: DataTypes.STRING
+    icon: DataTypes.STRING,
+    ledgerId: DataTypes.INTEGER
   }, {
     hooks: {
       afterSave: (team, options) => {

@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
       Ledger.hasMany(models.Message, {
         foreignKey: 'ledgerId'
       })
+      Ledger.hasOne(models.Lane, {
+        foreignKey: 'ledgerId'
+      })
+      Ledger.hasOne(models.Team, {
+        foreignKey: 'ledgerId'
+      })
       Ledger.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })

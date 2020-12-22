@@ -18,12 +18,16 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       frequency: {
         type: Sequelize.INTEGER,
         allowNull: true
       },
       rate: {
-        type: Sequelize.TEXT,
+        type: Sequelize.INTEGER,
         allowNull: true
       },
       userAddedRate: {
