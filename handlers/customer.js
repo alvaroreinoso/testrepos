@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
+const { Op } = require("sequelize");
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -67,71 +68,6 @@ module.exports.getCustomer = async (event, context) => {
             }]
         })
 
-        const lanes = await Lane.findAll({
-            order: [
-                ['frequency', 'DESC'],
-            ],
-            include: [{
-                model: Location,
-                as: 'origin',
-                required: true,
-                include: [{
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }]
-        });
-
-        const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-        
-        const loadCounts = await lanes.map(async lane => {
-
-            const loads = await lane.getLoads()
-
-            const frequency = await getFrequency(lane)
-
-            if (frequency == 0) {
-                return 0
-            }
-
-            const loadsPerMonth =  loads.length / frequency
-
-            return loadsPerMonth
-        })
-
-        const loadsResolved = await Promise.all(loadCounts)
-        const totalLoads = loadsResolved.reduce((a, b) => {return a + b})
-
-        customer.dataValues.loadsPerMonth = totalLoads
-        customer.dataValues.spendPerMonth = totalSpend.spend
-
         if (customer != null) {
             return {
                 statusCode: 200,
@@ -179,54 +115,94 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }]
         })
 
-        const lanes = await Lane.findAll({
-            order: [
-                ['frequency', 'DESC'],
-            ],
+        const locations = await customer.getCustomerLocations({
             include: [{
                 model: Location,
-                as: 'origin',
-                required: true,
-                include: [{
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
-                }]
             }]
-        });
+        })
+
+        let lanes = []
+        for (const location of locations) {
+            const locationLanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: location.Location.id },
+                        { destinationLocationId: location.Location.id }
+                    ]
+                },
+                order: [
+                    ['frequency', 'DESC'],
+                ],
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }]
+            })
+
+            for (const lane of locationLanes) {
+                lanes.push(lane)
+            }
+        }
+
+        const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+        const loadCounts = await lanes.map(async lane => {
+
+            const loads = await lane.getLoads()
+
+            const frequency = await getFrequency(lane)
+
+            if (frequency == 0) {
+                return 0
+            }
+
+            const loadsPerWeek = loads.length / frequency
+
+            return loadsPerWeek
+        })
+
+        const loadsResolved = await Promise.all(loadCounts)
+        const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+
+        customer.dataValues.loadsPerMonth = totalLoads
+        customer.dataValues.spendPerMonth = totalSpend.spend
+
+        const body = {
+            loadsPerWeek: totalLoads,
+            spend: totalSpend.spend,
+            Lanes: lanes
+        }
 
         return {
-            body: JSON.stringify(lanes),
+            body: JSON.stringify(body),
             statusCode: 200
         }
     }
     catch (err) {
+        console.log(err)
         return {
             statusCode: 500
         }
