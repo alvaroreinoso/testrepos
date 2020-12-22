@@ -58,14 +58,7 @@ module.exports.getCustomer = async (event, context) => {
         const customer = await Customer.findOne({
             where: {
                 id: customerId,
-            },
-            include: [{
-                model: Team,
-                required: true,
-                where: {
-                    brokerageId: user.brokerageId
-                }
-            }]
+            }
         })
 
         if (customer != null) {
@@ -91,28 +84,20 @@ module.exports.getCustomer = async (event, context) => {
 module.exports.getLanesForCustomer = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
+
     if (user.id == null) {
-
         return {
-
             statusCode: 401
         }
     }
 
     try {
         const customerId = event.pathParameters.customerId
+
         const customer = await Customer.findOne({
             where: {
                 id: customerId
             },
-            include: [{
-                model: Team,
-                required: true,
-                attributes: ['brokerageId'],
-                where: {
-                    brokerageId: user.brokerageId
-                }
-            }]
         })
 
         const locations = await customer.getCustomerLocations({
@@ -222,14 +207,13 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         const customerId = event.pathParameters.customerId
 
-        const customer = await Customer.findOne({
+        const customerLocations = await CustomerLocation.findAll({
             where: {
-                id: customerId
+                customerId: customerId
             },
-        })
-
-        const customerLocations = await customer.getCustomerLocations({
-            include: Location
+            include: [{
+                model: Location
+            }]
         })
 
         return {
@@ -302,47 +286,55 @@ module.exports.addTeammateToCustomer = async (event, context) => {
             }
         })
 
-        const lanes = await Lane.findAll({
-            order: [
-                ['frequency', 'DESC'],
-            ],
-            include: [{
-                model: Location,
-                as: 'origin',
-                required: true,
-                include: [{
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
+        const locations = await customer.getCustomerLocations({
+            include: Location
+        })
+
+        let lanes = []
+        for (const location of locations) {
+            const locationLanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: location.Location.id },
+                        { destinationLocationId: location.Location.id }
+                    ]
                 },
-                {
-                    model: LanePartner
-                }]
-            }, {
-                model: Location,
-                required: true,
-                as: 'destination',
+                order: [
+                    ['frequency', 'DESC'],
+                ],
                 include: [{
-                    model: CustomerLocation,
+                    model: Location,
+                    as: 'origin',
                     include: [{
-                        model: Customer,
-                        required: true,
-                        where: {
-                            id: customer.id
-                        }
-                    }]
-                },
-                {
-                    model: LanePartner
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
                 }]
-            }]
-        });
+            })
+
+            for (const lane of locationLanes) {
+                lanes.push(lane)
+            }
+        }
 
         for (const lane of lanes) {
 
@@ -354,11 +346,7 @@ module.exports.addTeammateToCustomer = async (event, context) => {
             })
         }
 
-        const customerLocations = await customer.getCustomerLocations({
-            include: Location
-        })
-
-        for (const cL of customerLocations) {
+        for (const cL of locations) {
 
             await TaggedLocation.findOrCreate({
                 where: {
