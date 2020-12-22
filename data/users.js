@@ -1,6 +1,6 @@
 const users = [
     {
-        username: 'adf66478-f9c5-4557-88fa-ecd4492d0c03',
+        username: '312cf3e3-8ee7-437e-b4d4-8dfe8ec4ff80',
         brokerageId: 1,
         teamId: 1,
         title: 'Sales Manager',
