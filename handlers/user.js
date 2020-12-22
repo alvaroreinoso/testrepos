@@ -290,26 +290,16 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }]
         })
 
-        const lanesWithSpend = await lanes.map(lane => {
-
-            const spend = lane.frequency * lane.rate
-
-            lane.dataValues.spend = spend
-
-            return lane
-        })
-
-        const lanesResolved = await Promise.all(lanesWithSpend)
+        const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
 
         const response = {
-            body: JSON.stringify(lanesResolved.sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })),
+            body: JSON.stringify(sortedLanes),
             statusCode: 200
         }
 
         return response
 
     } catch (err) {
-        
         return {
             statusCode: 500
         }
