@@ -39,67 +39,15 @@ module.exports.getTeamById = async (event, context) => {
             include: [{
                 model: Customer,
                 attributes: ['id'],
-                through: { attributes: [] },
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Location,
-                        include: [{
-                            model: Lane,
-                            attributes: ['id']
-                        }]
-                    }]
-                }]
-            }, {
-                model: Lane,
-                attributes: ['id']
-            }, {
-                model: Location,
-                include: [{
-                    model: Lane,
-                    attributes: ['id']
-                }]
             }]
         })
 
         let customerIds = []
-        let laneIds = []
         teammates.forEach(teammate => {
             teammate.Customers.forEach(cust => {
                 customerIds.push(cust.id)
-
-                cust.CustomerLocations.forEach(location => {
-
-                    location.Location.Lanes.forEach(lane => {
-                        laneIds.push(lane.id)
-                    })
-                })
-            })
-            teammate.Lanes.forEach(lane => {
-                laneIds.push(lane.id)
-            })
-            teammate.Locations.forEach(loc => {
-                for (const locLane of loc.Lanes) {
-                    laneIds.push(locLane.id)
-                }
             })
         })
-
-        const uniqueLaneIds = new Set(laneIds)
-        const lanes = await [...uniqueLaneIds].map(async laneId => {
-
-            const lane = await Lane.findOne({
-                where: {
-                    id: laneId
-                },
-            })
-            return lane
-        })
-
-        const lanesResolved = await Promise.all(lanes)
-        const laneSpend = lanesResolved.map(lane => lane.spend)
-        const teamSpend = await laneSpend.reduce((a, b) => a + b)
-        team.dataValues.revenue = teamSpend
 
         const uniqueCustomerIds = new Set(customerIds)
 
@@ -120,9 +68,6 @@ module.exports.getTeamById = async (event, context) => {
         const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
 
         team.dataValues.customerCount = uniqueCustomerIds.size
-
-        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-        team.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         team.dataValues.topCustomers = topCustomers
 
@@ -276,14 +221,24 @@ module.exports.getLanesForTeam = async (event, context) => {
             return lane
         })
 
-        const lanesResolved = await Promise.all(lanes)
 
-        const response = {
-            body: JSON.stringify(lanesResolved),
+        const lanesResolved = await Promise.all(lanes)
+        const laneSpend = lanesResolved.map(lane => lane.spend)
+        const teamSpend = await laneSpend.reduce((a, b) => a + b)
+
+        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+
+        const body = {
+            revenue: teamSpend,
+            loadsPerWeek: loadsPerWeek.frequency,
+            Lanes: lanesResolved
+        }
+
+        return {
+            body: JSON.stringify(body),
             statusCode: 200
         }
 
-        return response
     }
 
     catch (err) {
