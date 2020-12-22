@@ -228,9 +228,10 @@ module.exports.getTopCustomersForUser = async (event, context) => {
         })
 
         const customersResolved = await Promise.all(customersWithSpend)
+        const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
 
         const response = {
-            body: JSON.stringify(customersResolved.sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })),
+            body: JSON.stringify(topCustomers),
             statusCode: 200
         }
 
