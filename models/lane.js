@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     spend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('frequency') * this.getDataValue('rate')
+        return this.getDataValue('frequency') * this.getDataValue('rate') * 4
       }
     }
   }, {

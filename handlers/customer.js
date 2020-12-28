@@ -156,17 +156,13 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const loadCounts = await lanes.map(async lane => {
 
-            const loads = await lane.getLoads()
-
             const frequency = await getFrequency(lane)
 
             if (frequency == 0) {
                 return 0
             }
 
-            const loadsPerWeek = loads.length / frequency
-
-            return loadsPerWeek
+            return frequency
         })
 
         const loadsResolved = await Promise.all(loadCounts)
