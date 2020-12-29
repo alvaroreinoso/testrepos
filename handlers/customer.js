@@ -382,12 +382,90 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
+        const targetUserId = request.userId
+
         await TaggedCustomer.destroy({
             where: {
-                userId: request.userId,
+                userId: targetUserId,
                 customerId: request.customerId
             }
         })
+
+        const customer = await Customer.findOne({
+            where: {
+                id: request.customerId
+            }
+        })
+
+        const locations = await customer.getCustomerLocations({
+            include: Location
+        })
+
+        let lanes = []
+        for (const location of locations) {
+            const locationLanes = await Lane.findAll({
+                where: {
+                    [Op.or]: [
+                        { originLocationId: location.Location.id },
+                        { destinationLocationId: location.Location.id }
+                    ]
+                },
+                order: [
+                    ['frequency', 'DESC'],
+                ],
+                include: [{
+                    model: Location,
+                    as: 'origin',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }, {
+                    model: Location,
+                    as: 'destination',
+                    include: [{
+                        model: CustomerLocation,
+                        include: [{
+                            model: Customer,
+                            required: true
+                        }]
+                    },
+                    {
+                        model: LanePartner
+                    }],
+                }]
+            })
+
+            for (const lane of locationLanes) {
+                lanes.push(lane)
+            }
+        }
+
+        for (const lane of lanes) {
+
+            await TaggedLane.destroy({
+                where: {
+                    laneId: lane.id,
+                    userId: targetUserId
+                }
+            })
+        }
+
+        for (const cL of locations) {
+
+            await TaggedLocation.destroy({
+                where: {
+                    locationId: cL.Location.id,
+                    userId: targetUserId
+                }
+            })
+        }
 
         return {
             statusCode: 204
