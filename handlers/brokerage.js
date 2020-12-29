@@ -36,7 +36,6 @@ module.exports.getLanesForBrokerage = async (event, context) => {
     let locations = []
     for (const customer of customers) {
         for (const location of customer.CustomerLocations) {
-            console.log(location)
             locations.push(location.Location)
         }
     }

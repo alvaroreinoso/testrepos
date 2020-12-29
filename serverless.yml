@@ -446,6 +446,15 @@ functions:
             method: delete
             headers:
               - Authorization
+  
+  # Brokerage
+  getLanesForBrokerage:
+    handler:
+      ./handlers/brokerage.getLanesForBrokerage
+    events:
+        - http:
+            path: api/brokerage/{brokerageId}/lanes
+            method: get
 
   # Tag
   getTags:
