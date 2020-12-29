@@ -16,29 +16,36 @@ module.exports.getBrokerage = async (event, context) => {
 
 module.exports.getLanesForBrokerage = async (event, context) => {
 
+    const user = await getCurrentUser(event.headers.Authorization)
     const brokerageId = event.pathParameters.brokerageId
 
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: brokerageId
+    if (user.id == null) {
+        return {
+            statusCode: 401
         }
-    })
+    }
 
-    const customers = await brokerage.getCustomers({
+    if (user.brokerageId != brokerageId) {
+        return {
+            statusCode: 401
+        }
+    }
+
+    try {
+
+    const locations = await Location.findAll({
         include: [{
             model: CustomerLocation,
+            required: true,
             include: [{
-                model: Location
+                model: Customer,
+                required: true,
+                where: {
+                    brokerageId: brokerageId
+                }
             }]
         }]
     })
-
-    let locations = []
-    for (const customer of customers) {
-        for (const location of customer.CustomerLocations) {
-            locations.push(location.Location)
-        }
-    }
 
     let lanes = []
         for (const location of locations) {
@@ -100,5 +107,11 @@ module.exports.getLanesForBrokerage = async (event, context) => {
     return {
         statusCode: 200,
         body: JSON.stringify(body)
+    }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
     }
 }
