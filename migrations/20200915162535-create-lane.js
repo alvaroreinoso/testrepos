@@ -30,6 +30,15 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true
       },
+      mileage: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      inbound: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+      },
       userAddedRate: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

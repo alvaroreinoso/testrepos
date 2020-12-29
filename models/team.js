@@ -9,9 +9,6 @@ module.exports = (sequelize, DataTypes) => {
       Team.hasMany(models.User, {
         foreignKey: 'teamId'
       }),
-      Team.hasMany(models.Customer, {
-        foreignKey: 'teamId'
-      }),
       Team.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })

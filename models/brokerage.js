@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       Brokerage.hasMany(models.User, {
         foreignKey: 'brokerageId'
       }),
+      Brokerage.hasMany(models.Customer, {
+        foreignKey: 'brokerageId'
+      }),
       Brokerage.hasMany(models.Team, {
         foreignKey: 'brokerageId'
       })

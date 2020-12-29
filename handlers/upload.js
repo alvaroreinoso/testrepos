@@ -36,7 +36,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -134,7 +134,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -232,7 +232,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -297,7 +297,8 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            inbound: true
                         }
                     })
 
@@ -364,7 +365,7 @@ module.exports.ascendCustomerUpload = async (event, context) => {
             const [customer, customerWasCreated] = await Customer.findOrCreate({
                 where: {
                     name: row['name'],
-                    teamId: user.teamId,
+                    brokerageId: user.brokerageId,
                 },
             })
 

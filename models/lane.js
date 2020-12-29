@@ -44,6 +44,8 @@ module.exports = (sequelize, DataTypes) => {
     destinationLocationId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
+    mileage: DataTypes.INTEGER,
+    inbound: DataTypes.BOOLEAN,
     rate: DataTypes.INTEGER,
     userAddedRate: DataTypes.BOOLEAN,
     spend: {
