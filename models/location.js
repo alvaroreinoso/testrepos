@@ -49,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
     lnglat: DataTypes.STRING,
     open: DataTypes.STRING,
     close: DataTypes.STRING,
+    hoursType: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
     isShippingReceiving: DataTypes.BOOLEAN
   }, {
