@@ -81,44 +81,9 @@ async function seedLanes() {
 
     lanes.forEach(async (lane) => {
 
-        const origin = await lane.getOrigin({
-            include: [{
-                model: CustomerLocation,
-                include: [{
-                    model: Customer,
-                    required: true,
-                    include: [{
-                        model: Ledger,
-                        required: true
-                    }]
-                }]
-            }]
-        })
-
-        const destination = await lane.getDestination({
-            include: [{
-                model: CustomerLocation,
-                include: [{
-                    model: Customer,
-                    required: true,
-                    include: [{
-                        model: Ledger,
-                        required: true
-                    }]
-                }]
-            }]
-        })
-
-        let brokerageId = []
-
-        if (origin.CustomerLocation == null) {
-
-            brokerageId.push(destination.CustomerLocation.Customer.Ledger.brokerageId)
-
-        } else {
-
-            brokerageId.push(origin.CustomerLocation.Customer.Ledger.brokerageId)
-        }
+        const origin = await lane.getOrigin()
+        const destination = await lane.getDestination()
+        const ledger = await lane.getLedger()
 
         const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
         const shortRoute = `${origin.city} to ${destination.city}`
@@ -134,7 +99,7 @@ async function seedLanes() {
             destinationStateName: destinationState,
             route: route,
             shortRoute: shortRoute,
-            brokerageId: brokerageId[0]
+            brokerageId: ledger.brokerageId
         }
 
         client.create({
