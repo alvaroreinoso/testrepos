@@ -1,5 +1,5 @@
 const { CustomerContact, Location, Load, Customer, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress } = require('.././helpers/csvDump/ascend')
+const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress, getMileage } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
@@ -96,12 +96,14 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const route = await getRoute(firstLngLat, secondLngLat)
+                    const mileage = await getMileage(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            mileage: mileage,
                         }
                     })
 
@@ -194,12 +196,14 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const route = await getRoute(firstLngLat, secondLngLat)
+                    const mileage = await getMileage(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            mileage: mileage,
                         }
                     })
 
@@ -292,12 +296,14 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     })
 
                     const route = await getRoute(firstLngLat, secondLngLat)
+                    const mileage = await getMileage(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
                             routeGeometry: route,
+                            mileage: mileage,
                             inbound: true
                         }
                     })
