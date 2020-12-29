@@ -95,8 +95,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
-                    const mileage = await getMileage(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
@@ -195,8 +194,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
-                    const mileage = await getMileage(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
@@ -295,8 +293,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
-                    const mileage = await getMileage(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
