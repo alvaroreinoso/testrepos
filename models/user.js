@@ -1,5 +1,6 @@
 'use strict';
 const elastic = require('../elastic/hooks')
+const Sequelize = require('sequelize');
 const {
   Model
 } = require('sequelize');
@@ -45,6 +46,12 @@ module.exports = (sequelize, DataTypes) => {
     title: DataTypes.STRING,
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
+    fullName: {
+      type: Sequelize.VIRTUAL,
+      get () {
+        return `${this.getDataValue('firstName')} ${this.getDataValue('lastName')}`
+      }
+    },
     email: DataTypes.STRING,
     phone: DataTypes.STRING,
     profileImage: DataTypes.STRING

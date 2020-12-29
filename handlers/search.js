@@ -161,7 +161,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
                             multi_match: {
                                 query: query,
                                 type: "phrase_prefix",
-                                fields: ["firstName", "lastName"]
+                                fields: ["firstName", "lastName", "fullName"]
                             }
                         },
                     ],

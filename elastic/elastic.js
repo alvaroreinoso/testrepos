@@ -264,6 +264,7 @@ async function seedTeammates() {
                 title: mate.title,
                 firstName: mate.firstName,
                 lastName: mate.lastName,
+                fullName: mate.fullName,
                 email: mate.email,
                 phone: mate.phone,
                 brokerageId: mate.brokerageId
