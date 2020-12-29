@@ -3,16 +3,7 @@ const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
 const db = require('.././models/index');
-const client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    // log: 'trace',
-    log: [{
-        type: 'stdio',
-        levels: ['error']
-    }],
-    apiVersion: '7.7'
-});
-
+const client = require('./client')
 
 module.exports.saveDocument = async (item) => {
 

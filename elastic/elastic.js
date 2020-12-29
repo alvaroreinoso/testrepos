@@ -19,18 +19,13 @@ async function seedCustomer() {
         index: 'customer',
     })
 
-    const customers = await Customer.findAll({
-        include: [{
-            model: Team,
-            required: true
-        }]
-    })
+    const customers = await Customer.findAll()
 
     customers.forEach((cust) => {
 
         const customer = {
             name: cust.name,
-            brokerageId: cust.Team.brokerageId,
+            brokerageId: cust.brokerageId,
             id: cust.id
         }
 

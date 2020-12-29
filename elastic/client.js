@@ -1,7 +1,9 @@
 const elasticsearch = require('elasticsearch');
+require('dotenv').config()
 
 const client = new elasticsearch.Client({
-    host: 'localhost:9200',
+    // host: 'localhost:9200',
+    host: process.env.SEARCH_URL,
     log: [{
         type: 'stdio',
         levels: ['error']
