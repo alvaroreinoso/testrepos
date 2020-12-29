@@ -42,6 +42,7 @@ module.exports = (sequelize, DataTypes) => {
   Lane.init({
     originLocationId: DataTypes.INTEGER,
     destinationLocationId: DataTypes.INTEGER,
+    ledgerId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
     mileage: DataTypes.INTEGER,

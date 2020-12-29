@@ -175,7 +175,7 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
     const result = await fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${cLng},${cLat};${lpLng},${lpLat}?geometries=polyline&overview=full&access_token=${process.env.REACT_APP_MAPBOX_KEY}`).then(resp => resp.json())
     const route = result.routes[0].geometry
     const distance = result.routes[0].distance
-    
+
     async function getMiles(i) {
         return i*0.000621371192;
     }
@@ -189,7 +189,7 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
 module.exports.getRate = async (json) => {
 
 
-    if (json['Flat Rate i'] != null) {
+    if (json['Flat Rate i'] != '') {
 
         let rate = json['Flat Rate i']
 
@@ -197,7 +197,7 @@ module.exports.getRate = async (json) => {
 
     } else {
 
-
+        return null
     }
 
 
