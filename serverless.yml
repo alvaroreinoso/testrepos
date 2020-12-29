@@ -405,6 +405,13 @@ functions:
         - http:
             path: api/location/{id}
             method: get
+  editLocation:
+    handler:
+      ./handlers/location.editLocation
+    events:
+        - http:
+            path: api/location
+            method: put
   getLanesForLocation:
     handler:
       ./handlers/location.getLanesForLocation

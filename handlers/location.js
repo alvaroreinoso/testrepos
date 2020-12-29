@@ -81,6 +81,37 @@ module.exports.getLocationById = async (event, context) => {
 
 };
 
+module.exports.editLocation = async (event, context) => {
+
+    try {
+
+        const request = JSON.parse(event.body)
+
+        const location = await Location.findOne({
+            where: {
+                id: request.id
+            }
+        })
+
+        location.hoursType = request.hoursType
+        location.open = request.open
+        location.close = request.close
+        location.phone = request.phone
+        location.email = request.email
+
+        await location.save()
+
+        return {
+            statusCode: 204
+        }
+
+    } catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
+}
+
 module.exports.getLanesForLocation = async (event, context) => {
 
     try {
