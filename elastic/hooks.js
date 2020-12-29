@@ -233,6 +233,7 @@ module.exports.saveDocument = async (item) => {
                     title: item.title,
                     firstName: item.firstName,
                     lastName: item.lastName,
+                    fullName: item.fullName,
                     email: item.email,
                     phone: item.phone,
                     brokerageId: item.brokerageId
