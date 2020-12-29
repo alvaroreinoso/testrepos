@@ -280,12 +280,33 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
-        await TaggedLocation.destroy({
+        const locationId = request.locationId
+        const userId = request.userId
+
+        const location = await Location.findOne({
             where: {
-                userId: request.userId,
-                locationId: request.locationId
+                id: locationId
             }
         })
+
+        await TaggedLocation.destroy({
+            where: {
+                userId: userId,
+                locationId: locationId
+            }
+        })
+
+        const lanes = await location.getLanes()
+
+        for (const lane of lanes) {
+
+            await TaggedLane.destroy({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
 
         return {
             statusCode: 204
