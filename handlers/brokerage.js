@@ -34,6 +34,9 @@ module.exports.getBrokerage = async (event, context) => {
         let lanesForUser = new Set()
 
         const users = await team.getUsers()
+
+        team.dataValues.teammateCount = users.length
+
         for (const mate of users) {
 
             const customers = await mate.getCustomers()
@@ -61,9 +64,8 @@ module.exports.getBrokerage = async (event, context) => {
             teammatesWithCount.push(mate)
         }
 
-    
 
-        const lanesForTeam =  [...lanesForUser].map(async laneId => {
+        const lanesForTeam = [...lanesForUser].map(async laneId => {
 
             const lane = await Lane.findOne({
                 where: {
@@ -76,9 +78,15 @@ module.exports.getBrokerage = async (event, context) => {
 
         const lanesResolved = await Promise.all(lanesForTeam)
         const laneSpend = lanesResolved.map(lane => lane.spend)
-        const teamSpend = await laneSpend.reduce((a, b) => a + b)
 
-        team.dataValues.revenue = teamSpend
+        if (laneSpend.length == 0) {
+
+            team.dataValues.revenue = 0
+        } else {
+            const teamSpend = await laneSpend.reduce((a, b) => a + b)
+
+            team.dataValues.revenue = teamSpend
+        }
     }
 
     const topTeams = teams.sort((a, b) => { return b.dataValues.revenue - a.dataValues.revenue })
