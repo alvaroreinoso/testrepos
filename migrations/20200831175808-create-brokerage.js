@@ -16,6 +16,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
       address: {
         type: Sequelize.STRING,
         allowNull: false

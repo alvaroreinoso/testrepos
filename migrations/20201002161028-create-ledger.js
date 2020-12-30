@@ -62,6 +62,15 @@ module.exports = {
           as: 'ledgerId'
         }
     })
+    await queryInterface.changeColumn('Brokerages', 'ledgerId', {
+      type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
+    })
   },
   down: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('Ledgers');

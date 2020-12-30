@@ -6,9 +6,9 @@
   "scripts": {
     "test": "jest",
     "db:start": "npx sequelize-cli db:create && npx sequelize-cli db:migrate",
-    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:seed": "npx sequelize-cli db:seed:all && node data/addLedger.js",
     "db:stop": "npx sequelize-cli db:drop",
-    "db:restart": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "db:restart": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all && node data/addLedger.js",
     "elastic:start": "node elastic/elastic.js",
     "elastic:stop": "node elastic/deleteElastic.js"
   },

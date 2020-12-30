@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Customer, Brokerage, CustomerLocation, LanePartner, Team, User, Location, Lane } = require('.././models')
+const { Customer, Brokerage, CustomerLocation, LanePartner, Team, User, Location, Lane, Ledger } = require('.././models')
 const { Op } = require("sequelize");
 
 module.exports.getBrokerage = async (event, context) => {

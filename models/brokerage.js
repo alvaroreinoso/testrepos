@@ -1,4 +1,5 @@
 'use strict';
+const elastic = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
@@ -22,6 +23,9 @@ module.exports = (sequelize, DataTypes) => {
       Brokerage.hasMany(models.Ledger, {
         foreignKey: 'brokerageId'
       })
+      Brokerage.belongsTo(models.Ledger, {
+        foreignKey: 'ledgerId'
+      })
       Brokerage.belongsToMany(models.Tag, {
         through: 'BrokerageTag',
         foreignKey: 'brokerageId'
@@ -32,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
   Brokerage.init({
     pin: DataTypes.STRING,
     name: DataTypes.STRING,
+    ledgerId: DataTypes.INTEGER,
     address: DataTypes.STRING,
     address2: DataTypes.STRING,
     city: DataTypes.STRING,

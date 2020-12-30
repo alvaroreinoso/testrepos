@@ -32,6 +32,9 @@ module.exports = (sequelize, DataTypes) => {
       Ledger.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })
+      Ledger.hasOne(models.Brokerage, {
+        foreignKey: 'ledgerId'
+      })
 
     }
   };
