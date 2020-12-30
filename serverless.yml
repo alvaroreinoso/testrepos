@@ -448,6 +448,15 @@ functions:
               - Authorization
   
   # Brokerage
+  getBrokerage:
+    handler:
+      ./handlers/brokerage.getBrokerage
+    events:
+        - http:
+            path: api/brokerage/{brokerageId}
+            method: get
+            headers:
+              - Authorization
   getLanesForBrokerage:
     handler:
       ./handlers/brokerage.getLanesForBrokerage
@@ -455,6 +464,8 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}/lanes
             method: get
+            headers:
+              - Authorization
 
   # Tag
   getTags:
