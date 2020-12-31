@@ -105,24 +105,13 @@ module.exports.deleteTeam = async (event, context) => {
             where: {
                 id: teamId
             },
-            include: [{
-                model: User
-            }]
         })
-
-        for (const user of team.Users) {
-
-            user.teamId = null
-
-            await user.save()
-        }
 
         await Ledger.destroy({
             where: {
                 id: team.ledgerId
             }
         })
-
 
         await team.destroy()
 

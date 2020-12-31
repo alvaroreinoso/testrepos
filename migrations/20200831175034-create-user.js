@@ -19,6 +19,7 @@ module.exports = {
       teamId: {
         type: Sequelize.INTEGER,
         allowNull: true,
+        onDelete: 'SET NULL',
         references: {
           model: 'Teams',
           key: 'id',
