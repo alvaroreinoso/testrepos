@@ -30,7 +30,6 @@ module.exports.editBrokerage = async (event, context) => {
         brokerage.zipcode = request.zipcode,
         brokerage.phone = request.phone
 
-
         await brokerage.save()
 
         return {
