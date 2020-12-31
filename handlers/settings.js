@@ -49,7 +49,6 @@ module.exports.editBrokerage = async (event, context) => {
 module.exports.deleteTeam = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.admin == false) {
@@ -79,8 +78,6 @@ module.exports.deleteTeam = async (event, context) => {
             statusCode: 204
         }
     } catch (err) {
-
-        console.log(err)
 
         return {
             statusCode: 500

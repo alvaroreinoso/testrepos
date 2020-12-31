@@ -371,11 +371,20 @@ functions:
               - Authorization
   editTeam:
     handler:
-      ./handlers/settings.editTeam
+      ./handlers/team.editTeam
     events:
         - http:
-            path: api/settings/team
+            path: api/team
             method: put
+            headers:
+              - Authorization
+  deleteTeam:
+    handler:
+      ./handlers/team.deleteTeam
+    events:
+        - http:
+            path: api/team/{teamId}
+            method: delete
             headers:
               - Authorization
   getTeamById: 
@@ -581,15 +590,6 @@ functions:
         - http:
             path: api/settings/brokerage
             method: put
-            headers:
-              - Authorization
-  deleteTeam:
-    handler:
-      ./handlers/settings.deleteTeam
-    events:
-        - http:
-            path: api/settings/team/{teamId}
-            method: delete
             headers:
               - Authorization
   removeTeammate:

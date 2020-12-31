@@ -320,3 +320,42 @@ module.exports.editTeam = async (event, context) => {
         }
     }
 }
+
+module.exports.deleteTeam = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.admin == false) {
+
+            return {
+                statusCode: 403
+            }
+        }
+
+        const teamId = event.pathParameters.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId
+            },
+        })
+
+        await Ledger.destroy({
+            where: {
+                id: team.ledgerId
+            }
+        })
+
+        await team.destroy()
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500
+        }
+    }
+}
