@@ -414,6 +414,24 @@ functions:
             method: get
             headers:
               - Authorization
+  removeTeammate:
+    handler:
+      ./handlers/team.removeTeammate
+    events:
+        - http:
+            path: api/team/teammate/{userId}
+            method: delete
+            headers:
+              - Authorization
+  addTeammate:
+    handler:
+      ./handlers/team.addTeammate
+    events:
+        - http:
+            path: api/team/teammate
+            method: put
+            headers:
+              - Authorization
 
   # Location
   getLocationById:
@@ -482,6 +500,15 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}/lanes
             method: get
+            headers:
+              - Authorization
+  editBrokerage:
+    handler:
+      ./handlers/brokerage.editBrokerage
+    events:
+        - http:
+            path: api/brokerage
+            method: put
             headers:
               - Authorization
 
@@ -579,34 +606,5 @@ functions:
         - http:
             path: api/onboarding/team/{teamId}
             method: post
-            headers:
-              - Authorization
-  
-  # Admin Settings
-  editBrokerage:
-    handler:
-      ./handlers/settings.editBrokerage
-    events:
-        - http:
-            path: api/settings/brokerage
-            method: put
-            headers:
-              - Authorization
-  removeTeammate:
-    handler:
-      ./handlers/settings.removeTeammate
-    events:
-        - http:
-            path: api/settings/team/teammate/{userId}
-            method: delete
-            headers:
-              - Authorization
-  addTeammate:
-    handler:
-      ./handlers/settings.addTeammate
-    events:
-        - http:
-            path: api/settings/team/teammate
-            method: put
             headers:
               - Authorization
