@@ -46,46 +46,6 @@ module.exports.editBrokerage = async (event, context) => {
 
 }
 
-module.exports.editTeam = async (event, context) => {
-
-
-    try {
-        const user = await getCurrentUser(event.headers.Authorization)
-
-        if (user.admin == false) {
-
-            return {
-                statusCode: 403
-            }
-        }
-
-        const request = JSON.parse(event.body)
-
-        const team = await Team.findOne({
-            where: {
-                id: request.id
-            }
-        })
-
-        team.name = request.name,
-        team.icon = request.icon
-
-        await team.save()
-
-        return {
-            statusCode: 204
-        }
-    } catch (err) {
-
-        console.log(err)
-
-        return {
-            statusCode: 500
-        }
-    }
-
-}
-
 module.exports.deleteTeam = async (event, context) => {
 
     try {
@@ -126,4 +86,64 @@ module.exports.deleteTeam = async (event, context) => {
             statusCode: 500
         }
     }
+}
+
+module.exports.removeTeammate = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    const targetUserId = event.pathParameters.userId
+
+    const targetUser = await User.findOne({
+        where: {
+            id: targetUserId
+        }
+    })
+
+    targetUser.teamId = null
+
+    await targetUser.save()
+
+    return {
+        statusCode: 204
+    }
+}
+
+module.exports.addTeammate = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    if (user.id == null) {
+
+        return {
+            statusCode: 401
+        }
+    }
+
+    const request = JSON.parse(event.body)
+
+    const targetUserId = request.userId
+    const teamId = request.teamId
+
+    const targetUser = await User.findOne({
+        where: {
+            id: targetUserId
+        }
+    })
+
+    targetUser.teamId = teamId
+
+    await targetUser.save()
+
+    return {
+        statusCode: 204
+    }
+
 }

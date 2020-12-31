@@ -283,3 +283,40 @@ module.exports.addTeam = async (event, context) => {
         }
     }
 }
+
+module.exports.editTeam = async (event, context) => {
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+
+            return {
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const team = await Team.findOne({
+            where: {
+                id: request.id
+            }
+        })
+
+        team.name = request.name,
+            team.icon = request.icon
+
+        await team.save()
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        console.log(err)
+
+        return {
+            statusCode: 500
+        }
+    }
+}

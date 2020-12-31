@@ -369,6 +369,15 @@ functions:
             method: post
             headers:
               - Authorization
+  editTeam:
+    handler:
+      ./handlers/settings.editTeam
+    events:
+        - http:
+            path: api/settings/team
+            method: put
+            headers:
+              - Authorization
   getTeamById: 
     handler:
       ./handlers/team.getTeamById
@@ -574,15 +583,6 @@ functions:
             method: put
             headers:
               - Authorization
-  editTeam:
-    handler:
-      ./handlers/settings.editTeam
-    events:
-        - http:
-            path: api/settings/team
-            method: put
-            headers:
-              - Authorization
   deleteTeam:
     handler:
       ./handlers/settings.deleteTeam
@@ -590,5 +590,23 @@ functions:
         - http:
             path: api/settings/team/{teamId}
             method: delete
+            headers:
+              - Authorization
+  removeTeammate:
+    handler:
+      ./handlers/settings.removeTeammate
+    events:
+        - http:
+            path: api/settings/team/teammate/{userId}
+            method: delete
+            headers:
+              - Authorization
+  addTeammate:
+    handler:
+      ./handlers/settings.addTeammate
+    events:
+        - http:
+            path: api/settings/team/teammate
+            method: put
             headers:
               - Authorization
