@@ -374,7 +374,7 @@ functions:
       ./handlers/team.editTeam
     events:
         - http:
-            path: api/team
+            path: api/team/{teamId}
             method: put
             headers:
               - Authorization

@@ -295,16 +295,18 @@ module.exports.editTeam = async (event, context) => {
             }
         }
 
+        const teamId = event.pathParameters.teamId
+
         const request = JSON.parse(event.body)
 
         const team = await Team.findOne({
             where: {
-                id: request.id
+                id: teamId
             }
         })
 
         team.name = request.name,
-            team.icon = request.icon
+        team.icon = request.icon
 
         await team.save()
 
