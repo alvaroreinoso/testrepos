@@ -18,6 +18,7 @@ module.exports = {
       },
       teamId: {
         type: Sequelize.INTEGER,
+        allowNull: true,
         references: {
           model: 'Teams',
           key: 'id',

@@ -21,13 +21,15 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'ledgerId'
       })
       Ledger.hasMany(models.Message, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
+        onDelete: 'CASCADE'
       })
       Ledger.hasOne(models.Lane, {
         foreignKey: 'ledgerId'
       })
       Ledger.hasOne(models.Team, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
+        onDelete: 'CASCADE'
       })
       Ledger.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'

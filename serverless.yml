@@ -583,3 +583,12 @@ functions:
             method: put
             headers:
               - Authorization
+  deleteTeam:
+    handler:
+      ./handlers/settings.deleteTeam
+    events:
+        - http:
+            path: api/settings/team/{teamId}
+            method: delete
+            headers:
+              - Authorization

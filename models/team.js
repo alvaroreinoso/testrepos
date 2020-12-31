@@ -14,10 +14,12 @@ module.exports = (sequelize, DataTypes) => {
       })
       Team.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
+        onDelete: 'CASCADE'
       })
       Team.belongsToMany(models.Tag, {
         through: 'TeamTag',
-        foreignKey: 'teamId'
+        foreignKey: 'teamId',
+        onDelete: 'CASCADE'
       })
     }
   };

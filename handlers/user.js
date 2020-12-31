@@ -47,6 +47,13 @@ module.exports.getUserById = async (event, context) => {
     
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
+        if (currentUser.id == null) {
+
+            return {
+                statusCode: 401
+            }
+        }
+
         const targetUserId = event.pathParameters.id
 
         const user = await User.findOne({
@@ -56,13 +63,18 @@ module.exports.getUserById = async (event, context) => {
             },
             include: [{
                 model: Team,
-                required: true
             },
             {
                 model: Brokerage,
                 required: true
             }]
         })
+
+        if (user == null) {
+            return {
+                statusCode: 404
+            }
+        }
 
         const customers = await user.getCustomers()
         user.dataValues.customerCount = customers.length
@@ -75,12 +87,6 @@ module.exports.getUserById = async (event, context) => {
         const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
         user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
-        if (user == null) {
-            return {
-                statusCode: 404
-            }
-        }
-
         return {
             body: JSON.stringify(user),
             statusCode: 200
@@ -89,7 +95,7 @@ module.exports.getUserById = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
 
     }

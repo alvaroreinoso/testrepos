@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Team, User, Customer, Brokerage } = require('.././models');
+const { Team, User, Ledger, Brokerage } = require('.././models');
 
 module.exports.editBrokerage = async (event, context) => {
 
@@ -84,4 +84,57 @@ module.exports.editTeam = async (event, context) => {
         }
     }
 
+}
+
+module.exports.deleteTeam = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.admin == false) {
+
+            return {
+                statusCode: 403
+            }
+        }
+
+        const teamId = event.pathParameters.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId
+            },
+            include: [{
+                model: User
+            }]
+        })
+
+        for (const user of team.Users) {
+
+            user.teamId = null
+
+            await user.save()
+        }
+
+        await Ledger.destroy({
+            where: {
+                id: team.ledgerId
+            }
+        })
+
+
+        await team.destroy()
+
+        return {
+            statusCode: 204
+        }
+    } catch (err) {
+
+        console.log(err)
+
+        return {
+            statusCode: 500
+        }
+    }
 }
