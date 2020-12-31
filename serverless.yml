@@ -574,3 +574,12 @@ functions:
             method: put
             headers:
               - Authorization
+  editTeam:
+    handler:
+      ./handlers/settings.editTeam
+    events:
+        - http:
+            path: api/settings/team
+            method: put
+            headers:
+              - Authorization
