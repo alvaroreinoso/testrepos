@@ -15,25 +15,7 @@ module.exports.getUser = async (event, context) => {
             where: {
                 username: cognitoUser['cognito:username']
             },
-            include: [{
-                model: Brokerage,
-                required: true
-            }, {
-                model: Team,
-                required: true
-            }]
         })
-
-        const customers = await user.getCustomers()
-        user.dataValues.customerCount = customers.length
-
-        const lanes = await user.getLanes()
-        const laneSpend = await lanes.map(lane => lane.spend)
-        const revenue = await laneSpend.reduce((a, b) => (a + b))
-        user.dataValues.revenue = revenue
-
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
-        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         if (user != null) {
 
@@ -81,6 +63,17 @@ module.exports.getUserById = async (event, context) => {
                 required: true
             }]
         })
+
+        const customers = await user.getCustomers()
+        user.dataValues.customerCount = customers.length
+
+        const lanes = await user.getLanes()
+        const laneSpend = await lanes.map(lane => lane.spend)
+        const revenue = await laneSpend.reduce((a, b) => (a + b))
+        user.dataValues.revenue = revenue
+
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         if (user == null) {
             return {
@@ -131,6 +124,14 @@ module.exports.createProfile = async (event, context) => {
         }
         
     }
+}
+
+module.exports.joinTeam = async (event, context) => {
+
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+
+
 }
 
 module.exports.updateProfile = async (event, context) => {

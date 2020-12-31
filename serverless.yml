@@ -534,3 +534,41 @@ functions:
         - http:
             path: api/upload/ascend/customers
             method: post
+    
+  # Onboarding
+  getTeamsForBrokerage:
+    handler:
+      ./handlers/onboarding.getTeamsForBrokerage
+    events:
+        - http:
+            path: api/onboarding/teams
+            method: get
+            headers:
+              - Authorization
+  getCustomersForBrokerage:
+    handler:
+      ./handlers/onboarding.getCustomersForBrokerage
+    events:
+        - http:
+            path: api/onboarding/customers
+            method: get
+            headers:
+              - Authorization
+  joinTeam:
+    handler:
+      ./handlers/onboarding.joinTeam
+    events:
+        - http:
+            path: api/onboarding/team/{teamId}
+            method: post
+            headers:
+              - Authorization
+  selectCustomers:
+    handler:
+      ./handlers/onboarding.selectCustomers
+    events:
+        - http:
+            path: api/onboarding/customers
+            method: post
+            headers:
+              - Authorization
