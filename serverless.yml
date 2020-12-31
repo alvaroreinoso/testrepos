@@ -563,12 +563,14 @@ functions:
             method: post
             headers:
               - Authorization
-  selectCustomers:
+  
+  # Admin Settings
+  editBrokerage:
     handler:
-      ./handlers/onboarding.selectCustomers
+      ./handlers/settings.editBrokerage
     events:
         - http:
-            path: api/onboarding/customers
-            method: post
+            path: api/settings/brokerage
+            method: put
             headers:
               - Authorization
