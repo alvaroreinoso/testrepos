@@ -41,9 +41,9 @@ module.exports.getLedger = async (event, context) => {
             statusCode: 200
         }
     } catch (err) {
-
+        console.log(err)
         return {
-            statusCode: 401
+            statusCode: 500
         }
     }
 

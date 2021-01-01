@@ -143,6 +143,15 @@ functions:
             method: get
             headers:
               - Authorization
+  deleteUser:
+    handler:
+      ./handlers/user.deleteUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: delete
+            headers:
+              - Authorization
   getUserById:
     handler:
       ./handlers/user.getUserById

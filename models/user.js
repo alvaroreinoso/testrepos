@@ -13,6 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       }),
+      User.hasMany(models.Message, {
+        foreignKey: 'userId'
+      })
       User.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId'
       }),
@@ -69,6 +72,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     sequelize,
+    paranoid: true,
     modelName: 'User',
   });
   return User;

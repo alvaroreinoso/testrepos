@@ -170,6 +170,26 @@ module.exports.updateProfile = async (event, context) => {
 
 }
 
+module.exports.deleteUser = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    const userId = event.pathParameters.userId
+
+    const targetUser = await User.findOne({
+        where: {
+            id: userId
+        }
+    })
+
+    await targetUser.destroy()
+
+    return {
+        statusCode: 204
+    }
+
+}
+
 module.exports.getTeams = async (event, context) => {
 
     try {
