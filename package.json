@@ -22,7 +22,8 @@
     "sequelize-mock": "^0.10.2",
     "serverless": "^1.79.0",
     "serverless-offline": "^6.5.0",
-    "serverless-offline-local-authorizers-plugin": "^1.0.2"
+    "serverless-offline-local-authorizers-plugin": "^1.0.2",
+    "serverless-vpc-plugin": "^1.0.1"
   },
   "dependencies": {
     "csvtojson": "^2.0.10",

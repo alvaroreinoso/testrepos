@@ -1697,6 +1697,11 @@ bcrypt-pbkdf@^1.0.0:
   dependencies:
     tweetnacl "^0.14.3"
 
+bignumber.js@7.2.1:
+  version "7.2.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
+  integrity sha512-S4XzBk5sMB+Rcb/LNcpzXr57VRTxgAvaAEDAl1AwRx27j00hT84O6OkteE7u8UB3NuaaygCRrEpqox4uDOrbdQ==
+
 binary-extensions@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.1.0.tgz#30fa40c9e7fe07dbc895678cd287024dea241dd9"
@@ -2032,6 +2037,13 @@ ci-info@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
+
+cidr-split@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/cidr-split/-/cidr-split-0.1.2.tgz#58f65e6eefe2c56ce79553da1f6e0e478ccd4d0e"
+  integrity sha512-kGtEi2XkWDPZJrIASRgwIW7VauA7i5bc7GBt06I4XQJPIRjbD0QtKr2HzW1FsRxIGi+IaGta98r2BvwU1uWmNQ==
+  dependencies:
+    bignumber.js "7.2.1"
 
 cjs-module-lexer@^0.6.0:
   version "0.6.0"
@@ -6717,6 +6729,13 @@ serverless-offline@^6.5.0:
     update-notifier "^4.1.0"
     velocityjs "^2.0.0"
     ws "^7.2.1"
+
+serverless-vpc-plugin@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/serverless-vpc-plugin/-/serverless-vpc-plugin-1.0.1.tgz#5e8add659397daf5692f3202079bc60a22963712"
+  integrity sha512-P0wT1CSkqbv/y9nwxheQJWUA3QYyYGnfl1CVu/8o8skrtvV/KZkj/EyfvZbGgDWE45T0TRhZCauOVO+00eitvQ==
+  dependencies:
+    cidr-split "0.1.2"
 
 serverless@^1.79.0:
   version "1.83.2"

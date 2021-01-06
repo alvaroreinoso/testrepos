@@ -23,36 +23,21 @@ service: TerralanesAPI
 provider:
   name: aws
   runtime: nodejs12.x
+  vpc:
+    securityGroupIds:
+      - sg-0378ec8f608a2daeb
+    subnetIds:
+      - subnet-0355c435c67663f8b
+      - subnet-0a4f532b76b3e73b9
+      - subnet-0195d5e2d3da7ff36
   profile: default
   stage: dev
 
 plugins:
   - serverless-offline-local-authorizers-plugin
   - serverless-offline
+  - serverless-vpc-plugin
 
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-1
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
 
 functions:
 
