@@ -15,25 +15,7 @@ module.exports.getUser = async (event, context) => {
             where: {
                 username: cognitoUser['cognito:username']
             },
-            include: [{
-                model: Brokerage,
-                required: true
-            }, {
-                model: Team,
-                required: true
-            }]
         })
-
-        const customers = await user.getCustomers()
-        user.dataValues.customerCount = customers.length
-
-        const lanes = await user.getLanes()
-        const laneSpend = await lanes.map(lane => lane.spend)
-        const revenue = await laneSpend.reduce((a, b) => (a + b))
-        user.dataValues.revenue = revenue
-
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
-        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         if (user != null) {
 
@@ -51,7 +33,7 @@ module.exports.getUser = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500
         }
@@ -65,7 +47,14 @@ module.exports.getUserById = async (event, context) => {
     
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
-        const targetUserId = event.pathParameters.id
+        if (currentUser.id == null) {
+
+            return {
+                statusCode: 401
+            }
+        }
+
+        const targetUserId = event.pathParameters.userId
 
         const user = await User.findOne({
             where: {
@@ -74,7 +63,6 @@ module.exports.getUserById = async (event, context) => {
             },
             include: [{
                 model: Team,
-                required: true
             },
             {
                 model: Brokerage,
@@ -88,6 +76,17 @@ module.exports.getUserById = async (event, context) => {
             }
         }
 
+        const customers = await user.getCustomers()
+        user.dataValues.customerCount = customers.length
+
+        const lanes = await user.getLanes()
+        const laneSpend = await lanes.map(lane => lane.spend)
+        const revenue = await laneSpend.reduce((a, b) => (a + b))
+        user.dataValues.revenue = revenue
+
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
+
         return {
             body: JSON.stringify(user),
             statusCode: 200
@@ -96,7 +95,7 @@ module.exports.getUserById = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 401
+            statusCode: 500
         }
 
     }
@@ -133,6 +132,14 @@ module.exports.createProfile = async (event, context) => {
     }
 }
 
+module.exports.joinTeam = async (event, context) => {
+
+
+    const currentUser = await getCurrentUser(event.headers.Authorization)
+
+
+}
+
 module.exports.updateProfile = async (event, context) => {
 
     const req = (JSON.parse(event.body))
@@ -159,6 +166,26 @@ module.exports.updateProfile = async (event, context) => {
         return {
             statusCode: 500
         }
+    }
+
+}
+
+module.exports.deleteUser = async (event, context) => {
+
+    const user = await getCurrentUser(event.headers.Authorization)
+
+    const userId = event.pathParameters.userId
+
+    const targetUser = await User.findOne({
+        where: {
+            id: userId
+        }
+    })
+
+    await targetUser.destroy()
+
+    return {
+        statusCode: 204
     }
 
 }

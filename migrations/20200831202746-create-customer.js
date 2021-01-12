@@ -19,12 +19,12 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
-      teamId: {
+      brokerageId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Teams',
+          model: 'Brokerages',
           key: 'id',
-          as: 'teamId'
+          as: 'brokerageId'
         }
       },
       ledgerId: {

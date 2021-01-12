@@ -47,6 +47,7 @@ module.exports = {
     await queryInterface.changeColumn('Teams', 'ledgerId', {
       type: Sequelize.INTEGER,
         allowNull: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'Ledgers',
           key: 'id',
@@ -54,6 +55,15 @@ module.exports = {
         }
     })
     await queryInterface.changeColumn('Lanes', 'ledgerId', {
+      type: Sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'Ledgers',
+          key: 'id',
+          as: 'ledgerId'
+        }
+    })
+    await queryInterface.changeColumn('Brokerages', 'ledgerId', {
       type: Sequelize.INTEGER,
         allowNull: true,
         references: {

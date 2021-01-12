@@ -42,14 +42,17 @@ module.exports = (sequelize, DataTypes) => {
   Lane.init({
     originLocationId: DataTypes.INTEGER,
     destinationLocationId: DataTypes.INTEGER,
+    ledgerId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
+    mileage: DataTypes.INTEGER,
+    inbound: DataTypes.BOOLEAN,
     rate: DataTypes.INTEGER,
     userAddedRate: DataTypes.BOOLEAN,
     spend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('frequency') * this.getDataValue('rate')
+        return this.getDataValue('frequency') * this.getDataValue('rate') * 4
       }
     }
   }, {

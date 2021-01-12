@@ -3,16 +3,7 @@ const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
 const db = require('.././models/index');
-const client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    // log: 'trace',
-    log: [{
-        type: 'stdio',
-        levels: ['error']
-    }],
-    apiVersion: '7.7'
-});
-
+const client = require('./client')
 
 module.exports.saveDocument = async (item) => {
 
@@ -55,12 +46,10 @@ module.exports.saveDocument = async (item) => {
 
             case 'customer': {
 
-                const ledger = await item.getLedger()
-
                 const customer = {
                     id: item.id,
                     name: item.name,
-                    brokerageId: ledger.brokerageId
+                    brokerageId: item.brokerageId
                 }
 
                 await client.update({
@@ -79,8 +68,6 @@ module.exports.saveDocument = async (item) => {
 
                 const customer = await item.getCustomer()
 
-                const ledger = await customer.getLedger()
-
                 const location = await item.getLocation()
 
                 const stateName = stateAbbreviations[location.state]
@@ -93,7 +80,7 @@ module.exports.saveDocument = async (item) => {
                     state: location.state,
                     fullState: stateName,
                     zipcode: location.zipcode,
-                    brokerageId: ledger.brokerageId
+                    brokerageId: customer.brokerageId
                 }
 
                 await client.update({
@@ -139,44 +126,9 @@ module.exports.saveDocument = async (item) => {
 
             case 'lane': {
 
-                const origin = await item.getOrigin({
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true,
-                            include: [{
-                                model: Ledger,
-                                required: true
-                            }]
-                        }]
-                    }]
-                })
+                const origin = await item.getOrigin()
 
-                const destination = await item.getDestination({
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true,
-                            include: [{
-                                model: Ledger,
-                                required: true
-                            }]
-                        }]
-                    }]
-                })
-
-                let brokerageId = []
-
-                if (origin.CustomerLocation == null) {
-
-                    brokerageId.push(destination.CustomerLocation.Customer.Ledger.brokerageId)
-
-                } else {
-
-                    brokerageId.push(origin.CustomerLocation.Customer.Ledger.brokerageId)
-                }
+                const destination = await item.getDestination()
 
                 const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
                 const shortRoute = `${origin.city} to ${destination.city}`
@@ -192,7 +144,7 @@ module.exports.saveDocument = async (item) => {
                     destinationStateName: destinationState,
                     route: route,
                     shortRoute: shortRoute,
-                    brokerageId: brokerageId[0]
+                    // brokerageId: brokerageId[0]
                 }
 
                 await client.update({
@@ -233,6 +185,7 @@ module.exports.saveDocument = async (item) => {
                     title: item.title,
                     firstName: item.firstName,
                     lastName: item.lastName,
+                    fullName: item.fullName,
                     email: item.email,
                     phone: item.phone,
                     brokerageId: item.brokerageId
@@ -278,6 +231,42 @@ module.exports.saveDocument = async (item) => {
     } catch (err) {
         console.log(err)
     }
+
+}
+
+module.exports.saveLane = async (item, user) => {
+
+    const origin = await item.getOrigin()
+
+    const destination = await item.getDestination()
+
+    const brokerageId = user.brokerageId
+
+    const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
+    const shortRoute = `${origin.city} to ${destination.city}`
+
+    const originState = stateAbbreviations[origin.state]
+    const destinationState = stateAbbreviations[destination.state]
+
+    const lane = {
+        id: item.id,
+        origin: origin.city,
+        originStateName: originState,
+        destination: destination.city,
+        destinationStateName: destinationState,
+        route: route,
+        shortRoute: shortRoute,
+        brokerageId: brokerageId
+    }
+
+    await client.update({
+        index: 'lane',
+        id: item.id,
+        body: {
+            doc: lane,
+            doc_as_upsert: true
+        },
+    })
 
 }
 

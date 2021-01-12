@@ -344,7 +344,7 @@ module.exports.editContact = async (event, context) => {
         }
 
         const request = JSON.parse(event.body)
-        const id = event.pathParameters.contactId
+        const id = request.id
 
         const contact = await Contact.findOne({
             where: {

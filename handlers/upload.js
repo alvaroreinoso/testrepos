@@ -1,8 +1,9 @@
 const { CustomerContact, Location, Load, Customer, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
-const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress } = require('.././helpers/csvDump/ascend')
+const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress, getRate } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
+const elastic = require('.././elastic/hooks')
 
 module.exports.ascendLoadsUpload = async (event, context) => {
 
@@ -36,7 +37,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -95,15 +96,24 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            mileage: mileage,
                         }
                     })
+
+                    if (laneWasCreated) {
+                        await lane.createLedger({
+                            brokerageId: user.brokerageId
+                        })
+                    }
+
+                    await elastic.saveLane(lane, user)
 
                     const [carrier, carrierWasCreated] = await Carrier.findOrCreate({
                         where: {
@@ -111,11 +121,13 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
+                    const rate = await getRate(json)
+
                     const newLoad = await Load.create({
                         loadId: json['Load ID'],
                         laneId: lane.id,
                         carrierId: carrier.id,
-                        rate: json['Flat Rate i'],
+                        rate: rate,
                         dropDate: dropDate
                     })
 
@@ -134,7 +146,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -193,15 +205,24 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            mileage: mileage,
                         }
                     })
+
+                    if (laneWasCreated) {
+                        await lane.createLedger({
+                            brokerageId: user.brokerageId
+                        })
+                    }
+
+                    await elastic.saveLane(lane, user)
 
                     const [carrier, carrierWasCreated] = await Carrier.findOrCreate({
                         where: {
@@ -209,11 +230,14 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
+                    
+                    const rate = await getRate(json)
+
                     const newLoad = await Load.create({
                         loadId: json['Load ID'],
                         laneId: lane.id,
                         carrierId: carrier.id,
-                        rate: json['Flat Rate i'],
+                        rate: rate,
                         dropDate: dropDate
                     })
 
@@ -232,7 +256,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                     const [customer, customerWasCreated] = await Customer.findOrCreate({
                         where: {
                             name: json.Customer,
-                            teamId: user.teamId,
+                            brokerageId: user.brokerageId,
                         },
                     })
 
@@ -291,15 +315,25 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    const route = await getRoute(firstLngLat, secondLngLat)
+                    const [route, mileage] = await getRoute(firstLngLat, secondLngLat)
 
                     const [lane, laneWasCreated] = await Lane.findOrCreate({
                         where: {
                             originLocationId: firstLocation.id,
                             destinationLocationId: secondLocation.id,
-                            routeGeometry: route
+                            routeGeometry: route,
+                            mileage: mileage,
+                            inbound: true
                         }
                     })
+
+                    if (laneWasCreated) {
+                        await lane.createLedger({
+                            brokerageId: user.brokerageId
+                        })
+                    }
+
+                    await elastic.saveLane(lane, user)
 
                     const [carrier, carrierWasCreated] = await Carrier.findOrCreate({
                         where: {
@@ -307,11 +341,13 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
+                    const rate = await getRate(json)
+
                     const newLoad = await Load.create({
                         loadId: json['Load ID'],
                         laneId: lane.id,
                         carrierId: carrier.id,
-                        rate: json['Flat Rate i'],
+                        rate: rate,
                         dropDate: dropDate
                     })
 
@@ -364,7 +400,7 @@ module.exports.ascendCustomerUpload = async (event, context) => {
             const [customer, customerWasCreated] = await Customer.findOrCreate({
                 where: {
                     name: row['name'],
-                    teamId: user.teamId,
+                    brokerageId: user.brokerageId,
                 },
             })
 

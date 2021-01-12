@@ -18,6 +18,8 @@ module.exports = {
       },
       teamId: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+        onDelete: 'SET NULL',
         references: {
           model: 'Teams',
           key: 'id',
@@ -29,6 +31,11 @@ module.exports = {
         allowNull: true
       },
       confirmed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      admin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false
@@ -58,6 +65,10 @@ module.exports = {
       },
       updatedAt: {
         allowNull: false,
+        type: Sequelize.DATE
+      },
+      deletedAt: {
+        allowNull: true,
         type: Sequelize.DATE
       }
     });

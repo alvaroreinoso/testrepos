@@ -15,7 +15,7 @@ module.exports.getLocationById = async (event, context) => {
             }
         }
 
-        const locationId = event.pathParameters.id
+        const locationId = event.pathParameters.locationId
 
         const location = await Location.findOne({
             where: {
@@ -40,25 +40,21 @@ module.exports.getLocationById = async (event, context) => {
 
             const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            const loadCounts = await lanes.map(async lane => {
+            const loadsPerWeekPerLane = await lanes.map(async lane => {
 
-                const loads = await lane.getLoads()
-
-                const frequency = await getFrequency(lane)
+                const frequency = await getFrequency(lane) // returns loads per week per lane
 
                 if (frequency == 0) {
                     return 0
                 }
 
-                const loadsPerMonth = loads.length / frequency
-
-                return loadsPerMonth
+                return frequency
             })
 
-            const loadsResolved = await Promise.all(loadCounts)
+            const loadsResolved = await Promise.all(loadsPerWeekPerLane)
             const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
 
-            location.dataValues.loadsPerMonth = totalLoads
+            location.dataValues.loadsPerWeek = totalLoads
             location.dataValues.spendPerMonth = totalSpend.spend
 
             return {
@@ -85,6 +81,37 @@ module.exports.getLocationById = async (event, context) => {
 
 };
 
+module.exports.editLocation = async (event, context) => {
+
+    try {
+
+        const request = JSON.parse(event.body)
+
+        const location = await Location.findOne({
+            where: {
+                id: request.id
+            }
+        })
+
+        location.hoursType = request.hoursType
+        location.open = request.open
+        location.close = request.close
+        location.phone = request.phone
+        location.email = request.email
+
+        await location.save()
+
+        return {
+            statusCode: 204
+        }
+
+    } catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
+}
+
 module.exports.getLanesForLocation = async (event, context) => {
 
     try {
@@ -96,7 +123,7 @@ module.exports.getLanesForLocation = async (event, context) => {
             }
         }
 
-        const locationId = event.pathParameters.id
+        const locationId = event.pathParameters.locationId
 
         const lanes = await Lane.findAll({
             where: {
@@ -253,12 +280,33 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
-        await TaggedLocation.destroy({
+        const locationId = request.locationId
+        const userId = request.userId
+
+        const location = await Location.findOne({
             where: {
-                userId: request.userId,
-                locationId: request.locationId
+                id: locationId
             }
         })
+
+        await TaggedLocation.destroy({
+            where: {
+                userId: userId,
+                locationId: locationId
+            }
+        })
+
+        const lanes = await location.getLanes()
+
+        for (const lane of lanes) {
+
+            await TaggedLane.destroy({
+                where: {
+                    laneId: lane.id,
+                    userId: userId
+                }
+            })
+        }
 
         return {
             statusCode: 204

@@ -2,7 +2,7 @@ const customers = [
     {
         name: 'Lollicup USA, Inc.',
         industry: 'Plastics and Packaging',
-        teamId: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 17
@@ -10,7 +10,7 @@ const customers = [
     {
         name: 'Lopez Foods',
         industry: 'Food and Beverage',
-        teamId: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 18
@@ -18,7 +18,7 @@ const customers = [
     {
         name: 'DeRoyal Textiles',
         industry: 'Textiles',
-        teamId: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 19
@@ -26,7 +26,7 @@ const customers = [
     {
         name: 'Caesarstone',
         industry: 'Stone and Tile',
-        teamId: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 20
@@ -34,7 +34,7 @@ const customers = [
     {
         name: 'Inteplast Group',
         industry: 'Plastics and Packaging',
-        teamId: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 21
@@ -42,7 +42,7 @@ const customers = [
     {
         name: 'Evoqua Water Technologies',
         industry: 'Waste Water Treatment',
-        teamId: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 22
@@ -50,7 +50,7 @@ const customers = [
     {
         name: 'Tosh Farms',
         industry: 'Livestock',
-        teamId: 4,
+        brokerageId: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 23
@@ -58,7 +58,7 @@ const customers = [
     {
         name: 'Newly Weds Foods',
         industry: 'Food and Beverage',
-        teamId: 4,
+        brokerageId: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 24
@@ -66,7 +66,7 @@ const customers = [
     {
         name: 'Glencore PLC',
         industry: 'Agriculture',
-        teamId: 4,
+        brokerageId: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 25
@@ -74,7 +74,7 @@ const customers = [
     {
         name: 'Engelhart Commodities',
         industry: 'Agriculture',
-        teamId: 4,
+        brokerageId: 2,
         createdAt: new Date(),
         updatedAt: new Date(),
         ledgerId: 26

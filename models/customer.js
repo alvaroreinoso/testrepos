@@ -8,8 +8,8 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       
-      Customer.belongsTo(models.Team, {
-        foreignKey: 'teamId'
+      Customer.belongsTo(models.Brokerage, {
+        foreignKey: 'brokerageId'
       })
       Customer.hasMany(models.CustomerLocation, {
         foreignKey: 'customerId'
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
   Customer.init({
     name: DataTypes.STRING,
     industry: DataTypes.STRING,
-    teamId: DataTypes.INTEGER,
+    brokerageId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
     bio: DataTypes.TEXT
   }, {

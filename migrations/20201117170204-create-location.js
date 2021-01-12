@@ -53,6 +53,14 @@ module.exports = {
       close: {
         type: Sequelize.STRING
       },
+      hoursType: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

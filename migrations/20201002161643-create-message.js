@@ -20,6 +20,7 @@ module.exports = {
       ledgerId: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        onDelete: 'CASCADE',
         references: {
           model: 'Ledgers',
           key: 'id',

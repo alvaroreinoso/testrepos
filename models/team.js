@@ -7,20 +7,20 @@ module.exports = (sequelize, DataTypes) => {
   class Team extends Model {
     static associate(models) {
       Team.hasMany(models.User, {
-        foreignKey: 'teamId'
-      }),
-      Team.hasMany(models.Customer, {
-        foreignKey: 'teamId'
+        foreignKey: 'teamId',
+        onDelete: 'SET NULL'
       }),
       Team.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })
       Team.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
+        onDelete: 'CASCADE'
       })
       Team.belongsToMany(models.Tag, {
         through: 'TeamTag',
-        foreignKey: 'teamId'
+        foreignKey: 'teamId',
+        onDelete: 'CASCADE'
       })
     }
   };
