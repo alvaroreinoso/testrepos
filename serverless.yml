@@ -16,8 +16,8 @@
 # org: terralanes
 
 org: terralanes
-app: terralanes-api-dev
-service: terralanes-api-dev
+app: terralanes-backend
+service: terralanes-api
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
