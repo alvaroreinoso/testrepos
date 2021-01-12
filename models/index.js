@@ -6,28 +6,21 @@ require('dotenv').config()
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV //|| 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+// const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
-
-
-console.log(env)
-
-// const sequelize = new Sequelize(config.database, config.username, config.password, config);
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
   host: process.env.DB_URL,
   dialect: 'postgres',
-  dialectOptions: {
-    ssl: 'Amazon RDS'
-  }
+  logging: false
 })
 
-try {
-  sequelize.authenticate();
-  console.log('Connection has been established successfully.');
-} catch (error) {
-  console.error('Unable to connect to the database:', error);
-}
+// try {
+//   sequelize.authenticate();
+//   console.log('Connection has been established successfully.');
+// } catch (error) {
+//   console.error('Unable to connect to the database:', error);
+// }
 
 fs
   .readdirSync(__dirname)

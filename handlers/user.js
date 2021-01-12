@@ -54,7 +54,7 @@ module.exports.getUserById = async (event, context) => {
             }
         }
 
-        const targetUserId = event.pathParameters.id
+        const targetUserId = event.pathParameters.userId
 
         const user = await User.findOne({
             where: {

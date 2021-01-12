@@ -15,7 +15,7 @@ module.exports.getLocationById = async (event, context) => {
             }
         }
 
-        const locationId = event.pathParameters.id
+        const locationId = event.pathParameters.locationId
 
         const location = await Location.findOne({
             where: {
@@ -123,7 +123,7 @@ module.exports.getLanesForLocation = async (event, context) => {
             }
         }
 
-        const locationId = event.pathParameters.id
+        const locationId = event.pathParameters.locationId
 
         const lanes = await Lane.findAll({
             where: {

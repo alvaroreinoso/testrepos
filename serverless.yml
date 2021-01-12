@@ -23,21 +23,22 @@ service: TerralanesAPI
 provider:
   name: aws
   runtime: nodejs12.x
-  vpc:
-    securityGroupIds:
-      - sg-0378ec8f608a2daeb
-    subnetIds:
-      - subnet-0355c435c67663f8b
-      - subnet-0a4f532b76b3e73b9
-      - subnet-0195d5e2d3da7ff36
+  # vpc:
+  #   securityGroupIds:
+  #     - sg-0378ec8f608a2daeb
+  #   subnetIds:
+  #     - subnet-0355c435c67663f8b
+  #     - subnet-0a4f532b76b3e73b9
+  #     - subnet-0195d5e2d3da7ff36
   profile: default
   stage: dev
 
 plugins:
-  - serverless-offline-local-authorizers-plugin
   - serverless-offline
-  - serverless-vpc-plugin
+  # - serverless-vpc-plugin
 
+package:
+  individually: false
 
 functions:
 
@@ -87,9 +88,6 @@ functions:
         - http:
             path: api/ledger/{id}
             method: get
-            headers:
-              - Authorization
-              
   writeMessage:
     handler:
       ./handlers/ledger.writeMessage
@@ -97,26 +95,16 @@ functions:
         - http:
             path: api/ledger
             method: post
-            headers:
-              - Authorization
-  deleteMessage:
+  updateMessage:
     handler:
-      ./handlers/ledger.deleteMessage
-    events:
-        - http:
-            path: api/ledger/message/{id}
-            method: delete
-            headers:
-              - Authorization
-  editMessage:
-    handler:
-      ./handlers/ledger.editMessage
+      ./handlers/ledger.updateMessage
     events:
         - http:
             path: api/ledger/message/{id}
             method: put
-            headers:
-              - Authorization
+        - http:
+            path: api/ledger/message/{id}
+            method: delete
 
 # User
   getUser:
@@ -126,8 +114,6 @@ functions:
         - http:
             path: api/user
             method: get
-            headers:
-              - Authorization
   deleteUser:
     handler:
       ./handlers/user.deleteUser
@@ -135,17 +121,13 @@ functions:
         - http:
             path: api/user/{userId}
             method: delete
-            headers:
-              - Authorization
   getUserById:
     handler:
       ./handlers/user.getUserById
     events:
         - http:
-            path: api/user/{id}
+            path: api/user/{userId}
             method: get
-            headers:
-              - Authorization
   getTeams:
     handler:
       ./handlers/user.getTeams
@@ -153,8 +135,6 @@ functions:
         - http:
             path: api/user/teams
             method: get
-            headers:
-              - Authorization
   createProfile:
     handler:
       ./handlers/user.createProfile
@@ -169,8 +149,6 @@ functions:
         - http:
             path: api/user
             method: put
-            headers:
-              - Authorization
   getTopCustomersForUser:
     handler:
       ./handlers/user.getTopCustomersForUser
@@ -178,9 +156,6 @@ functions:
         - http:
             path: api/customer/top/{userId}
             method: get
-            headers:
-              - Content-Type
-              - Authorization
   getTopLanesForUser:
     handler:
       ./handlers/user.getTopLanesForUser
@@ -188,9 +163,6 @@ functions:
         - http:
             path: api/lane/top/{userId}
             method: get
-            headers:
-              - Authorization
-
 
 # Customer
   updateCustomer:
@@ -200,8 +172,6 @@ functions:
         - http:
             path: api/customer/{customerId}
             method: put
-            headers:
-              - Authorization
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
@@ -209,9 +179,6 @@ functions:
         - http:
             path: api/customer/{customerId}
             method: get
-            headers:
-              - Content-Type
-              - Authorization
   getLanesForCustomer:
     handler:
       ./handlers/customer.getLanesForCustomer
@@ -219,9 +186,6 @@ functions:
         - http:
             path: api/lanes/customer/{customerId}
             method: get
-            headers:
-              - Content-Type
-              - Authorization
   getLocationsForCustomer:
     handler:
       ./handlers/customer.getLocationsForCustomer
@@ -229,9 +193,6 @@ functions:
         - http:
             path: api/customer/{customerId}/locations
             method: get
-            headers:
-              - Content-Type
-              - Authorization
   getTeammatesForCustomer:
     handler:
       ./handlers/customer.getTeammatesForCustomer
@@ -239,8 +200,6 @@ functions:
         - http:
             path: api/customer/{customerId}/teammates
             method: get
-            headers:
-              - Authorization
   addTeammateToCustomer:
     handler:
       ./handlers/customer.addTeammateToCustomer
@@ -248,8 +207,6 @@ functions:
         - http:
             path: api/customer/teammates
             method: post
-            headers:
-              - Authorization
   deleteTeammateFromCustomer:
     handler:
       ./handlers/customer.deleteTeammateFromCustomer
@@ -257,8 +214,6 @@ functions:
         - http:
             path: api/customer/teammates
             method: delete
-            headers:
-              - Authorization
 
 # Lane
   getLanesByUser:
@@ -268,8 +223,6 @@ functions:
         - http:
             path: api/lane/user/{id}
             method: get
-            headers:
-              - Authorization
   getLaneById:
     handler:
       ./handlers/lane.getLaneById
@@ -277,8 +230,6 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: get
-            headers:
-              - Authorization
   updateLane:
     handler:
       ./handlers/lane.updateLane
@@ -286,9 +237,6 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
-            headers:
-              - Authorization
-              - Content-Type
   getMarketFeedback:
     handler:
       ./handlers/lane.getMarketFeedback
@@ -296,8 +244,6 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback
             method: get
-            headers:
-              - Authorization
   addMarketFeedback:
     handler:
       ./handlers/lane.addMarketFeedback
@@ -305,8 +251,6 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback
             method: post
-            headers:
-              - Authorization
   deleteMarketFeedback:
     handler:
       ./handlers/lane.deleteMarketFeedback
@@ -314,8 +258,6 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback/{feedbackId}
             method: delete
-            headers:
-              - Authorization
   getTeammatesForLane:
     handler:
       ./handlers/lane.getTeammatesForLane
@@ -323,8 +265,6 @@ functions:
         - http:
             path: api/lane/{laneId}/teammates
             method: get
-            headers:
-              - Authorization
   addTeammatetoLane:
     handler:
       ./handlers/lane.addTeammateToLane
@@ -332,8 +272,6 @@ functions:
         - http:
             path: api/lane/teammates
             method: post
-            headers:
-              - Authorization
   deleteTeammateFromLane:
     handler:
       ./handlers/lane.deleteTeammateFromLane
@@ -341,8 +279,6 @@ functions:
         - http:
             path: api/lane/teammates
             method: delete
-            headers:
-              - Authorization
   getTopCarriers:
     handler:
       ./handlers/lane.getTopCarriers
@@ -350,8 +286,6 @@ functions:
         - http:
             path: api/lane/{laneId}/carriers
             method: get
-            headers:
-              - Authorization
 
   # Team
   addTeam:
@@ -361,8 +295,6 @@ functions:
         - http:
             path: api/team
             method: post
-            headers:
-              - Authorization
   editTeam:
     handler:
       ./handlers/team.editTeam
@@ -370,8 +302,6 @@ functions:
         - http:
             path: api/team/{teamId}
             method: put
-            headers:
-              - Authorization
   deleteTeam:
     handler:
       ./handlers/team.deleteTeam
@@ -379,8 +309,6 @@ functions:
         - http:
             path: api/team/{teamId}
             method: delete
-            headers:
-              - Authorization
   getTeamById: 
     handler:
       ./handlers/team.getTeamById
@@ -388,8 +316,6 @@ functions:
         - http:
             path: api/team/{teamId}
             method: get
-            headers:
-              - Authorization
   getLanesForTeam:
     handler:
       ./handlers/team.getLanesForTeam
@@ -397,8 +323,6 @@ functions:
         - http:
             path: api/team/{teamId}/lanes
             method: get
-            headers:
-              - Authorization
   getTeammatesForTeam:
     handler:
       ./handlers/team.getTeammatesForTeam
@@ -406,8 +330,6 @@ functions:
         - http:
             path: api/team/{teamId}/teammates
             method: get
-            headers:
-              - Authorization
   removeTeammate:
     handler:
       ./handlers/team.removeTeammate
@@ -433,7 +355,7 @@ functions:
       ./handlers/location.getLocationById
     events:
         - http:
-            path: api/location/{id}
+            path: api/location/{locationId}
             method: get
   editLocation:
     handler:
@@ -447,7 +369,7 @@ functions:
       ./handlers/location.getLanesForLocation
     events:
         - http:
-            path: api/location/{id}/lanes
+            path: api/location/{locationId}/lanes
             method: get
   getTeammatesForLocation:
     handler:
@@ -456,8 +378,7 @@ functions:
         - http:
             path: api/location/{locationId}/teammates
             method: get
-            headers:
-              - Authorization
+
   addTeammatetoLocation:
     handler:
       ./handlers/location.addTeammateToLocation
@@ -465,8 +386,6 @@ functions:
         - http:
             path: api/location/teammates
             method: post
-            headers:
-              - Authorization
   deleteTeammateFromLocation:
     handler:
       ./handlers/location.deleteTeammateFromLocation
@@ -474,8 +393,6 @@ functions:
         - http:
             path: api/location/teammates
             method: delete
-            headers:
-              - Authorization
   
   # Brokerage
   getBrokerage:
@@ -485,8 +402,6 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}
             method: get
-            headers:
-              - Authorization
   getLanesForBrokerage:
     handler:
       ./handlers/brokerage.getLanesForBrokerage
@@ -494,8 +409,6 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}/lanes
             method: get
-            headers:
-              - Authorization
   editBrokerage:
     handler:
       ./handlers/brokerage.editBrokerage
@@ -503,8 +416,6 @@ functions:
         - http:
             path: api/brokerage
             method: put
-            headers:
-              - Authorization
 
   # Tag
   getTags:
@@ -529,26 +440,26 @@ functions:
             path: api/tag
             method: delete
   # Contact
-  getContacts:
-    handler:
-      ./handlers/contact.getContacts
-    events:
-        - http:
-            path: api/contact/{itemId}
-            method: get
-  addContact:
-    handler:
-      ./handlers/contact.addContact
-    events:
-        - http:
-            path: api/contact/{itemId}
-            method: post
+  # getContacts:
+  #   handler:
+  #     ./handlers/contact.getContacts
+  #   events:
+  #       - http:
+  #           path: api/contact/{itemId}
+  #           method: get
+  # addContact:
+  #   handler:
+  #     ./handlers/contact.addContact
+  #   events:
+  #       - http:
+  #           path: api/contact/{itemId}
+  #           method: post
   editContact:
     handler:
       ./handlers/contact.editContact
     events:
         - http:
-            path: api/contact/{contactId}
+            path: api/contact/
             method: put
   deleteContact:
     handler:
@@ -582,8 +493,6 @@ functions:
         - http:
             path: api/onboarding/teams
             method: get
-            headers:
-              - Authorization
   getCustomersForBrokerage:
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
@@ -591,8 +500,6 @@ functions:
         - http:
             path: api/onboarding/customers
             method: get
-            headers:
-              - Authorization
   joinTeam:
     handler:
       ./handlers/onboarding.joinTeam
@@ -600,5 +507,3 @@ functions:
         - http:
             path: api/onboarding/team/{teamId}
             method: post
-            headers:
-              - Authorization

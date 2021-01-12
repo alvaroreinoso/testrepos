@@ -139,8 +139,7 @@ module.exports.deleteMessage = async (event, context) => {
     }
 }
 
-module.exports.editMessage = async (event, context) => {
-
+module.exports.updateMessage = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -150,18 +149,11 @@ module.exports.editMessage = async (event, context) => {
             return {
                 statusCode: 401
             }
-        } 
+        }
+
+        const method = event.httpMethod
 
         const messageId = event.pathParameters.id
-
-        const request = JSON.parse(event.body)
-
-        if (request.content == null) {
-
-            return {
-                statusCode: 400
-            }
-        }
 
         const message = await Message.findOne({
             where: {
@@ -171,25 +163,35 @@ module.exports.editMessage = async (event, context) => {
         })
 
         if (message == null) {
-
             return {
                 statusCode: 404
             }
         }
 
-        message.update({
-            content: request.content
-        })
+        switch (method) {
+
+            case 'PUT': {
+                const request = JSON.parse(event.body)
+
+                message.update({
+                    content: request.content
+                })
+
+                break;
+            
+            } case 'DELETE': {
+                await message.destroy()
+
+                break;
+            }
+        }
 
         return {
-
-            statusCode: 200
+            statusCode: 204
         }
     } catch (err) {
-
         return {
             statusCode: 500
         }
     }
-
 }
