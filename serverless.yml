@@ -11,10 +11,13 @@
 #
 # Happy Coding!
 
-service: TerralanesAPI
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+# service: TerralanesAPI
+# app: TerralanesAPI-dev
+# org: terralanes
+
+org: terralanes
+app: terralanes-api-dev
+service: terralanes-api-dev
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -50,8 +53,6 @@ functions:
         - http:
             path: api/search
             method: get
-            headers:
-              - Authorization
   searchLedger:
     handler:
       ./handlers/search.searchLedger
@@ -59,8 +60,6 @@ functions:
         - http:
             path: api/ledger/search
             method: get
-            headers:
-              - Authorization
   searchUsersInBrokerage:
     handler:
       ./handlers/search.searchUsersInBrokerage
@@ -68,8 +67,6 @@ functions:
         - http:
             path: api/search/users
             method: get
-            headers:
-              - Authorization
   searchContacts:
     handler:
       ./handlers/search.searchContacts
@@ -77,8 +74,6 @@ functions:
         - http:
             path: api/search/contacts
             method: get
-            headers:
-              - Authorization
 
 # Ledger
   getLedger:
@@ -337,8 +332,6 @@ functions:
         - http:
             path: api/team/teammate/{userId}
             method: delete
-            headers:
-              - Authorization
   addTeammate:
     handler:
       ./handlers/team.addTeammate
@@ -346,8 +339,6 @@ functions:
         - http:
             path: api/team/teammate
             method: put
-            headers:
-              - Authorization
 
   # Location
   getLocationById:
@@ -440,20 +431,20 @@ functions:
             path: api/tag
             method: delete
   # Contact
-  # getContacts:
-  #   handler:
-  #     ./handlers/contact.getContacts
-  #   events:
-  #       - http:
-  #           path: api/contact/{itemId}
-  #           method: get
-  # addContact:
-  #   handler:
-  #     ./handlers/contact.addContact
-  #   events:
-  #       - http:
-  #           path: api/contact/{itemId}
-  #           method: post
+  getContacts:
+    handler:
+      ./handlers/contact.getContacts
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: get
+  addContact:
+    handler:
+      ./handlers/contact.addContact
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: post
   editContact:
     handler:
       ./handlers/contact.editContact
