@@ -4,7 +4,6 @@
   "description": "Terralanes API",
   "main": "handler.js",
   "scripts": {
-    "test": "jest",
     "db:start": "npx sequelize-cli db:create && npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all && node data/addLedger.js",
     "db:stop": "npx sequelize-cli db:drop",
