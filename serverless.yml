@@ -34,7 +34,17 @@ provider:
   #     - subnet-0a4f532b76b3e73b9
   #     - subnet-0195d5e2d3da7ff36
   profile: default
-  stage: dev
+  # stage: dev
+  environment:
+    DB_URL: ${param:DB_URL, env:DB_URL}
+    DB_DATABASE: ${param:DB_DATABASE, env:DB_DATABASE}
+    DB_PASSWORD: ${param:DB_PASSWORD, env:DB_PASSWORD}
+    DB_USERNAME: ${param:DB_USERNAME, env:DB_USERNAME}
+    SEARCH_URL: ${param:SEARCH_URL, env:SEARCH_URL}
+    SEARCH_USER: ${param:SEARCH_USER, env:SEARCH_USER}
+    SEARCH_PASSWORD: ${param:SEARCH_PASSWORD, env:SEARCH_PASSWORD}
+    REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
+    NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
 
 plugins:
   - serverless-offline
