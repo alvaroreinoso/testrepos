@@ -24,5 +24,13 @@
     "database": "my-db",
     "url": "postgres://postgres:postgres@localhost:5432/my-db",
     "dialect": "postgres"
+  },
+  "test": {
+    "use_env_variable": true,
+    "username": "postgres",
+    "password": "R&rTs68#Lsp3tHD#q98uzybpT",
+    "database": "staging-db-cluster",
+    "url": "postgres://postgres:R&rTs68#Lsp3tHD#q98uzybpT@staging-db-cluster.cluster-csxttyqcerdj.us-east-1.rds.amazonaws.com:5432/staging-db-cluster"
   }
+
 }
