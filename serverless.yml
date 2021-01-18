@@ -26,12 +26,12 @@ service: terralanes-api
 provider:
   name: aws
   runtime: nodejs12.x
-  vpc:
-    securityGroupIds:
-      - sg-012e7222a5f8ac6cc
-    subnetIds:
-      - subnet-03086cdd9e1e48134
-      - subnet-0243c1302f458775f
+  # vpc:
+  #   securityGroupIds:
+  #     - sg-012e7222a5f8ac6cc
+  #   subnetIds:
+  #     - subnet-03086cdd9e1e48134
+  #     - subnet-0243c1302f458775f
   profile: default
   region: us-east-1
   # stage: dev
@@ -48,7 +48,14 @@ provider:
 
 plugins:
   - serverless-offline
-  - serverless-vpc-plugin
+  - serverless-vpc-discovery
+
+custom:
+  vpcDiscovery:
+    vpcName: aurora-vpc
+    securityGroups:
+      - names:
+        - aurora-sg1
 
 package:
   individually: false
