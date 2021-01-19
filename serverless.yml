@@ -54,7 +54,7 @@ plugins:
 custom:
   dependsOn:
     enabled: true
-    chains: 3
+    chains: 20
 #   vpcDiscovery:
 #     vpcName: aurora-vpc
 #     subnets:
