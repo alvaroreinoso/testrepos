@@ -137,6 +137,7 @@ functions:
         - http:
             path: api/user
             method: get
+            cors: true
   deleteUser:
     handler:
       ./handlers/user.deleteUser

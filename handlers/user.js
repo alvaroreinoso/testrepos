@@ -21,7 +21,11 @@ module.exports.getUser = async (event, context) => {
 
             return {
                 statusCode: 200,
-                body: JSON.stringify(user)
+                body: JSON.stringify(user),
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                },
             }
 
         } else {
