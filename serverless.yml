@@ -50,7 +50,6 @@ plugins:
   - serverless-offline
   - serverless-vpc-discovery
   - serverless-dependson-plugin
-  # test
 
 custom:
   vpcDiscovery:
