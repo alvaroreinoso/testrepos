@@ -51,7 +51,10 @@ plugins:
   # - serverless-vpc-discovery
   - serverless-dependson-plugin
 
-# custom:
+custom:
+  dependsOn:
+    enabled: true
+    chains: 3
 #   vpcDiscovery:
 #     vpcName: aurora-vpc
 #     subnets:
