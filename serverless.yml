@@ -53,6 +53,13 @@ plugins:
 custom:
   vpcDiscovery:
     vpcName: aurora-vpc
+    subnets:
+      - tagKey: Name
+        tagValues:
+          - aurora-public-subnet-1
+      - tagKey: Name
+        tagValues:
+          - aurora-sub-2
     securityGroups:
       - names:
         - aurora-sg1
