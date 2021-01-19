@@ -7036,6 +7036,11 @@ sequelize@^6.3.5:
     validator "^10.11.0"
     wkx "^0.5.0"
 
+serverless-dependson-plugin@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/serverless-dependson-plugin/-/serverless-dependson-plugin-1.1.2.tgz#cc1558f7798fc49d2a298458836a4942851a5802"
+  integrity sha512-3u5x+2nqgZ4gDTY5Y+mvURAY8bCrwYEqcnqpldDrPyO2TUPgZTifTRIcsiQB5oe72MpCyhR42nrz+FfgqDr5kw==
+
 serverless-offline-local-authorizers-plugin@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/serverless-offline-local-authorizers-plugin/-/serverless-offline-local-authorizers-plugin-1.0.3.tgz#d2b2d61878255c8f4f0c67e6891541a66774b091"
