@@ -49,7 +49,7 @@ provider:
 plugins:
   - serverless-offline
   - serverless-vpc-discovery
-  - serverless-dependson-plugin
+  # - serverless-dependson-plugin
 
 custom:
   vpcDiscovery:
