@@ -34,7 +34,7 @@ provider:
       - subnet-0243c1302f458775f
   profile: default
   region: us-east-1
-  # stage: dev
+  stage: staging
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
     DB_DATABASE: ${param:DB_DATABASE, env:DB_DATABASE}
