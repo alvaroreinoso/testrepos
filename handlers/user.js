@@ -3,6 +3,7 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
+require('dotenv').config()
 
 module.exports.getUser = async (event, context) => {
 
@@ -11,35 +12,49 @@ module.exports.getUser = async (event, context) => {
 
         const cognitoUser = jwt.decode(token)
 
+        if (cognitoUser == null) {
+            return {
+                statusCode: 401,
+                headers: {
+                    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+                    'Access-Control-Allow-Credentials': true,
+                },
+            }
+        }
+
         const user = await User.findOne({
             where: {
                 username: cognitoUser['cognito:username']
             },
         })
 
-        if (user != null) {
-
+        if (user == null) {
             return {
-                statusCode: 200,
-                body: JSON.stringify(user),
+                statusCode: 404,
                 headers: {
-                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
                     'Access-Control-Allow-Credentials': true,
                 },
             }
+        }
 
-        } else {
-
-            return {
-                statusCode: 404
-            }
-
+        return {
+            statusCode: 200,
+            body: JSON.stringify(user),
+            headers: {
+                'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+                'Access-Control-Allow-Credentials': true,
+            },
         }
 
     } catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: {
+                'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+                'Access-Control-Allow-Credentials': true,
+            },
         }
 
     }

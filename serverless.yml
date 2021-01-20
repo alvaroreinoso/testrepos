@@ -34,7 +34,7 @@ provider:
       - subnet-0243c1302f458775f
   profile: default
   region: us-east-1
-  stage: staging
+  stage: dev
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
     DB_DATABASE: ${param:DB_DATABASE, env:DB_DATABASE}
@@ -45,6 +45,7 @@ provider:
     SEARCH_PASSWORD: ${param:SEARCH_PASSWORD, env:SEARCH_PASSWORD}
     REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
+    ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
 
 plugins:
   - serverless-offline
