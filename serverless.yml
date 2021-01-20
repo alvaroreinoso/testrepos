@@ -51,479 +51,479 @@ plugins:
   # - serverless-vpc-discovery
   - serverless-dependson-plugin
 
-# custom:
-#   dependsOn:
-#     enabled: true
-#     chains: 20
-# #   vpcDiscovery:
-# #     vpcName: aurora-vpc
-# #     subnets:
-# #       - tagKey: Name
-# #         tagValues:
-# #           - aurora-public-subnet-1
-# #       - tagKey: Name
-# #         tagValues:
-# #           - aurora-sub-2
-# #     securityGroups:
-# #       - names:
-# #         - aurora-sg1
+custom:
+  dependsOn:
+    enabled: true
+    chains: 20
+#   vpcDiscovery:
+#     vpcName: aurora-vpc
+#     subnets:
+#       - tagKey: Name
+#         tagValues:
+#           - aurora-public-subnet-1
+#       - tagKey: Name
+#         tagValues:
+#           - aurora-sub-2
+#     securityGroups:
+#       - names:
+#         - aurora-sg1
 
-# package:
-#   individually: false
+package:
+  individually: false
 
-# functions:
+functions:
 
-# # Search
-#   search:
-#     handler:
-#       ./handlers/search.search
-#     events:
-#         - http:
-#             path: api/search
-#             method: get
-#   searchLedger:
-#     handler:
-#       ./handlers/search.searchLedger
-#     events:
-#         - http:
-#             path: api/ledger/search
-#             method: get
-#   searchUsersInBrokerage:
-#     handler:
-#       ./handlers/search.searchUsersInBrokerage
-#     events:
-#         - http:
-#             path: api/search/users
-#             method: get
-#   searchContacts:
-#     handler:
-#       ./handlers/search.searchContacts
-#     events:
-#         - http:
-#             path: api/search/contacts
-#             method: get
+# Search
+  search:
+    handler:
+      ./handlers/search.search
+    events:
+        - http:
+            path: api/search
+            method: get
+  searchLedger:
+    handler:
+      ./handlers/search.searchLedger
+    events:
+        - http:
+            path: api/ledger/search
+            method: get
+  searchUsersInBrokerage:
+    handler:
+      ./handlers/search.searchUsersInBrokerage
+    events:
+        - http:
+            path: api/search/users
+            method: get
+  searchContacts:
+    handler:
+      ./handlers/search.searchContacts
+    events:
+        - http:
+            path: api/search/contacts
+            method: get
 
-# # Ledger
-#   getLedger:
-#     handler:
-#       ./handlers/ledger.getLedger
-#     events:
-#         - http:
-#             path: api/ledger/{id}
-#             method: get
-#   writeMessage:
-#     handler:
-#       ./handlers/ledger.writeMessage
-#     events:
-#         - http:
-#             path: api/ledger
-#             method: post
-#   updateMessage:
-#     handler:
-#       ./handlers/ledger.updateMessage
-#     events:
-#         - http:
-#             path: api/ledger/message/{id}
-#             method: put
-#         - http:
-#             path: api/ledger/message/{id}
-#             method: delete
+# Ledger
+  getLedger:
+    handler:
+      ./handlers/ledger.getLedger
+    events:
+        - http:
+            path: api/ledger/{id}
+            method: get
+  writeMessage:
+    handler:
+      ./handlers/ledger.writeMessage
+    events:
+        - http:
+            path: api/ledger
+            method: post
+  updateMessage:
+    handler:
+      ./handlers/ledger.updateMessage
+    events:
+        - http:
+            path: api/ledger/message/{id}
+            method: put
+        - http:
+            path: api/ledger/message/{id}
+            method: delete
 
-# # User
-#   getUser:
-#     handler:
-#       ./handlers/user.getUser
-#     events:
-#         - http:
-#             path: api/user
-#             method: get
-#             cors: true
-#   deleteUser:
-#     handler:
-#       ./handlers/user.deleteUser
-#     events:
-#         - http:
-#             path: api/user/{userId}
-#             method: delete
-#   getUserById:
-#     handler:
-#       ./handlers/user.getUserById
-#     events:
-#         - http:
-#             path: api/user/{userId}
-#             method: get
-#   getTeams:
-#     handler:
-#       ./handlers/user.getTeams
-#     events:
-#         - http:
-#             path: api/user/teams
-#             method: get
-#   createProfile:
-#     handler:
-#       ./handlers/user.createProfile
-#     events:
-#         - http:
-#             path: api/user
-#             method: post
-#   updateProfile:
-#     handler:
-#       ./handlers/user.updateProfile
-#     events:
-#         - http:
-#             path: api/user
-#             method: put
-#   getTopCustomersForUser:
-#     handler:
-#       ./handlers/user.getTopCustomersForUser
-#     events:
-#         - http:
-#             path: api/customer/top/{userId}
-#             method: get
-#   getTopLanesForUser:
-#     handler:
-#       ./handlers/user.getTopLanesForUser
-#     events:
-#         - http:
-#             path: api/lane/top/{userId}
-#             method: get
+# User
+  getUser:
+    handler:
+      ./handlers/user.getUser
+    events:
+        - http:
+            path: api/user
+            method: get
+            cors: true
+  deleteUser:
+    handler:
+      ./handlers/user.deleteUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: delete
+  getUserById:
+    handler:
+      ./handlers/user.getUserById
+    events:
+        - http:
+            path: api/user/{userId}
+            method: get
+  getTeams:
+    handler:
+      ./handlers/user.getTeams
+    events:
+        - http:
+            path: api/user/teams
+            method: get
+  createProfile:
+    handler:
+      ./handlers/user.createProfile
+    events:
+        - http:
+            path: api/user
+            method: post
+  updateProfile:
+    handler:
+      ./handlers/user.updateProfile
+    events:
+        - http:
+            path: api/user
+            method: put
+  getTopCustomersForUser:
+    handler:
+      ./handlers/user.getTopCustomersForUser
+    events:
+        - http:
+            path: api/customer/top/{userId}
+            method: get
+  getTopLanesForUser:
+    handler:
+      ./handlers/user.getTopLanesForUser
+    events:
+        - http:
+            path: api/lane/top/{userId}
+            method: get
 
-# # Customer
-#   updateCustomer:
-#     handler:
-#       ./handlers/customer.updateCustomer
-#     events:
-#         - http:
-#             path: api/customer/{customerId}
-#             method: put
-#   getCustomer:
-#     handler:
-#       ./handlers/customer.getCustomer
-#     events:
-#         - http:
-#             path: api/customer/{customerId}
-#             method: get
-#   getLanesForCustomer:
-#     handler:
-#       ./handlers/customer.getLanesForCustomer
-#     events:
-#         - http:
-#             path: api/lanes/customer/{customerId}
-#             method: get
-#   getLocationsForCustomer:
-#     handler:
-#       ./handlers/customer.getLocationsForCustomer
-#     events:
-#         - http:
-#             path: api/customer/{customerId}/locations
-#             method: get
-#   getTeammatesForCustomer:
-#     handler:
-#       ./handlers/customer.getTeammatesForCustomer
-#     events:
-#         - http:
-#             path: api/customer/{customerId}/teammates
-#             method: get
-#   addTeammateToCustomer:
-#     handler:
-#       ./handlers/customer.addTeammateToCustomer
-#     events:
-#         - http:
-#             path: api/customer/teammates
-#             method: post
-#   deleteTeammateFromCustomer:
-#     handler:
-#       ./handlers/customer.deleteTeammateFromCustomer
-#     events:
-#         - http:
-#             path: api/customer/teammates
-#             method: delete
+# Customer
+  updateCustomer:
+    handler:
+      ./handlers/customer.updateCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}
+            method: put
+  getCustomer:
+    handler:
+      ./handlers/customer.getCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}
+            method: get
+  getLanesForCustomer:
+    handler:
+      ./handlers/customer.getLanesForCustomer
+    events:
+        - http:
+            path: api/lanes/customer/{customerId}
+            method: get
+  getLocationsForCustomer:
+    handler:
+      ./handlers/customer.getLocationsForCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}/locations
+            method: get
+  getTeammatesForCustomer:
+    handler:
+      ./handlers/customer.getTeammatesForCustomer
+    events:
+        - http:
+            path: api/customer/{customerId}/teammates
+            method: get
+  addTeammateToCustomer:
+    handler:
+      ./handlers/customer.addTeammateToCustomer
+    events:
+        - http:
+            path: api/customer/teammates
+            method: post
+  deleteTeammateFromCustomer:
+    handler:
+      ./handlers/customer.deleteTeammateFromCustomer
+    events:
+        - http:
+            path: api/customer/teammates
+            method: delete
 
-# # Lane
-#   getLanesByUser:
-#     handler:
-#       ./handlers/lane.getLanesByUser
-#     events:
-#         - http:
-#             path: api/lane/user/{id}
-#             method: get
-#   getLaneById:
-#     handler:
-#       ./handlers/lane.getLaneById
-#     events:
-#         - http:
-#             path: api/lane/{laneId}
-#             method: get
-#   updateLane:
-#     handler:
-#       ./handlers/lane.updateLane
-#     events:
-#         - http:
-#             path: api/lane/{laneId}
-#             method: put
-#   getMarketFeedback:
-#     handler:
-#       ./handlers/lane.getMarketFeedback
-#     events:
-#         - http:
-#             path: api/lane/{laneId}/feedback
-#             method: get
-#   addMarketFeedback:
-#     handler:
-#       ./handlers/lane.addMarketFeedback
-#     events:
-#         - http:
-#             path: api/lane/{laneId}/feedback
-#             method: post
-#   deleteMarketFeedback:
-#     handler:
-#       ./handlers/lane.deleteMarketFeedback
-#     events:
-#         - http:
-#             path: api/lane/{laneId}/feedback/{feedbackId}
-#             method: delete
-#   getTeammatesForLane:
-#     handler:
-#       ./handlers/lane.getTeammatesForLane
-#     events:
-#         - http:
-#             path: api/lane/{laneId}/teammates
-#             method: get
-#   addTeammatetoLane:
-#     handler:
-#       ./handlers/lane.addTeammateToLane
-#     events:
-#         - http:
-#             path: api/lane/teammates
-#             method: post
-#   deleteTeammateFromLane:
-#     handler:
-#       ./handlers/lane.deleteTeammateFromLane
-#     events:
-#         - http:
-#             path: api/lane/teammates
-#             method: delete
-#   getTopCarriers:
-#     handler:
-#       ./handlers/lane.getTopCarriers
-#     events:
-#         - http:
-#             path: api/lane/{laneId}/carriers
-#             method: get
+# Lane
+  getLanesByUser:
+    handler:
+      ./handlers/lane.getLanesByUser
+    events:
+        - http:
+            path: api/lane/user/{id}
+            method: get
+  getLaneById:
+    handler:
+      ./handlers/lane.getLaneById
+    events:
+        - http:
+            path: api/lane/{laneId}
+            method: get
+  updateLane:
+    handler:
+      ./handlers/lane.updateLane
+    events:
+        - http:
+            path: api/lane/{laneId}
+            method: put
+  getMarketFeedback:
+    handler:
+      ./handlers/lane.getMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: get
+  addMarketFeedback:
+    handler:
+      ./handlers/lane.addMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback
+            method: post
+  deleteMarketFeedback:
+    handler:
+      ./handlers/lane.deleteMarketFeedback
+    events:
+        - http:
+            path: api/lane/{laneId}/feedback/{feedbackId}
+            method: delete
+  getTeammatesForLane:
+    handler:
+      ./handlers/lane.getTeammatesForLane
+    events:
+        - http:
+            path: api/lane/{laneId}/teammates
+            method: get
+  addTeammatetoLane:
+    handler:
+      ./handlers/lane.addTeammateToLane
+    events:
+        - http:
+            path: api/lane/teammates
+            method: post
+  deleteTeammateFromLane:
+    handler:
+      ./handlers/lane.deleteTeammateFromLane
+    events:
+        - http:
+            path: api/lane/teammates
+            method: delete
+  getTopCarriers:
+    handler:
+      ./handlers/lane.getTopCarriers
+    events:
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: get
 
-#   # Team
-#   addTeam:
-#     handler:
-#       ./handlers/team.addTeam
-#     events:
-#         - http:
-#             path: api/team
-#             method: post
-#   editTeam:
-#     handler:
-#       ./handlers/team.editTeam
-#     events:
-#         - http:
-#             path: api/team/{teamId}
-#             method: put
-#   deleteTeam:
-#     handler:
-#       ./handlers/team.deleteTeam
-#     events:
-#         - http:
-#             path: api/team/{teamId}
-#             method: delete
-#   getTeamById: 
-#     handler:
-#       ./handlers/team.getTeamById
-#     events:
-#         - http:
-#             path: api/team/{teamId}
-#             method: get
-#   getLanesForTeam:
-#     handler:
-#       ./handlers/team.getLanesForTeam
-#     events:
-#         - http:
-#             path: api/team/{teamId}/lanes
-#             method: get
-#   getTeammatesForTeam:
-#     handler:
-#       ./handlers/team.getTeammatesForTeam
-#     events:
-#         - http:
-#             path: api/team/{teamId}/teammates
-#             method: get
-#   removeTeammate:
-#     handler:
-#       ./handlers/team.removeTeammate
-#     events:
-#         - http:
-#             path: api/team/teammate/{userId}
-#             method: delete
-#   addTeammate:
-#     handler:
-#       ./handlers/team.addTeammate
-#     events:
-#         - http:
-#             path: api/team/teammate
-#             method: put
+  # Team
+  addTeam:
+    handler:
+      ./handlers/team.addTeam
+    events:
+        - http:
+            path: api/team
+            method: post
+  editTeam:
+    handler:
+      ./handlers/team.editTeam
+    events:
+        - http:
+            path: api/team/{teamId}
+            method: put
+  deleteTeam:
+    handler:
+      ./handlers/team.deleteTeam
+    events:
+        - http:
+            path: api/team/{teamId}
+            method: delete
+  getTeamById: 
+    handler:
+      ./handlers/team.getTeamById
+    events:
+        - http:
+            path: api/team/{teamId}
+            method: get
+  getLanesForTeam:
+    handler:
+      ./handlers/team.getLanesForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/lanes
+            method: get
+  getTeammatesForTeam:
+    handler:
+      ./handlers/team.getTeammatesForTeam
+    events:
+        - http:
+            path: api/team/{teamId}/teammates
+            method: get
+  removeTeammate:
+    handler:
+      ./handlers/team.removeTeammate
+    events:
+        - http:
+            path: api/team/teammate/{userId}
+            method: delete
+  addTeammate:
+    handler:
+      ./handlers/team.addTeammate
+    events:
+        - http:
+            path: api/team/teammate
+            method: put
 
-#   # Location
-#   getLocationById:
-#     handler:
-#       ./handlers/location.getLocationById
-#     events:
-#         - http:
-#             path: api/location/{locationId}
-#             method: get
-#   editLocation:
-#     handler:
-#       ./handlers/location.editLocation
-#     events:
-#         - http:
-#             path: api/location
-#             method: put
-#   getLanesForLocation:
-#     handler:
-#       ./handlers/location.getLanesForLocation
-#     events:
-#         - http:
-#             path: api/location/{locationId}/lanes
-#             method: get
-#   getTeammatesForLocation:
-#     handler:
-#       ./handlers/location.getTeammatesForLocation
-#     events:
-#         - http:
-#             path: api/location/{locationId}/teammates
-#             method: get
+  # Location
+  getLocationById:
+    handler:
+      ./handlers/location.getLocationById
+    events:
+        - http:
+            path: api/location/{locationId}
+            method: get
+  editLocation:
+    handler:
+      ./handlers/location.editLocation
+    events:
+        - http:
+            path: api/location
+            method: put
+  getLanesForLocation:
+    handler:
+      ./handlers/location.getLanesForLocation
+    events:
+        - http:
+            path: api/location/{locationId}/lanes
+            method: get
+  getTeammatesForLocation:
+    handler:
+      ./handlers/location.getTeammatesForLocation
+    events:
+        - http:
+            path: api/location/{locationId}/teammates
+            method: get
 
-#   addTeammatetoLocation:
-#     handler:
-#       ./handlers/location.addTeammateToLocation
-#     events:
-#         - http:
-#             path: api/location/teammates
-#             method: post
-#   deleteTeammateFromLocation:
-#     handler:
-#       ./handlers/location.deleteTeammateFromLocation
-#     events:
-#         - http:
-#             path: api/location/teammates
-#             method: delete
+  addTeammatetoLocation:
+    handler:
+      ./handlers/location.addTeammateToLocation
+    events:
+        - http:
+            path: api/location/teammates
+            method: post
+  deleteTeammateFromLocation:
+    handler:
+      ./handlers/location.deleteTeammateFromLocation
+    events:
+        - http:
+            path: api/location/teammates
+            method: delete
   
-#   # Brokerage
-#   getBrokerage:
-#     handler:
-#       ./handlers/brokerage.getBrokerage
-#     events:
-#         - http:
-#             path: api/brokerage/{brokerageId}
-#             method: get
-#   getLanesForBrokerage:
-#     handler:
-#       ./handlers/brokerage.getLanesForBrokerage
-#     events:
-#         - http:
-#             path: api/brokerage/{brokerageId}/lanes
-#             method: get
-#   editBrokerage:
-#     handler:
-#       ./handlers/brokerage.editBrokerage
-#     events:
-#         - http:
-#             path: api/brokerage
-#             method: put
+  # Brokerage
+  getBrokerage:
+    handler:
+      ./handlers/brokerage.getBrokerage
+    events:
+        - http:
+            path: api/brokerage/{brokerageId}
+            method: get
+  getLanesForBrokerage:
+    handler:
+      ./handlers/brokerage.getLanesForBrokerage
+    events:
+        - http:
+            path: api/brokerage/{brokerageId}/lanes
+            method: get
+  editBrokerage:
+    handler:
+      ./handlers/brokerage.editBrokerage
+    events:
+        - http:
+            path: api/brokerage
+            method: put
 
-#   # Tag
-#   getTags:
-#     handler:
-#       ./handlers/tag.getTags
-#     events:
-#         - http:
-#             path: api/tag/{itemId}
-#             method: get
-#   addTag:
-#     handler:
-#       ./handlers/tag.addTag
-#     events:
-#         - http:
-#             path: api/tag/{itemId}
-#             method: post
-#   deleteTag:
-#     handler:
-#       ./handlers/tag.deleteTag
-#     events:
-#         - http:
-#             path: api/tag
-#             method: delete
-#   # Contact
-#   getContacts:
-#     handler:
-#       ./handlers/contact.getContacts
-#     events:
-#         - http:
-#             path: api/contact/{itemId}
-#             method: get
-#   addContact:
-#     handler:
-#       ./handlers/contact.addContact
-#     events:
-#         - http:
-#             path: api/contact/{itemId}
-#             method: post
-#   editContact:
-#     handler:
-#       ./handlers/contact.editContact
-#     events:
-#         - http:
-#             path: api/contact/
-#             method: put
-#   deleteContact:
-#     handler:
-#       ./handlers/contact.deleteContact
-#     events:
-#         - http:
-#             path: api/contact
-#             method: delete
+  # Tag
+  getTags:
+    handler:
+      ./handlers/tag.getTags
+    events:
+        - http:
+            path: api/tag/{itemId}
+            method: get
+  addTag:
+    handler:
+      ./handlers/tag.addTag
+    events:
+        - http:
+            path: api/tag/{itemId}
+            method: post
+  deleteTag:
+    handler:
+      ./handlers/tag.deleteTag
+    events:
+        - http:
+            path: api/tag
+            method: delete
+  # Contact
+  getContacts:
+    handler:
+      ./handlers/contact.getContacts
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: get
+  addContact:
+    handler:
+      ./handlers/contact.addContact
+    events:
+        - http:
+            path: api/contact/{itemId}
+            method: post
+  editContact:
+    handler:
+      ./handlers/contact.editContact
+    events:
+        - http:
+            path: api/contact/
+            method: put
+  deleteContact:
+    handler:
+      ./handlers/contact.deleteContact
+    events:
+        - http:
+            path: api/contact
+            method: delete
 
-#   # CSV Upload
-#   ascendLoadsUpload:
-#     handler:
-#       ./handlers/upload.ascendLoadsUpload
-#     events:
-#         - http:
-#             path: api/upload/ascend
-#             method: post
-#   ascendCustomerUpload:
-#     handler:
-#       ./handlers/upload.ascendCustomerUpload
-#     events:
-#         - http:
-#             path: api/upload/ascend/customers
-#             method: post
+  # CSV Upload
+  ascendLoadsUpload:
+    handler:
+      ./handlers/upload.ascendLoadsUpload
+    events:
+        - http:
+            path: api/upload/ascend
+            method: post
+  ascendCustomerUpload:
+    handler:
+      ./handlers/upload.ascendCustomerUpload
+    events:
+        - http:
+            path: api/upload/ascend/customers
+            method: post
     
-#   # Onboarding
-#   getTeamsForBrokerage:
-#     handler:
-#       ./handlers/onboarding.getTeamsForBrokerage
-#     events:
-#         - http:
-#             path: api/onboarding/teams
-#             method: get
-#   getCustomersForBrokerage:
-#     handler:
-#       ./handlers/onboarding.getCustomersForBrokerage
-#     events:
-#         - http:
-#             path: api/onboarding/customers
-#             method: get
-#   joinTeam:
-#     handler:
-#       ./handlers/onboarding.joinTeam
-#     events:
-#         - http:
-#             path: api/onboarding/team/{teamId}
-#             method: post
+  # Onboarding
+  getTeamsForBrokerage:
+    handler:
+      ./handlers/onboarding.getTeamsForBrokerage
+    events:
+        - http:
+            path: api/onboarding/teams
+            method: get
+  getCustomersForBrokerage:
+    handler:
+      ./handlers/onboarding.getCustomersForBrokerage
+    events:
+        - http:
+            path: api/onboarding/customers
+            method: get
+  joinTeam:
+    handler:
+      ./handlers/onboarding.joinTeam
+    events:
+        - http:
+            path: api/onboarding/team/{teamId}
+            method: post
