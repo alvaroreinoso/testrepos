@@ -82,6 +82,7 @@ functions:
         - http:
             path: api/search
             method: get
+            cors: true
   searchLedger:
     handler:
       ./handlers/search.searchLedger
