@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 require('dotenv').config()
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getUser = async (event, context) => {
 
@@ -14,11 +18,8 @@ module.exports.getUser = async (event, context) => {
 
         if (cognitoUser == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401,
-                headers: {
-                    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-                    'Access-Control-Allow-Credentials': true,
-                },
             }
         }
 
@@ -30,31 +31,22 @@ module.exports.getUser = async (event, context) => {
 
         if (user == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 404,
-                headers: {
-                    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-                    'Access-Control-Allow-Credentials': true,
-                },
             }
         }
 
         return {
+            headers: corsHeaders,
             statusCode: 200,
             body: JSON.stringify(user),
-            headers: {
-                'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-                'Access-Control-Allow-Credentials': true,
-            },
         }
 
     } catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-                'Access-Control-Allow-Credentials': true,
-            },
         }
 
     }
@@ -63,12 +55,13 @@ module.exports.getUser = async (event, context) => {
 module.exports.getUserById = async (event, context) => {
 
     try {
-    
+
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
         if (currentUser.id == null) {
 
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -91,7 +84,8 @@ module.exports.getUserById = async (event, context) => {
 
         if (user == null) {
             return {
-                statusCode: 404
+                headers: corsHeaders,
+                statusCode: 404,
             }
         }
 
@@ -103,18 +97,20 @@ module.exports.getUserById = async (event, context) => {
         const revenue = await laneSpend.reduce((a, b) => (a + b))
         user.dataValues.revenue = revenue
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
         user.dataValues.loadsPerWeek = loadsPerWeek.frequency
 
         return {
             body: JSON.stringify(user),
+            headers: corsHeaders,
             statusCode: 200
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            headers: corsHeaders,
+            statusCode: 500,
         }
 
     }
@@ -139,15 +135,17 @@ module.exports.createProfile = async (event, context) => {
         })
 
         return {
-            statusCode: 200
+            headers: corsHeaders,
+            statusCode: 200,
         }
 
     } catch (err) {
-        
+
         return {
-            statusCode: 500
+            headers: corsHeaders,
+            statusCode: 500,
         }
-        
+
     }
 }
 
@@ -178,12 +176,14 @@ module.exports.updateProfile = async (event, context) => {
         await user.save()
 
         return {
-            statusCode: 200
+            headers: corsHeaders,
+            statusCode: 200,
         }
     } catch (err) {
 
         return {
-            statusCode: 500
+            headers: corsHeaders,
+            statusCode: 500,
         }
     }
 
@@ -204,7 +204,8 @@ module.exports.deleteUser = async (event, context) => {
     await targetUser.destroy()
 
     return {
-        statusCode: 204
+        headers: corsHeaders,
+        statusCode: 204,
     }
 
 }
@@ -221,14 +222,16 @@ module.exports.getTeams = async (event, context) => {
         })
 
         return {
+            headers: corsHeaders,
             statusCode: 200,
-            body: JSON.stringify(teams)
+            body: JSON.stringify(teams),
         }
 
     } catch (err) {
 
         return {
-            statusCode: 401
+            headers: corsHeaders,
+            statusCode: 401,
         }
     }
 
@@ -241,7 +244,8 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
     if (currentUser.id == null) {
         return {
-            statusCode: 401
+            headers: corsHeaders,
+            statusCode: 401,
         }
     }
 
@@ -254,13 +258,15 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
         if (targetUser == null) {
             return {
-                statusCode: 404
+                headers: corsHeaders,
+                statusCode: 404,
             }
         }
 
         if (targetUser.brokerageId != currentUser.brokerageId) {
             return {
-                statusCode: 401
+                headers: corsHeaders,
+                statusCode: 401,
             }
         }
 
@@ -278,15 +284,17 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
         const response = {
             body: JSON.stringify(topCustomers),
-            statusCode: 200
+            headers: corsHeaders,
+            statusCode: 200,
         }
 
         return response
 
     } catch (err) {
-        
+
         return {
-            statusCode: 500
+            headers: corsHeaders,
+            statusCode: 500,
         }
     }
 
@@ -299,7 +307,8 @@ module.exports.getTopLanesForUser = async (event, context) => {
 
     if (currentUser.id == null) {
         return {
-            statusCode: 401
+            headers: corsHeaders,
+            statusCode: 401,
         }
     }
 
@@ -312,13 +321,15 @@ module.exports.getTopLanesForUser = async (event, context) => {
 
         if (targetUser == null) {
             return {
-                statusCode: 404
+                headers: corsHeaders,
+                statusCode: 404,
             }
         }
 
         if (targetUser.brokerageId != currentUser.brokerageId) {
             return {
-                statusCode: 401
+                headers: corsHeaders,
+                statusCode: 401,
             }
         }
 
@@ -340,14 +351,16 @@ module.exports.getTopLanesForUser = async (event, context) => {
 
         const response = {
             body: JSON.stringify(sortedLanes),
-            statusCode: 200
+            headers: corsHeaders,
+            statusCode: 200,
         }
 
         return response
 
     } catch (err) {
         return {
-            statusCode: 500
+            headers: corsHeaders,
+            statusCode: 500,
         }
     }
 

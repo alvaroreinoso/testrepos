@@ -2,6 +2,10 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, Brokerage, CustomerLocation, LanePartner, Team, User, Location, Lane, Ledger } = require('.././models')
 const { Op } = require("sequelize");
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getBrokerage = async (event, context) => {
 
@@ -10,7 +14,8 @@ module.exports.getBrokerage = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -100,7 +105,8 @@ module.exports.getBrokerage = async (event, context) => {
 
     return {
         body: JSON.stringify(brokerage),
-        statusCode: 200
+        statusCode: 200,
+        headers: corsHeaders
     }
 }
 
@@ -111,13 +117,15 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
     if (user.brokerageId != brokerageId) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -196,12 +204,14 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 
         return {
             statusCode: 200,
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
+            headers: corsHeaders
         }
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -214,7 +224,8 @@ module.exports.editBrokerage = async (event, context) => {
         if (user.admin == false) {
 
             return {
-                statusCode: 403
+                statusCode: 403,
+                headers: corsHeaders
             }
         }
 
@@ -237,14 +248,16 @@ module.exports.editBrokerage = async (event, context) => {
         await brokerage.save()
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     } catch (err) {
 
         console.log(err)
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 

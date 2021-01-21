@@ -3,6 +3,10 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
 const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getTags = async (event, context) => {
 
@@ -10,6 +14,7 @@ module.exports.getTags = async (event, context) => {
 
     if (user.id == null) {
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
     }
@@ -33,6 +38,7 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(laneTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
 
@@ -48,6 +54,7 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(locationTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
 
@@ -63,6 +70,7 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(customerTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
             } case 'user': {
@@ -77,6 +85,7 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(userTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
             } case 'brokerage': {
@@ -91,6 +100,7 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(brokerageTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
             } case 'team': {
@@ -105,12 +115,14 @@ module.exports.getTags = async (event, context) => {
 
                 return {
                     body: JSON.stringify(teamTags),
+                    headers: corsHeaders,
                     statusCode: 200
                 }
 
             } default: {
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 500
                 }
             }
@@ -119,6 +131,7 @@ module.exports.getTags = async (event, context) => {
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -132,6 +145,7 @@ module.exports.addTag = async (event, context) => {
 
         if (user.id == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -221,12 +235,14 @@ module.exports.addTag = async (event, context) => {
                 } default: {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 500
                     }
                 }
             }
 
             return {
+                headers: corsHeaders,
                 statusCode: 204
             }
         }
@@ -267,8 +283,8 @@ module.exports.addTag = async (event, context) => {
 
                     break
 
-                } 
-                
+                }
+
                 case 'user': {
 
                     await UserTag.findOrCreate({
@@ -305,6 +321,7 @@ module.exports.addTag = async (event, context) => {
                 default: {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 500
                     }
                 }
@@ -312,12 +329,14 @@ module.exports.addTag = async (event, context) => {
             }
 
             return {
+                headers: corsHeaders,
                 statusCode: 204
             }
         }
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -345,6 +364,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (laneTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -365,6 +385,7 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
@@ -380,6 +401,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (locationTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -400,10 +422,11 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
-            } 
+            }
             case 'customer': {
 
                 const customerTag = await CustomerTag.findOne({
@@ -416,6 +439,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (customerTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -436,10 +460,11 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
-            } 
+            }
             case 'user': {
 
                 const userTag = await UserTag.findOne({
@@ -452,6 +477,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (userTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -471,10 +497,11 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
-            } 
+            }
             case 'brokerage': {
 
                 const brokerageTag = await BrokerageTag.findOne({
@@ -487,6 +514,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (brokerageTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -506,10 +534,11 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
-            } 
+            }
             case 'team': {
 
                 const teamTag = await TeamTag.findOne({
@@ -522,6 +551,7 @@ module.exports.deleteTag = async (event, context) => {
                 if (brokerageTag === null) {
 
                     return {
+                        headers: corsHeaders,
                         statusCode: 404
                     }
                 }
@@ -541,12 +571,14 @@ module.exports.deleteTag = async (event, context) => {
                 }
 
                 return {
+                    headers: corsHeaders,
                     statusCode: 204
                 }
 
-            } 
+            }
             default: {
                 return {
+                    headers: corsHeaders,
                     statusCode: 500
                 }
             }
@@ -554,6 +586,7 @@ module.exports.deleteTag = async (event, context) => {
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }

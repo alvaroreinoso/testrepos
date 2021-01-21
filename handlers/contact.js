@@ -2,6 +2,10 @@
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerContact, Ledger, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getContacts = async (event, context) => {
 
@@ -9,7 +13,8 @@ module.exports.getContacts = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -55,7 +60,8 @@ module.exports.getContacts = async (event, context) => {
 
                 return {
                     body: JSON.stringify(locationContacts),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } case 'customer': {
@@ -74,13 +80,15 @@ module.exports.getContacts = async (event, context) => {
 
                 return {
                     body: JSON.stringify(customerContacts),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } default: {
 
                 return {
-                    statusCode: 500
+                    statusCode: 500,
+                    headers: corsHeaders
                 }
             }
         }
@@ -88,7 +96,8 @@ module.exports.getContacts = async (event, context) => {
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -101,7 +110,8 @@ module.exports.addContact = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -207,13 +217,15 @@ module.exports.addContact = async (event, context) => {
                 } default: {
 
                     return {
-                        statusCode: 500
+                        statusCode: 500,
+                        headers: corsHeaders
                     }
                 }
             }
 
             return {
-                statusCode: 204
+                statusCode: 204,
+                headers: corsHeaders
             }
         }
 
@@ -314,19 +326,22 @@ module.exports.addContact = async (event, context) => {
                 } default: {
 
                     return {
-                        statusCode: 500
+                        statusCode: 500,
+                        headers: corsHeaders
                     }
                 }
 
             }
 
             return {
-                statusCode: 204
+                statusCode: 204,
+                headers: corsHeaders
             }
         }
     } catch (err) {
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -339,7 +354,8 @@ module.exports.editContact = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -364,13 +380,15 @@ module.exports.editContact = async (event, context) => {
         await elastic.editContact(contact)
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 
@@ -423,7 +441,8 @@ module.exports.deleteContact = async (event, context) => {
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } case 'location': {
@@ -438,7 +457,8 @@ module.exports.deleteContact = async (event, context) => {
                 if (locationContact === null) {
 
                     return {
-                        statusCode: 404
+                        statusCode: 404,
+                        headers: corsHeaders
                     }
                 }
 
@@ -456,14 +476,15 @@ module.exports.deleteContact = async (event, context) => {
                     await contact.destroy()
 
                     return {
-                        body: 'contact destroyed',
+                        headers: corsHeaders,
                         statusCode: 200
                     }
                 }
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } case 'customer': {
@@ -478,7 +499,8 @@ module.exports.deleteContact = async (event, context) => {
                 if (customerContact === null) {
 
                     return {
-                        statusCode: 404
+                        statusCode: 404,
+                        headers: corsHeaders
                     }
                 }
 
@@ -497,26 +519,30 @@ module.exports.deleteContact = async (event, context) => {
 
                     return {
                         body: 'contact destroyed',
-                        statusCode: 200
+                        statusCode: 200,
+                        headers: corsHeaders
                     }
                 }
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } default: {
 
                 return {
-                    statusCode: 500
+                    statusCode: 500,
+                    headers: corsHeaders
                 }
             }
         }
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 

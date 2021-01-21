@@ -1,6 +1,10 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Ledger, Message, Customer, User } = require('.././models');
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getLedger = async (event, context) => {
 
@@ -32,17 +36,20 @@ module.exports.getLedger = async (event, context) => {
 
         if (ledger == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 404
             }
         }
 
         return {
             body: JSON.stringify(ledger),
+            headers: corsHeaders,
             statusCode: 200
         }
     } catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -56,6 +63,7 @@ module.exports.writeMessage = async (event, context) => {
     if (user.id == null) {
 
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
 
@@ -74,6 +82,7 @@ module.exports.writeMessage = async (event, context) => {
 
         if (ledger == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -85,12 +94,14 @@ module.exports.writeMessage = async (event, context) => {
         })
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
 
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
 
@@ -105,6 +116,7 @@ module.exports.deleteMessage = async (event, context) => {
     if (user.id == null) {
 
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
     }
@@ -121,6 +133,7 @@ module.exports.deleteMessage = async (event, context) => {
 
         if (message == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 404
             }
         }
@@ -128,12 +141,14 @@ module.exports.deleteMessage = async (event, context) => {
         await message.destroy()
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
 
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -147,6 +162,7 @@ module.exports.updateMessage = async (event, context) => {
         if (user.id == undefined) {
 
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -164,6 +180,7 @@ module.exports.updateMessage = async (event, context) => {
 
         if (message == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 404
             }
         }
@@ -178,7 +195,7 @@ module.exports.updateMessage = async (event, context) => {
                 })
 
                 break;
-            
+
             } case 'DELETE': {
                 await message.destroy()
 
@@ -187,10 +204,12 @@ module.exports.updateMessage = async (event, context) => {
         }
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
     } catch (err) {
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }

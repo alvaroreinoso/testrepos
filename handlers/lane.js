@@ -3,6 +3,10 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, Load, CustomerLocation, Carrier, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const { Op } = require("sequelize");
 const query = require('.././helpers/getLanes')
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -12,7 +16,8 @@ module.exports.getLanesByUser = async (event, context) => {
 
     if (currentUser.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -25,13 +30,15 @@ module.exports.getLanesByUser = async (event, context) => {
 
         if (targetUser == null) {
             return {
-                statusCode: 404
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
         if (targetUser.brokerageId != currentUser.brokerageId) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -49,13 +56,15 @@ module.exports.getLanesByUser = async (event, context) => {
 
         return {
             body: JSON.stringify(allTaggedLanes),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -68,7 +77,8 @@ module.exports.getLaneById = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -108,18 +118,21 @@ module.exports.getLaneById = async (event, context) => {
 
         if (lane == null) {
             return {
-                statusCode: 404
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
         return {
             body: JSON.stringify(lane),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
     } catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -185,12 +198,14 @@ module.exports.getTopCarriers = async (event, context) => {
 
     return {
         body: JSON.stringify(results),
-        statusCode: 200
+        statusCode: 200,
+        headers: corsHeaders
     }
     } catch(err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -225,13 +240,15 @@ module.exports.updateLane = async (event, context) => {
         }
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -257,12 +274,14 @@ module.exports.getMarketFeedback = async (event, context) => {
 
         return {
             body: JSON.stringify(feedback),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -273,7 +292,8 @@ module.exports.addMarketFeedback = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -289,12 +309,14 @@ module.exports.addMarketFeedback = async (event, context) => {
         })
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -305,7 +327,8 @@ module.exports.deleteMarketFeedback = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -322,12 +345,15 @@ module.exports.deleteMarketFeedback = async (event, context) => {
         })
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
+
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -341,7 +367,8 @@ module.exports.getTeammatesForLane = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -357,14 +384,16 @@ module.exports.getTeammatesForLane = async (event, context) => {
 
         return {
             body: JSON.stringify(users),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
     }
     catch (err) {
 
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 
@@ -378,7 +407,8 @@ module.exports.addTeammateToLane = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -395,13 +425,15 @@ module.exports.addTeammateToLane = async (event, context) => {
         })
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     }
     catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -413,7 +445,8 @@ module.exports.deleteTeammateFromLane = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -427,12 +460,14 @@ module.exports.deleteTeammateFromLane = async (event, context) => {
         })
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     }
     catch (err) {
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }

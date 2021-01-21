@@ -4,6 +4,10 @@ const csv = require('csvtojson')
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const elastic = require('.././elastic/hooks')
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.ascendLoadsUpload = async (event, context) => {
 
@@ -12,6 +16,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
 
     if (user.id == null) {
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
     }
@@ -230,7 +235,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
                         }
                     })
 
-                    
+
                     const rate = await getRate(json)
 
                     const newLoad = await Load.create({
@@ -367,6 +372,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
         }
 
         return {
+            headers: corsHeaders,
             statusCode: 200,
             body: JSON.stringify(unmatchedLanes)
         }
@@ -374,6 +380,7 @@ module.exports.ascendLoadsUpload = async (event, context) => {
     } catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -388,6 +395,7 @@ module.exports.ascendCustomerUpload = async (event, context) => {
 
     if (user.id == null) {
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
     }
@@ -459,12 +467,14 @@ module.exports.ascendCustomerUpload = async (event, context) => {
             })
         }
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
     } catch (err) {
 
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }

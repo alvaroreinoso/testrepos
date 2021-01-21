@@ -2,6 +2,10 @@
 const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
 const client = require('.././elastic/client')
 const { getCurrentUser } = require('.././helpers/user')
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.search = async (event, context) => {
 
@@ -11,6 +15,7 @@ module.exports.search = async (event, context) => {
         if (user.id == null) {
 
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -41,12 +46,14 @@ module.exports.search = async (event, context) => {
 
         return {
             body: JSON.stringify(searchResults.hits.hits),
+            headers: corsHeaders,
             statusCode: 200
         }
 
     } catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -68,6 +75,7 @@ module.exports.searchLedger = async (event, context) => {
     if (ledger == null) {
 
         return {
+            headers: corsHeaders,
             statusCode: 401
         }
     }
@@ -124,6 +132,7 @@ module.exports.searchLedger = async (event, context) => {
 
     return {
         body: JSON.stringify(sortedResults),
+        headers: corsHeaders,
         statusCode: 200
     }
 }
@@ -132,69 +141,72 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 
     try {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    if (user.id == null) {
+        if (user.id == null) {
 
-        return {
-            statusCode: 401
-        }
-    }
-
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: user.brokerageId
-        }
-    })
-
-    const brokerageId = brokerage.id
-
-    const query = event.queryStringParameters.q
-
-    const searchResults = await client.search({
-        index: 'user',
-        body: {
-            query: {
-                bool: {
-                    must: [
-                        {
-                            multi_match: {
-                                query: query,
-                                type: "phrase_prefix",
-                                fields: ["firstName", "lastName", "fullName"]
-                            }
-                        },
-                    ],
-                    filter: [
-                        { "term": { "brokerageId": brokerageId } }
-                    ]
-                }
+            return {
+                headers: corsHeaders,
+                statusCode: 401
             }
         }
-    })
 
-    const dbResults = searchResults.hits.hits.map(user => {
-
-        const results = User.findOne({
+        const brokerage = await Brokerage.findOne({
             where: {
-                id: user._id
+                id: user.brokerageId
             }
         })
 
-        return results
-    })
+        const brokerageId = brokerage.id
 
-    const response = await Promise.all(dbResults)
+        const query = event.queryStringParameters.q
 
-    return {
-        body: JSON.stringify(response),
-        statusCode: 200
-    }
+        const searchResults = await client.search({
+            index: 'user',
+            body: {
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                multi_match: {
+                                    query: query,
+                                    type: "phrase_prefix",
+                                    fields: ["firstName", "lastName", "fullName"]
+                                }
+                            },
+                        ],
+                        filter: [
+                            { "term": { "brokerageId": brokerageId } }
+                        ]
+                    }
+                }
+            }
+        })
+
+        const dbResults = searchResults.hits.hits.map(user => {
+
+            const results = User.findOne({
+                where: {
+                    id: user._id
+                }
+            })
+
+            return results
+        })
+
+        const response = await Promise.all(dbResults)
+
+        return {
+            body: JSON.stringify(response),
+            headers: corsHeaders,
+            statusCode: 200
+        }
 
     } catch (err) {
 
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -204,69 +216,72 @@ module.exports.searchContacts = async (event, context) => {
 
     try {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    if (user.id == null) {
+        if (user.id == null) {
 
-        return {
-            statusCode: 401
-        }
-    }
-
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: user.brokerageId
-        }
-    })
-
-    const brokerageId = brokerage.id
-
-    const query = event.queryStringParameters.q
-
-    const searchResults = await client.search({
-        index: 'contact',
-        body: {
-            query: {
-                bool: {
-                    must: [
-                        {
-                            multi_match: {
-                                query: query,
-                                type: "phrase_prefix",
-                                fields: ["firstName", "lastName", "fullName"]
-                            }
-                        },
-                    ],
-                    filter: [
-                        { "term": { "brokerageId": brokerageId } }
-                    ]
-                }
+            return {
+                headers: corsHeaders,
+                statusCode: 401
             }
         }
-    })
 
-    const dbResults = searchResults.hits.hits.map(contact => {
-
-        const results = Contact.findOne({
+        const brokerage = await Brokerage.findOne({
             where: {
-                id: contact._id
+                id: user.brokerageId
             }
         })
 
-        return results
-    })
+        const brokerageId = brokerage.id
 
-    const response = await Promise.all(dbResults)
+        const query = event.queryStringParameters.q
 
-    return {
-        body: JSON.stringify(response),
-        statusCode: 200
-    }
+        const searchResults = await client.search({
+            index: 'contact',
+            body: {
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                multi_match: {
+                                    query: query,
+                                    type: "phrase_prefix",
+                                    fields: ["firstName", "lastName", "fullName"]
+                                }
+                            },
+                        ],
+                        filter: [
+                            { "term": { "brokerageId": brokerageId } }
+                        ]
+                    }
+                }
+            }
+        })
+
+        const dbResults = searchResults.hits.hits.map(contact => {
+
+            const results = Contact.findOne({
+                where: {
+                    id: contact._id
+                }
+            })
+
+            return results
+        })
+
+        const response = await Promise.all(dbResults)
+
+        return {
+            body: JSON.stringify(response),
+            headers: corsHeaders,
+            statusCode: 200
+        }
 
     } catch (err) {
 
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
