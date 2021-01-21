@@ -90,6 +90,7 @@ functions:
         - http:
             path: api/ledger/search
             method: get
+            cors: true
   searchUsersInBrokerage:
     handler:
       ./handlers/search.searchUsersInBrokerage
@@ -97,6 +98,7 @@ functions:
         - http:
             path: api/search/users
             method: get
+            cors: true
   searchContacts:
     handler:
       ./handlers/search.searchContacts
@@ -104,6 +106,7 @@ functions:
         - http:
             path: api/search/contacts
             method: get
+            cors: true
 
 # Ledger
   getLedger:
@@ -113,6 +116,7 @@ functions:
         - http:
             path: api/ledger/{id}
             method: get
+            cors: true
   writeMessage:
     handler:
       ./handlers/ledger.writeMessage
@@ -120,6 +124,7 @@ functions:
         - http:
             path: api/ledger
             method: post
+            cors: true
   updateMessage:
     handler:
       ./handlers/ledger.updateMessage
@@ -127,9 +132,11 @@ functions:
         - http:
             path: api/ledger/message/{id}
             method: put
+            cors: true
         - http:
             path: api/ledger/message/{id}
             method: delete
+            cors: true
 
 # User
   getUser:
@@ -147,6 +154,7 @@ functions:
         - http:
             path: api/user/{userId}
             method: delete
+            cors: true
   getUserById:
     handler:
       ./handlers/user.getUserById
@@ -154,6 +162,7 @@ functions:
         - http:
             path: api/user/{userId}
             method: get
+            cors: true
   getTeams:
     handler:
       ./handlers/user.getTeams
@@ -161,6 +170,7 @@ functions:
         - http:
             path: api/user/teams
             method: get
+            cors: true
   createProfile:
     handler:
       ./handlers/user.createProfile
@@ -168,6 +178,7 @@ functions:
         - http:
             path: api/user
             method: post
+            cors: true
   updateProfile:
     handler:
       ./handlers/user.updateProfile
@@ -175,6 +186,7 @@ functions:
         - http:
             path: api/user
             method: put
+            cors: true
   getTopCustomersForUser:
     handler:
       ./handlers/user.getTopCustomersForUser
@@ -182,6 +194,7 @@ functions:
         - http:
             path: api/customer/top/{userId}
             method: get
+            cors: true
   getTopLanesForUser:
     handler:
       ./handlers/user.getTopLanesForUser
@@ -189,6 +202,7 @@ functions:
         - http:
             path: api/lane/top/{userId}
             method: get
+            cors: true
 
 # Customer
   updateCustomer:
@@ -198,6 +212,7 @@ functions:
         - http:
             path: api/customer/{customerId}
             method: put
+            cors: true
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
@@ -205,6 +220,7 @@ functions:
         - http:
             path: api/customer/{customerId}
             method: get
+            cors: true
   getLanesForCustomer:
     handler:
       ./handlers/customer.getLanesForCustomer
@@ -212,6 +228,7 @@ functions:
         - http:
             path: api/lanes/customer/{customerId}
             method: get
+            cors: true
   getLocationsForCustomer:
     handler:
       ./handlers/customer.getLocationsForCustomer
@@ -219,6 +236,7 @@ functions:
         - http:
             path: api/customer/{customerId}/locations
             method: get
+            cors: true
   getTeammatesForCustomer:
     handler:
       ./handlers/customer.getTeammatesForCustomer
@@ -226,6 +244,7 @@ functions:
         - http:
             path: api/customer/{customerId}/teammates
             method: get
+            cors: true
   addTeammateToCustomer:
     handler:
       ./handlers/customer.addTeammateToCustomer
@@ -233,6 +252,7 @@ functions:
         - http:
             path: api/customer/teammates
             method: post
+            cors: true
   deleteTeammateFromCustomer:
     handler:
       ./handlers/customer.deleteTeammateFromCustomer
@@ -240,6 +260,7 @@ functions:
         - http:
             path: api/customer/teammates
             method: delete
+            cors: true
 
 # Lane
   getLanesByUser:
@@ -249,6 +270,7 @@ functions:
         - http:
             path: api/lane/user/{id}
             method: get
+            cors: true
   getLaneById:
     handler:
       ./handlers/lane.getLaneById
@@ -256,6 +278,7 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: get
+            cors: true
   updateLane:
     handler:
       ./handlers/lane.updateLane
@@ -263,6 +286,7 @@ functions:
         - http:
             path: api/lane/{laneId}
             method: put
+            cors: true
   getMarketFeedback:
     handler:
       ./handlers/lane.getMarketFeedback
@@ -270,6 +294,7 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback
             method: get
+            cors: true
   addMarketFeedback:
     handler:
       ./handlers/lane.addMarketFeedback
@@ -277,6 +302,7 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback
             method: post
+            cors: true
   deleteMarketFeedback:
     handler:
       ./handlers/lane.deleteMarketFeedback
@@ -284,6 +310,7 @@ functions:
         - http:
             path: api/lane/{laneId}/feedback/{feedbackId}
             method: delete
+            cors: true
   getTeammatesForLane:
     handler:
       ./handlers/lane.getTeammatesForLane
@@ -291,6 +318,7 @@ functions:
         - http:
             path: api/lane/{laneId}/teammates
             method: get
+            cors: true
   addTeammatetoLane:
     handler:
       ./handlers/lane.addTeammateToLane
@@ -298,6 +326,7 @@ functions:
         - http:
             path: api/lane/teammates
             method: post
+            cors: true
   deleteTeammateFromLane:
     handler:
       ./handlers/lane.deleteTeammateFromLane
@@ -305,6 +334,7 @@ functions:
         - http:
             path: api/lane/teammates
             method: delete
+            cors: true
   getTopCarriers:
     handler:
       ./handlers/lane.getTopCarriers
@@ -312,6 +342,7 @@ functions:
         - http:
             path: api/lane/{laneId}/carriers
             method: get
+            cors: true
 
   # Team
   addTeam:
@@ -321,6 +352,7 @@ functions:
         - http:
             path: api/team
             method: post
+            cors: true
   editTeam:
     handler:
       ./handlers/team.editTeam
@@ -328,6 +360,7 @@ functions:
         - http:
             path: api/team/{teamId}
             method: put
+            cors: true
   deleteTeam:
     handler:
       ./handlers/team.deleteTeam
@@ -335,6 +368,7 @@ functions:
         - http:
             path: api/team/{teamId}
             method: delete
+            cors: true
   getTeamById: 
     handler:
       ./handlers/team.getTeamById
@@ -342,6 +376,7 @@ functions:
         - http:
             path: api/team/{teamId}
             method: get
+            cors: true
   getLanesForTeam:
     handler:
       ./handlers/team.getLanesForTeam
@@ -349,6 +384,7 @@ functions:
         - http:
             path: api/team/{teamId}/lanes
             method: get
+            cors: true
   getTeammatesForTeam:
     handler:
       ./handlers/team.getTeammatesForTeam
@@ -356,6 +392,7 @@ functions:
         - http:
             path: api/team/{teamId}/teammates
             method: get
+            cors: true
   removeTeammate:
     handler:
       ./handlers/team.removeTeammate
@@ -363,6 +400,7 @@ functions:
         - http:
             path: api/team/teammate/{userId}
             method: delete
+            cors: true
   addTeammate:
     handler:
       ./handlers/team.addTeammate
@@ -370,6 +408,7 @@ functions:
         - http:
             path: api/team/teammate
             method: put
+            cors: true
 
   # Location
   getLocationById:
@@ -379,6 +418,7 @@ functions:
         - http:
             path: api/location/{locationId}
             method: get
+            cors: true
   editLocation:
     handler:
       ./handlers/location.editLocation
@@ -386,6 +426,7 @@ functions:
         - http:
             path: api/location
             method: put
+            cors: true
   getLanesForLocation:
     handler:
       ./handlers/location.getLanesForLocation
@@ -393,6 +434,7 @@ functions:
         - http:
             path: api/location/{locationId}/lanes
             method: get
+            cors: true
   getTeammatesForLocation:
     handler:
       ./handlers/location.getTeammatesForLocation
@@ -400,6 +442,7 @@ functions:
         - http:
             path: api/location/{locationId}/teammates
             method: get
+            cors: true
 
   addTeammatetoLocation:
     handler:
@@ -408,6 +451,7 @@ functions:
         - http:
             path: api/location/teammates
             method: post
+            cors: true
   deleteTeammateFromLocation:
     handler:
       ./handlers/location.deleteTeammateFromLocation
@@ -415,6 +459,7 @@ functions:
         - http:
             path: api/location/teammates
             method: delete
+            cors: true
   
   # Brokerage
   getBrokerage:
@@ -424,6 +469,7 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}
             method: get
+            cors: true
   getLanesForBrokerage:
     handler:
       ./handlers/brokerage.getLanesForBrokerage
@@ -431,6 +477,7 @@ functions:
         - http:
             path: api/brokerage/{brokerageId}/lanes
             method: get
+            cors: true
   editBrokerage:
     handler:
       ./handlers/brokerage.editBrokerage
@@ -438,6 +485,7 @@ functions:
         - http:
             path: api/brokerage
             method: put
+            cors: true
 
   # Tag
   getTags:
@@ -447,6 +495,7 @@ functions:
         - http:
             path: api/tag/{itemId}
             method: get
+            cors: true
   addTag:
     handler:
       ./handlers/tag.addTag
@@ -454,6 +503,7 @@ functions:
         - http:
             path: api/tag/{itemId}
             method: post
+            cors: true
   deleteTag:
     handler:
       ./handlers/tag.deleteTag
@@ -461,6 +511,7 @@ functions:
         - http:
             path: api/tag
             method: delete
+            cors: true
   # Contact
   getContacts:
     handler:
@@ -469,6 +520,7 @@ functions:
         - http:
             path: api/contact/{itemId}
             method: get
+            cors: true
   addContact:
     handler:
       ./handlers/contact.addContact
@@ -476,6 +528,7 @@ functions:
         - http:
             path: api/contact/{itemId}
             method: post
+            cors: true
   editContact:
     handler:
       ./handlers/contact.editContact
@@ -483,6 +536,7 @@ functions:
         - http:
             path: api/contact/
             method: put
+            cors: true
   deleteContact:
     handler:
       ./handlers/contact.deleteContact
@@ -490,6 +544,7 @@ functions:
         - http:
             path: api/contact
             method: delete
+            cors: true
 
   # CSV Upload
   ascendLoadsUpload:
@@ -499,6 +554,7 @@ functions:
         - http:
             path: api/upload/ascend
             method: post
+            cors: true
   ascendCustomerUpload:
     handler:
       ./handlers/upload.ascendCustomerUpload
@@ -506,6 +562,7 @@ functions:
         - http:
             path: api/upload/ascend/customers
             method: post
+            cors: true
     
   # Onboarding
   getTeamsForBrokerage:
@@ -515,6 +572,7 @@ functions:
         - http:
             path: api/onboarding/teams
             method: get
+            cors: true
   getCustomersForBrokerage:
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
@@ -522,6 +580,7 @@ functions:
         - http:
             path: api/onboarding/customers
             method: get
+            cors: true
   joinTeam:
     handler:
       ./handlers/onboarding.joinTeam
@@ -529,3 +588,4 @@ functions:
         - http:
             path: api/onboarding/team/{teamId}
             method: post
+            cors: true
