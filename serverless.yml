@@ -28,7 +28,8 @@ provider:
   runtime: nodejs12.x
   vpc:
     securityGroupIds:
-      - sg-012e7222a5f8ac6cc
+      # - sg-012e7222a5f8ac6cc
+      - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
     subnetIds:
       - subnet-03086cdd9e1e48134
       - subnet-0243c1302f458775f
@@ -37,6 +38,7 @@ provider:
   stage: dev
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
+    DB_HOST: ${param:DB_HOST, env:DB_HOST}
     DB_DATABASE: ${param:DB_DATABASE, env:DB_DATABASE}
     DB_PASSWORD: ${param:DB_PASSWORD, env:DB_PASSWORD}
     DB_USERNAME: ${param:DB_USERNAME, env:DB_USERNAME}
@@ -49,25 +51,12 @@ provider:
 
 plugins:
   - serverless-offline
-  # - serverless-vpc-discovery
   - serverless-dependson-plugin
 
 custom:
   dependsOn:
     enabled: true
     chains: 20
-#   vpcDiscovery:
-#     vpcName: aurora-vpc
-#     subnets:
-#       - tagKey: Name
-#         tagValues:
-#           - aurora-public-subnet-1
-#       - tagKey: Name
-#         tagValues:
-#           - aurora-sub-2
-#     securityGroups:
-#       - names:
-#         - aurora-sg1
 
 package:
   individually: false

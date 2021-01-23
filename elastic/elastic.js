@@ -323,6 +323,7 @@ async function setUp() {
     await seedTeams()
     await seedTeammates()
     await seedMessages()
+
 }
 
 setUp()
