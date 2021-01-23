@@ -3,6 +3,10 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.updateCustomer = async (event, context) => {
 
@@ -10,7 +14,8 @@ module.exports.updateCustomer = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -31,13 +36,15 @@ module.exports.updateCustomer = async (event, context) => {
         await customer.save()
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -48,7 +55,8 @@ module.exports.getCustomer = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -64,11 +72,13 @@ module.exports.getCustomer = async (event, context) => {
         if (customer != null) {
             return {
                 statusCode: 200,
-                body: JSON.stringify(customer)
+                body: JSON.stringify(customer),
+                headers: corsHeaders
             }
         } else {
             return {
-                statusCode: 404
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
@@ -76,7 +86,8 @@ module.exports.getCustomer = async (event, context) => {
 
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -87,7 +98,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
     if (user.id == null) {
         return {
-            statusCode: 401
+            statusCode: 401,
+            headers: corsHeaders
         }
     }
 
@@ -179,13 +191,15 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         return {
             body: JSON.stringify(body),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
     }
     catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -197,7 +211,8 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -214,13 +229,15 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         return {
             body: JSON.stringify(customerLocations),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
 
     } catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 
@@ -233,7 +250,8 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -249,13 +267,15 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
 
         return {
             body: JSON.stringify(users),
-            statusCode: 200
+            statusCode: 200,
+            headers: corsHeaders
         }
     }
     catch (err) {
 
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -267,7 +287,8 @@ module.exports.addTeammateToCustomer = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -359,13 +380,15 @@ module.exports.addTeammateToCustomer = async (event, context) => {
         })
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     }
     catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -376,7 +399,8 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
 
         if (user.id == null) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
@@ -468,12 +492,14 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
         }
 
         return {
-            statusCode: 204
+            statusCode: 204,
+            headers: corsHeaders
         }
     }
     catch (err) {
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }

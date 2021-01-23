@@ -3,6 +3,10 @@ const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, Tag
 const { Op } = require("sequelize");
 const { getCurrentUser } = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.getLocationById = async (event, context) => {
 
@@ -11,6 +15,7 @@ module.exports.getLocationById = async (event, context) => {
 
         if (user.id == undefined) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -59,6 +64,7 @@ module.exports.getLocationById = async (event, context) => {
 
             return {
                 body: JSON.stringify(location),
+                headers: corsHeaders,
                 statusCode: 200
             }
         } else {
@@ -68,6 +74,7 @@ module.exports.getLocationById = async (event, context) => {
 
             return {
                 body: JSON.stringify(location),
+                headers: corsHeaders,
                 statusCode: 200
             }
         }
@@ -75,6 +82,7 @@ module.exports.getLocationById = async (event, context) => {
     catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -102,11 +110,13 @@ module.exports.editLocation = async (event, context) => {
         await location.save()
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
 
     } catch (err) {
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -119,6 +129,7 @@ module.exports.getLanesForLocation = async (event, context) => {
 
         if (user.id == undefined) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -163,12 +174,14 @@ module.exports.getLanesForLocation = async (event, context) => {
 
         return {
             body: JSON.stringify(lanes),
+            headers: corsHeaders,
             statusCode: 200
         }
 
     } catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -184,6 +197,7 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
         if (user.id == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -200,6 +214,7 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
         return {
             body: JSON.stringify(users),
+            headers: corsHeaders,
             statusCode: 200
         }
     }
@@ -207,6 +222,7 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -221,6 +237,7 @@ module.exports.addTeammateToLocation = async (event, context) => {
 
         if (user.id == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -256,12 +273,14 @@ module.exports.addTeammateToLocation = async (event, context) => {
         }
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
     }
     catch (err) {
         console.log(err)
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -274,6 +293,7 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
 
         if (user.id == null) {
             return {
+                headers: corsHeaders,
                 statusCode: 401
             }
         }
@@ -309,11 +329,13 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
         }
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
     }
     catch (err) {
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }

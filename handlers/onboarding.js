@@ -1,6 +1,10 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Team, User, Customer } = require('.././models');
+const corsHeaders = {
+    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
+    'Access-Control-Allow-Credentials': true,
+}
 
 module.exports.joinTeam = async (event, context) => {
 
@@ -14,11 +18,13 @@ module.exports.joinTeam = async (event, context) => {
         await user.save()
 
         return {
+            headers: corsHeaders,
             statusCode: 204
         }
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -47,12 +53,14 @@ module.exports.getTeamsForBrokerage = async (event, context) => {
 
         return {
             body: JSON.stringify(teams),
+            headers: corsHeaders,
             statusCode: 200
         }
 
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }
@@ -71,12 +79,14 @@ module.exports.getCustomersForBrokerage = async (event, context) => {
 
         return {
             body: JSON.stringify(customers),
+            headers: corsHeaders,
             statusCode: 200
         }
 
     } catch (err) {
 
         return {
+            headers: corsHeaders,
             statusCode: 500
         }
     }

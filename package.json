@@ -4,7 +4,6 @@
   "description": "Terralanes API",
   "main": "handler.js",
   "scripts": {
-    "test": "jest",
     "db:start": "npx sequelize-cli db:create && npx sequelize-cli db:migrate",
     "db:seed": "npx sequelize-cli db:seed:all && node data/addLedger.js",
     "db:stop": "npx sequelize-cli db:drop",
@@ -36,6 +35,8 @@
     "sequelize": "^6.3.5",
     "sequelize-auto": "^0.5.3",
     "serverless": "^2.18.0",
+    "serverless-dependson-plugin": "^1.1.2",
+    "serverless-vpc-discovery": "^3.0.0",
     "states-abbreviations": "^1.0.0",
     "string-similarity": "^4.0.3"
   }
