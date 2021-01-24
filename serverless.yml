@@ -11,10 +11,6 @@
 #
 # Happy Coding!
 
-# service: TerralanesAPI
-# app: TerralanesAPI-dev
-# org: terralanes
-
 org: terralanes
 app: terralanes-backend
 service: terralanes-api
@@ -28,7 +24,6 @@ provider:
   runtime: nodejs12.x
   vpc:
     securityGroupIds:
-      # - sg-012e7222a5f8ac6cc
       - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
     subnetIds:
       - subnet-03086cdd9e1e48134
