@@ -6986,7 +6986,7 @@ serverless-dependson-plugin@^1.1.2:
   resolved "https://registry.yarnpkg.com/serverless-dependson-plugin/-/serverless-dependson-plugin-1.1.2.tgz#cc1558f7798fc49d2a298458836a4942851a5802"
   integrity sha512-3u5x+2nqgZ4gDTY5Y+mvURAY8bCrwYEqcnqpldDrPyO2TUPgZTifTRIcsiQB5oe72MpCyhR42nrz+FfgqDr5kw==
 
-serverless-offline@^6.5.0:
+serverless-offline@^6.8.0:
   version "6.8.0"
   resolved "https://registry.yarnpkg.com/serverless-offline/-/serverless-offline-6.8.0.tgz#65d2192e41ef87ebcbc1093108db6a25059d6ab5"
   integrity sha512-DBDMcU58Bl+zZGSTAZ96Ed57k11oh0fQwgSoH2iVJpO6xFV9dTIttBYzTCwnfAgG0kB6NZK99Q/69b4brChTnQ==
