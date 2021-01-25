@@ -24,8 +24,6 @@
     "csvtojson": "^2.0.10",
     "date-fns": "^2.16.1",
     "dotenv": "^8.2.0",
-    "elasticsearch": "^16.7.1",
-    "http-aws-es": "^6.0.0",
     "inquirer": "^7.3.3",
     "jsonwebtoken": "^8.5.1",
     "node-fetch": "^2.6.1",

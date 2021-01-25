@@ -1,8 +1,6 @@
-const elasticsearch = require('elasticsearch');
 const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
-const db = require('.././models/index');
 const client = require('./client')
 
 module.exports.saveDocument = async (item) => {
