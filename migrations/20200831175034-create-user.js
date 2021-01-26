@@ -35,7 +35,17 @@ module.exports = {
         allowNull: false,
         defaultValue: false
       },
+      active: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
       admin: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      deleted: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
         defaultValue: false

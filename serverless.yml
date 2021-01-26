@@ -139,6 +139,14 @@ functions:
             path: api/user/{userId}
             method: delete
             cors: true
+  updateUser:
+    handler:
+      ./handlers/user.updateUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: put
+            cors: true
   getUserById:
     handler:
       ./handlers/user.getUserById
