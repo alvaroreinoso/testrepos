@@ -189,25 +189,190 @@ module.exports.updateProfile = async (event, context) => {
 
 }
 
+module.exports.updateUser = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                headers: corsHeaders,
+                statusCode: 403
+            }
+        }
+
+        const targetUserId = event.pathParameters.userId
+
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId,
+                deleted: false,
+            },
+            paranoid: false
+        })
+
+        if (targetUser == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 404
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const activationStatus = request.active
+        const adminStatus = request.admin
+
+
+        if (targetUser.admin == true) {
+
+            const adminUsers = await User.findAll({
+                where: {
+                    brokerageId: user.brokerageId,
+                    admin: true,
+                }
+            })
+
+            if (adminUsers.length == 1) {
+
+                if (activationStatus == true && adminStatus == true) {
+
+                    return {
+                        headers: corsHeaders,
+                        statusCode: 204
+                    }
+                }
+                const message = "Cannot remove last admin for brokerage" 
+                return {
+                    headers: corsHeaders,
+                    statusCode: 400,
+                    body: JSON.stringify(message)
+                }
+
+            } else {
+
+                targetUser.admin = adminStatus
+
+                await targetUser.save()
+
+                if (activationStatus == false) {
+
+                    targetUser.active = false
+
+                    await targetUser.destroy()
+                }
+
+                return {
+                    headers: corsHeaders,
+                    statusCode: 204,
+                }
+            }
+
+        } else {
+
+            targetUser.admin = adminStatus
+
+            await targetUser.save()
+
+            if (activationStatus == false) {
+
+                targetUser.active = false
+
+                await targetUser.destroy()
+            }
+
+            return {
+                headers: corsHeaders,
+                statusCode: 204,
+            }
+        }
+
+    } catch (err) {
+        return {
+            headers: corsHeaders,
+            statusCode: 500
+        }
+    }
+
+}
 module.exports.deleteUser = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
 
-    const userId = event.pathParameters.userId
+    if (user.id == null) {
+        return {
+            headers: corsHeaders,
+            statusCode: 401
+        }
+    }
+
+    if (user.admin == false) {
+        return {
+            headers: corsHeaders,
+            statusCode: 403
+        }
+    }
+
+    const targetUserId = event.pathParameters.userId
 
     const targetUser = await User.findOne({
         where: {
-            id: userId
+            id: targetUserId,
+            brokerageId: user.brokerageId
         }
     })
 
-    await targetUser.destroy()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 204,
+    if (targetUser == null) {
+        return {
+            headers: corsHeaders,
+            statusCode: 404
+        }
     }
 
+    if (targetUser.admin == true) {
+        const adminUsers = await User.findAll({
+            where: {
+                brokerageId: user.brokerageId,
+                admin: true
+            }
+        })
+
+        if (adminUsers.length == 1) {
+
+            const message = "Cannot remove last admin from brokerage"
+            return {
+                headers: corsHeaders,
+                statusCode: 400,
+                body: JSON.stringify(message)
+            }
+        } else {
+            targetUser.deleted = true
+            targetUser.active = false
+            await targetUser.destroy()
+            return {
+                headers: corsHeaders,
+                statusCode: 204
+            }
+        }
+
+    } else {
+        targetUser.deleted = true
+        targetUser.active = false
+        await targetUser.destroy()
+
+        return {
+            headers: corsHeaders,
+            statusCode: 204,
+        }
+    }
 }
 
 module.exports.getTeams = async (event, context) => {

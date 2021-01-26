@@ -2,16 +2,13 @@ const stateAbbreviations = require('states-abbreviations')
 const { Customer, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = require('./client')
 
-client.ping({
-
-    requestTimeout: 1000
-}, function (error) {
-    if (error) {
-        console.trace('elasticsearch cluster is down!');
+client.ping((err) => {
+    if(err) {
+        console.trace('cluster is down maybe')
     } else {
-        console.log('All is well');
+        console.log('All is well')
     }
-});
+})
 
 async function seedCustomer() {
 
@@ -323,6 +320,7 @@ async function setUp() {
     await seedTeams()
     await seedTeammates()
     await seedMessages()
+
 }
 
 setUp()

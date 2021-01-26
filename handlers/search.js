@@ -44,8 +44,10 @@ module.exports.search = async (event, context) => {
             }
         })
 
+        console.log(searchResults.body.hits.hits)
+
         return {
-            body: JSON.stringify(searchResults.hits.hits),
+            body: JSON.stringify(searchResults.body.hits.hits),
             headers: corsHeaders,
             statusCode: 200
         }
@@ -104,7 +106,7 @@ module.exports.searchLedger = async (event, context) => {
         }
     })
 
-    const dbResults = searchResults.hits.hits.map(message => {
+    const dbResults = searchResults.body.hits.hits.map(message => {
 
         const results = Message.findOne({
             where: {
@@ -183,7 +185,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
             }
         })
 
-        const dbResults = searchResults.hits.hits.map(user => {
+        const dbResults = searchResults.body.hits.hits.map(user => {
 
             const results = User.findOne({
                 where: {
@@ -258,7 +260,7 @@ module.exports.searchContacts = async (event, context) => {
             }
         })
 
-        const dbResults = searchResults.hits.hits.map(contact => {
+        const dbResults = searchResults.body.hits.hits.map(contact => {
 
             const results = Contact.findOne({
                 where: {
