@@ -21,7 +21,8 @@ module.exports.getLedger = async (event, context) => {
             include: [{
                 model: Message,
                 include: [{
-                    model: User
+                    model: User,
+                    paranoid: false
                 }]
             }, {
                 model: User,
@@ -47,7 +48,6 @@ module.exports.getLedger = async (event, context) => {
             statusCode: 200
         }
     } catch (err) {
-        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
