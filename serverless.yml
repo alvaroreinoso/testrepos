@@ -526,7 +526,7 @@ functions:
       ./handlers/contact.editContact
     events:
         - http:
-            path: api/contact/
+            path: api/contact
             method: put
             cors: true
   deleteContact:

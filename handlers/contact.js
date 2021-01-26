@@ -350,7 +350,6 @@ module.exports.addContact = async (event, context) => {
 module.exports.editContact = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -373,7 +372,7 @@ module.exports.editContact = async (event, context) => {
         contact.lastName = request.lastName
         contact.phoneExt = request.phoneExt
         contact.phone = request.phone
-        contact.email = request.email
+        contact.email = request.email 
         contact.level = request.level
 
         await contact.save()
@@ -384,7 +383,6 @@ module.exports.editContact = async (event, context) => {
             statusCode: 204,
             headers: corsHeaders
         }
-
     } catch (err) {
 
         return {
@@ -392,7 +390,6 @@ module.exports.editContact = async (event, context) => {
             headers: corsHeaders
         }
     }
-
 }
 
 module.exports.deleteContact = async (event, context) => {
