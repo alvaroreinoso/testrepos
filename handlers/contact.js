@@ -41,7 +41,8 @@ module.exports.getContacts = async (event, context) => {
 
                 return {
                     body: JSON.stringify(laneContacts),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } case 'location': {
@@ -416,7 +417,8 @@ module.exports.deleteContact = async (event, context) => {
                 if (laneContact === null) {
 
                     return {
-                        statusCode: 404
+                        statusCode: 404,
+                        headers: corsHeaders
                     }
                 }
 
@@ -435,7 +437,8 @@ module.exports.deleteContact = async (event, context) => {
                     await contact.destroy()
 
                     return {
-                        statusCode: 204
+                        statusCode: 204,
+                        headers: corsHeaders
                     }
                 }
 
