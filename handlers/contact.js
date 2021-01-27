@@ -41,7 +41,8 @@ module.exports.getContacts = async (event, context) => {
 
                 return {
                     body: JSON.stringify(laneContacts),
-                    statusCode: 200
+                    statusCode: 200,
+                    headers: corsHeaders
                 }
 
             } case 'location': {
@@ -349,7 +350,6 @@ module.exports.addContact = async (event, context) => {
 module.exports.editContact = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -370,9 +370,10 @@ module.exports.editContact = async (event, context) => {
 
         contact.firstName = request.firstName
         contact.lastName = request.lastName
+        contact.title = request.title
         contact.phoneExt = request.phoneExt
         contact.phone = request.phone
-        contact.email = request.email
+        contact.email = request.email 
         contact.level = request.level
 
         await contact.save()
@@ -383,7 +384,6 @@ module.exports.editContact = async (event, context) => {
             statusCode: 204,
             headers: corsHeaders
         }
-
     } catch (err) {
 
         return {
@@ -391,7 +391,6 @@ module.exports.editContact = async (event, context) => {
             headers: corsHeaders
         }
     }
-
 }
 
 module.exports.deleteContact = async (event, context) => {
@@ -416,7 +415,8 @@ module.exports.deleteContact = async (event, context) => {
                 if (laneContact === null) {
 
                     return {
-                        statusCode: 404
+                        statusCode: 404,
+                        headers: corsHeaders
                     }
                 }
 
@@ -435,7 +435,8 @@ module.exports.deleteContact = async (event, context) => {
                     await contact.destroy()
 
                     return {
-                        statusCode: 204
+                        statusCode: 204,
+                        headers: corsHeaders
                     }
                 }
 

@@ -93,6 +93,17 @@ module.exports.getUserById = async (event, context) => {
         user.dataValues.customerCount = customers.length
 
         const lanes = await user.getLanes()
+
+        if (lanes.length == 0) {
+            user.dataValues.revenue = 0
+            user.dataValues.loadsPerWeek = 0
+
+            return {
+                body: JSON.stringify(user),
+                headers: corsHeaders,
+                statusCode: 200
+            }
+        }
         const laneSpend = await lanes.map(lane => lane.spend)
         const revenue = await laneSpend.reduce((a, b) => (a + b))
         user.dataValues.revenue = revenue
@@ -107,7 +118,7 @@ module.exports.getUserById = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,
