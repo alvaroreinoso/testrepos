@@ -398,13 +398,27 @@ module.exports.removeTeammate = async (event, context) => {
         }
     }
 
+    if (user.admin == false) {
+        return {
+            headers: corsHeaders,
+            statusCode:403
+        }
+    }
+
     const targetUserId = event.pathParameters.userId
 
     const targetUser = await User.findOne({
         where: {
-            id: targetUserId
+            id: targetUserId,
+            brokerageId: user.brokerageId
         }
     })
+
+    if (targetUser == null) {
+        return {
+            statusCode: 404
+        }
+    }
 
     targetUser.teamId = null
 
