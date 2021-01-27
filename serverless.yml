@@ -22,6 +22,7 @@ service: terralanes-api
 provider:
   name: aws
   runtime: nodejs12.x
+  versionFunctions: false
   vpc:
     securityGroupIds:
       - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
