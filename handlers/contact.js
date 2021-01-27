@@ -370,6 +370,7 @@ module.exports.editContact = async (event, context) => {
 
         contact.firstName = request.firstName
         contact.lastName = request.lastName
+        contact.title = request.title
         contact.phoneExt = request.phoneExt
         contact.phone = request.phone
         contact.email = request.email 
