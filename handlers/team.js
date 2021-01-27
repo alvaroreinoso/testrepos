@@ -392,7 +392,6 @@ module.exports.removeTeammate = async (event, context) => {
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
-
         return {
             headers: corsHeaders,
             statusCode: 401
