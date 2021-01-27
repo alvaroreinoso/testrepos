@@ -392,10 +392,16 @@ module.exports.removeTeammate = async (event, context) => {
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
-
         return {
             headers: corsHeaders,
             statusCode: 401
+        }
+    }
+
+    if (user.admin == false) {
+        return {
+            headers: corsHeaders,
+            statusCode:403
         }
     }
 
@@ -403,9 +409,16 @@ module.exports.removeTeammate = async (event, context) => {
 
     const targetUser = await User.findOne({
         where: {
-            id: targetUserId
+            id: targetUserId,
+            brokerageId: user.brokerageId
         }
     })
+
+    if (targetUser == null) {
+        return {
+            statusCode: 404
+        }
+    }
 
     targetUser.teamId = null
 

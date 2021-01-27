@@ -22,6 +22,7 @@ service: terralanes-api
 provider:
   name: aws
   runtime: nodejs12.x
+  versionFunctions: false
   vpc:
     securityGroupIds:
       - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
@@ -138,6 +139,14 @@ functions:
         - http:
             path: api/user/{userId}
             method: delete
+            cors: true
+  updateUser:
+    handler:
+      ./handlers/user.updateUser
+    events:
+        - http:
+            path: api/user/{userId}
+            method: put
             cors: true
   getUserById:
     handler:
@@ -518,7 +527,7 @@ functions:
       ./handlers/contact.editContact
     events:
         - http:
-            path: api/contact/
+            path: api/contact
             method: put
             cors: true
   deleteContact:
