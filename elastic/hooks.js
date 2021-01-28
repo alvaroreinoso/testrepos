@@ -1,7 +1,8 @@
 const stateAbbreviations = require('states-abbreviations')
+const elasticsearch = require('@elastic/elasticsearch');
 const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
-const client = require('./client')
+// const client = require('./client')
 
 module.exports.saveDocument = async (item) => {
 
@@ -21,6 +22,19 @@ module.exports.saveDocument = async (item) => {
             case 'message': {
 
                 console.log('hook is running')
+
+                const client = new elasticsearch.Client({
+                    node: process.env.SEARCH_URL,
+                    log: 'trace',
+                    // log: [{
+                    //     type: 'stdio',
+                    //     levels: 'trace'
+                    //     // levels: ['error']
+                    // }],
+                    apiVersion: '7.10'
+                });
+
+                console.log('client created: ', client)
 
                 const ledger = await item.getLedger()
 
