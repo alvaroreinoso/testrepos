@@ -44,8 +44,6 @@ module.exports.search = async (event, context) => {
             }
         })
 
-        console.log(searchResults.body.hits.hits)
-
         return {
             body: JSON.stringify(searchResults.body.hits.hits),
             headers: corsHeaders,
