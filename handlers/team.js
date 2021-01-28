@@ -289,9 +289,14 @@ module.exports.addTeam = async (event, context) => {
             brokerageId: team.brokerageId
         })
 
+        const response = {
+            id: team.id
+        }
+
         return {
             headers: corsHeaders,
-            statusCode: 204
+            body: JSON.stringify(response),
+            statusCode: 200
         }
     }
     catch (err) {
