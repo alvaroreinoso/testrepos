@@ -72,11 +72,11 @@ module.exports = (sequelize, DataTypes) => {
     profileImage: DataTypes.STRING
   }, {
     hooks: {
-      afterSave: (user, options) => {
-        elastic.saveDocument(user)
+      afterSave: async (user, options) => {
+        await elastic.saveDocument(user)
       },
-      afterDestroy: (user, options) => {
-        elastic.deleteDocument(user)
+      afterDestroy: async (user, options) => {
+        await elastic.deleteDocument(user)
       }
     },
     sequelize,

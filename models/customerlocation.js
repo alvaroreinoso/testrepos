@@ -21,11 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     locationId: DataTypes.INTEGER,
   }, {
     hooks: {
-      afterSave: (customerLocation, options) => {
-        elastic.saveDocument(customerLocation)
+      afterSave: async (customerLocation, options) => {
+        await elastic.saveDocument(customerLocation)
       },
-      afterDestroy: (customerLocation, options) => {
-        elastic.deleteDocument(customerLocation)
+      afterDestroy: async (customerLocation, options) => {
+        await elastic.deleteDocument(customerLocation)
       }
     },
     sequelize,

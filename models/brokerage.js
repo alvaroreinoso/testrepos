@@ -45,11 +45,11 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING
   }, {
     hooks: {
-      afterSave: (brokerage, options) => {
-        elastic.saveDocument(brokerage)
+      afterSave: async (brokerage, options) => {
+        await elastic.saveDocument(brokerage)
       },
-      afterDestroy: (brokerage, options) => {
-        elastic.deleteDocument(brokerage)
+      afterDestroy: async (brokerage, options) => {
+        await elastic.deleteDocument(brokerage)
       }
     },
     sequelize,

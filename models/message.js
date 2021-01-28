@@ -25,8 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       afterSave: async (message, options) => {
         await elastic.saveDocument(message)
       },
-      afterDestroy: (message, options) => {
-        elastic.deleteDocument(message)
+      afterDestroy: async (message, options) => {
+        await elastic.deleteDocument(message)
       }
     },
     sequelize,

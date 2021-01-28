@@ -57,11 +57,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     hooks: {
-      afterSave: (lane, options) => {
-        elastic.saveDocument(lane)
+      afterSave: async (lane, options) => {
+        await elastic.saveDocument(lane)
       },
-      afterDestroy: (lane, options) => {
-        elastic.deleteDocument(lane)
+      afterDestroy: async (lane, options) => {
+        await elastic.deleteDocument(lane)
       }
     },
     sequelize,

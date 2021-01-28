@@ -27,8 +27,8 @@ module.exports = (sequelize, DataTypes) => {
     dropDate: DataTypes.DATEONLY
   }, {
     hooks: {
-      afterSave: (load, options) => {
-        setRate(load)
+      afterSave: async (load, options) => {
+        await setRate(load)
       },
     },
     sequelize,
