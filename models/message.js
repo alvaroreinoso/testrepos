@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.TEXT
   }, {
     hooks: {
-      afterSave: (message, options) => {
-        elastic.saveDocument(message)
+      afterSave: async (message, options) => {
+        await elastic.saveDocument(message)
       },
       afterDestroy: (message, options) => {
         elastic.deleteDocument(message)
