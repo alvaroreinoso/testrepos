@@ -124,13 +124,13 @@ module.exports.searchLedger = async (event, context) => {
     const response = await Promise.all(dbResults)
 
     function compare(a, b) {
-        if (a.createdAt < b.createdAt) return 1;
-        if (b.createdAt > a.createdAt) return -1;
+        // if (a.createdAt < b.createdAt) return -1;
+        // if (b.createdAt > a.createdAt) return 1;
 
-        return 0;
+        // return 0;
     }
 
-    const sortedResults = response.sort(compare)
+    const sortedResults = await response.sort(compare)
 
     return {
         body: JSON.stringify(sortedResults),
