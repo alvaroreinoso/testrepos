@@ -20,6 +20,8 @@ module.exports.saveDocument = async (item) => {
 
             case 'message': {
 
+                console.log('hook is running')
+
                 const ledger = await item.getLedger()
 
                 const user = await item.getUser()

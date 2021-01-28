@@ -3,11 +3,21 @@ require('dotenv').config()
 
 const client = new elasticsearch.Client({
     node: process.env.SEARCH_URL,
-    log: [{
-        type: 'stdio',
-        levels: ['error']
-    }],
+    log: 'trace',
+    // log: [{
+    //     type: 'stdio',
+    //     levels: 'trace'
+    //     // levels: ['error']
+    // }],
     apiVersion: '7.10'
 });
+
+client.on('response', (err, result) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(result)
+    }
+  })
 
 module.exports = client;
