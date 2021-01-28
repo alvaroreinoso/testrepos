@@ -41,6 +41,8 @@ module.exports.saveDocument = async (item) => {
                         doc_as_upsert: true
                     },
                 })
+
+                console.log('made it here')
                 break;
             }
 

@@ -12,6 +12,8 @@ const client = new elasticsearch.Client({
     apiVersion: '7.10'
 });
 
+console.log('client is being accessed')
+
 client.on('response', (err, result) => {
     if (err) {
       console.log(err)
