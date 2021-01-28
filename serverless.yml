@@ -29,6 +29,7 @@ provider:
     subnetIds:
       - subnet-03086cdd9e1e48134
       - subnet-0243c1302f458775f
+      - subnet-016928dcc4b9cba7b
   profile: default
   region: us-east-1
   stage: dev
