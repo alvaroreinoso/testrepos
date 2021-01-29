@@ -57,7 +57,7 @@ custom:
     chains: 20
   warmup:
     default:
-      enabled: true
+      enabled: ${param:WARMUP_ENABLED, false}
 
 package:
   individually: false
