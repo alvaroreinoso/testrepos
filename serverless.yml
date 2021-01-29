@@ -48,15 +48,16 @@ provider:
 
 plugins:
   - serverless-offline
-  - serverless-dependson-plugin
   - serverless-plugin-warmup
+  - serverless-dependson-plugin
 
 custom:
   dependsOn:
     enabled: true
     chains: 20
   warmup:
-    default: true
+    default:
+      enabled: true
 
 package:
   individually: false
