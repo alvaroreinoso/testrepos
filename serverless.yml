@@ -40,8 +40,6 @@ provider:
     DB_PASSWORD: ${param:DB_PASSWORD, env:DB_PASSWORD}
     DB_USERNAME: ${param:DB_USERNAME, env:DB_USERNAME}
     SEARCH_URL: ${param:SEARCH_URL, env:SEARCH_URL}
-    SEARCH_USER: ${param:SEARCH_USER, env:SEARCH_USER}
-    SEARCH_PASSWORD: ${param:SEARCH_PASSWORD, env:SEARCH_PASSWORD}
     REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
@@ -58,6 +56,13 @@ custom:
   warmup:
     default:
       enabled: ${param:WARMUP_ENABLED, false}
+      vpc:
+        securityGroupIds:
+          - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+        subnetIds:
+          - subnet-03086cdd9e1e48134
+          - subnet-0243c1302f458775f
+          - subnet-016928dcc4b9cba7b
 
 package:
   individually: false
