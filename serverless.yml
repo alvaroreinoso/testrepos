@@ -55,6 +55,8 @@ custom:
   dependsOn:
     enabled: true
     chains: 20
+  warmup:
+    default: true
 
 package:
   individually: false
@@ -63,7 +65,7 @@ functions:
 
 # Search
   search:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/search.search
     events:
@@ -72,7 +74,7 @@ functions:
             method: get
             cors: true
   searchLedger:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/search.searchLedger
     events:
@@ -81,7 +83,7 @@ functions:
             method: get
             cors: true
   searchUsersInBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/search.searchUsersInBrokerage
     events:
@@ -90,7 +92,7 @@ functions:
             method: get
             cors: true
   searchContacts:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/search.searchContacts
     events:
@@ -101,7 +103,7 @@ functions:
 
 # Ledger
   getLedger:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/ledger.getLedger
     events:
@@ -110,7 +112,7 @@ functions:
             method: get
             cors: true
   writeMessage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/ledger.writeMessage
     events:
@@ -119,7 +121,7 @@ functions:
             method: post
             cors: true
   updateMessage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/ledger.updateMessage
     events:
@@ -134,7 +136,7 @@ functions:
 
 # User
   getUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.getUser
     events:
@@ -143,7 +145,7 @@ functions:
             method: get
             cors: true
   deleteUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.deleteUser
     events:
@@ -152,7 +154,7 @@ functions:
             method: delete
             cors: true
   updateUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.updateUser
     events:
@@ -161,7 +163,7 @@ functions:
             method: put
             cors: true
   getUserById:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.getUserById
     events:
@@ -170,7 +172,7 @@ functions:
             method: get
             cors: true
   getTeams:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.getTeams
     events:
@@ -179,7 +181,7 @@ functions:
             method: get
             cors: true
   createProfile:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.createProfile
     events:
@@ -188,7 +190,7 @@ functions:
             method: post
             cors: true
   updateProfile:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.updateProfile
     events:
@@ -197,7 +199,7 @@ functions:
             method: put
             cors: true
   getTopCustomersForUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.getTopCustomersForUser
     events:
@@ -206,7 +208,7 @@ functions:
             method: get
             cors: true
   getTopLanesForUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/user.getTopLanesForUser
     events:
@@ -217,7 +219,7 @@ functions:
 
 # Customer
   updateCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.updateCustomer
     events:
@@ -226,7 +228,7 @@ functions:
             method: put
             cors: true
   getCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.getCustomer
     events:
@@ -235,7 +237,7 @@ functions:
             method: get
             cors: true
   getLanesForCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.getLanesForCustomer
     events:
@@ -244,7 +246,7 @@ functions:
             method: get
             cors: true
   getLocationsForCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.getLocationsForCustomer
     events:
@@ -253,7 +255,7 @@ functions:
             method: get
             cors: true
   getTeammatesForCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.getTeammatesForCustomer
     events:
@@ -262,7 +264,7 @@ functions:
             method: get
             cors: true
   addTeammateToCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.addTeammateToCustomer
     events:
@@ -271,7 +273,7 @@ functions:
             method: post
             cors: true
   deleteTeammateFromCustomer:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/customer.deleteTeammateFromCustomer
     events:
@@ -282,7 +284,7 @@ functions:
 
 # Lane
   getLanesByUser:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.getLanesByUser
     events:
@@ -291,7 +293,7 @@ functions:
             method: get
             cors: true
   getLaneById:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.getLaneById
     events:
@@ -300,7 +302,7 @@ functions:
             method: get
             cors: true
   updateLane:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.updateLane
     events:
@@ -309,7 +311,7 @@ functions:
             method: put
             cors: true
   getMarketFeedback:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.getMarketFeedback
     events:
@@ -318,7 +320,7 @@ functions:
             method: get
             cors: true
   addMarketFeedback:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.addMarketFeedback
     events:
@@ -327,7 +329,7 @@ functions:
             method: post
             cors: true
   deleteMarketFeedback:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.deleteMarketFeedback
     events:
@@ -336,7 +338,7 @@ functions:
             method: delete
             cors: true
   getTeammatesForLane:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.getTeammatesForLane
     events:
@@ -345,7 +347,7 @@ functions:
             method: get
             cors: true
   addTeammatetoLane:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.addTeammateToLane
     events:
@@ -354,7 +356,7 @@ functions:
             method: post
             cors: true
   deleteTeammateFromLane:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.deleteTeammateFromLane
     events:
@@ -363,7 +365,7 @@ functions:
             method: delete
             cors: true
   getTopCarriers:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/lane.getTopCarriers
     events:
@@ -374,7 +376,7 @@ functions:
 
   # Team
   addTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.addTeam
     events:
@@ -383,7 +385,7 @@ functions:
             method: post
             cors: true
   editTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.editTeam
     events:
@@ -392,7 +394,7 @@ functions:
             method: put
             cors: true
   deleteTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.deleteTeam
     events:
@@ -401,7 +403,7 @@ functions:
             method: delete
             cors: true
   getTeamById: 
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.getTeamById
     events:
@@ -410,7 +412,7 @@ functions:
             method: get
             cors: true
   getLanesForTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.getLanesForTeam
     events:
@@ -419,7 +421,7 @@ functions:
             method: get
             cors: true
   getTeammatesForTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.getTeammatesForTeam
     events:
@@ -428,7 +430,7 @@ functions:
             method: get
             cors: true
   removeTeammate:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.removeTeammate
     events:
@@ -437,7 +439,7 @@ functions:
             method: delete
             cors: true
   addTeammate:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/team.addTeammate
     events:
@@ -448,7 +450,7 @@ functions:
 
   # Location
   getLocationById:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.getLocationById
     events:
@@ -457,7 +459,7 @@ functions:
             method: get
             cors: true
   editLocation:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.editLocation
     events:
@@ -466,7 +468,7 @@ functions:
             method: put
             cors: true
   getLanesForLocation:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.getLanesForLocation
     events:
@@ -475,7 +477,7 @@ functions:
             method: get
             cors: true
   getTeammatesForLocation:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.getTeammatesForLocation
     events:
@@ -485,7 +487,7 @@ functions:
             cors: true
 
   addTeammatetoLocation:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.addTeammateToLocation
     events:
@@ -494,7 +496,7 @@ functions:
             method: post
             cors: true
   deleteTeammateFromLocation:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/location.deleteTeammateFromLocation
     events:
@@ -505,7 +507,7 @@ functions:
   
   # Brokerage
   getBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/brokerage.getBrokerage
     events:
@@ -514,7 +516,7 @@ functions:
             method: get
             cors: true
   getUsersForBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/brokerage.getUsersForBrokerage
     events:
@@ -523,7 +525,7 @@ functions:
             method: get
             cors: true
   getLanesForBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/brokerage.getLanesForBrokerage
     events:
@@ -532,7 +534,7 @@ functions:
             method: get
             cors: true
   editBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/brokerage.editBrokerage
     events:
@@ -543,7 +545,7 @@ functions:
 
   # Tag
   getTags:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/tag.getTags
     events:
@@ -552,7 +554,7 @@ functions:
             method: get
             cors: true
   addTag:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/tag.addTag
     events:
@@ -561,7 +563,7 @@ functions:
             method: post
             cors: true
   deleteTag:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/tag.deleteTag
     events:
@@ -571,7 +573,7 @@ functions:
             cors: true
   # Contact
   getContacts:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/contact.getContacts
     events:
@@ -580,7 +582,7 @@ functions:
             method: get
             cors: true
   addContact:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/contact.addContact
     events:
@@ -589,7 +591,7 @@ functions:
             method: post
             cors: true
   editContact:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/contact.editContact
     events:
@@ -598,7 +600,7 @@ functions:
             method: put
             cors: true
   deleteContact:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/contact.deleteContact
     events:
@@ -609,7 +611,7 @@ functions:
 
   # CSV Upload
   ascendLoadsUpload:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/upload.ascendLoadsUpload
     events:
@@ -618,7 +620,7 @@ functions:
             method: post
             cors: true
   ascendCustomerUpload:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/upload.ascendCustomerUpload
     events:
@@ -629,7 +631,7 @@ functions:
     
   # Onboarding
   getTeamsForBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/onboarding.getTeamsForBrokerage
     events:
@@ -638,7 +640,7 @@ functions:
             method: get
             cors: true
   getCustomersForBrokerage:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
     events:
@@ -647,7 +649,7 @@ functions:
             method: get
             cors: true
   joinTeam:
-    warmup: true,
+    # warmup: true,
     handler:
       ./handlers/onboarding.joinTeam
     events:
