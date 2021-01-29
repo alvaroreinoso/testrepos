@@ -55,7 +55,7 @@ custom:
     chains: 20
   warmup:
     default:
-      enabled: ${param:WARMUP_ENABLED, false}
+      # enabled: ${param:WARMUP_ENABLED, false}
       vpc:
         securityGroupIds:
           - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
@@ -142,7 +142,7 @@ functions:
 
 # User
   getUser:
-    # warmup: true,
+    warmup: true,
     handler:
       ./handlers/user.getUser
     events:
