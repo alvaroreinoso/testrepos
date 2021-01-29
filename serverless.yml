@@ -464,6 +464,14 @@ functions:
             path: api/brokerage/{brokerageId}
             method: get
             cors: true
+  getUsersForBrokerage:
+    handler:
+      ./handlers/brokerage.getUsersForBrokerage
+    events:
+        - http:
+            path: api/brokerage/users
+            method: get
+            cors: true
   getLanesForBrokerage:
     handler:
       ./handlers/brokerage.getLanesForBrokerage

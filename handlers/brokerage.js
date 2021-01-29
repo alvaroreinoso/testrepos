@@ -110,6 +110,43 @@ module.exports.getBrokerage = async (event, context) => {
     }
 }
 
+module.exports.getUsersForBrokerage = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const users = await User.findAll({
+            where: {
+                brokerageId: user.brokerageId
+            },
+            include: [{
+                model: Team,
+                attributes: ['name']
+            }]
+        })
+
+        return {
+            body: JSON.stringify(users),
+            statusCode: 200,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
 module.exports.getLanesForBrokerage = async (event, context) => {
 
     const user = await getCurrentUser(event.headers.Authorization)
@@ -238,12 +275,12 @@ module.exports.editBrokerage = async (event, context) => {
         })
 
         brokerage.name = request.name,
-        brokerage.address = request.address,
-        brokerage.address2 = request.address2,
-        brokerage.city = request.city,
-        brokerage.state = request.state,
-        brokerage.zipcode = request.zipcode,
-        brokerage.phone = request.phone
+            brokerage.address = request.address,
+            brokerage.address2 = request.address2,
+            brokerage.city = request.city,
+            brokerage.state = request.state,
+            brokerage.zipcode = request.zipcode,
+            brokerage.phone = request.phone
 
         await brokerage.save()
 
