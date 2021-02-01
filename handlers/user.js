@@ -11,6 +11,11 @@ const corsHeaders = {
 
 module.exports.getUser = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const token = event.headers.Authorization
 
