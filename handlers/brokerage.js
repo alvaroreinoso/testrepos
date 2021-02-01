@@ -128,11 +128,11 @@ module.exports.getUsersForBrokerage = async (event, context) => {
                 brokerageId: user.brokerageId,
                 deleted: false
             },
-            paranoid: false,
             include: [{
                 model: Team,
                 attributes: ['name']
-            }]
+            }],
+            paranoid: false,
         })
 
         return {

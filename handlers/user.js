@@ -286,6 +286,12 @@ module.exports.updateUser = async (event, context) => {
                     await targetUser.destroy()
                 }
 
+                else {
+                    targetUser.active = true
+
+                    await targetUser.restore()
+                }
+
                 return {
                     headers: corsHeaders,
                     statusCode: 204,
@@ -304,6 +310,13 @@ module.exports.updateUser = async (event, context) => {
 
                 await targetUser.destroy()
             }
+
+            else {
+                targetUser.active = true
+
+                await targetUser.restore()
+            }
+
 
             return {
                 headers: corsHeaders,
