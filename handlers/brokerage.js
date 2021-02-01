@@ -125,8 +125,10 @@ module.exports.getUsersForBrokerage = async (event, context) => {
 
         const users = await User.findAll({
             where: {
-                brokerageId: user.brokerageId
+                brokerageId: user.brokerageId,
+                deleted: false
             },
+            paranoid: false,
             include: [{
                 model: Team,
                 attributes: ['name']
