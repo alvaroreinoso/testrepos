@@ -16,6 +16,8 @@ module.exports.getUser = async (event, context) => {
         return 'Lambda is warm!';
     }
 
+    context.callbackWaitsForEmptyEventLoop = false
+
     try {
         const token = event.headers.Authorization
 

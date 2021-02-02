@@ -144,7 +144,7 @@ functions:
   getUser:
     warmup: 
       default:
-        enabled: false
+        enabled: ${param:WARMUP_ENABLED, false}
     handler:
       ./handlers/user.getUser
     events:
