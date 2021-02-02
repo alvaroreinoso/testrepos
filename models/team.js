@@ -31,11 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER
   }, {
     hooks: {
-      afterSave: (team, options) => {
-        elastic.saveDocument(team)
+      afterSave: async (team, options) => {
+        await elastic.saveDocument(team)
       },
-      afterDestroy: (team, options) => {
-        elastic.deleteDocument(team)
+      afterDestroy: async (team, options) => {
+        await elastic.deleteDocument(team)
       }
     },
     sequelize,

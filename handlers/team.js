@@ -277,21 +277,33 @@ module.exports.addTeam = async (event, context) => {
             }
         }
 
+        if (user.admin == false) {
+            return {
+                headers: corsHeaders,
+                statusCode: 403
+            }
+        }
+
         const request = JSON.parse(event.body)
 
         const team = await Team.create({
             icon: request.icon,
             name: request.name,
-            brokerageId: request.brokerageId,
+            brokerageId: user.brokerageId,
         })
 
         await team.createLedger({
             brokerageId: team.brokerageId
         })
 
+        const response = {
+            id: team.id
+        }
+
         return {
             headers: corsHeaders,
-            statusCode: 204
+            body: JSON.stringify(response),
+            statusCode: 200
         }
     }
     catch (err) {

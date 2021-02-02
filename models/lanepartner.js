@@ -17,11 +17,11 @@ module.exports = (sequelize, DataTypes) => {
     locationId: DataTypes.INTEGER
   }, {
     hooks: {
-      afterSave: (lanePartner, options) => {
-        elastic.saveDocument(lanePartner)
+      afterSave: async (lanePartner, options) => {
+        await elastic.saveDocument(lanePartner)
       },
-      afterDestroy: (lanePartner, options) => {
-        elastic.deleteDocument(lanePartner)
+      afterDestroy: async (lanePartner, options) => {
+        await elastic.deleteDocument(lanePartner)
       }
     },
     sequelize,

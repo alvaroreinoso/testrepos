@@ -33,8 +33,9 @@
     "sequelize": "^6.3.5",
     "sequelize-auto": "^0.5.3",
     "serverless": "^2.18.0",
-    "serverless-offline": "^6.8.0",
     "serverless-dependson-plugin": "^1.1.2",
+    "serverless-offline": "^6.8.0",
+    "serverless-plugin-warmup": "^5.1.0",
     "states-abbreviations": "^1.0.0",
     "string-similarity": "^4.0.3"
   }

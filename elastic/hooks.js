@@ -1,4 +1,5 @@
 const stateAbbreviations = require('states-abbreviations')
+const elasticsearch = require('@elastic/elasticsearch');
 const getIndex = require('../helpers/getIndexName').getIndexName
 const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
 const client = require('./client')
@@ -39,6 +40,7 @@ module.exports.saveDocument = async (item) => {
                         doc_as_upsert: true
                     },
                 })
+
                 break;
             }
 

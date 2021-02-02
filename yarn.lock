@@ -6970,6 +6970,11 @@ serverless-offline@^6.8.0:
     velocityjs "^2.0.0"
     ws "^7.2.1"
 
+serverless-plugin-warmup@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/serverless-plugin-warmup/-/serverless-plugin-warmup-5.1.0.tgz#c90ae13b91ba173a89ef453b04b67662bd9d8686"
+  integrity sha512-tC4pYizQJMJRiltMO5aIcrYPDM65AU5HPZ0NpGRCk2mpQO0htehFZyZ1lEfYn62s4Fu2RgxFj4r53zbhe83A1w==
+
 serverless@^2.18.0:
   version "2.20.1"
   resolved "https://registry.yarnpkg.com/serverless/-/serverless-2.20.1.tgz#5aebd245e57dcd30d317e288d41d56f17e7d7b1a"
