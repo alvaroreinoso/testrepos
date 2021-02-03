@@ -64,8 +64,6 @@ module.exports.requestAccount = async (event, context) => {
 
     const uuid = await uuidv4()
 
-    console.log(uuid)
-
     const brokerage = await Brokerage.create({
         pin: uuid,
     })
@@ -77,12 +75,15 @@ module.exports.requestAccount = async (event, context) => {
     brokerage.ledgerId = ledger.id
     await brokerage.save()
 
-    console.log(brokerage.toJSON())
+    const userLedger = await Ledger.create({
+        brokerageId: brokerage.id
+    })
 
     const user = await User.create({
         firstName: request.firstName,
         lastName: request.lastName,
         brokerageId: brokerage.id,
+        ledgerId: userLedger.id,
         admin: true,
         role: request.role,
         email: request.email,
@@ -90,7 +91,6 @@ module.exports.requestAccount = async (event, context) => {
         ext: request.ext
     })
 
-    console.log(user.toJSON())
 }
 
 module.exports.getUserById = async (event, context) => {
