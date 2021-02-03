@@ -1,6 +1,6 @@
-const AWS_SES = require('../config')
+const AWS_SES = require('../client')
 
-module.exports.sendRequestAccountEmail = async (user) => {
+module.exports = async (user) => {
 
   const data = {
     firstName: user.firstName,
@@ -22,8 +22,7 @@ module.exports.sendRequestAccountEmail = async (user) => {
     TemplateData: JSON.stringify(data)
   }
 
-  AWS_SES.sendTemplatedEmail(params, (err, data) => {
+  AWS_SES.sendTemplatedEmail(params, (err) => {
     if (err) console.log(err, err.stack);
-    else console.log(data);
   })
 }

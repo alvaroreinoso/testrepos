@@ -2,7 +2,7 @@
 require('dotenv').config()
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
-const sendRequestAccountEmail = require('../ses/templates/requestAccount').sendRequestAccountEmail
+const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { v4: uuidv4 } = require('uuid');
@@ -60,7 +60,7 @@ module.exports.getUser = async (event, context) => {
 }
 
 module.exports.requestAccount = async (event, context) => {
-    
+
     try {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
