@@ -1,7 +1,7 @@
 const { CustomerContact, Location, Load, Customer, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
 const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress, getRate } = require('.././helpers/csvDump/ascend')
 const csv = require('csvtojson')
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const elastic = require('.././elastic/hooks')
 const corsHeaders = require('.././helpers/cors')

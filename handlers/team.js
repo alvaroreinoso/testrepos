@@ -1,5 +1,5 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const { Customer, Ledger, User, CustomerLocation, Team, LanePartner, Location, Lane } = require('.././models')
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { Op } = require("sequelize");

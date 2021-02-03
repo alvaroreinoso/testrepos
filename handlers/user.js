@@ -1,5 +1,5 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const jwt = require('jsonwebtoken')
 const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');

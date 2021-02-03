@@ -1,7 +1,7 @@
 'use strict';
 const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
 const client = require('.././elastic/client')
-const { getCurrentUser } = require('.././helpers/user')
+const getCurrentUser = require('.././helpers/user')
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.search = async (event, context) => {

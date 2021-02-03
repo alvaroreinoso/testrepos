@@ -1,5 +1,5 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const { Ledger, Message, Customer, User } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
 

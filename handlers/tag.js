@@ -1,5 +1,5 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
 const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
