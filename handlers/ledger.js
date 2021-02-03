@@ -1,10 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Ledger, Message, Customer, User } = require('.././models');
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getLedger = async (event, context) => {
 

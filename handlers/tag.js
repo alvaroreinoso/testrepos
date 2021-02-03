@@ -3,10 +3,7 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const elastic = require('.././elastic/hooks')
 const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getTags = async (event, context) => {
 

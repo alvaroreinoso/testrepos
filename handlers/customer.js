@@ -3,10 +3,7 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.updateCustomer = async (event, context) => {
 

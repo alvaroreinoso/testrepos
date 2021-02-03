@@ -1,15 +1,11 @@
 'use strict';
-require('dotenv').config()
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { v4: uuidv4 } = require('uuid');
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getUser = async (event, context) => {
 
