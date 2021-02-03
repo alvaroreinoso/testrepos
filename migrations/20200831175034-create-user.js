@@ -66,6 +66,10 @@ module.exports = {
       phone: {
         type: Sequelize.STRING,
       },
+      phoneExt: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       profileImage: {
         type: Sequelize.STRING
       },

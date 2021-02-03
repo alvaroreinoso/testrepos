@@ -1,10 +1,11 @@
 'use strict';
+require('dotenv').config()
 const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
+const sendRequestAccountEmail = require('../ses/templates/requestAccount').sendRequestAccountEmail
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { v4: uuidv4 } = require('uuid');
-require('dotenv').config()
 const corsHeaders = {
     'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
     'Access-Control-Allow-Credentials': true,
@@ -59,38 +60,49 @@ module.exports.getUser = async (event, context) => {
 }
 
 module.exports.requestAccount = async (event, context) => {
+    
+    try {
+        const request = JSON.parse(event.body)
+        const uuid = await uuidv4()
 
-    const request = JSON.parse(event.body)
+        const brokerage = await Brokerage.create({
+            pin: uuid,
+        })
 
-    const uuid = await uuidv4()
+        const ledger = await Ledger.create({
+            brokerageId: brokerage.id
+        })
 
-    const brokerage = await Brokerage.create({
-        pin: uuid,
-    })
+        brokerage.ledgerId = ledger.id
+        await brokerage.save()
 
-    const ledger = await Ledger.create({
-        brokerageId: brokerage.id
-    })
+        const userLedger = await Ledger.create({
+            brokerageId: brokerage.id
+        })
 
-    brokerage.ledgerId = ledger.id
-    await brokerage.save()
+        const user = await User.create({
+            firstName: request.firstName,
+            lastName: request.lastName,
+            brokerageId: brokerage.id,
+            ledgerId: userLedger.id,
+            admin: true,
+            title: request.role,
+            email: request.email,
+            phone: request.phone,
+            phoneExt: request.ext
+        })
 
-    const userLedger = await Ledger.create({
-        brokerageId: brokerage.id
-    })
+        await sendRequestAccountEmail(user)
 
-    const user = await User.create({
-        firstName: request.firstName,
-        lastName: request.lastName,
-        brokerageId: brokerage.id,
-        ledgerId: userLedger.id,
-        admin: true,
-        role: request.role,
-        email: request.email,
-        phone: request.phone,
-        ext: request.ext
-    })
-
+        return {
+            headers: corsHeaders,
+            statusCode: 204
+        }
+    } catch (err) {
+        return {
+            statusCode: 500
+        }
+    }
 }
 
 module.exports.getUserById = async (event, context) => {
@@ -302,7 +314,7 @@ module.exports.updateUser = async (event, context) => {
                         statusCode: 204
                     }
                 }
-                const message = "Cannot remove last admin for brokerage" 
+                const message = "Cannot remove last admin for brokerage"
                 return {
                     headers: corsHeaders,
                     statusCode: 400,
