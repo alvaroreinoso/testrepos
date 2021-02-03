@@ -3,6 +3,7 @@ const getCurrentUser = require('.././helpers/user').getCurrentUser
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config()
 const corsHeaders = {
     'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
@@ -55,6 +56,41 @@ module.exports.getUser = async (event, context) => {
         }
 
     }
+}
+
+module.exports.requestAccount = async (event, context) => {
+
+    const request = JSON.parse(event.body)
+
+    const uuid = await uuidv4()
+
+    console.log(uuid)
+
+    const brokerage = await Brokerage.create({
+        pin: uuid,
+    })
+
+    const ledger = await Ledger.create({
+        brokerageId: brokerage.id
+    })
+
+    brokerage.ledgerId = ledger.id
+    await brokerage.save()
+
+    console.log(brokerage.toJSON())
+
+    const user = await User.create({
+        firstName: request.firstName,
+        lastName: request.lastName,
+        brokerageId: brokerage.id,
+        admin: true,
+        role: request.role,
+        email: request.email,
+        phone: request.phone,
+        ext: request.ext
+    })
+
+    console.log(user.toJSON())
 }
 
 module.exports.getUserById = async (event, context) => {

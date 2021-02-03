@@ -197,6 +197,14 @@ functions:
             path: api/user
             method: post
             cors: true
+  createAccount:
+    handler:
+      ./handlers/user.requestAccount
+    events:
+        - http:
+            path: api/account
+            method: post
+            cors: true
   updateProfile:
     # warmup: true,
     handler:
