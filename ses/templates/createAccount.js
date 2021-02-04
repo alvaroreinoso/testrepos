@@ -9,7 +9,7 @@ module.exports = async (user, brokerage) => {
 
   const params = {
     Source: 'support@terralanes.com',
-    Template: "CreateAccount",
+    Template: "TestCreateAccount",
     Destination: {
       ToAddresses: [
         user.email
