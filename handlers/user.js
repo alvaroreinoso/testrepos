@@ -49,7 +49,6 @@ module.exports.getUser = async (event, context) => {
             headers: corsHeaders,
             statusCode: 500,
         }
-
     }
 }
 

@@ -32,7 +32,7 @@ provider:
       - subnet-016928dcc4b9cba7b
   profile: default
   region: us-east-1
-  stage: dev
+  stage: staging
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
     DB_HOST: ${param:DB_HOST, env:DB_HOST}
@@ -50,11 +50,15 @@ plugins:
   - serverless-offline
   - serverless-plugin-warmup
   - serverless-dependson-plugin
+  - serverless-prune-plugin
 
 custom:
   dependsOn:
     enabled: true
     chains: 20
+  prune:
+    automatic: true
+    number: 3
   warmup:
     test:
       # enabled: ${param:WARMUP_ENABLED, false}
@@ -67,7 +71,7 @@ custom:
           - subnet-016928dcc4b9cba7b
 
 package:
-  individually: false
+  individually: true
 
 functions:
 
