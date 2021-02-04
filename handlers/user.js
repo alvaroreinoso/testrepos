@@ -1,10 +1,8 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const jwt = require('jsonwebtoken')
-const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
-const { v4: uuidv4 } = require('uuid');
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.getUser = async (event, context) => {
@@ -52,52 +50,6 @@ module.exports.getUser = async (event, context) => {
             statusCode: 500,
         }
 
-    }
-}
-
-module.exports.requestAccount = async (event, context) => {
-
-    try {
-        const request = JSON.parse(event.body)
-        const uuid = await uuidv4()
-
-        const brokerage = await Brokerage.create({
-            pin: uuid,
-        })
-
-        const ledger = await Ledger.create({
-            brokerageId: brokerage.id
-        })
-
-        brokerage.ledgerId = ledger.id
-        await brokerage.save()
-
-        const userLedger = await Ledger.create({
-            brokerageId: brokerage.id
-        })
-
-        const user = await User.create({
-            firstName: request.firstName,
-            lastName: request.lastName,
-            brokerageId: brokerage.id,
-            ledgerId: userLedger.id,
-            admin: true,
-            title: request.role,
-            email: request.email,
-            phone: request.phone,
-            phoneExt: request.ext
-        })
-
-        await sendRequestAccountEmail(user)
-
-        return {
-            headers: corsHeaders,
-            statusCode: 204
-        }
-    } catch (err) {
-        return {
-            statusCode: 500
-        }
     }
 }
 

@@ -43,6 +43,8 @@ provider:
     REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
+    SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
+    SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
 
 plugins:
   - serverless-offline
@@ -195,14 +197,6 @@ functions:
     events:
         - http:
             path: api/user
-            method: post
-            cors: true
-  createAccount:
-    handler:
-      ./handlers/user.requestAccount
-    events:
-        - http:
-            path: api/account
             method: post
             cors: true
   updateProfile:
@@ -646,6 +640,14 @@ functions:
             cors: true
     
   # Onboarding
+  createAccount:
+    handler:
+      ./handlers/onboarding.requestAccount
+    events:
+        - http:
+            path: api/account
+            method: post
+            cors: true
   getTeamsForBrokerage:
     # warmup: true,
     handler:
