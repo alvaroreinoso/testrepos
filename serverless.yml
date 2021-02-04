@@ -657,6 +657,14 @@ functions:
             path: api/account
             method: post
             cors: true
+  getBrokerageByUUID:
+    handler:
+      ./handlers/onboarding.getBrokerageByUUID
+    events:
+        - http:
+            path: api/register/{uuid}
+            method: get
+            cors: true
   getTeamsForBrokerage:
     # warmup: true,
     handler:

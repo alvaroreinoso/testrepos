@@ -52,7 +52,7 @@ module.exports.requestAccount = async (event, context) => {
             headers: corsHeaders,
             statusCode: 204
         }
-        
+
     } catch (err) {
         console.log(err)
         return {
@@ -62,6 +62,36 @@ module.exports.requestAccount = async (event, context) => {
     }
 }
 
+module.exports.getBrokerageByUUID = async (event, context) => {
+
+    try {
+        const uuid = event.pathParameters.uuid
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                pin: uuid
+            }
+        })
+
+        const user = (await brokerage.getUsers())[0]
+
+        const response = {
+            brokerage: brokerage,
+            user: user
+        }
+
+        return {
+            body: JSON.stringify(response),
+            headers: corsHeaders,
+            statusCode: 200
+        }
+    } catch (err) {
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
 
 module.exports.joinTeam = async (event, context) => {
 
