@@ -71,7 +71,7 @@ custom:
           - subnet-016928dcc4b9cba7b
 
 package:
-  individually: true
+  individually: false
 
 functions:
 
