@@ -182,6 +182,7 @@ module.exports.updateProfile = async (event, context) => {
         user.title = req.title
         user.teamId = req.teamId
         user.profileImage = req.profileImage
+        user.username = req.username
         user.confirmed = true
 
         await user.save()
