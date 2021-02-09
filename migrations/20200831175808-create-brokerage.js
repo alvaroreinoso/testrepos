@@ -16,6 +16,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      logo: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       ledgerId: {
         type: Sequelize.INTEGER,
         allowNull: true
