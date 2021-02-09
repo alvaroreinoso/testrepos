@@ -274,12 +274,14 @@ module.exports.editBrokerage = async (event, context) => {
         })
 
         brokerage.name = request.name,
-            brokerage.address = request.address,
-            brokerage.address2 = request.address2,
-            brokerage.city = request.city,
-            brokerage.state = request.state,
-            brokerage.zipcode = request.zipcode,
-            brokerage.phone = request.phone
+        brokerage.address = request.address,
+        brokerage.address2 = request.address2,
+        brokerage.city = request.city,
+        brokerage.state = request.state,
+        brokerage.zipcode = request.zipcode,
+        brokerage.phone = request.phone
+        brokerage.email = request.email
+        brokerage.logo = request.logo
 
         await brokerage.save()
 
