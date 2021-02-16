@@ -1,12 +1,9 @@
 'use strict';
 const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
 const { Op } = require("sequelize");
-const { getCurrentUser } = require('.././helpers/user')
+const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getLocationById = async (event, context) => {
 

@@ -1,13 +1,9 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Ledger, Location } = require('.././models');
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
-require('dotenv').config()
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getUser = async (event, context) => {
 
@@ -15,8 +11,6 @@ module.exports.getUser = async (event, context) => {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
     }
-
-    context.callbackWaitsForEmptyEventLoop = false
 
     try {
         const token = event.headers.Authorization
@@ -55,7 +49,6 @@ module.exports.getUser = async (event, context) => {
             headers: corsHeaders,
             statusCode: 500,
         }
-
     }
 }
 
@@ -189,6 +182,7 @@ module.exports.updateProfile = async (event, context) => {
         user.title = req.title
         user.teamId = req.teamId
         user.profileImage = req.profileImage
+        user.username = req.username
         user.confirmed = true
 
         await user.save()
@@ -268,7 +262,7 @@ module.exports.updateUser = async (event, context) => {
                         statusCode: 204
                     }
                 }
-                const message = "Cannot remove last admin for brokerage" 
+                const message = "Cannot remove last admin for brokerage"
                 return {
                     headers: corsHeaders,
                     statusCode: 400,

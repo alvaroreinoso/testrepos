@@ -43,18 +43,24 @@ provider:
     REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
+    SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
+    SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
 
 plugins:
   - serverless-offline
   - serverless-plugin-warmup
   - serverless-dependson-plugin
+  - serverless-prune-plugin
 
 custom:
   dependsOn:
     enabled: true
     chains: 20
+  prune:
+    automatic: true
+    number: 3
   warmup:
-    default:
+    test:
       # enabled: ${param:WARMUP_ENABLED, false}
       vpc:
         securityGroupIds:
@@ -66,6 +72,11 @@ custom:
 
 package:
   individually: false
+  exclude:
+    - data/**
+    - tests/**
+    - seeders/**
+    - migrations/**
 
 functions:
 
@@ -143,7 +154,7 @@ functions:
 # User
   getUser:
     warmup: 
-      default:
+      test:
         enabled: ${param:WARMUP_ENABLED, false}
     handler:
       ./handlers/user.getUser
@@ -638,6 +649,22 @@ functions:
             cors: true
     
   # Onboarding
+  createAccount:
+    handler:
+      ./handlers/onboarding.requestAccount
+    events:
+        - http:
+            path: api/account
+            method: post
+            cors: true
+  getBrokerageByUUID:
+    handler:
+      ./handlers/onboarding.getBrokerageByUUID
+    events:
+        - http:
+            path: api/register/{uuid}
+            method: get
+            cors: true
   getTeamsForBrokerage:
     # warmup: true,
     handler:

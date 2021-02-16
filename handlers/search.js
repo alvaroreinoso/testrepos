@@ -1,11 +1,8 @@
 'use strict';
 const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
 const client = require('.././elastic/client')
-const { getCurrentUser } = require('.././helpers/user')
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const getCurrentUser = require('.././helpers/user')
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.search = async (event, context) => {
 

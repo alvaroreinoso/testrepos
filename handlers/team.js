@@ -1,12 +1,9 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const { Customer, Ledger, User, CustomerLocation, Team, LanePartner, Location, Lane } = require('.././models')
 const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
 const { Op } = require("sequelize");
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getTeamById = async (event, context) => {
 

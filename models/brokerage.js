@@ -36,6 +36,8 @@ module.exports = (sequelize, DataTypes) => {
   Brokerage.init({
     pin: DataTypes.STRING,
     name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    logo: DataTypes.STRING,
     ledgerId: DataTypes.INTEGER,
     address: DataTypes.STRING,
     address2: DataTypes.STRING,

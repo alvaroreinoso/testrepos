@@ -1,11 +1,8 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
+const getCurrentUser = require('.././helpers/user')
 const { Customer, Brokerage, CustomerLocation, LanePartner, Team, User, Location, Lane, Ledger } = require('.././models')
 const { Op } = require("sequelize");
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
-}
+const corsHeaders = require('.././helpers/cors')
 
 module.exports.getBrokerage = async (event, context) => {
 
@@ -277,12 +274,14 @@ module.exports.editBrokerage = async (event, context) => {
         })
 
         brokerage.name = request.name,
-            brokerage.address = request.address,
-            brokerage.address2 = request.address2,
-            brokerage.city = request.city,
-            brokerage.state = request.state,
-            brokerage.zipcode = request.zipcode,
-            brokerage.phone = request.phone
+        brokerage.address = request.address,
+        brokerage.address2 = request.address2,
+        brokerage.city = request.city,
+        brokerage.state = request.state,
+        brokerage.zipcode = request.zipcode,
+        brokerage.phone = request.phone
+        brokerage.email = request.email
+        brokerage.logo = request.logo
 
         await brokerage.save()
 

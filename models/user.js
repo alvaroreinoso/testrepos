@@ -69,6 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     email: DataTypes.STRING,
     phone: DataTypes.STRING,
+    phoneExt: DataTypes.STRING,
     profileImage: DataTypes.STRING
   }, {
     hooks: {

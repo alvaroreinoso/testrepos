@@ -1,9 +1,96 @@
 'use strict';
-const getCurrentUser = require('.././helpers/user').getCurrentUser
-const { Team, User, Customer } = require('.././models');
-const corsHeaders = {
-    'Access-Control-Allow-Origin': process.env.ORIGIN_URL,
-    'Access-Control-Allow-Credentials': true,
+const getCurrentUser = require('.././helpers/user')
+const sendRequestAccountEmail = require('../ses/templates/requestAccount')
+const sendCreateAccountEmail = require('../ses/templates/createAccount')
+const { Team, User, Customer, Brokerage, Ledger } = require('.././models');
+const corsHeaders = require('.././helpers/cors')
+const { v4: uuidv4 } = require('uuid');
+
+module.exports.requestAccount = async (event, context) => {
+
+    try {
+        const request = JSON.parse(event.body)
+        const uuid = await uuidv4()
+
+        const brokerage = await Brokerage.create({
+            pin: uuid,
+        })
+
+        const ledger = await Ledger.create({
+            brokerageId: brokerage.id
+        })
+
+        brokerage.ledgerId = ledger.id
+        await brokerage.save()
+
+        const userLedger = await Ledger.create({
+            brokerageId: brokerage.id
+        })
+
+        const user = await User.create({
+            firstName: request.firstName,
+            lastName: request.lastName,
+            brokerageId: brokerage.id,
+            ledgerId: userLedger.id,
+            admin: true,
+            title: request.role,
+            email: request.email,
+            phone: request.phone,
+            phoneExt: request.ext
+        })
+
+        const tms = request.tms
+
+        if (tms === undefined) {
+            await sendRequestAccountEmail(user)
+
+        } else {
+            await sendCreateAccountEmail(user, brokerage)
+        }
+
+        return {
+            headers: corsHeaders,
+            statusCode: 204
+        }
+
+    } catch (err) {
+        console.log(err)
+        return {
+            headers: corsHeaders,
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.getBrokerageByUUID = async (event, context) => {
+
+    try {
+        const uuid = event.pathParameters.uuid
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                pin: uuid
+            }
+        })
+
+        const user = (await brokerage.getUsers())[0]
+
+        const response = {
+            brokerage: brokerage,
+            user: user
+        }
+
+        return {
+            body: JSON.stringify(response),
+            headers: corsHeaders,
+            statusCode: 200
+        }
+    } catch (err) {
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
 }
 
 module.exports.joinTeam = async (event, context) => {

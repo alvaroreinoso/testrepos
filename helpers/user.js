@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const db = require('../models/index')
 
-module.exports.getCurrentUser = async (token) => {
+module.exports = async (token) => {
 
     try {
         
@@ -21,11 +21,9 @@ module.exports.getCurrentUser = async (token) => {
         }
         return results
 
-    } catch (error) {
-         
+    } catch (error) { 
         return {
             statusCode: 401
         }
-
     }
 }

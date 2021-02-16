@@ -10,7 +10,7 @@ module.exports = {
       },
       username: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
       },
       brokerageId: {
         type: Sequelize.INTEGER,
@@ -65,6 +65,10 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING,
+      },
+      phoneExt: {
+        type: Sequelize.STRING,
+        allowNull: true
       },
       profileImage: {
         type: Sequelize.STRING
