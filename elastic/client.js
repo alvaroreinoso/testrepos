@@ -3,7 +3,7 @@ require('dotenv').config()
 
 const client = new elasticsearch.Client({
   node: process.env.SEARCH_URL,
-  apiVersion: '7.10'
+  apiVersion: '7.9'
 });
 
 client.on('response', (err, result) => {
