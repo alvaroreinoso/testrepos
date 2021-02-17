@@ -164,7 +164,8 @@ module.exports.saveDocument = async (item) => {
                 const team = {
                     id: item.id,
                     name: item.name,
-                    brokerageId: item.brokerageId
+                    brokerageId: item.brokerageId,
+                    icon: item.icon
                 }
 
                 await client.update({

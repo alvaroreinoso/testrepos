@@ -3,7 +3,7 @@ const { Customer, Contact, Lane, LanePartner, Team, Location, CustomerLocation, 
 const client = require('./client')
 
 client.ping((err) => {
-    if(err) {
+    if (err) {
         console.trace('cluster is down maybe')
     } else {
         console.log('All is well')
@@ -16,24 +16,20 @@ async function seedCustomer() {
         index: 'customer',
     })
 
-    const customers = await Customer.findAll()
-
-    customers.forEach((cust) => {
-
-        const customer = {
-            name: cust.name,
-            brokerageId: cust.brokerageId,
-            id: cust.id
-        }
-
-        client.create({
-            index: 'customer',
-            id: cust.id,
-            body: customer
-        })
+    const customers = await Customer.findAll({
+        attributes: ['name', 'brokerageId', 'id']
     })
 
-    console.log('Seeded Customers')
+    const result = await client.helpers.bulk({
+        datasource: customers,
+        onDocument(doc) {
+            return {
+                index: { _index: 'customer', _id: doc.id },
+            }
+        }
+    })
+
+    console.log('Customers: ', result)
 }
 
 async function seedMessages() {
@@ -51,23 +47,32 @@ async function seedMessages() {
         }]
     })
 
-    messages.forEach(message => {
-        client.create({
-            index: 'message',
+    const messageDocs = await messages.map(message => {
+        const messageDoc = {
             id: message.id,
-            body: {
-                id: message.id,
-                content: message.content,
-                ledgerId: message.ledgerId,
-                brokerageId: message.Ledger.brokerageId,
-                userFirstName: message.User.firstName,
-                userLastName: message.User.lastName
-            }
-        })
+            content: message.content,
+            ledgerId: message.ledgerId,
+            brokerageId: message.Ledger.brokerageId,
+            userFirstName: message.User.firstName,
+            userLastName: message.User.lastName
+        }
+
+        return messageDoc
     })
 
-    console.log('Seeded Messages')
+    const result = await client.helpers.bulk({
+        datasource: messageDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'message', _id: doc.id },
+                id: doc.id
+            }
+        }
+    })
+
+    console.log('Messages: ', result)
 }
+
 async function seedLanes() {
 
     await client.indices.create({
@@ -76,7 +81,7 @@ async function seedLanes() {
 
     const lanes = await Lane.findAll()
 
-    lanes.forEach(async (lane) => {
+    const laneDocs = await lanes.map(async (lane) => {
 
         const origin = await lane.getOrigin()
         const destination = await lane.getDestination()
@@ -99,14 +104,20 @@ async function seedLanes() {
             brokerageId: ledger.brokerageId
         }
 
-        client.create({
-            index: 'lane',
-            id: lane.id,
-            body: body
-        })
+        return body
     })
 
-    console.log('Seeded Lanes')
+    const result = await client.helpers.bulk({
+        datasource: laneDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'lane', _id: doc.id }
+            }
+        }
+    })
+
+    console.log('Lanes: ', result)
+
 }
 
 async function seedTeams() {
@@ -115,22 +126,20 @@ async function seedTeams() {
         index: 'team',
     })
 
-    const teams = await Team.findAll()
-
-    teams.forEach((team) => {
-        client.create({
-            index: 'team',
-            id: team.id,
-            body: {
-                id: team.id,
-                name: team.name,
-                brokerageId: team.brokerageId,
-                icon: team.icon
-            }
-        })
+    const teams = await Team.findAll({
+        attributes: ['id', 'name', 'brokerageId', 'icon']
     })
 
-    console.log('Seeded Teams')
+    const result = await client.helpers.bulk({
+        datasource: teams,
+        onDocument(doc) {
+            return {
+                index: { _index: 'team', _id: doc.id }
+            }
+        }
+    })
+
+    console.log('Teams: ', result)
 }
 
 async function seedLanePartners() {
@@ -141,7 +150,7 @@ async function seedLanePartners() {
 
     const partners = await LanePartner.findAll()
 
-    partners.forEach(async (partner) => {
+    const partnerDocs = await partners.map(async (partner) => {
 
         const location = await partner.getLocation()
         const ledger = await location.getLedger()
@@ -158,17 +167,22 @@ async function seedLanePartners() {
             brokerageId: ledger.brokerageId
         }
 
-        client.create({
-            index: 'lane_partner',
-            id: partner.id,
-            body: lanePartner
-        })
+        return lanePartner
     })
 
-    console.log('Seeded Lane Partners')
+    const result = await client.helpers.bulk({
+        datasource: partnerDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'lane_partner', _id: doc.id },
+            }
+        }
+    })
+
+    console.log('Lane Partners: ', result)
 }
 
-async function seedCustomerLocatioins() {
+async function seedCustomerLocations() {
 
     await client.indices.create({
         index: 'customer_location',
@@ -176,7 +190,7 @@ async function seedCustomerLocatioins() {
 
     const customerLocations = await CustomerLocation.findAll()
 
-    customerLocations.forEach(async (cLocation) => {
+    const cLDocs = await customerLocations.map(async (cLocation) => {
 
         const customer = await cLocation.getCustomer()
         const ledger = await customer.getLedger()
@@ -194,42 +208,41 @@ async function seedCustomerLocatioins() {
             brokerageId: ledger.brokerageId
         }
 
-        client.create({
-            index: 'customer_location',
-            id: cLocation.id,
-            body: customerLocation
-        })
+        return customerLocation
     })
 
-    console.log('Seeded Customer Locations')
+    const result = await client.helpers.bulk({
+        datasource: cLDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'customer_location', _id: doc.id },
+            }
+        }
+    })
+
+    console.log('Customer Locations: ', result)
 }
 
-async function seedTeammates() {
+async function seedUsers() {
 
     await client.indices.create({
         index: 'user',
     })
 
-    const teammates = await User.findAll()
-
-    teammates.forEach((mate) => {
-        client.create({
-            index: 'user',
-            id: mate.id,
-            body: {
-                id: mate.id,
-                title: mate.title,
-                firstName: mate.firstName,
-                lastName: mate.lastName,
-                fullName: mate.fullName,
-                email: mate.email,
-                phone: mate.phone,
-                brokerageId: mate.brokerageId
-            }
-        })
+    const users = await User.findAll({
+        attributes: ['id', 'title', 'firstName', 'lastName', 'fullName', 'email', 'phone', 'brokerageId']
     })
 
-    console.log('Seeded Users')
+    const result = await client.helpers.bulk({
+        datasource: users,
+        onDocument(doc) {
+            return {
+                index: { _index: 'user', _id: doc.id },
+            }
+        }
+    })
+
+    console.log('Users: ', result)
 }
 
 async function seedContacts() {
@@ -270,7 +283,7 @@ async function seedContacts() {
         }]
     })
 
-    contacts.forEach((contact) => {
+    const contactDocs = await contacts.map((contact) => {
 
         let brokerageId = []
 
@@ -295,14 +308,20 @@ async function seedContacts() {
             brokerageId: brokerageId[0]
         }
 
-        client.create({
-            index: 'contact',
-            id: contact.id,
-            body: doc
-        })
+        return doc
     })
 
-    console.log('Seeded Contacts')
+    const result = await client.helpers.bulk({
+        datasource: contactDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'contact', _id: doc.id },
+            }
+        }
+    })
+
+    console.log('Contacts: ', result)
+
 }
 
 
@@ -314,13 +333,14 @@ async function setUp() {
 
     await seedContacts()
     await seedCustomer()
-    await seedCustomerLocatioins()
+    await seedCustomerLocations()
     await seedLanePartners()
     await seedLanes()
     await seedTeams()
-    await seedTeammates()
+    await seedUsers()
     await seedMessages()
 
+    return
 }
 
 setUp()
