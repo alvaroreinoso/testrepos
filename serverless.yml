@@ -702,3 +702,11 @@ functions:
             path: api/stripe-webhook
             method: post
             cors: true
+  createCustomer:
+    handler:
+      ./handlers/billing.createCustomer
+    events:
+        - http:
+            path: api/create-customer/{brokerageId}
+            method: post
+            cors: true

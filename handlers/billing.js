@@ -1,5 +1,6 @@
 const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IHAhJHsDRF5ASkOBXJvvDl81evnBbqXr3cT44El9t9WUi098tGSR0hI6SKZiHHdHPbAudyT26V7vU4CjtqXhCnB00KPK9QDyk');
+const { Brokerage } = require('.././models')
 require('dotenv').config()
 
 
@@ -62,4 +63,38 @@ module.exports.webhookHandler = async (event, context) => {
     return {
         statusCode: 200
     }
+}
+
+module.exports.createCustomer = async (event, context) => {
+
+    const request = JSON.parse(event.body)
+
+    const brokerageId = event.pathParameters.brokerageId
+
+    const customer = await stripe.customers.create({
+        email: request.email,
+    });
+
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: brokerageId
+        }
+    })
+
+    brokerage.stripeCustomerId = customer.id
+
+    await brokerage.save()
+    
+      // save the customer.id as stripeCustomerId
+      // in your database.
+    
+    return {
+        body: JSON.stringify(customer),
+        statusCode: 200
+    }
+}
+
+module.exports.createStripeSubscription = async (event, context) => {
+
+    
 }
