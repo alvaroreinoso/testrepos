@@ -45,6 +45,7 @@ provider:
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
     SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
     SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
+    STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
 
 plugins:
   - serverless-offline
@@ -702,11 +703,19 @@ functions:
             path: api/stripe-webhook
             method: post
             cors: true
-  createCustomer:
+  createStripeCustomer:
     handler:
-      ./handlers/billing.createCustomer
+      ./handlers/billing.createStripeCustomer
     events:
         - http:
-            path: api/create-customer/{brokerageId}
+            path: api/create-stripe-customer/{brokerageId}
+            method: post
+            cors: true
+  createStripeSubscription:
+    handler:
+      ./handlers/billing.createStripeSubscription
+    events:
+        - http:
+            path: api/create-stripe-subscription
             method: post
             cors: true

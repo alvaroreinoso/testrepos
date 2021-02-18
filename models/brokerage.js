@@ -46,6 +46,8 @@ module.exports = (sequelize, DataTypes) => {
     zipcode: DataTypes.STRING,
     phone: DataTypes.STRING,
     stripeCustomerId: DataTypes.STRING,
+    stripeSubscriptionId: DataTypes.STRING,
+    stripeProductId: DataTypes.STRING,
   }, {
     hooks: {
       afterSave: async (brokerage, options) => {

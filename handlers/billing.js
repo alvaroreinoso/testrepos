@@ -65,7 +65,7 @@ module.exports.webhookHandler = async (event, context) => {
     }
 }
 
-module.exports.createCustomer = async (event, context) => {
+module.exports.createStripeCustomer = async (event, context) => {
 
     const request = JSON.parse(event.body)
 
@@ -85,9 +85,6 @@ module.exports.createCustomer = async (event, context) => {
 
     await brokerage.save()
     
-      // save the customer.id as stripeCustomerId
-      // in your database.
-    
     return {
         body: JSON.stringify(customer),
         statusCode: 200
@@ -96,5 +93,49 @@ module.exports.createCustomer = async (event, context) => {
 
 module.exports.createStripeSubscription = async (event, context) => {
 
+    const reqBody = JSON.parse(event.body)
+
+    try {
+        await stripe.paymentMethods.attach(reqBody.paymentMethodId, {
+          customer: reqBody.customerId,
+        });
+      } catch (error) {
+        console.log(error)
+        return {
+            statusCode: 402
+        }
+      }
+    
+      let updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+        reqBody.customerId,
+        {
+          invoice_settings: {
+            default_payment_method: reqBody.paymentMethodId,
+          },
+        }
+      );
+
+      const subscription = await stripe.subscriptions.create({
+        customer: reqBody.customerId,
+        items: [
+          { price: 'price_HGd7M3DV3IMXkC', quantity: reqBody.quantity },
+        ],
+        expand: ['latest_invoice.payment_intent', 'plan.product'],
+      });
+
+      const brokerage = await Brokerage.findOne({
+          where: {
+              id: brokerageId
+          }
+      })
+
+      brokerage.stripeSubscriptionId = subscription.id
+
+      await brokerage.save()
+
+      return {
+          statusCode: 200,
+          body: JSON.stringify(subscription)
+      }
     
 }
