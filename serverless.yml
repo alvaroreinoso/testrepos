@@ -692,3 +692,13 @@ functions:
             path: api/onboarding/team/{teamId}
             method: post
             cors: true
+
+  # Billing
+  webhookHandler:
+    handler:
+      ./handlers/billing.webhookHandler
+    events:
+        - http:
+            path: api/stripe-webhook
+            method: post
+            cors: true
