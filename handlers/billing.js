@@ -128,7 +128,7 @@ module.exports.createStripeSubscription = async (event, context) => {
 
     const brokerage = await Brokerage.findOne({
         where: {
-            id: brokerageId
+            id: reqBody.brokerageId
         }
     })
 
