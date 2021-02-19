@@ -84,7 +84,7 @@ module.exports.createStripeCustomer = async (event, context) => {
     brokerage.stripeCustomerId = customer.id
 
     await brokerage.save()
-    
+
     return {
         body: JSON.stringify(customer),
         statusCode: 200
@@ -97,45 +97,48 @@ module.exports.createStripeSubscription = async (event, context) => {
 
     try {
         await stripe.paymentMethods.attach(reqBody.paymentMethodId, {
-          customer: reqBody.customerId,
+            customer: reqBody.customerId,
         });
-      } catch (error) {
+    } catch (error) {
         console.log(error)
         return {
             statusCode: 402
         }
-      }
-    
-      let updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+    }
+
+    let updateCustomerDefaultPaymentMethod = await stripe.customers.update(
         reqBody.customerId,
         {
-          invoice_settings: {
-            default_payment_method: reqBody.paymentMethodId,
-          },
+            invoice_settings: {
+                default_payment_method: reqBody.paymentMethodId,
+            },
         }
-      );
+    );
 
-      const subscription = await stripe.subscriptions.create({
+    const subscription = await stripe.subscriptions.create({
         customer: reqBody.customerId,
         items: [
-          { price: 'price_HGd7M3DV3IMXkC', quantity: reqBody.quantity },
+            {
+                price: reqBody.priceId,
+                quantity: reqBody.quantity
+            },
         ],
         expand: ['latest_invoice.payment_intent', 'plan.product'],
-      });
+    });
 
-      const brokerage = await Brokerage.findOne({
-          where: {
-              id: brokerageId
-          }
-      })
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: brokerageId
+        }
+    })
 
-      brokerage.stripeSubscriptionId = subscription.id
+    brokerage.stripeSubscriptionId = subscription.id
 
-      await brokerage.save()
+    await brokerage.save()
 
-      return {
-          statusCode: 200,
-          body: JSON.stringify(subscription)
-      }
-    
+    return {
+        statusCode: 200,
+        body: JSON.stringify(subscription)
+    }
+
 }
