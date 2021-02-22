@@ -73,6 +73,9 @@ module.exports.createStripeCustomer = async (event, context) => {
 
     const customer = await stripe.customers.create({
         email: request.email,
+        name: request.name,
+        address: request.address,
+        phone:  request.phone
     });
 
     const brokerage = await Brokerage.findOne({
