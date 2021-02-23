@@ -2,6 +2,7 @@
 const getCurrentUser = require('.././helpers/user')
 const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const sendCreateAccountEmail = require('../ses/templates/createAccount')
+const testInvite = require('../ses/templates/testInvite')
 const { Team, User, Customer, Brokerage, Ledger } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
 const { v4: uuidv4 } = require('uuid');
@@ -57,6 +58,50 @@ module.exports.requestAccount = async (event, context) => {
         console.log(err)
         return {
             headers: corsHeaders,
+            statusCode: 500
+        }
+    }
+}
+
+module.exports.inviteUser = async (event, context) => {
+
+    try {
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+
+        if (currentUser.id == undefined) {
+            return {
+                statusCode: 401
+            }
+        }
+
+        if (currentUser.admin == false) {
+            return {
+                statusCode: 403
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const newUser = await User.create({
+            email: request.email,
+            brokerageId: currentUser.brokerageId
+        })
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                id: currentUser.brokerageId
+            }
+        })
+
+        await testInvite(newUser, brokerage.name)
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
+        return {
             statusCode: 500
         }
     }

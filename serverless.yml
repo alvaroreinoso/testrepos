@@ -658,6 +658,14 @@ functions:
             path: api/account
             method: post
             cors: true
+  inviteUser:
+    handler:
+      ./handlers/onboarding.inviteUser
+    events:
+        - http:
+            path: api/onboarding/user
+            method: post
+            cors: true
   getBrokerageByUUID:
     handler:
       ./handlers/onboarding.getBrokerageByUUID
