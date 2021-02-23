@@ -10,7 +10,6 @@ module.exports = {
       },
       address: {
         type: Sequelize.STRING,
-        unique: true
       },
       address2: {
         type: Sequelize.STRING,
