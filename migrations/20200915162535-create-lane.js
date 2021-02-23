@@ -17,7 +17,6 @@ module.exports = {
       routeGeometry: {
         type: Sequelize.TEXT,
         allowNull: true,
-        unique: true
       },
       ledgerId: {
         type: Sequelize.INTEGER,
