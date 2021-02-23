@@ -9,7 +9,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       address2: {
         type: Sequelize.STRING,
