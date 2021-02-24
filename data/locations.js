@@ -875,7 +875,7 @@ const locations = [
         "address": "959 Ridgeway Loop Rd",
         "address2": "",
         "city": "Memphis",
-        "state": "CA",
+        "state": "TN",
         "zipcode": 38120,
         // "open": "",
         // "close": "",
