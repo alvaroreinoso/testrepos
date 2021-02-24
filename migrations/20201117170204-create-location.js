@@ -45,7 +45,8 @@ module.exports = {
         allowNull: true
       },
       lnglat: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       open: {
         type: Sequelize.STRING

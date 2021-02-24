@@ -47,7 +47,10 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     email: DataTypes.STRING,
     ledgerId: DataTypes.INTEGER,
-    lnglat: DataTypes.STRING,
+    lnglat: {
+      type: DataTypes.STRING,
+      unique: true
+    },
     open: DataTypes.STRING,
     close: DataTypes.STRING,
     hoursType: DataTypes.STRING,
