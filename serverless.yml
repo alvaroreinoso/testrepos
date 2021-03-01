@@ -629,26 +629,6 @@ functions:
             method: delete
             cors: true
 
-  # CSV Upload
-  ascendLoadsUpload:
-    # warmup: true,
-    handler:
-      ./handlers/upload.ascendLoadsUpload
-    events:
-        - http:
-            path: api/upload/ascend
-            method: post
-            cors: true
-  ascendCustomerUpload:
-    # warmup: true,
-    handler:
-      ./handlers/upload.ascendCustomerUpload
-    events:
-        - http:
-            path: api/upload/ascend/customers
-            method: post
-            cors: true
-    
   # Onboarding
   createAccount:
     handler:
