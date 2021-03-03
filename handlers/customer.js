@@ -163,6 +163,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         if (lanes.length == 0) {
             return {
+                headers: corsHeaders,
                 statusCode: 200
             }
         }
