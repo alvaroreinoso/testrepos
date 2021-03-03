@@ -162,7 +162,15 @@ module.exports.getLanesForCustomer = async (event, context) => {
         }
 
         if (lanes.length == 0) {
+
+            const body = {
+                loadsPerWeek: 0,
+                spend: 0,
+                Lanes: lanes
+            }
+
             return {
+                body: JSON.stringify(body),
                 headers: corsHeaders,
                 statusCode: 200
             }
