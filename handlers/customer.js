@@ -161,6 +161,13 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
+        if (lanes.length == 0) {
+            return {
+                statusCode: 200
+            }
+        }
+
+
         const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
         const loadCounts = await lanes.map(async lane => {
