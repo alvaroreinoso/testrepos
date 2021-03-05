@@ -52,6 +52,32 @@ module.exports.getUser = async (event, context) => {
     }
 }
 
+module.exports.getEmailById = async (event, context) => {
+
+    try {
+
+        const userId = event.pathParameters.userId
+
+        const user = await User.findOne({
+            where: {
+                id: userId
+            }
+        })
+
+        return {
+            body: JSON.stringify(user.email),
+            statusCode: 200,
+            headers: corsHeaders
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
 module.exports.getUserById = async (event, context) => {
 
     try {

@@ -164,6 +164,14 @@ functions:
             path: api/user
             method: get
             cors: true
+  getEmailById:
+    handler:
+      ./handlers/user.getEmailById
+    events:
+        - http:
+            path: api/user/email/{userId}
+            method: get
+            cors: true
   deleteUser:
     # warmup: true,
     handler:
