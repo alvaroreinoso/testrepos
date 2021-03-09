@@ -115,8 +115,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }]
         })
 
-        let lanes = []
-        let laneSet = new Set()
+        let laneIds = new Set()
+        
         for (const location of locations) {
             const locationLanes = await Lane.findAll({
                 where: {
@@ -128,46 +128,14 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 order: [
                     ['frequency', 'DESC'],
                 ],
-                // include: [{
-                //     model: Location,
-                //     as: 'origin',
-                //     include: [{
-                //         model: CustomerLocation,
-                //         include: [{
-                //             model: Customer,
-                //             required: true
-                //         }]
-                //     },
-                //     {
-                //         model: LanePartner
-                //     }],
-                // }, {
-                //     model: Location,
-                //     as: 'destination',
-                //     include: [{
-                //         model: CustomerLocation,
-                //         include: [{
-                //             model: Customer,
-                //             required: true
-                //         }]
-                //     },
-                //     {
-                //         model: LanePartner
-                //     }],
-                // }]
             })
 
             for (const lane of locationLanes) {
-                lanes.push(lane)
-                laneSet.add(lane.id)
+                laneIds.add(lane.id)
             }
         }
 
-        for (const item of lanes) {
-            console.log(item.id)
-        }
-
-        const lanesFromSet = await Promise.all([...laneSet].map(async laneId => {
+        const lanes = await Promise.all([...laneIds].map(async laneId => {
 
             const lane = await Lane.findOne({
                 where: {
