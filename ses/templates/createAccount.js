@@ -18,7 +18,7 @@ module.exports = async (user, brokerage) => {
     TemplateData: JSON.stringify(data)
   }
 
-  AWS_SES.sendTemplatedEmail(params, (err) => {
+  await AWS_SES.sendTemplatedEmail(params, (err) => {
     if (err) console.log(err, err.stack);
   })
 }
