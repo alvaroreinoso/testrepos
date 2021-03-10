@@ -46,6 +46,9 @@ module.exports.requestAccount = async (event, context) => {
             await sendRequestAccountEmail(user)
 
         } else {
+
+            console.log('tms not undefined, calling email helper')
+            
             await sendCreateAccountEmail(user, brokerage)
         }
 

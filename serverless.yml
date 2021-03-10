@@ -641,6 +641,7 @@ functions:
   createAccount:
     handler:
       ./handlers/onboarding.requestAccount
+    timeout: 20
     events:
         - http:
             path: api/account

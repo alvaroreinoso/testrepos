@@ -7,6 +7,8 @@ module.exports = async (user, brokerage) => {
     UUID: brokerage.pin
   }
 
+  console.log('data in email template: ', data)
+
   const params = {
     Source: 'support@terralanes.com',
     Template: "TestCreateAccount",
@@ -19,8 +21,11 @@ module.exports = async (user, brokerage) => {
   }
 
   await AWS_SES.sendTemplatedEmail(params, (err) => {
+
     if (err) {
       throw err, err.stack
+    } else {
+      console.log('should have sent', params)
     }
   })
 }
