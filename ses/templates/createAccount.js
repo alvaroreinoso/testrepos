@@ -17,6 +17,7 @@ module.exports = async (user, brokerage) => {
         user.email
       ]
     },
+    ConfigurationSetName: 'Config',
     TemplateData: JSON.stringify(data)
   }
 
