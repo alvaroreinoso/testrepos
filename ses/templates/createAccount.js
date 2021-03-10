@@ -23,16 +23,18 @@ module.exports = async (user, brokerage) => {
 
   console.log('past params')
 
-  // return new Promise((r, x) => {
-    AWS_SES.sendTemplatedEmail(params, (err, data) => {
-      console.log('inside send templated email function')
-      if (err) {
-        throw err
-      } else {
-        console.log(data)
-      }
-    }).then(resp => console.log(resp))
+  function sendEmail(params) {
+    return new Promise((r, x) => {
+      AWS_SES.sendTemplatedEmail(params, (err, data) => {
+        console.log('inside send templated email function')
+        if (err) {
+          x(err)
+        } else {
+          r(data)
+        }
+      })
+    })
+  }
 
-    // return response
-  // })
+  return await sendEmail(params)
 }
