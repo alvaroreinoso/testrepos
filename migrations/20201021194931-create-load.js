@@ -12,6 +12,15 @@ module.exports = {
         type: Sequelize.INTEGER,
         unique: true
       },
+      brokerageId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        },
+        allowNull: false
+      },
       laneId: {
         type: Sequelize.INTEGER,
         references: {

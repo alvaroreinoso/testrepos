@@ -30,7 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         through: 'BrokerageTag',
         foreignKey: 'brokerageId'
       })
-
+      Brokerage.hasMany(models.Load, {
+        foreignKey: 'brokerageId'
+      })
     }
   };
   Brokerage.init({
