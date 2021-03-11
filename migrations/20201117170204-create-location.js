@@ -10,7 +10,6 @@ module.exports = {
       },
       address: {
         type: Sequelize.STRING,
-        unique: true
       },
       address2: {
         type: Sequelize.STRING,
@@ -51,7 +50,6 @@ module.exports = {
       lnglat: {
         type: Sequelize.STRING,
         allowNull: true,
-        unique: true
       },
       open: {
         type: Sequelize.STRING

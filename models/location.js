@@ -49,7 +49,6 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER,
     lnglat: {
       type: DataTypes.STRING,
-      unique: true
     },
     open: DataTypes.STRING,
     close: DataTypes.STRING,
