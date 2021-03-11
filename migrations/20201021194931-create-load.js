@@ -10,7 +10,6 @@ module.exports = {
       },
       loadId: {
         type: Sequelize.INTEGER,
-        unique: true
       },
       brokerageId: {
         type: Sequelize.INTEGER,
