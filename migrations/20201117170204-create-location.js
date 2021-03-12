@@ -15,6 +15,15 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      brokerageId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        },
+        allowNull: false
+      },
       city: {
         type: Sequelize.STRING,
         allowNull: true

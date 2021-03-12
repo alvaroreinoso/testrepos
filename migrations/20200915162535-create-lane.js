@@ -14,6 +14,15 @@ module.exports = {
       destinationLocationId: {
         type: Sequelize.INTEGER
       },
+      brokerageId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        },
+        allowNull: false
+      },
       routeGeometry: {
         type: Sequelize.TEXT,
         allowNull: true,
