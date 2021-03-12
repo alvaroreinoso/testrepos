@@ -33,6 +33,12 @@ module.exports = (sequelize, DataTypes) => {
       Brokerage.hasMany(models.Load, {
         foreignKey: 'brokerageId'
       })
+      Brokerage.hasMany(models.Lane, {
+        foreignKey: 'brokerageId'
+      })
+      Brokerage.hasMany(models.Location, {
+        foreignKey: 'brokerageId'
+      })
     }
   };
   Brokerage.init({
