@@ -13,10 +13,12 @@ module.exports.requestAccount = async (event, context) => {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
 
-        if (event.queryStringParameters.resend === true) {
+        if (event.queryStringParameters.resend == 'true') {
 
             const user = await User.findOne({
-                email: request.email
+                where: {
+                    email: request.email
+                }
             })
 
             const brokerage = await Brokerage.findOne({
