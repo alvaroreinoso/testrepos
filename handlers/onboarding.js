@@ -13,43 +13,59 @@ module.exports.requestAccount = async (event, context) => {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
 
-        const brokerage = await Brokerage.create({
-            pin: uuid,
-        })
+        if (event.queryStringParameters.resend = true) {
 
-        const ledger = await Ledger.create({
-            brokerageId: brokerage.id
-        })
+            const user = await User.findOne({
+                email: request.email
+            })
 
-        brokerage.ledgerId = ledger.id
-        await brokerage.save()
+            const brokerage = await Brokerage.findOne({
+                where: {
+                    id: user.brokerageId
+                }
+            })
 
-        const userLedger = await Ledger.create({
-            brokerageId: brokerage.id
-        })
-
-        const user = await User.create({
-            firstName: request.firstName,
-            lastName: request.lastName,
-            brokerageId: brokerage.id,
-            ledgerId: userLedger.id,
-            admin: true,
-            title: request.role,
-            email: request.email,
-            phone: request.phone,
-            phoneExt: request.ext
-        })
-
-        const tms = request.tms
-
-        if (tms === undefined) {
-            await sendRequestAccountEmail(user)
-
-        } else {
-
-            console.log('tms not undefined, calling email helper')
-            
             await sendCreateAccountEmail(user, brokerage)
+        }
+
+        else {
+
+            const tms = request.tms
+
+            if (tms === undefined) {
+                await sendRequestAccountEmail(user)
+
+            } else {
+
+                const brokerage = await Brokerage.create({
+                    pin: uuid,
+                })
+    
+                const ledger = await Ledger.create({
+                    brokerageId: brokerage.id
+                })
+    
+                brokerage.ledgerId = ledger.id
+                await brokerage.save()
+    
+                const userLedger = await Ledger.create({
+                    brokerageId: brokerage.id
+                })
+    
+                const user = await User.create({
+                    firstName: request.firstName,
+                    lastName: request.lastName,
+                    brokerageId: brokerage.id,
+                    ledgerId: userLedger.id,
+                    admin: true,
+                    title: request.role,
+                    email: request.email,
+                    phone: request.phone,
+                    phoneExt: request.ext
+                })
+
+                await sendCreateAccountEmail(user, brokerage)
+            }
         }
 
         return {
@@ -58,7 +74,6 @@ module.exports.requestAccount = async (event, context) => {
         }
 
     } catch (err) {
-        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
