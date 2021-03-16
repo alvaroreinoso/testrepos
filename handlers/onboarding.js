@@ -74,6 +74,7 @@ module.exports.requestAccount = async (event, context) => {
         }
 
     } catch (err) {
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
