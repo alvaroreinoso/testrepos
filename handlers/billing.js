@@ -1,6 +1,7 @@
 const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IHAhJHsDRF5ASkOBXJvvDl81evnBbqXr3cT44El9t9WUi098tGSR0hI6SKZiHHdHPbAudyT26V7vU4CjtqXhCnB00KPK9QDyk');
 const { Brokerage } = require('.././models')
+const corsHeaders = require('.././helpers/cors')
 require('dotenv').config()
 
 
@@ -23,6 +24,7 @@ module.exports.webhookHandler = async (event, context) => {
             `⚠️  Check the env file and enter the correct webhook secret.`
         );
         return {
+            headers: corsHeaders,
             statusCode: 400
         }
     }
@@ -61,6 +63,7 @@ module.exports.webhookHandler = async (event, context) => {
         // Unexpected event type
     }
     return {
+        headers: corsHeaders,
         statusCode: 200
     }
 }
@@ -89,6 +92,7 @@ module.exports.createStripeCustomer = async (event, context) => {
     await brokerage.save()
 
     return {
+        headers: corsHeaders,
         body: JSON.stringify(customer),
         statusCode: 200
     }
@@ -105,6 +109,7 @@ module.exports.createStripeSubscription = async (event, context) => {
     } catch (error) {
         console.log(error)
         return {
+            headers: corsHeaders,
             statusCode: 402
         }
     }
@@ -140,6 +145,7 @@ module.exports.createStripeSubscription = async (event, context) => {
     await brokerage.save()
 
     return {
+        headers: corsHeaders,
         statusCode: 200,
         body: JSON.stringify(subscription)
     }
