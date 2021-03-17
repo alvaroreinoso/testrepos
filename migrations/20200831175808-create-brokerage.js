@@ -52,6 +52,18 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true
       },
+      stripeCustomerId: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      stripeSubscriptionId: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      stripeProductId: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

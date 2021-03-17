@@ -7,6 +7,8 @@ module.exports = async (user, brokerage) => {
     UUID: brokerage.pin
   }
 
+  console.log('data in email template: ', data)
+
   const params = {
     Source: 'support@terralanes.com',
     Template: "TestCreateAccount",
@@ -15,10 +17,24 @@ module.exports = async (user, brokerage) => {
         user.email
       ]
     },
+    ConfigurationSetName: 'Config',
     TemplateData: JSON.stringify(data)
   }
 
-  AWS_SES.sendTemplatedEmail(params, (err) => {
-    if (err) console.log(err, err.stack);
-  })
+  console.log('past params')
+
+  function sendEmail(params) {
+    return new Promise((r, x) => {
+      AWS_SES.sendTemplatedEmail(params, (err, data) => {
+        console.log('inside send templated email function')
+        if (err) {
+          x(err)
+        } else {
+          r(data)
+        }
+      })
+    })
+  }
+
+  return await sendEmail(params)
 }

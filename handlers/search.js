@@ -101,11 +101,13 @@ module.exports.searchLedger = async (event, context) => {
         }
     })
 
+    console.log(searchResults.body.hits.hits)
+
     const dbResults = searchResults.body.hits.hits.map(message => {
 
         const results = Message.findOne({
             where: {
-                id: message._id
+                id: message._source.id
             },
             include: [{
                 model: User,
@@ -184,7 +186,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 
             const results = User.findOne({
                 where: {
-                    id: user._id
+                    id: user._source.id
                 }
             })
 
@@ -259,7 +261,7 @@ module.exports.searchContacts = async (event, context) => {
 
             const results = Contact.findOne({
                 where: {
-                    id: contact._id
+                    id: contact._source.id
                 }
             })
 

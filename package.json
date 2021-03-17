@@ -37,6 +37,7 @@
     "serverless-prune-plugin": "^1.4.3",
     "states-abbreviations": "^1.0.0",
     "string-similarity": "^4.0.3",
+    "stripe": "^8.137.0",
     "uuid": "^8.3.2"
   }
 }

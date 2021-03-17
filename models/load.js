@@ -17,10 +17,14 @@ module.exports = (sequelize, DataTypes) => {
       Load.belongsTo(models.Carrier, {
         foreignKey: 'carrierId'
       })
+      Load.belongsTo(models.Brokerage, {
+        foreignKey: 'brokerageId'
+      })
     }
   };
   Load.init({
     loadId: DataTypes.INTEGER,
+    brokerageId: DataTypes.INTEGER,
     laneId: DataTypes.INTEGER,
     carrierId: DataTypes.INTEGER,
     rate: DataTypes.INTEGER,

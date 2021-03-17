@@ -45,6 +45,7 @@ provider:
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
     SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
     SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
+    STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
 
 plugins:
   - serverless-offline
@@ -161,6 +162,14 @@ functions:
     events:
         - http:
             path: api/user
+            method: get
+            cors: true
+  getEmailById:
+    handler:
+      ./handlers/user.getEmailById
+    events:
+        - http:
+            path: api/user/email/{userId}
             method: get
             cors: true
   deleteUser:
@@ -628,33 +637,28 @@ functions:
             method: delete
             cors: true
 
-  # CSV Upload
-  ascendLoadsUpload:
-    # warmup: true,
-    handler:
-      ./handlers/upload.ascendLoadsUpload
-    events:
-        - http:
-            path: api/upload/ascend
-            method: post
-            cors: true
-  ascendCustomerUpload:
-    # warmup: true,
-    handler:
-      ./handlers/upload.ascendCustomerUpload
-    events:
-        - http:
-            path: api/upload/ascend/customers
-            method: post
-            cors: true
-    
   # Onboarding
   createAccount:
     handler:
       ./handlers/onboarding.requestAccount
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        # - subnet-03086cdd9e1e48134 # public
+    timeout: 20
     events:
         - http:
             path: api/account
+            method: post
+            cors: true
+  inviteUser:
+    handler:
+      ./handlers/onboarding.inviteUser
+    events:
+        - http:
+            path: api/onboarding/user
             method: post
             cors: true
   getBrokerageByUUID:
@@ -690,5 +694,31 @@ functions:
     events:
         - http:
             path: api/onboarding/team/{teamId}
+            method: post
+            cors: true
+
+  # Billing
+  webhookHandler:
+    handler:
+      ./handlers/billing.webhookHandler
+    events:
+        - http:
+            path: api/stripe-webhook
+            method: post
+            cors: true
+  createStripeCustomer:
+    handler:
+      ./handlers/billing.createStripeCustomer
+    events:
+        - http:
+            path: api/create-stripe-customer/{brokerageId}
+            method: post
+            cors: true
+  createStripeSubscription:
+    handler:
+      ./handlers/billing.createStripeSubscription
+    events:
+        - http:
+            path: api/create-stripe-subscription
             method: post
             cors: true

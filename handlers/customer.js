@@ -115,7 +115,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }]
         })
 
-        let lanes = []
+        let laneIds = new Set()
+        
         for (const location of locations) {
             const locationLanes = await Lane.findAll({
                 where: {
@@ -127,6 +128,19 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 order: [
                     ['frequency', 'DESC'],
                 ],
+            })
+
+            for (const lane of locationLanes) {
+                laneIds.add(lane.id)
+            }
+        }
+
+        const lanes = await Promise.all([...laneIds].map(async laneId => {
+
+            const lane = await Lane.findOne({
+                where: {
+                    id: laneId
+                },
                 include: [{
                     model: Location,
                     as: 'origin',
@@ -156,10 +170,24 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 }]
             })
 
-            for (const lane of locationLanes) {
-                lanes.push(lane)
+            return lane
+        }))
+
+        if (lanes.length == 0) {
+
+            const body = {
+                loadsPerWeek: 0,
+                spend: 0,
+                Lanes: lanes
+            }
+
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
             }
         }
+
 
         const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 

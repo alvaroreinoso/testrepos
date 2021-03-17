@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       Lane.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
       })
+      Lane.belongsTo(models.Brokerage, {
+        foreignKey: 'brokerageId'
+      })
       Lane.belongsToMany(models.User, {
         through: 'TaggedLane',
         foreignKey: 'laneId'
@@ -42,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
   Lane.init({
     originLocationId: DataTypes.INTEGER,
     destinationLocationId: DataTypes.INTEGER,
+    brokerageId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,

@@ -9,20 +9,32 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       address: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       address2: {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      brokerageId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Brokerages',
+          key: 'id',
+          as: 'brokerageId'
+        },
+        allowNull: false
+      },
       city: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       state: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true
       },
       zipcode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       phone: {
         type: Sequelize.STRING
@@ -45,7 +57,8 @@ module.exports = {
         allowNull: true
       },
       lnglat: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       open: {
         type: Sequelize.STRING

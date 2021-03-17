@@ -134,43 +134,57 @@ module.exports.getLanesForLocation = async (event, context) => {
         const locationId = event.pathParameters.locationId
 
         const lanes = await Lane.findAll({
+            attributes: ['id'],
             where: {
                 [Op.or]: [
                     { originLocationId: locationId },
                     { destinationLocationId: locationId }
                 ]
             },
-            include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }, {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }]
         })
 
+        const laneIds = new Set([...lanes].map(lane => lane.id))
+
+        const uniqueLanes = await Promise.all([...laneIds].map(async laneId => {
+
+            const lane = await Lane.findOne({
+                where: {
+                    id: laneId
+                },
+                include: [{
+                        model: Location,
+                        as: 'origin',
+                        include: [{
+                            model: CustomerLocation,
+                            include: [{
+                                model: Customer,
+                                required: true
+                            }]
+                        },
+                        {
+                            model: LanePartner
+                        }],
+                    }, {
+                        model: Location,
+                        as: 'destination',
+                        include: [{
+                            model: CustomerLocation,
+                            include: [{
+                                model: Customer,
+                                required: true
+                            }]
+                        },
+                        {
+                            model: LanePartner
+                        }],
+                    }]
+            })
+
+            return lane
+        }))
+
         return {
-            body: JSON.stringify(lanes),
+            body: JSON.stringify(uniqueLanes),
             headers: corsHeaders,
             statusCode: 200
         }

@@ -30,7 +30,15 @@ module.exports = (sequelize, DataTypes) => {
         through: 'BrokerageTag',
         foreignKey: 'brokerageId'
       })
-
+      Brokerage.hasMany(models.Load, {
+        foreignKey: 'brokerageId'
+      })
+      Brokerage.hasMany(models.Lane, {
+        foreignKey: 'brokerageId'
+      })
+      Brokerage.hasMany(models.Location, {
+        foreignKey: 'brokerageId'
+      })
     }
   };
   Brokerage.init({
@@ -44,7 +52,10 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
-    phone: DataTypes.STRING
+    phone: DataTypes.STRING,
+    stripeCustomerId: DataTypes.STRING,
+    stripeSubscriptionId: DataTypes.STRING,
+    stripeProductId: DataTypes.STRING,
   }, {
     hooks: {
       afterSave: async (brokerage, options) => {
