@@ -701,6 +701,13 @@ functions:
   webhookHandler:
     handler:
       ./handlers/billing.webhookHandler
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        # - subnet-03086cdd9e1e48134 # public
+    timeout: 20
     events:
         - http:
             path: api/stripe-webhook
@@ -709,6 +716,13 @@ functions:
   createStripeCustomer:
     handler:
       ./handlers/billing.createStripeCustomer
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        # - subnet-03086cdd9e1e48134 # public
+    timeout: 20
     events:
         - http:
             path: api/create-stripe-customer/{brokerageId}
@@ -717,6 +731,13 @@ functions:
   createStripeSubscription:
     handler:
       ./handlers/billing.createStripeSubscription
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        # - subnet-03086cdd9e1e48134 # public
+    timeout: 20
     events:
         - http:
             path: api/create-stripe-subscription
