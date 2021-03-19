@@ -646,7 +646,6 @@ functions:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
     timeout: 20
     events:
         - http:
@@ -656,6 +655,11 @@ functions:
   inviteUser:
     handler:
       ./handlers/onboarding.inviteUser
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
     events:
         - http:
             path: api/onboarding/user
