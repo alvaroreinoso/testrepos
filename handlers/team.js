@@ -232,25 +232,38 @@ module.exports.getLanesForTeam = async (event, context) => {
             return lane
         })
 
+        if (lanes.length == 0) {
+            const body = {
+                revenue: 0,
+                loadsPerWeek: 0,
+                Lanes: []
+            }
 
-        const lanesResolved = await Promise.all(lanes)
-        const laneSpend = lanesResolved.map(lane => lane.spend)
-        const teamSpend = await laneSpend.reduce((a, b) => a + b)
-
-        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-
-        const body = {
-            revenue: teamSpend,
-            loadsPerWeek: loadsPerWeek.frequency,
-            Lanes: lanesResolved
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
+        else {
+            const lanesResolved = await Promise.all(lanes)
+            const laneSpend = lanesResolved.map(lane => lane.spend)
+            const teamSpend = await laneSpend.reduce((a, b) => a + b)
 
-        return {
-            body: JSON.stringify(body),
-            headers: corsHeaders,
-            statusCode: 200
+            const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+
+            const body = {
+                revenue: teamSpend,
+                loadsPerWeek: loadsPerWeek.frequency,
+                Lanes: lanesResolved
+            }
+
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
-
     }
 
     catch (err) {
