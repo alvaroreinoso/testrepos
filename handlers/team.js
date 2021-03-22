@@ -410,7 +410,7 @@ module.exports.removeTeammate = async (event, context) => {
     if (user.admin == false) {
         return {
             headers: corsHeaders,
-            statusCode:403
+            statusCode: 403
         }
     }
 
@@ -441,34 +441,57 @@ module.exports.removeTeammate = async (event, context) => {
 
 module.exports.addTeammate = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+    try {
 
-    if (user.id == null) {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const targetUserId = request.userId
+        const teamId = request.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId
+            }
+        })
+
+        if (team.brokerageId != user.brokerageId) {
+            return {
+                statusCode: 403
+            }
+        }
+
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId
+            }
+        })
+
+        if (targetUser.brokerageId != user.brokerageId) {
+            return {
+                statusCode: 403
+            }
+        }
+
+        targetUser.teamId = teamId
+
+        await targetUser.save()
 
         return {
             headers: corsHeaders,
-            statusCode: 401
+            statusCode: 204
+        }
+    } catch (err) {
+        return {
+            statusCode: 500
         }
     }
-
-    const request = JSON.parse(event.body)
-
-    const targetUserId = request.userId
-    const teamId = request.teamId
-
-    const targetUser = await User.findOne({
-        where: {
-            id: targetUserId
-        }
-    })
-
-    targetUser.teamId = teamId
-
-    await targetUser.save()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 204
-    }
-
 }
