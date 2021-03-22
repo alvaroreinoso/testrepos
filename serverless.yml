@@ -691,15 +691,6 @@ functions:
             path: api/onboarding/customers
             method: get
             cors: true
-  joinTeam:
-    # warmup: true,
-    handler:
-      ./handlers/onboarding.joinTeam
-    events:
-        - http:
-            path: api/onboarding/team/{teamId}
-            method: post
-            cors: true
 
   # Billing
   webhookHandler:

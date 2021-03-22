@@ -159,31 +159,6 @@ module.exports.getBrokerageByUUID = async (event, context) => {
     }
 }
 
-module.exports.joinTeam = async (event, context) => {
-
-    try {
-        const user = await getCurrentUser(event.headers.Authorization)
-
-        const teamId = event.pathParameters.teamId
-
-        user.teamId = teamId
-
-        await user.save()
-
-        return {
-            headers: corsHeaders,
-            statusCode: 204
-        }
-    } catch (err) {
-
-        return {
-            headers: corsHeaders,
-            statusCode: 500
-        }
-    }
-
-}
-
 module.exports.getTeamsForBrokerage = async (event, context) => {
 
 
