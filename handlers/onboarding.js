@@ -35,7 +35,7 @@ module.exports.requestAccount = async (event, context) => {
             const tms = request.tms
 
             if (tms === undefined) {
-                await sendRequestAccountEmail(user)
+                await sendRequestAccountEmail(request)
 
             } else {
 

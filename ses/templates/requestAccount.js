@@ -1,14 +1,14 @@
 const AWS_SES = require('../client')
 
-module.exports = async (user) => {
+module.exports = async (request) => {
 
   const data = {
-    firstName: user.firstName,
-    lastName: user.lastName,
-    role: user.title,
-    phone: user.phone,
-    ext: user.phoneExt,
-    email: user.email
+    firstName: request.firstName,
+    lastName: request.lastName,
+    role: request.role,
+    phone: request.phone,
+    ext: request.ext,
+    email: request.email
   }
 
   const params = {
@@ -22,7 +22,17 @@ module.exports = async (user) => {
     TemplateData: JSON.stringify(data)
   }
 
-  AWS_SES.sendTemplatedEmail(params, (err) => {
-    if (err) console.log(err, err.stack);
-  })
+  function sendEmail(params) {
+    return new Promise((r, x) => {
+      AWS_SES.sendTemplatedEmail(params, (err, data) => {
+        if (err) {
+          x(err)
+        } else {
+          r(data)
+        }
+      })
+    })
+  }
+
+  return await sendEmail(params)
 }

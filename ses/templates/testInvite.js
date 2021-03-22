@@ -19,10 +19,25 @@ module.exports = async (user, brokerageName) => {
         TemplateData: JSON.stringify(data)
     }
 
-    AWS_SES.sendTemplatedEmail(params, (data, err) => {
+    // AWS_SES.sendTemplatedEmail(params, (data, err) => {
 
-        console.log(data)
-        if (err) console.log(err, err.stack);
-    })
+    //     console.log(data)
+    //     if (err) console.log(err, err.stack);
+    // })
+
+    function sendEmail(params) {
+        return new Promise((r, x) => {
+          AWS_SES.sendTemplatedEmail(params, (err, data) => {
+            console.log('inside send templated email function')
+            if (err) {
+              x(err)
+            } else {
+              r(data)
+            }
+          })
+        })
+      }
+    
+    return await sendEmail(params)
 
 }
