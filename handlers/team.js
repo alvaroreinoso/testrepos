@@ -411,44 +411,66 @@ module.exports.deleteTeam = async (event, context) => {
 
 module.exports.removeTeammate = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    if (user.id == null) {
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        const targetUserId = event.pathParameters.userId
+
+        if (user.admin == true) {
+
+            const targetUser = await User.findOne({
+                where: {
+                    id: targetUserId,
+                    brokerageId: user.brokerageId
+                }
+            })
+
+            if (targetUser == null) {
+                return {
+                    statusCode: 404
+                }
+            }
+
+            targetUser.teamId = null
+
+            await targetUser.save()
+
+            return {
+                headers: corsHeaders,
+                statusCode: 204
+            }
+        } else {
+
+            if (targetUserId != user.id) {
+                return {
+                    headers: corsHeaders,
+                    statusCode: 403
+                }
+            }
+
+            else {
+
+                user.teamId = null
+
+                await user.save()
+
+                return {
+                    headers: corsHeaders,
+                    statusCode: 403
+                }
+            }
+        }
+    } catch (err) {
         return {
-            headers: corsHeaders,
-            statusCode: 401
+            statusCode: 500
         }
-    }
-
-    if (user.admin == false) {
-        return {
-            headers: corsHeaders,
-            statusCode: 403
-        }
-    }
-
-    const targetUserId = event.pathParameters.userId
-
-    const targetUser = await User.findOne({
-        where: {
-            id: targetUserId,
-            brokerageId: user.brokerageId
-        }
-    })
-
-    if (targetUser == null) {
-        return {
-            statusCode: 404
-        }
-    }
-
-    targetUser.teamId = null
-
-    await targetUser.save()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 204
     }
 }
 
