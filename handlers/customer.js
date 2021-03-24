@@ -202,15 +202,15 @@ module.exports.getLanesForCustomer = async (event, context) => {
         //     return frequency
         // })
 
-        const spendPerMonth = await lanes.reduce((a, b) => ((a.frequency * 4) + (b.frequency * 4)))
+        const loadsPerMonth = await lanes.reduce((a, b) => ((a.frequency * 4) + (b.frequency * 4)))
 
 
         // const loadsResolved = await Promise.all(loadCounts)
         // const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
 
-        customer.dataValues.loadsPerMonth = totalLoads
-        // customer.dataValues.spendPerMonth = totalSpend.spend
-        customer.dataValues.spendPerMonth = spendPerMonth
+        // customer.dataValues.loadsPerMonth = totalLoads
+        customer.dataValues.spendPerMonth = totalSpend.spend
+        customer.dataValues.spendPerMonth = loadsPerMonth
 
         const body = {
             loadsPerWeek: totalLoads,
