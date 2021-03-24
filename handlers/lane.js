@@ -3,6 +3,7 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
+const sequelize = requrie('sequelize')
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -145,17 +146,30 @@ module.exports.getTopCarriers = async (event, context) => {
         }
     })
 
+    // const carriers = await Carrier.findAll({
+    //     include: [{
+    //         model: Load,
+    //         // attributes: ['User.*', 'Post.*', [sequelize.fn('COUNT', 'Post.id'), 'PostCount']],
+    //         // include: [Post],
+    //         where: {
+    //             laneId: lane.id
+    //         }
+    //     }],
+    // });
+
     const carriers = await Carrier.findAll({
+        attributes: ['Carrier.*', 'Load.*', [sequelize.fn('COUNT', 'Load.id'), 'LoadCount']],
         include: [{
             model: Load,
-            // attributes: { 
-            //     include: [[Sequelize.fn("COUNT", Sequelize.col("sensors.id")), "sensorCount"]] 
-            // },
             where: {
                 laneId: lane.id
             }
-        }],
-    });
+        }]
+    })
+
+    // const topCarriers = await carriers.map(carrier => {
+
+    // })
 
     return {
         body: JSON.stringify(carriers),
