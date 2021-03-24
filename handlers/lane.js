@@ -3,7 +3,7 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
-const sequelize = requrie('sequelize')
+const sequelize = require('sequelize')
 
 module.exports.getLanesByUser = async (event, context) => {
 
