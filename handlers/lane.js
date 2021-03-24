@@ -175,7 +175,7 @@ module.exports.getTopCarriers = async (event, context) => {
             carrier.dataValues.loadCount = carrier.Loads.length
             carrier.dataValues.historicalRate = carrier.Loads[0].rate
 
-            delete carrier.Loads
+            delete carrier.dataValues.Loads
 
             return carrier
         })
