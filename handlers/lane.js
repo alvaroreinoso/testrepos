@@ -146,33 +146,34 @@ module.exports.getTopCarriers = async (event, context) => {
         }
     })
 
-    // const carriers = await Carrier.findAll({
-    //     include: [{
-    //         model: Load,
-    //         // attributes: ['User.*', 'Post.*', [sequelize.fn('COUNT', 'Post.id'), 'PostCount']],
-    //         // include: [Post],
-    //         where: {
-    //             laneId: lane.id
-    //         }
-    //     }],
-    // });
-
     const carriers = await Carrier.findAll({
-        attributes: ['Carrier.*', 'Load.*', [sequelize.fn('COUNT', 'Load.id'), 'LoadCount']],
         include: [{
             model: Load,
             where: {
                 laneId: lane.id
             }
-        }]
-    })
+        }],
+    });
 
-    // const topCarriers = await carriers.map(carrier => {
-
+    // const carriers = await Carrier.findAll({
+    //     attributes: ['Carrier.*', 'Load.*', [sequelize.fn('COUNT', 'Load.id'), 'LoadCount']],
+    //     include: [{
+    //         model: Load,
+    //         where: {
+    //             laneId: lane.id
+    //         }
+    //     }]
     // })
 
+    const topCarriers = await carriers.map(carrier => {
+        carrier.dataValues.loadCount = carrier.Loads.length
+        carrier.dataValues.historicalRate = carrier.Loads[0].rate
+
+        return carrier
+    })
+
     return {
-        body: JSON.stringify(carriers),
+        body: JSON.stringify(topCarriers),
         headers: corsHeaders,
         statusCode: 200
     }
