@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, CustomerLocation, Carrier, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
+const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
 
@@ -145,7 +145,7 @@ module.exports.getTopCarriers = async (event, context) => {
         }
     })
 
-    const carriers = Carrier.findAll({
+    const carriers = await Carrier.findAll({
         include: [{
             model: Load,
             // attributes: { 
