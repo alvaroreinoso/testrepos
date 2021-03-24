@@ -169,58 +169,58 @@ module.exports.getTopCarriers = async (event, context) => {
 
     // count loads by carrier
 
-    if (lane === null) {
-        return {
-            statusCode: 404
-        }
-    }
+    // if (lane === null) {
+    //     return {
+    //         statusCode: 404
+    //     }
+    // }
 
-    const loads = await lane.getLoads({
-        include: [{
-            model: Carrier,
-            required: true
-        }]
-    })
+    // const loads = await lane.getLoads({
+    //     include: [{
+    //         model: Carrier,
+    //         required: true
+    //     }]
+    // })
 
-    const carriers = await loads.map(load => load.Carrier.name)
+    // const carriers = await loads.map(load => load.Carrier.name)
 
-    let counts = {}
+    // let counts = {}
 
-    for (let i = 0; i < carriers.length; i++) {
-        let num = carriers[i];
-        counts[num] = counts[num] ? counts[num] + 1 : 1;
-    }
+    // for (let i = 0; i < carriers.length; i++) {
+    //     let num = carriers[i];
+    //     counts[num] = counts[num] ? counts[num] + 1 : 1;
+    // }
 
-    const sorted = Object.fromEntries(
-        Object.entries(counts).sort(([,a],[,b]) => b-a)
-    );
+    // const sorted = Object.fromEntries(
+    //     Object.entries(counts).sort(([,a],[,b]) => b-a)
+    // );
     
-    const topCarriers = Object.keys(sorted).map(async item => {
+    // const topCarriers = Object.keys(sorted).map(async item => {
 
-        const carrier = await Carrier.findOne({
-            where: {
-                name: item
-            },
-        })
+    //     const carrier = await Carrier.findOne({
+    //         where: {
+    //             name: item
+    //         },
+    //     })
 
-        const loads = await carrier.getLoads()
+    //     const loads = await carrier.getLoads()
 
-        const rates = await loads.map(load => load.rate)
-        const rateSum = await rates.reduce((a, b) => { return a + b })
-        const historicalRate = rateSum / rates.length
+    //     const rates = await loads.map(load => load.rate)
+    //     const rateSum = await rates.reduce((a, b) => { return a + b })
+    //     const historicalRate = rateSum / rates.length
         
-        carrier.dataValues.historicalRate = historicalRate
+    //     carrier.dataValues.historicalRate = historicalRate
 
-        return carrier
-    })
+    //     return carrier
+    // })
 
-    const results = await Promise.all(topCarriers)
+    // const results = await Promise.all(topCarriers)
 
-    return {
-        body: JSON.stringify(results),
-        statusCode: 200,
-        headers: corsHeaders
-    }
+    // return {
+    //     body: JSON.stringify(results),
+    //     statusCode: 200,
+    //     headers: corsHeaders
+    // }
     } catch(err) {
         console.log(err)
         return {
