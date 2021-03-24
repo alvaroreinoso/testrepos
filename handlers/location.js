@@ -21,7 +21,8 @@ module.exports.getLocationById = async (event, context) => {
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             },
             include: [
                 {
@@ -36,6 +37,12 @@ module.exports.getLocationById = async (event, context) => {
                 }]
         })
 
+        if (location === null) {
+            return {
+                statusCode: 404
+            }
+        }
+
         const lanes = await location.getLanes()
 
         if (lanes.length != 0) {
@@ -44,21 +51,11 @@ module.exports.getLocationById = async (event, context) => {
 
             const loadsPerMonthPerLane = await lanes.map( lane => {
 
-                // const frequency = await getFrequency(lane) // returns loads per week per lane
-
-                // if (frequency == 0) {
-                //     return 0
-                // }
-
-                // return frequency
-
                 const loadsPerMonth = lane.frequency * 4
 
                 return loadsPerMonth
             })
 
-            // const loadsResolved = await Promise.all(loadsPerWeekPerLane)
-            // const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
             const totalLoadsPerMonth = loadsPerMonthPerLane.reduce((a, b) => { return a + b })
 
             location.dataValues.loadsPerMonth = totalLoadsPerMonth
