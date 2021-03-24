@@ -145,6 +145,30 @@ module.exports.getTopCarriers = async (event, context) => {
         }
     })
 
+    const carriers = Carrier.findAll({
+        include: [{
+            model: Load,
+            // attributes: { 
+            //     include: [[Sequelize.fn("COUNT", Sequelize.col("sensors.id")), "sensorCount"]] 
+            // },
+            where: {
+                laneId: lane.id
+            }
+        }],
+    });
+
+    return {
+        body: JSON.stringify(carriers),
+        headers: corsHeaders,
+        statusCode: 200
+    }
+
+    // find lane 
+
+    // get loads
+
+    // count loads by carrier
+
     if (lane === null) {
         return {
             statusCode: 404
