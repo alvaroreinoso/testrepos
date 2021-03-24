@@ -42,21 +42,26 @@ module.exports.getLocationById = async (event, context) => {
 
             const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            const loadsPerWeekPerLane = await lanes.map(async lane => {
+            const loadsPerMonthPerLane = await lanes.map( lane => {
 
-                const frequency = await getFrequency(lane) // returns loads per week per lane
+                // const frequency = await getFrequency(lane) // returns loads per week per lane
 
-                if (frequency == 0) {
-                    return 0
-                }
+                // if (frequency == 0) {
+                //     return 0
+                // }
 
-                return frequency
+                // return frequency
+
+                const loadsPerMonth = lane.frequency * 4
+
+                return loadsPerMonth
             })
 
-            const loadsResolved = await Promise.all(loadsPerWeekPerLane)
-            const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+            // const loadsResolved = await Promise.all(loadsPerWeekPerLane)
+            // const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+            const totalLoadsPerMonth = loadsPerMonthPerLane.reduce((a, b) => { return a + b })
 
-            location.dataValues.loadsPerWeek = totalLoads
+            location.dataValues.loadsPerMonth = totalLoadsPerMonth
             location.dataValues.spendPerMonth = totalSpend.spend
 
             return {
