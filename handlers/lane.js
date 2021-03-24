@@ -137,106 +137,114 @@ module.exports.getLaneById = async (event, context) => {
 module.exports.getTopCarriers = async (event, context) => {
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    const laneId = event.pathParameters.laneId
-
-    const lane = await Lane.findOne({
-        where: {
-            id: laneId
-        }
-    })
-
-    const carriers = await Carrier.findAll({
-        include: [{
-            model: Load,
-            where: {
-                laneId: lane.id
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
             }
-        }],
-    });
+        }
 
-    // const carriers = await Carrier.findAll({
-    //     attributes: ['Carrier.*', 'Load.*', [sequelize.fn('COUNT', 'Load.id'), 'LoadCount']],
-    //     include: [{
-    //         model: Load,
-    //         where: {
-    //             laneId: lane.id
-    //         }
-    //     }]
-    // })
+        const laneId = event.pathParameters.laneId
 
-    const topCarriers = await carriers.map(carrier => {
-        carrier.dataValues.loadCount = carrier.Loads.length
-        carrier.dataValues.historicalRate = carrier.Loads[0].rate
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
 
-        return carrier
-    })
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
-    return {
-        body: JSON.stringify(topCarriers),
-        headers: corsHeaders,
-        statusCode: 200
-    }
+        const carriers = await Carrier.findAll({
+            include: [{
+                model: Load,
+                where: {
+                    laneId: lane.id
+                }
+            }],
+        });
 
-    // find lane 
+        const carriersWithCount = await carriers.map(carrier => {
+            carrier.dataValues.loadCount = carrier.Loads.length
+            carrier.dataValues.historicalRate = carrier.Loads[0].rate
 
-    // get loads
+            return carrier
+        })
 
-    // count loads by carrier
+        const topCarriers = await carriersWithCount.sort((a, b) => b.loadCount - a.loadCount)
 
-    // if (lane === null) {
-    //     return {
-    //         statusCode: 404
-    //     }
-    // }
+        return {
+            body: JSON.stringify(topCarriers),
+            headers: corsHeaders,
+            statusCode: 200
+        }
 
-    // const loads = await lane.getLoads({
-    //     include: [{
-    //         model: Carrier,
-    //         required: true
-    //     }]
-    // })
+        // find lane 
 
-    // const carriers = await loads.map(load => load.Carrier.name)
+        // get loads
 
-    // let counts = {}
+        // count loads by carrier
 
-    // for (let i = 0; i < carriers.length; i++) {
-    //     let num = carriers[i];
-    //     counts[num] = counts[num] ? counts[num] + 1 : 1;
-    // }
+        // if (lane === null) {
+        //     return {
+        //         statusCode: 404
+        //     }
+        // }
 
-    // const sorted = Object.fromEntries(
-    //     Object.entries(counts).sort(([,a],[,b]) => b-a)
-    // );
-    
-    // const topCarriers = Object.keys(sorted).map(async item => {
+        // const loads = await lane.getLoads({
+        //     include: [{
+        //         model: Carrier,
+        //         required: true
+        //     }]
+        // })
 
-    //     const carrier = await Carrier.findOne({
-    //         where: {
-    //             name: item
-    //         },
-    //     })
+        // const carriers = await loads.map(load => load.Carrier.name)
 
-    //     const loads = await carrier.getLoads()
+        // let counts = {}
 
-    //     const rates = await loads.map(load => load.rate)
-    //     const rateSum = await rates.reduce((a, b) => { return a + b })
-    //     const historicalRate = rateSum / rates.length
-        
-    //     carrier.dataValues.historicalRate = historicalRate
+        // for (let i = 0; i < carriers.length; i++) {
+        //     let num = carriers[i];
+        //     counts[num] = counts[num] ? counts[num] + 1 : 1;
+        // }
 
-    //     return carrier
-    // })
+        // const sorted = Object.fromEntries(
+        //     Object.entries(counts).sort(([,a],[,b]) => b-a)
+        // );
 
-    // const results = await Promise.all(topCarriers)
+        // const topCarriers = Object.keys(sorted).map(async item => {
 
-    // return {
-    //     body: JSON.stringify(results),
-    //     statusCode: 200,
-    //     headers: corsHeaders
-    // }
-    } catch(err) {
+        //     const carrier = await Carrier.findOne({
+        //         where: {
+        //             name: item
+        //         },
+        //     })
+
+        //     const loads = await carrier.getLoads()
+
+        //     const rates = await loads.map(load => load.rate)
+        //     const rateSum = await rates.reduce((a, b) => { return a + b })
+        //     const historicalRate = rateSum / rates.length
+
+        //     carrier.dataValues.historicalRate = historicalRate
+
+        //     return carrier
+        // })
+
+        // const results = await Promise.all(topCarriers)
+
+        // return {
+        //     body: JSON.stringify(results),
+        //     statusCode: 200,
+        //     headers: corsHeaders
+        // }
+    } catch (err) {
         console.log(err)
         return {
             statusCode: 500,
