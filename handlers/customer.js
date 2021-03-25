@@ -235,12 +235,30 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 customerId: customerId
             },
             include: [{
-                model: Location
+                model: Location,
+                include: [{
+                    model: Lane
+                }]
             }]
         })
 
+        const locationsWithStats = await customerLocations.map(cL => {
+
+            const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
+            const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
+
+
+            delete cL.dataValues.Lanes
+            cL.dataValues.spend = spend
+            cL.dataValues.loadsPerMonth = loadsPerWeek * 4
+
+            return cL
+        })
+
+        const sortedLocations = locationsWithStats.sort((a, b) => b.spend - a.spend)
+
         return {
-            body: JSON.stringify(customerLocations),
+            body: JSON.stringify(sortedLocations),
             statusCode: 200,
             headers: corsHeaders
         }
