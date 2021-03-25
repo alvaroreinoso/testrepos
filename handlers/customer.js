@@ -242,7 +242,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }]
         })
 
-        const locationsWithStats = await customerLocations.map(async cL => {
+        const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
             const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
             const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
@@ -253,7 +253,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             cL.dataValues.loadsPerMonth = loadsPerWeek * 4
 
             return cL
-        })
+        }))
 
         const sortedLocations = locationsWithStats.sort((a, b) => b.spend - a.spend)
 
