@@ -237,7 +237,8 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             include: [{
                 model: Location,
                 include: [{
-                    model: Lane
+                    model: Lane,
+                    attributes: ['spend', 'frequency']
                 }]
             }]
         })
@@ -249,8 +250,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 cL.dataValues.spend = 0
                 cL.dataValues.loadsPerMonth = 0
 
-                await delete cL.dataValues.Location.Lanes
-
                 return cL
 
             } else {
@@ -258,8 +257,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
                 const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
 
-                console.log('lanes inside map: ', cL.dataValues.Location.Lanes)
-                await delete cL.dataValues.Location.Lanes
                 cL.dataValues.spend = spend
                 cL.dataValues.loadsPerMonth = loadsPerWeek * 4
 
