@@ -195,11 +195,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const loadsPerMonth = loadsPerWeek.frequency * 4
 
-        customer.dataValues.spendPerMonth = totalSpend.spend
-        customer.dataValues.loadsPerMonth = loadsPerMonth
-
         const body = {
-            loadsPerMonth: loadsPerMonth.frequency,
+            loadsPerMonth: loadsPerMonth,
             spend: totalSpend.spend,
             Lanes: lanes
         }
