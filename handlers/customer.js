@@ -242,6 +242,8 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }]
         })
 
+        console.log('initial query', customerLocations)
+
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
             const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
