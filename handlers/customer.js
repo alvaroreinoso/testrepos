@@ -213,7 +213,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
         customer.dataValues.loadsPerMonth = loadsPerMonth.frequency
 
         const body = {
-            loadsPerWeek: totalLoads,
+            loadsPerMonth: loadsPerMonth.frequency,
             spend: totalSpend.spend,
             Lanes: lanes
         }
