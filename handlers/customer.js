@@ -188,17 +188,17 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
+        const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
         const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
         const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-
         const loadsPerMonth = loadsPerWeek.frequency * 4
 
         const body = {
             loadsPerMonth: loadsPerMonth,
             spend: totalSpend.spend,
-            Lanes: lanes
+            Lanes: sortedLanes
         }
 
         return {
