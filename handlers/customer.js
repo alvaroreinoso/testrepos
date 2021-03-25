@@ -255,7 +255,9 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             return cL
         }))
 
-        const sortedLocations = locationsWithStats.sort((a, b) => b.spend - a.spend)
+        console.log('map result:', locationsWithStats)
+
+        const sortedLocations = await locationsWithStats.sort((a, b) => b.spend - a.spend)
 
         return {
             body: JSON.stringify(sortedLocations),
@@ -264,7 +266,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
