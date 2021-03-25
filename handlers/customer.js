@@ -242,7 +242,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }]
         })
 
-        const locationsWithStats = await customerLocations.map(cL => {
+        const locationsWithStats = await customerLocations.map(async cL => {
 
             const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
             const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
