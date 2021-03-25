@@ -116,7 +116,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
         })
 
         let laneIds = new Set()
-        
+
         for (const location of locations) {
             const locationLanes = await Lane.findAll({
                 where: {
@@ -246,15 +246,26 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
-            const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
-            const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
+            if (cL.Location.Lanes.length == 0) {
 
+                cL.dataValues.spend = 0
+                cL.dataValues.loadsPerMonth = 0
 
-            delete cL.dataValues.Lanes
-            cL.dataValues.spend = spend
-            cL.dataValues.loadsPerMonth = loadsPerWeek * 4
+                delete cL.dataValues.Lanes
 
-            return cL
+                return cL
+
+            } else {
+
+                const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
+                const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
+
+                delete cL.dataValues.Lanes
+                cL.dataValues.spend = spend
+                cL.dataValues.loadsPerMonth = loadsPerWeek * 4
+
+                return cL
+            }
         }))
 
         console.log('map result:', locationsWithStats)
