@@ -242,8 +242,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }]
         })
 
-        console.log('initial query', customerLocations)
-
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
             if (cL.Location.Lanes.length == 0) {
@@ -260,6 +258,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
                 const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
 
+                console.log('lanes inside map: ', cL.dataValues.Location.Lanes)
                 delete cL.dataValues.Location.Lanes
                 cL.dataValues.spend = spend
                 cL.dataValues.loadsPerMonth = loadsPerWeek * 4
@@ -267,8 +266,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 return cL
             }
         }))
-
-        console.log('map result:', locationsWithStats)
 
         const sortedLocations = await locationsWithStats.sort((a, b) => b.spend - a.spend)
 
