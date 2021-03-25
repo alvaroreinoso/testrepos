@@ -249,7 +249,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 cL.dataValues.spend = 0
                 cL.dataValues.loadsPerMonth = 0
 
-                delete cL.dataValues.Location.Lanes
+                await delete cL.dataValues.Location.Lanes
 
                 return cL
 
@@ -259,7 +259,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
 
                 console.log('lanes inside map: ', cL.dataValues.Location.Lanes)
-                delete cL.dataValues.Location.Lanes
+                await delete cL.dataValues.Location.Lanes
                 cL.dataValues.spend = spend
                 cL.dataValues.loadsPerMonth = loadsPerWeek * 4
 
