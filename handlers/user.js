@@ -514,6 +514,8 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
+
         return {
             headers: corsHeaders,
             statusCode: 500,
