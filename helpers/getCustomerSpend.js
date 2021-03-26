@@ -1,22 +1,72 @@
+const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+
 module.exports.getCustomerSpend = async (customer) => {
-    const locations = await customer.getCustomerLocations()
 
-    const spendForLocation = await locations.map(async cLocation => {
-
-        const location = await cLocation.getLocation()
-
-        const lanes = await location.getLanes()
-
-        const spendForLane = lanes.map(lane => lane.spend)
-
-        return spendForLane
+    const locations = await customer.getCustomerLocations({
+        include: [{
+            model: Location,
+        }]
     })
 
-    const final = await Promise.all(spendForLocation)
+    let laneIds = new Set()
 
-    const sumPerLocation = final.map(item => item.reduce((a, b) => a + b, 0))
+    for (const location of locations) {
+        const locationLanes = await Lane.findAll({
+            where: {
+                [Op.or]: [
+                    { originLocationId: location.Location.id },
+                    { destinationLocationId: location.Location.id }
+                ]
+            },
+            order: [
+                ['frequency', 'DESC'],
+            ],
+        })
 
-    const sumForCustomer = sumPerLocation.reduce((a, b) => a + b, 0)
+        for (const lane of locationLanes) {
+            laneIds.add(lane.id)
+        }
+    }
 
-    return sumForCustomer
+    const lanes = await Promise.all([...laneIds].map(async laneId => {
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId
+            },
+            include: [{
+                model: Location,
+                as: 'origin',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }, {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
+        })
+
+        return lane
+    }))
+
+    const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+    return customerSpend.spend
 }

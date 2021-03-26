@@ -122,7 +122,7 @@ module.exports.getUserById = async (event, context) => {
 
         if (lanes.length == 0) {
             user.dataValues.revenue = 0
-            user.dataValues.loadsPerWeek = 0
+            user.dataValues.loadsPerMonth = 0
 
             return {
                 body: JSON.stringify(user),
@@ -134,8 +134,8 @@ module.exports.getUserById = async (event, context) => {
         const revenue = await laneSpend.reduce((a, b) => (a + b))
         user.dataValues.revenue = revenue
 
-        const loadsPerMonth = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-        user.dataValues.loadsPerMonth = loadsPerMonth.frequency * 4
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+        user.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
 
         return {
             body: JSON.stringify(user),
@@ -491,6 +491,12 @@ module.exports.getTopCustomersForUser = async (event, context) => {
         const customersWithSpend = await customers.map(async customer => {
 
             customer.dataValues.spend = await getCustomerSpend(customer)
+
+            // get all unique lanes for customer
+
+            // reduce lanes
+
+            // return customer with spend
 
             return customer
         })
