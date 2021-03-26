@@ -63,7 +63,7 @@ module.exports.getTeamById = async (event, context) => {
                 }
             })
 
-            customer.dataValues.spend = await getCustomerSpend(customer)
+            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
 
             return customer
         })
