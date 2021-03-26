@@ -490,13 +490,7 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
         const customersWithSpend = await customers.map(async customer => {
 
-            customer.dataValues.spend = await getCustomerSpend(customer)
-
-            // get all unique lanes for customer
-
-            // reduce lanes
-
-            // return customer with spend
+            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
 
             return customer
         })

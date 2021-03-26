@@ -69,5 +69,9 @@ module.exports.getCustomerSpend = async (customer) => {
 
     const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-    return customerSpend.spend
+    const loadsPerWeek = await lands.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+
+    const loadsPerMonth = loadsPerWeek.frequency * 4
+
+    return [customerSpend.spend, loadsPerMonth]
 }
