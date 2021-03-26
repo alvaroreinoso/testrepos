@@ -63,8 +63,12 @@ module.exports.getTeamById = async (event, context) => {
                 }
             })
 
-            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
+            const spendAndLoads = await getCustomerSpend(customer)
+            // [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
 
+            customer.dataValues.spend = spendAndLoads[0]
+            customer.dataValues.loadsPerMonth = spendAndLoads[1]
+            
             return customer
         })
 
