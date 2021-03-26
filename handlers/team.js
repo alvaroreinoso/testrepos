@@ -64,11 +64,10 @@ module.exports.getTeamById = async (event, context) => {
             })
 
             const spendAndLoads = await getCustomerSpend(customer)
-            // [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
 
             customer.dataValues.spend = spendAndLoads[0]
             customer.dataValues.loadsPerMonth = spendAndLoads[1]
-            
+
             return customer
         })
 
@@ -255,10 +254,11 @@ module.exports.getLanesForTeam = async (event, context) => {
             const teamSpend = await laneSpend.reduce((a, b) => a + b)
 
             const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+            const loadsPerMonth = loadsPerWeek.frequency * 4
 
             const body = {
                 revenue: teamSpend,
-                loadsPerWeek: loadsPerWeek.frequency,
+                loadsPerMonth: loadsPerMonth,
                 Lanes: lanesResolved
             }
 
