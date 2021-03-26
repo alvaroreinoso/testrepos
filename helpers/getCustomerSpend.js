@@ -1,4 +1,5 @@
 const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+const { Op } = require("sequelize");
 
 module.exports.getCustomerSpend = async (customer) => {
 
