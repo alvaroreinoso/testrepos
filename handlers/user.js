@@ -186,14 +186,6 @@ module.exports.createProfile = async (event, context) => {
     }
 }
 
-module.exports.joinTeam = async (event, context) => {
-
-
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-
-
-}
-
 module.exports.updateProfile = async (event, context) => {
 
     const req = (JSON.parse(event.body))
