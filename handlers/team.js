@@ -120,13 +120,12 @@ module.exports.getTeammatesForTeam = async (event, context) => {
 
         const teammates = await team.getUsers()
 
-        // get teammates
-
-        // get all tagged things
-
         const teammatesWithSpend = await Promise.all(await teammates.map(async teammate => {
 
             const lanes = await teammate.getLanes()
+            const customers = await teammate.getCustomers()
+
+            teammate.dataValues.customerCount = customers.length
 
             if (lanes.length == 0) {
                 teammate.dataValues.spendPerMonth = 0
@@ -145,8 +144,6 @@ module.exports.getTeammatesForTeam = async (event, context) => {
         }))
 
         const sortedTeammates = await teammatesWithSpend.sort((a, b) => { return b.dataValues.spendPerMonth - a.dataValues.spendPerMonth })
-
-
 
         return {
             body: JSON.stringify(sortedTeammates),
