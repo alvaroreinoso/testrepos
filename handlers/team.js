@@ -120,8 +120,36 @@ module.exports.getTeammatesForTeam = async (event, context) => {
 
         const teammates = await team.getUsers()
 
+        // get teammates
+
+        // get all tagged things
+
+        const teammatesWithSpend = await Promise.all(await teammates.map(async teammate => {
+
+            const lanes = await teammate.getLanes()
+
+            if (lanes.length == 0) {
+                teammate.dataValues.spendPerMonth = 0
+                teammate.dataValues.loadsPerMonth = 0
+
+                return teammate
+            }
+
+            const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+            const spendPerMonth = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+            teammate.dataValues.spendPerMonth = spendPerMonth.spend
+            teammate.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
+
+            return teammate
+        }))
+
+        const sortedTeammates = await teammatesWithSpend.sort((a, b) => { return b.dataValues.spendPerMonth - a.dataValues.spendPerMonth })
+
+
+
         return {
-            body: JSON.stringify(teammates),
+            body: JSON.stringify(sortedTeammates),
             headers: corsHeaders,
             statusCode: 200
         }
