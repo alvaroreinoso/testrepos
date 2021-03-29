@@ -16,6 +16,13 @@ module.exports.getBrokerage = async (event, context) => {
         }
     }
 
+    if (user.brokerageId != brokerageId) {
+        return {
+            statusCode: 403,
+            headers: corsHeaders
+        }
+    }
+
     const brokerage = await Brokerage.findOne({
         where: {
             id: brokerageId,
@@ -160,7 +167,7 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 
     if (user.brokerageId != brokerageId) {
         return {
-            statusCode: 401,
+            statusCode: 403,
             headers: corsHeaders
         }
     }
@@ -272,6 +279,13 @@ module.exports.editBrokerage = async (event, context) => {
                 id: request.id
             }
         })
+
+        if (brokerage.id != user.brokerageId) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
 
         brokerage.name = request.name,
         brokerage.address = request.address,
