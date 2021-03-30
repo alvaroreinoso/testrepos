@@ -7,21 +7,22 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.getTeamById = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
@@ -29,13 +30,6 @@ module.exports.getTeamById = async (event, context) => {
             return {
                 headers: corsHeaders,
                 statusCode: 404
-            }
-        }
-
-        if (team.brokerageId != user.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401
             }
         }
 
@@ -96,11 +90,20 @@ module.exports.getTeammatesForTeam = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
                 id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
@@ -108,13 +111,6 @@ module.exports.getTeammatesForTeam = async (event, context) => {
             return {
                 headers: corsHeaders,
                 statusCode: 404
-            }
-        }
-
-        if (team.brokerageId != user.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401
             }
         }
 
@@ -164,18 +160,26 @@ module.exports.getLanesForTeam = async (event, context) => {
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
-        if (team.brokerageId != user.brokerageId) {
+        if (team === null) {
             return {
-                headers: corsHeaders,
-                statusCode: 401
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
@@ -306,7 +310,6 @@ module.exports.getLanesForTeam = async (event, context) => {
 module.exports.addTeam = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -348,11 +351,11 @@ module.exports.addTeam = async (event, context) => {
 }
 
 module.exports.editTeam = async (event, context) => {
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -361,16 +364,24 @@ module.exports.editTeam = async (event, context) => {
 
         const teamId = event.pathParameters.teamId
 
-        const request = JSON.parse(event.body)
-
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
+        if (team === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
         team.name = request.name,
-            team.icon = request.icon
+        team.icon = request.icon
 
         await team.save()
 
@@ -378,10 +389,8 @@ module.exports.editTeam = async (event, context) => {
             headers: corsHeaders,
             statusCode: 204
         }
+
     } catch (err) {
-
-        console.log(err)
-
         return {
             headers: corsHeaders,
             statusCode: 500
@@ -395,7 +404,6 @@ module.exports.deleteTeam = async (event, context) => {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.admin == false) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 403
@@ -406,9 +414,17 @@ module.exports.deleteTeam = async (event, context) => {
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (team === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         await Ledger.destroy({
             where: {
@@ -499,10 +515,9 @@ module.exports.removeTeammate = async (event, context) => {
 module.exports.addTeammate = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == null) {
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -516,25 +531,22 @@ module.exports.addTeammate = async (event, context) => {
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
-
-        if (team.brokerageId != user.brokerageId) {
-            return {
-                statusCode: 403
-            }
-        }
 
         const targetUser = await User.findOne({
             where: {
-                id: targetUserId
+                id: targetUserId,
+                brokerageId: user.brokerageId
             }
         })
 
-        if (targetUser.brokerageId != user.brokerageId) {
+        if (targetUser === null || team === null) {
             return {
-                statusCode: 403
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
@@ -548,7 +560,8 @@ module.exports.addTeammate = async (event, context) => {
         }
     } catch (err) {
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
