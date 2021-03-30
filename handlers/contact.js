@@ -26,9 +26,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const lane = await Lane.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (lane === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const laneContacts = await lane.getContacts({
                     order: [
@@ -46,9 +54,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const location = await Location.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (location === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const locationContacts = await location.getContacts({
                     order: [
@@ -66,9 +82,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const customer = await Customer.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (customer === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const customerContacts = await customer.getContacts({
                     order: [
@@ -130,18 +154,24 @@ module.exports.addContact = async (event, context) => {
 
                 case 'universal': {
 
-                    // create customer contact
-
-                    await CustomerContact.findOrCreate({
+                    const customer = await Customer.findOne({
                         where: {
-                            customerId: id,
-                            contactId: contact.id
+                            id: id,
+                            brokerageId: user.brokerageId
                         }
                     })
 
-                    const customer = await Customer.findOne({
+                    if (customer === null) {
+                        return {
+                            status: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
+                    await CustomerContact.findOrCreate({
                         where: {
-                            id: id
+                            customerId: customer.id,
+                            contactId: contact.id
                         }
                     })
 
@@ -181,9 +211,23 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneContact.findOrCreate({
                         where: {
-                            laneId: id,
+                            laneId: lane.id,
                             contactId: contact.id
                         }
                     })
@@ -192,9 +236,23 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationContact.findOrCreate({
                         where: {
-                            locationId: id,
+                            locationId: location.id,
                             contactId: contact.id
                         }
                     })
@@ -203,9 +261,23 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerContact.findOrCreate({
                         where: {
-                            customerId: id,
+                            customerId: customer.id,
                             contactId: contact.id
                         }
                     })
@@ -245,18 +317,24 @@ module.exports.addContact = async (event, context) => {
 
                 case 'universal': {
 
-                    // create customer contact
-
-                    await CustomerContact.findOrCreate({
+                    const customer = await Customer.findOne({
                         where: {
-                            customerId: id,
-                            contactId: contact.id
+                            id: id,
+                            brokerageId: user.brokerageId
                         }
                     })
 
-                    const customer = await Customer.findOne({
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
+                    await CustomerContact.findOrCreate({
                         where: {
-                            id: id
+                            customerId: customer.id,
+                            contactId: contact.id
                         }
                     })
 
@@ -296,8 +374,22 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneContact.create({
-                        laneId: id,
+                        laneId: lane.id,
                         contactId: contact.id
                     })
 
@@ -305,8 +397,22 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationContact.create({
-                        locationId: id,
+                        locationId: location.id,
                         contactId: contact.id
                     })
 
@@ -314,8 +420,20 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        id: id,
+                        brokerageId: user.brokerageId
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerContact.create({
-                        customerId: id,
+                        customerId: customer.id,
                         contactId: contact.id
                     })
 
