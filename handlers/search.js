@@ -9,8 +9,7 @@ module.exports.search = async (event, context) => {
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == null) {
-
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -70,7 +69,6 @@ module.exports.searchLedger = async (event, context) => {
     })
 
     if (ledger == null) {
-
         return {
             headers: corsHeaders,
             statusCode: 401
