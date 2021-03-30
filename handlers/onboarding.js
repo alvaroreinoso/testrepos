@@ -91,12 +91,14 @@ module.exports.inviteUser = async (event, context) => {
 
         if (currentUser.id == undefined) {
             return {
-                statusCode: 401
+                statusCode: 401,
+                headers: corsHeaders
             }
         }
 
         if (currentUser.admin == false) {
             return {
+                headers: corsHeaders,
                 statusCode: 403
             }
         }
@@ -123,7 +125,8 @@ module.exports.inviteUser = async (event, context) => {
     } catch (err) {
         console.log(err)
         return {
-            statusCode: 500
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
 }
@@ -175,7 +178,6 @@ module.exports.getTeamsForBrokerage = async (event, context) => {
         })
 
         for (const team of teams) {
-
             team.dataValues.teammates = team.Users.length
         }
 
