@@ -55,7 +55,6 @@ module.exports.getUser = async (event, context) => {
 module.exports.getEmailById = async (event, context) => {
 
     try {
-
         const userId = event.pathParameters.userId
 
         const user = await User.findOne({
@@ -81,11 +80,9 @@ module.exports.getEmailById = async (event, context) => {
 module.exports.getUserById = async (event, context) => {
 
     try {
-
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
         if (currentUser.id == null) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -144,21 +141,17 @@ module.exports.getUserById = async (event, context) => {
         }
 
     } catch (err) {
-        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,
         }
-
     }
-
 }
 
 module.exports.createProfile = async (event, context) => {
 
-    const req = await (JSON.parse(event.body))
-
     try {
+        const req = JSON.parse(event.body)
 
         const ledger = await Ledger.create({
             brokerageId: req.brokerageId
@@ -188,11 +181,10 @@ module.exports.createProfile = async (event, context) => {
 
 module.exports.updateProfile = async (event, context) => {
 
-    const req = (JSON.parse(event.body))
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        const req = JSON.parse(event.body)
 
         user.firstName = req.firstName
         user.lastName = req.lastName
@@ -216,7 +208,6 @@ module.exports.updateProfile = async (event, context) => {
             statusCode: 500,
         }
     }
-
 }
 
 module.exports.updateUser = async (event, context) => {
@@ -447,34 +438,28 @@ module.exports.getTeams = async (event, context) => {
 
 module.exports.getTopCustomersForUser = async (event, context) => {
 
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-    const userId = event.pathParameters.userId
-
-    if (currentUser.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401,
-        }
-    }
-
     try {
-        const targetUser = await User.findOne({
-            where: {
-                id: userId,
-            }
-        })
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+        const userId = event.pathParameters.userId
 
-        if (targetUser == null) {
-            return {
-                headers: corsHeaders,
-                statusCode: 404,
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
+        if (currentUser.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401,
+            }
+        }
+
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+                brokerageId: currentUser.brokerageId
+            }
+        })
+
+        if (targetUser === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 404,
             }
         }
 
@@ -526,6 +511,7 @@ module.exports.getTopLanesForUser = async (event, context) => {
         const targetUser = await User.findOne({
             where: {
                 id: userId,
+                brokerageId: currentUser.brokerageId
             }
         })
 
@@ -533,13 +519,6 @@ module.exports.getTopLanesForUser = async (event, context) => {
             return {
                 headers: corsHeaders,
                 statusCode: 404,
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401,
             }
         }
 
@@ -573,5 +552,4 @@ module.exports.getTopLanesForUser = async (event, context) => {
             statusCode: 500,
         }
     }
-
 }
