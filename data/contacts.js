@@ -6,6 +6,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -16,6 +17,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -26,6 +28,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 3,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -36,6 +39,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -46,6 +50,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -56,6 +61,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -66,6 +72,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 3,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -76,6 +83,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -86,6 +94,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -96,6 +105,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -106,6 +116,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 3,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -116,6 +127,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -126,6 +138,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -136,6 +149,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -146,6 +160,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -156,6 +171,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 1,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -166,6 +182,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 2,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
@@ -176,6 +193,7 @@ const contacts = [
         phone: '865-262-6782',
         email: 'test51@gmail.com',
         level: 3,
+        brokerageId: 1,
         createdAt: new Date(),
         updatedAt: new Date()
     },
