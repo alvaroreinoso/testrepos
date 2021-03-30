@@ -34,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING
   }, {
     hooks: {
+      afterSave: async (contact, options) => {
+        await elastic.saveContact(contact)
+      },
       afterDestroy: async (contact, options) => {
         await elastic.deleteDocument(contact)
       }

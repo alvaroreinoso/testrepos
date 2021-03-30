@@ -1,7 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerContact, Ledger, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
-const elastic = require('.././elastic/hooks')
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.getContacts = async (event, context) => {
@@ -16,7 +15,6 @@ module.exports.getContacts = async (event, context) => {
     }
 
     try {
-
         const type = event.queryStringParameters.contactType
         const id = event.pathParameters.itemId
 
@@ -127,7 +125,6 @@ module.exports.getContacts = async (event, context) => {
 module.exports.addContact = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -146,7 +143,8 @@ module.exports.addContact = async (event, context) => {
 
             const contact = await Contact.findOne({
                 where: {
-                    id: request.id
+                    id: request.id,
+                    brokerageId: user.brokerageId
                 }
             })
 
@@ -302,6 +300,7 @@ module.exports.addContact = async (event, context) => {
         else {
 
             const contact = await Contact.create({
+                brokerageId: user.brokerageId,
                 firstName: request.firstName,
                 lastName: request.lastName,
                 phoneExt: request.phoneExt,
@@ -310,8 +309,6 @@ module.exports.addContact = async (event, context) => {
                 level: request.level,
                 title: request.title
             })
-
-            await elastic.saveContact(contact, user.brokerageId)
 
             switch (type) {
 
@@ -479,9 +476,17 @@ module.exports.editContact = async (event, context) => {
 
         const contact = await Contact.findOne({
             where: {
-                id: id
+                id: id,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (contact === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         contact.firstName = request.firstName
         contact.lastName = request.lastName
@@ -492,8 +497,6 @@ module.exports.editContact = async (event, context) => {
         contact.level = request.level
 
         await contact.save()
-
-        await elastic.editContact(contact)
 
         return {
             statusCode: 204,
@@ -511,6 +514,14 @@ module.exports.editContact = async (event, context) => {
 module.exports.deleteContact = async (event, context) => {
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
 
         const request = JSON.parse(event.body)
 
@@ -524,7 +535,14 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         laneId: request.LaneContact.laneId,
                         contactId: request.LaneContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (laneContact === null) {
@@ -567,11 +585,17 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         locationId: request.LocationContact.locationId,
                         contactId: request.LocationContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (locationContact === null) {
-
                     return {
                         statusCode: 404,
                         headers: corsHeaders
@@ -609,11 +633,17 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         customerId: request.CustomerContact.customerId,
                         contactId: request.CustomerContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (customerContact === null) {
-
                     return {
                         statusCode: 404,
                         headers: corsHeaders
@@ -655,12 +685,9 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
         }
     }
-
-
 }
