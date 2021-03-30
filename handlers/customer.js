@@ -7,16 +7,16 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.updateCustomer = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
         const customerId = event.pathParameters.customerId
         const request = JSON.parse(event.body)
 
@@ -24,9 +24,17 @@ module.exports.updateCustomer = async (event, context) => {
 
         const customer = await Customer.findOne({
             where: {
-                id: customerId
+                id: customerId,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (customer == null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         customer.bio = bio
 
@@ -48,40 +56,38 @@ module.exports.updateCustomer = async (event, context) => {
 
 module.exports.getCustomer = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
         const customerId = event.pathParameters.customerId
 
         const customer = await Customer.findOne({
             where: {
                 id: customerId,
+                brokerageId: user.brokerageId
             }
         })
 
-        if (customer != null) {
-            return {
-                statusCode: 200,
-                body: JSON.stringify(customer),
-                headers: corsHeaders
-            }
-        } else {
+        if (customer === null) {
             return {
                 statusCode: 404,
                 headers: corsHeaders
             }
         }
 
-    } catch (err) {
+        return {
+            statusCode: 200,
+            body: JSON.stringify(customer),
+            headers: corsHeaders
+        }
 
-        console.log(err)
+    } catch (err) {
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -91,23 +97,30 @@ module.exports.getCustomer = async (event, context) => {
 
 module.exports.getLanesForCustomer = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
         const customerId = event.pathParameters.customerId
 
         const customer = await Customer.findOne({
             where: {
-                id: customerId
+                id: customerId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (customer === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const locations = await customer.getCustomerLocations({
             include: [{
@@ -230,6 +243,20 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         const customerId = event.pathParameters.customerId
 
+        const customer = await Customer.findOne({
+            where: {
+                id: customerId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (customer === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         const customerLocations = await CustomerLocation.findAll({
             where: {
                 customerId: customerId
@@ -298,9 +325,17 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
 
         const customer = await Customer.findOne({
             where: {
-                id: customerId
+                id: customerId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (customer === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 404
+            }
+        }
 
         const users = await customer.getUsers()
 
@@ -338,9 +373,24 @@ module.exports.addTeammateToCustomer = async (event, context) => {
 
         const customer = await Customer.findOne({
             where: {
-                id: customerId
+                id: customerId,
+                brokerageId: user.brokerageId
             }
         })
+
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (targetUser === null || customer === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const locations = await customer.getCustomerLocations({
             include: Location
@@ -447,16 +497,31 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
 
         const targetUserId = request.userId
 
-        await TaggedCustomer.destroy({
+        const targetUser = await User.findOne({
             where: {
-                userId: targetUserId,
-                customerId: request.customerId
+                id: targetUserId,
+                brokerageId: user.brokerageId
             }
         })
 
         const customer = await Customer.findOne({
             where: {
-                id: request.customerId
+                id: request.customerId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (targetUser === null || customer === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        await TaggedCustomer.destroy({
+            where: {
+                userId: targetUser.id,
+                customerId: customer.id
             }
         })
 
