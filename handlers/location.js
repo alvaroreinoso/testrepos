@@ -3,14 +3,15 @@ const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, Tag
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
-const corsHeaders = require('.././helpers/cors')
+const corsHeaders = require('.././helpers/cors');
+const { underscoredIf } = require('sequelize/types/lib/utils');
 
 module.exports.getLocationById = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == undefined) {
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -39,7 +40,8 @@ module.exports.getLocationById = async (event, context) => {
 
         if (location === null) {
             return {
-                statusCode: 404
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
@@ -91,14 +93,30 @@ module.exports.getLocationById = async (event, context) => {
 module.exports.editLocation = async (event, context) => {
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
 
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+        
         const request = JSON.parse(event.body)
 
         const location = await Location.findOne({
             where: {
-                id: request.id
+                id: request.id,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         location.hoursType = request.hoursType
         location.open = request.open
@@ -134,6 +152,20 @@ module.exports.getLanesForLocation = async (event, context) => {
         }
 
         const locationId = event.pathParameters.locationId
+
+        const location = await Location.findOne({
+            where: {
+                id: locationId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const lanes = await Lane.findAll({
             attributes: ['id'],
@@ -204,9 +236,7 @@ module.exports.getLanesForLocation = async (event, context) => {
 module.exports.getTeammatesForLocation = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -219,9 +249,17 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const users = await location.getUsers()
 
@@ -258,18 +296,33 @@ module.exports.addTeammateToLocation = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const locationId = request.locationId
-        const userId = request.userId
+        const targetUserId = request.userId
 
-        const location = await Location.findOne({
+        const targetUser = await User.findOne({
             where: {
-                id: locationId
+                id: targetUserId,
+                brokerageId: user.brokerageId
             }
         })
 
+        const location = await Location.findOne({
+            where: {
+                id: locationId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLocation.findOrCreate({
             where: {
-                locationId: locationId,
-                userId: userId
+                locationId: location.id,
+                userId: targetUser.id
             }
         })
 
@@ -280,7 +333,7 @@ module.exports.addTeammateToLocation = async (event, context) => {
             await TaggedLane.findOrCreate({
                 where: {
                     laneId: lane.id,
-                    userId: userId
+                    userId: targetUser.id
                 }
             })
         }
@@ -314,18 +367,33 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const locationId = request.locationId
-        const userId = request.userId
+        const targetUserId = request.userId
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             }
         })
 
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLocation.destroy({
             where: {
-                userId: userId,
-                locationId: locationId
+                userId: targetUser.id,
+                locationId: location.id
             }
         })
 
@@ -336,7 +404,7 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
             await TaggedLane.destroy({
                 where: {
                     laneId: lane.id,
-                    userId: userId
+                    userId: targetUser.id
                 }
             })
         }
