@@ -68,21 +68,22 @@ module.exports.getLanesByUser = async (event, context) => {
 
 module.exports.getLaneById = async (event, context) => {
 
-    const laneId = event.pathParameters.laneId
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const laneId = event.pathParameters.laneId
+
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             },
             include: [{
                 model: Location,
@@ -113,7 +114,7 @@ module.exports.getLaneById = async (event, context) => {
             }]
         })
 
-        if (lane == null) {
+        if (lane === null) {
             return {
                 statusCode: 404,
                 headers: corsHeaders
@@ -126,7 +127,6 @@ module.exports.getLaneById = async (event, context) => {
             headers: corsHeaders
         }
     } catch (err) {
-        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -198,17 +198,32 @@ module.exports.getTopCarriers = async (event, context) => {
 
 module.exports.updateLane = async (event, context) => {
 
-    const request = JSON.parse(event.body)
-
-    const laneId = event.pathParameters.laneId
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+        const laneId = event.pathParameters.laneId
 
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         lane.routeGeometry = request.routeGeometry
         lane.frequency = request.frequency
@@ -241,20 +256,34 @@ module.exports.updateLane = async (event, context) => {
 
 module.exports.getMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const feedback = await MarketFeedback.findAll({
             where: {
-                laneId: laneId
+                laneId: lane.id
             }
         })
 
@@ -274,22 +303,36 @@ module.exports.getMarketFeedback = async (event, context) => {
 
 module.exports.addMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const request = JSON.parse(event.body)
 
         await MarketFeedback.create({
-            laneId: laneId,
+            laneId: lane.id,
             rate: request.rate,
             motorCarrierNumber: request.motorCarrierNumber,
         })
@@ -299,7 +342,6 @@ module.exports.addMarketFeedback = async (event, context) => {
             headers: corsHeaders
         }
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -309,17 +351,31 @@ module.exports.addMarketFeedback = async (event, context) => {
 
 module.exports.deleteMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
-    }
-
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const feedbackId = event.pathParameters.feedbackId
 
@@ -336,7 +392,6 @@ module.exports.deleteMarketFeedback = async (event, context) => {
         }
 
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -347,9 +402,7 @@ module.exports.deleteMarketFeedback = async (event, context) => {
 module.exports.getTeammatesForLane = async (event, context) => {
 
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -362,9 +415,17 @@ module.exports.getTeammatesForLane = async (event, context) => {
 
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const users = await lane.getUsers()
 
@@ -375,15 +436,11 @@ module.exports.getTeammatesForLane = async (event, context) => {
         }
     }
     catch (err) {
-
-        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
         }
     }
-
-
 }
 
 module.exports.addTeammateToLane = async (event, context) => {
@@ -401,12 +458,34 @@ module.exports.addTeammateToLane = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const laneId = request.laneId
-        const userId = request.userId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        const targetUserId = request.userId
+
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         await TaggedLane.findOrCreate({
             where: {
-                laneId: laneId,
-                userId: userId
+                laneId: lane.id,
+                userId: targetUser.id
             }
         })
 
@@ -438,10 +517,31 @@ module.exports.deleteTeammateFromLane = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
+        const lane = await Lane.findOne({
+            where: {
+                id: request.laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        const targetUser = await User.findOne({
+            where: {
+                id: request.userId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLane.destroy({
             where: {
-                userId: request.userId,
-                laneId: request.laneId
+                userId: targetUser.id,
+                laneId: lane.id
             }
         })
 
