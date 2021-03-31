@@ -2,6 +2,7 @@ const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IHAhJHsDRF5ASkOBXJvvDl81evnBbqXr3cT44El9t9WUi098tGSR0hI6SKZiHHdHPbAudyT26V7vU4CjtqXhCnB00KPK9QDyk');
 const { Brokerage } = require('.././models')
 const corsHeaders = require('.././helpers/cors')
+const getCurrentUser = require('.././helpers/user')
 require('dotenv').config()
 
 
@@ -128,7 +129,7 @@ module.exports.createStripeCustomer = async (event, context) => {
             statusCode: 200
         }
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -138,54 +139,93 @@ module.exports.createStripeCustomer = async (event, context) => {
 
 module.exports.createStripeSubscription = async (event, context) => {
 
-    const reqBody = JSON.parse(event.body)
-
     try {
-        await stripe.paymentMethods.attach(reqBody.paymentMethodId, {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const reqBody = JSON.parse(event.body)
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                id: reqBody.brokerageId
+            }
+        })
+
+        if (brokerage.id != user.brokerageId) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        if (brokerage.stripeSubscriptionId != null) {
+            return {
+                statusCode: 409,
+                headers: corsHeaders
+            }
+        }
+
+        try {
+            await stripe.paymentMethods.attach(reqBody.paymentMethodId, {
+                customer: reqBody.customerId,
+            });
+        } catch (error) {
+            console.log(error)
+            return {
+                headers: corsHeaders,
+                statusCode: 402
+            }
+        }
+
+        let updateCustomerDefaultPaymentMethod = await stripe.customers.update(
+            reqBody.customerId,
+            {
+                invoice_settings: {
+                    default_payment_method: reqBody.paymentMethodId,
+                },
+            }
+        );
+
+        const subscription = await stripe.subscriptions.create({
             customer: reqBody.customerId,
+            items: [
+                {
+                    price: reqBody.priceId,
+                    quantity: reqBody.quantity
+                },
+            ],
+            expand: ['latest_invoice.payment_intent', 'plan.product'],
         });
-    } catch (error) {
-        console.log(error)
+
+        brokerage.stripeSubscriptionId = subscription.id
+
+        await brokerage.save()
+
         return {
             headers: corsHeaders,
-            statusCode: 402
+            statusCode: 200,
+            body: JSON.stringify(subscription)
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
-
-    let updateCustomerDefaultPaymentMethod = await stripe.customers.update(
-        reqBody.customerId,
-        {
-            invoice_settings: {
-                default_payment_method: reqBody.paymentMethodId,
-            },
-        }
-    );
-
-    const subscription = await stripe.subscriptions.create({
-        customer: reqBody.customerId,
-        items: [
-            {
-                price: reqBody.priceId,
-                quantity: reqBody.quantity
-            },
-        ],
-        expand: ['latest_invoice.payment_intent', 'plan.product'],
-    });
-
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: reqBody.brokerageId
-        }
-    })
-
-    brokerage.stripeSubscriptionId = subscription.id
-
-    await brokerage.save()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 200,
-        body: JSON.stringify(subscription)
-    }
-
 }
