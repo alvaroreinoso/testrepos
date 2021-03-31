@@ -70,31 +70,69 @@ module.exports.webhookHandler = async (event, context) => {
 
 module.exports.createStripeCustomer = async (event, context) => {
 
-    const request = JSON.parse(event.body)
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    const brokerageId = event.pathParameters.brokerageId
-
-    const customer = await stripe.customers.create({
-        email: request.email,
-        name: request.name,
-        address: request.address,
-        phone:  request.phone
-    });
-
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: brokerageId
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
         }
-    })
 
-    brokerage.stripeCustomerId = customer.id
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
 
-    await brokerage.save()
+        const brokerageId = event.pathParameters.brokerageId
 
-    return {
-        headers: corsHeaders,
-        body: JSON.stringify(customer),
-        statusCode: 200
+        const brokerage = await Brokerage.findOne({
+            where: {
+                id: brokerageId
+            }
+        })
+
+        if (brokerage.id != user.brokerageId) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        if (brokerage.stripeCustomerId != null) {
+            return {
+                statusCode: 409,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const customer = await stripe.customers.create({
+            email: request.email,
+            name: request.name,
+            address: request.address,
+            phone: request.phone
+        });
+
+        brokerage.stripeCustomerId = customer.id
+
+        await brokerage.save()
+
+        return {
+            headers: corsHeaders,
+            body: JSON.stringify(customer),
+            statusCode: 200
+        }
+    } catch (err) {
+
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
     }
 }
 
