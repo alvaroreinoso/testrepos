@@ -115,6 +115,8 @@ module.exports.getContacts = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
+
         return {
             statusCode: 500,
             headers: corsHeaders
