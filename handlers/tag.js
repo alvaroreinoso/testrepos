@@ -3,6 +3,7 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
 const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
 const corsHeaders = require('.././helpers/cors')
+const { Op } = require("sequelize");
 
 module.exports.getTags = async (event, context) => {
 
@@ -37,10 +38,25 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const laneTags = await lane.getTags()
+                const customTags = await lane.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await lane.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const data = customTags.concat(otherTags)
+                
 
                 return {
-                    body: JSON.stringify(laneTags),
+                    body: JSON.stringify(data),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -61,10 +77,24 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const locationTags = await location.getTags()
+                const customTags = await location.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await location.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(locationTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -85,10 +115,24 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const customerTags = await customer.getTags()
+                const customTags = await customer.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await customer.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(customerTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -108,10 +152,24 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const userTags = await targetUser.getTags()
+                const customTags = await targetUser.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await targetUser.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(userTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -130,10 +188,24 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const brokerageTags = await brokerage.getTags()
+                const customTags = await brokerage.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await brokerage.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(brokerageTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -153,10 +225,24 @@ module.exports.getTags = async (event, context) => {
                     }
                 }
 
-                const teamTags = await team.getTags()
+                const customTags = await team.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await team.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(teamTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -171,7 +257,7 @@ module.exports.getTags = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
