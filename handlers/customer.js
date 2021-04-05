@@ -281,11 +281,11 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
             } else {
 
-                const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => a.frequency + b.frequency)
-                const spend = await cL.Location.Lanes.reduce((a, b) => a.spend + b.spend)
+                const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+                const spend = await cL.Location.Lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-                cL.dataValues.spend = spend
-                cL.dataValues.loadsPerMonth = loadsPerWeek * 4
+                cL.dataValues.spend = spend.spend
+                cL.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
 
                 return cL
             }
