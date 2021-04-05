@@ -4,7 +4,6 @@ const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const corsHeaders = require('.././helpers/cors');
-const { underscoredIf } = require('sequelize/types/lib/utils');
 
 module.exports.getLocationById = async (event, context) => {
 
