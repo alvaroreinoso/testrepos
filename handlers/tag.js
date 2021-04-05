@@ -491,7 +491,7 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'location': {
 
-                    const location = await User.findOne({
+                    const location = await Location.findOne({
                         where: {
                             id: id,
                             brokerageId: user.brokerageId
@@ -514,7 +514,7 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'customer': {
 
-                    const customer = await User.findOne({
+                    const customer = await Customer.findOne({
                         where: {
                             id: id,
                             brokerageId: user.brokerageId
@@ -587,7 +587,7 @@ module.exports.addTag = async (event, context) => {
                 }
                 case 'team': {
 
-                    const team = await User.findOne({
+                    const team = await Team.findOne({
                         where: {
                             id: id,
                             brokerageId: user.brokerageId
