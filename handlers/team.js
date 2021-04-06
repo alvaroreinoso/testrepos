@@ -69,7 +69,6 @@ module.exports.getTeamById = async (event, context) => {
         const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
 
         team.dataValues.customerCount = uniqueCustomerIds.size
-
         team.dataValues.topCustomers = topCustomers
 
         return {
@@ -325,10 +324,6 @@ module.exports.addTeam = async (event, context) => {
             icon: request.icon,
             name: request.name,
             brokerageId: user.brokerageId,
-        })
-
-        await team.createLedger({
-            brokerageId: team.brokerageId
         })
 
         const response = {

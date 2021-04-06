@@ -73,6 +73,11 @@ module.exports = (sequelize, DataTypes) => {
     profileImage: DataTypes.STRING
   }, {
     hooks: {
+      afterCreate: async (user, options) => {
+        await user.createLedger({
+          brokerageId: user.brokerageId
+        })
+      },
       afterSave: async (user, options) => {
         await elastic.saveDocument(user)
       },

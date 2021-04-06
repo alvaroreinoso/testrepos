@@ -153,15 +153,10 @@ module.exports.createProfile = async (event, context) => {
     try {
         const req = JSON.parse(event.body)
 
-        const ledger = await Ledger.create({
-            brokerageId: req.brokerageId
-        })
-
         await User.create({
             username: req.username,
             email: req.email,
             brokerageId: req.brokerageId,
-            ledgerId: ledger.id
         })
 
         return {
@@ -171,6 +166,7 @@ module.exports.createProfile = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,
