@@ -272,18 +272,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
-            // const locationLanes = await Lane.findAll({
-            //     where: {
-            //         [Op.or]: [
-            //             { originLocationId: location.Location.id },
-            //             { destinationLocationId: location.Location.id }
-            //         ]
-            //     },
-            //     order: [
-            //         ['frequency', 'DESC'],
-            //     ],
-            // })
-
             const lanesAsOrigin = await Lane.findAll({
                 where: {
                     originLocationId: cL.Location.id
@@ -305,21 +293,8 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 }]
             })
 
-            console.log(lanesAsDestination)
-
             const lanes = lanesAsOrigin.concat(lanesAsDestination)
 
-            // for (const lane of locationLanes) {
-            //     if (lane.destinationLocationId == cL.Location.id ) 
-            // }
-
-            // get lanes
-
-            // if location is destination and origin is a customer location, drop lane
-
-            // const lanes = await cL.Location.getLanes()
-
-            // if (cL.Location.Lanes.length == 0) {
             if (lanes.length == 0) {
 
                 cL.dataValues.spend = 0
