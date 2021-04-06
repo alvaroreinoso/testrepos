@@ -263,16 +263,19 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             },
             include: [{
                 model: Location,
-                include: [{
-                    model: Lane,
-                    attributes: ['spend', 'frequency']
-                }]
+                // include: [{
+                //     model: Lane,
+                //     attributes: ['spend', 'frequency']
+                // }]
             }]
         })
 
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
 
-            if (cL.Location.Lanes.length == 0) {
+            const lanes = await cL.Location.getLanes()
+
+            // if (cL.Location.Lanes.length == 0) {
+            if (lanes.length == 0) {
 
                 cL.dataValues.spend = 0
                 cL.dataValues.loadsPerMonth = 0
@@ -281,8 +284,8 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
             } else {
 
-                const loadsPerWeek = await cL.Location.Lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
-                const spend = await cL.Location.Lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+                const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                 cL.dataValues.spend = spend.spend
                 cL.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
