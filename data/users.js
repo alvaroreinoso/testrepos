@@ -131,7 +131,7 @@ const users = [
         username: '59cf010f-cfaa-4bae-9a88-76e110ede864',
         brokerageId: 2,
         teamId: 3,
-        title: 'Director of Logistics',
+        title: 'Director of Logistic',
         email: 'sclark@dunavant.com',
         admin: true,
         active: true,
