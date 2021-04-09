@@ -758,3 +758,8 @@ functions:
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
+    events:
+        - http:
+            path: api/subscription
+            method: post
+            cors: true
