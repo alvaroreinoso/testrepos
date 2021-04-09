@@ -738,9 +738,9 @@ functions:
             path: api/create-stripe-subscription
             method: post
             cors: true
-  getSubscriptionDetails:
+  getBillingDetails:
     handler:
-      ./handlers/billing.getSubscriptionDetails
+      ./handlers/billing.getBillingDetails
     vpc:
       securityGroupIds:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
@@ -750,6 +750,6 @@ functions:
     timeout: 20
     events:
         - http:
-            path: api/subscription-details
+            path: api/billing-details
             method: get
             cors: true

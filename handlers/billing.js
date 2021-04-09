@@ -231,7 +231,7 @@ module.exports.createStripeSubscription = async (event, context) => {
     }
 }
 
-module.exports.getSubscriptionDetails = async (event, context) => {
+module.exports.getBillingDetails = async (event, context) => {
 
     try {
 
