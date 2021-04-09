@@ -259,11 +259,19 @@ module.exports.getSubscriptionDetails = async (event, context) => {
 
         const subscription = await stripe.subscriptions.retrieve(brokerage.stripeSubscriptionId)
 
-        const paymentMethods = await stripe.paymentMethods.list(subscription.customer)
+        const paymentMethods = await stripe.paymentMethods.list({
+            customer: subscription.customer,
+            type: 'card'
+        })
+
+        const invoices = await stripe.invoices.list({
+            customer: subscription.customer
+        })
 
         const response = {
             subscription: subscription,
-            paymentMethods: paymentMethods
+            paymentMethods: paymentMethods,
+            invoices: invoices
         }
 
         return {
