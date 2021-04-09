@@ -701,7 +701,6 @@ functions:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
     timeout: 20
     events:
         - http:
@@ -716,7 +715,6 @@ functions:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
     timeout: 20
     events:
         - http:
@@ -731,7 +729,6 @@ functions:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
     timeout: 20
     events:
         - http:
@@ -746,10 +743,18 @@ functions:
         - sg-012e7222a5f8ac6cc                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
     timeout: 20
     events:
         - http:
             path: api/billing-details
             method: get
             cors: true
+  updateSubscription:
+    handler:
+      ./handlers/billing.updateSubscription
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
