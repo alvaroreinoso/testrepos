@@ -2,7 +2,8 @@ const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IHAhJHsDRF5ASkOBXJvvDl81evnBbqXr3cT44El9t9WUi098tGSR0hI6SKZiHHdHPbAudyT26V7vU4CjtqXhCnB00KPK9QDyk');
 const { Brokerage } = require('.././models')
 const corsHeaders = require('.././helpers/cors')
-const getCurrentUser = require('.././helpers/user')
+const getCurrentUser = require('.././helpers/user');
+const cors = require('.././helpers/cors');
 require('dotenv').config()
 
 
@@ -223,6 +224,46 @@ module.exports.createStripeSubscription = async (event, context) => {
         }
     } catch (err) {
         console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
+module.exports.getSubscriptionDetails = async (event, context) => {
+
+    try {
+
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                id: user.brokerageId
+            }
+        })
+
+        const subscription = await stripe.subscriptions.retrieve(brokerage.stripeSubscriptionId)
+
+        return {
+            body: JSON.stringify(subscription),
+            headers: corsHeaders
+        }
+    } catch (err) {
         return {
             statusCode: 500,
             headers: corsHeaders
