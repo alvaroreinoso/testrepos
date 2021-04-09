@@ -271,6 +271,8 @@ module.exports.getSubscriptionDetails = async (event, context) => {
             headers: corsHeaders
         }
     } catch (err) {
+
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
