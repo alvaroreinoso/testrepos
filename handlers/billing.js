@@ -332,3 +332,48 @@ module.exports.updateSubscription = async (event, context) => {
         }
     }
 }
+
+module.exports.updatePaymentInfo = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        const brokerage = await Brokerage.findOne({
+            where: {
+                id: user.brokerageId
+            }
+        })
+
+        const request = JSON.parse(event.body)
+
+        const paymentMethod = await stripe.paymentMethods.update(
+            request.paymentMethodId,
+            request.body
+        );
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}

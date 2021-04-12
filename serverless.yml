@@ -763,3 +763,17 @@ functions:
             path: api/subscription
             method: post
             cors: true
+  updatePaymentInfo:
+    handler:
+      ./handlers/billing.updatePaymentInfo
+    vpc:
+      securityGroupIds:
+        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
+    events:
+        - http:
+            path: api/payment
+            method: post
+            cors: true
