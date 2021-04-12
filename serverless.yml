@@ -25,7 +25,7 @@ provider:
   versionFunctions: false
   vpc:
     securityGroupIds:
-      - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      - sg-012e7222a5f8ac6cc
     subnetIds:
       - subnet-03086cdd9e1e48134
       - subnet-0243c1302f458775f
@@ -65,7 +65,7 @@ custom:
       enabled: true # test
       vpc:
         securityGroupIds:
-          - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+          - sg-012e7222a5f8ac6cc
         subnetIds:
           - subnet-03086cdd9e1e48134
           - subnet-0243c1302f458775f
