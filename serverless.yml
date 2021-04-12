@@ -62,7 +62,7 @@ custom:
     number: 3
   warmup:
     test:
-      # enabled: ${param:WARMUP_ENABLED, false}
+      enabled: true
       vpc:
         securityGroupIds:
           - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
