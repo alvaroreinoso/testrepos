@@ -1,5 +1,5 @@
 'use strict';
-const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
+const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation, User, Team } = require('.././models');
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
@@ -251,6 +251,13 @@ module.exports.getTeammatesForLocation = async (event, context) => {
                 id: locationId,
                 brokerageId: user.brokerageId
             },
+            include: { 
+                model: User,
+                through: { attributes: []},
+                include: {
+                    model: Team
+                }
+            }
         })
 
         if (location === null) {
@@ -260,10 +267,8 @@ module.exports.getTeammatesForLocation = async (event, context) => {
             }
         }
 
-        const users = await location.getUsers()
-
         return {
-            body: JSON.stringify(users),
+            body: JSON.stringify(location),
             headers: corsHeaders,
             statusCode: 200
         }
