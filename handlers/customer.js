@@ -351,8 +351,16 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
                 id: customerId,
                 brokerageId: user.brokerageId
             },
+            include: { 
+                model: User,
+                through: { attributes: []},
+                include: {
+                    model: Team
+                }
+            }
         })
 
+        
         if (customer === null) {
             return {
                 headers: corsHeaders,
@@ -360,16 +368,13 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
             }
         }
 
-        const users = await customer.getUsers()
-
         return {
-            body: JSON.stringify(users),
+            body: JSON.stringify(customer.Users),
             statusCode: 200,
             headers: corsHeaders
         }
     }
     catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders

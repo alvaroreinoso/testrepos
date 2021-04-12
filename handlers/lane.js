@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
+const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane, Team } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
 const sequelize = require('sequelize')
@@ -418,6 +418,13 @@ module.exports.getTeammatesForLane = async (event, context) => {
                 id: laneId,
                 brokerageId: user.brokerageId
             },
+            include: { 
+                model: User,
+                through: { attributes: []},
+                include: {
+                    model: Team
+                }
+            }
         })
 
         if (lane === null) {
@@ -427,10 +434,8 @@ module.exports.getTeammatesForLane = async (event, context) => {
             }
         }
 
-        const users = await lane.getUsers()
-
         return {
-            body: JSON.stringify(users),
+            body: JSON.stringify(lane.Users),
             statusCode: 200,
             headers: corsHeaders
         }
