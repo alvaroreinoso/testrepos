@@ -32,7 +32,7 @@ provider:
       - subnet-016928dcc4b9cba7b
   profile: default
   region: us-east-1
-  stage: dev
+  stage: test-warmup
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
     DB_HOST: ${param:DB_HOST, env:DB_HOST}
@@ -40,12 +40,12 @@ provider:
     DB_PASSWORD: ${param:DB_PASSWORD, env:DB_PASSWORD}
     DB_USERNAME: ${param:DB_USERNAME, env:DB_USERNAME}
     SEARCH_URL: ${param:SEARCH_URL, env:SEARCH_URL}
-    REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
+    # REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
-    SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
-    SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
-    STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
+    # SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
+    # SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
+    # STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
 
 plugins:
   - serverless-offline
@@ -156,7 +156,7 @@ functions:
   getUser:
     warmup: 
       test:
-        enabled: ${param:WARMUP_ENABLED, false}
+        enabled: true
     handler:
       ./handlers/user.getUser
     events:
