@@ -268,7 +268,7 @@ module.exports.getTeammatesForLocation = async (event, context) => {
         }
 
         return {
-            body: JSON.stringify(location),
+            body: JSON.stringify(location.Users),
             headers: corsHeaders,
             statusCode: 200
         }
