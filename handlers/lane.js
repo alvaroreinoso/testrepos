@@ -7,6 +7,11 @@ const sequelize = require('sequelize')
 
 module.exports.getLanesByUser = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const targetUserId = event.pathParameters.id
 
     const currentUser = await getCurrentUser(event.headers.Authorization)
@@ -67,6 +72,11 @@ module.exports.getLanesByUser = async (event, context) => {
 }
 
 module.exports.getLaneById = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -136,6 +146,11 @@ module.exports.getLaneById = async (event, context) => {
 
 module.exports.getTopCarriers = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -198,6 +213,11 @@ module.exports.getTopCarriers = async (event, context) => {
 
 module.exports.updateLane = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -256,6 +276,11 @@ module.exports.updateLane = async (event, context) => {
 
 module.exports.getMarketFeedback = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -302,6 +327,11 @@ module.exports.getMarketFeedback = async (event, context) => {
 }
 
 module.exports.addMarketFeedback = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -350,6 +380,11 @@ module.exports.addMarketFeedback = async (event, context) => {
 }
 
 module.exports.deleteMarketFeedback = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -401,6 +436,11 @@ module.exports.deleteMarketFeedback = async (event, context) => {
 
 module.exports.getTeammatesForLane = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -449,6 +489,11 @@ module.exports.getTeammatesForLane = async (event, context) => {
 }
 
 module.exports.addTeammateToLane = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -509,6 +554,11 @@ module.exports.addTeammateToLane = async (event, context) => {
 }
 
 module.exports.deleteTeammateFromLane = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)

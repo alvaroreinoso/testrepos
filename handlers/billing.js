@@ -9,6 +9,11 @@ require('dotenv').config()
 
 module.exports.webhookHandler = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const body = JSON.parse(event.body)
 
     let stripeEvent;
@@ -71,6 +76,11 @@ module.exports.webhookHandler = async (event, context) => {
 }
 
 module.exports.createStripeCustomer = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -140,10 +150,13 @@ module.exports.createStripeCustomer = async (event, context) => {
 
 module.exports.createStripeSubscription = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -233,6 +246,11 @@ module.exports.createStripeSubscription = async (event, context) => {
 
 module.exports.getBillingDetails = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
 
         const user = await getCurrentUser(event.headers.Authorization)
@@ -289,6 +307,11 @@ module.exports.getBillingDetails = async (event, context) => {
 }
 
 module.exports.updateSubscription = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
