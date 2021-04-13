@@ -62,7 +62,7 @@ custom:
     number: 3
   warmup:
     test:
-      enabled: true # test
+      enabled: false # test
       vpc:
         securityGroupIds:
           - sg-012e7222a5f8ac6cc
@@ -156,7 +156,7 @@ functions:
   getUser:
     warmup: 
       test:
-        enabled: true
+        enabled: false
     handler:
       ./handlers/user.getUser
     events:
