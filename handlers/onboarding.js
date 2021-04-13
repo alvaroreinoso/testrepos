@@ -10,6 +10,11 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports.requestAccount = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
@@ -87,6 +92,11 @@ module.exports.requestAccount = async (event, context) => {
 
 module.exports.inviteUser = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
@@ -134,6 +144,11 @@ module.exports.inviteUser = async (event, context) => {
 
 module.exports.getBrokerageByUUID = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const uuid = event.pathParameters.uuid
 
@@ -165,6 +180,10 @@ module.exports.getBrokerageByUUID = async (event, context) => {
 
 module.exports.getTeamsForBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const currentUser = await getCurrentUser(event.headers.Authorization)
@@ -198,6 +217,11 @@ module.exports.getTeamsForBrokerage = async (event, context) => {
 }
 
 module.exports.getCustomersForBrokerage = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)

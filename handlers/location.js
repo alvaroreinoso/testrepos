@@ -7,6 +7,11 @@ const corsHeaders = require('.././helpers/cors');
 
 module.exports.getLocationById = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -91,6 +96,11 @@ module.exports.getLocationById = async (event, context) => {
 
 module.exports.editLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -139,6 +149,11 @@ module.exports.editLocation = async (event, context) => {
 }
 
 module.exports.getLanesForLocation = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -234,6 +249,11 @@ module.exports.getLanesForLocation = async (event, context) => {
 
 module.exports.getTeammatesForLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -286,6 +306,11 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 }
 
 module.exports.addTeammateToLocation = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -357,6 +382,11 @@ module.exports.addTeammateToLocation = async (event, context) => {
 }
 
 module.exports.deleteTeammateFromLocation = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
