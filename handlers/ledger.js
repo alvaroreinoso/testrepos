@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Ledger, Message, Customer, User } = require('.././models');
+const { Ledger, Message, Customer, User, Team } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.getLedger = async (event, context) => {
@@ -26,7 +26,10 @@ module.exports.getLedger = async (event, context) => {
                 model: Message,
                 include: [{
                     model: User,
-                    paranoid: false
+                    paranoid: false,
+                    include: {
+                        model: Team
+                    }
                 }]
             }, {
                 model: User,
