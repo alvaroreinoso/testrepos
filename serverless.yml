@@ -69,7 +69,6 @@ package:
     - migrations/**
 
 functions:
-
 # Search
   search:
     handler:
@@ -136,9 +135,6 @@ functions:
 
 # User
   getUser:
-    warmup: 
-      test:
-        enabled: true
     handler:
       ./handlers/user.getUser
     events:
