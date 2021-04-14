@@ -135,6 +135,12 @@ functions:
 
 # User
   getUser:
+<<<<<<< HEAD
+=======
+    warmup: 
+      test:
+        enabled: true
+>>>>>>> dcb41fca83ca9dc43ef7a75a83fb0e16a31682f6
     handler:
       ./handlers/user.getUser
     events:
