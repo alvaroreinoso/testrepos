@@ -567,7 +567,7 @@ functions:
       ./handlers/onboarding.requestAccount
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -581,7 +581,7 @@ functions:
       ./handlers/onboarding.inviteUser
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     events:
@@ -622,7 +622,7 @@ functions:
       ./handlers/billing.webhookHandler
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -636,7 +636,7 @@ functions:
       ./handlers/billing.createStripeCustomer
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -650,7 +650,7 @@ functions:
       ./handlers/billing.createStripeSubscription
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -664,7 +664,7 @@ functions:
       ./handlers/billing.getBillingDetails
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -678,7 +678,7 @@ functions:
       ./handlers/billing.updateSubscription
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -692,7 +692,7 @@ functions:
       ./handlers/billing.updatePaymentInfo
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
