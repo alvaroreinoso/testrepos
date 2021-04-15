@@ -12,7 +12,7 @@ provider:
   versionFunctions: false
   vpc:
     securityGroupIds:
-      - sg-012e7222a5f8ac6cc
+      - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
     subnetIds:
       - subnet-03086cdd9e1e48134 # public-1
       - subnet-0243c1302f458775f # public-2
@@ -135,9 +135,6 @@ functions:
 
 # User
   getUser:
-    warmup: 
-      test:
-        enabled: true
     handler:
       ./handlers/user.getUser
     events:
