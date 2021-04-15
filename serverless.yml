@@ -2,10 +2,6 @@ org: terralanes
 app: terralanes-backend
 service: terralanes-api
 
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X" test
-
 provider:
   name: aws
   runtime: nodejs12.x
@@ -19,7 +15,7 @@ provider:
       - subnet-016928dcc4b9cba7b # public-3
   profile: default
   region: us-east-1
-  stage: test-warmup2
+  stage: default
   environment:
     DB_URL: ${param:DB_URL, env:DB_URL}
     DB_HOST: ${param:DB_HOST, env:DB_HOST}
@@ -48,7 +44,7 @@ custom:
     automatic: true
     number: 3
   warmup:
-    test:
+    allLambdas:
       enabled: ${param:WARMUP_ENABLED, false}
       prewarm: true
       concurrency: 1
