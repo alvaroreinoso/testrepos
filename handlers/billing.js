@@ -375,12 +375,6 @@ module.exports.updatePaymentInfo = async (event, context) => {
             }
         }
 
-        const brokerage = await Brokerage.findOne({
-            where: {
-                id: user.brokerageId
-            }
-        })
-
         const request = JSON.parse(event.body)
 
         const paymentMethod = await stripe.paymentMethods.update(
