@@ -6,6 +6,11 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.getBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
     const brokerageId = event.pathParameters.brokerageId
 
@@ -116,6 +121,11 @@ module.exports.getBrokerage = async (event, context) => {
 
 module.exports.getUsersForBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -154,6 +164,11 @@ module.exports.getUsersForBrokerage = async (event, context) => {
 }
 
 module.exports.getLanesForBrokerage = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const user = await getCurrentUser(event.headers.Authorization)
     const brokerageId = event.pathParameters.brokerageId
@@ -260,6 +275,11 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 }
 
 module.exports.editBrokerage = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
