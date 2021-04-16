@@ -6,6 +6,9 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Contact extends Model {
     static associate(models) {
+      Contact.belongsTo(models.Brokerage, {
+        foreignKey: 'brokerageId'
+      })
       Contact.belongsToMany(models.Location, {
         through: 'LocationContact',
         foreignKey: 'contactId'
@@ -21,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Contact.init({
+    brokerageId: DataTypes.INTEGER,
     level: DataTypes.INTEGER,
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
@@ -30,6 +34,9 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING
   }, {
     hooks: {
+      afterSave: async (contact, options) => {
+        await elastic.saveContact(contact)
+      },
       afterDestroy: async (contact, options) => {
         await elastic.deleteDocument(contact)
       }

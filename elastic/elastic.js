@@ -1,5 +1,5 @@
 const stateAbbreviations = require('states-abbreviations')
-const { Customer, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
+const { Customer, Brokerage, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = require('./client')
 
 client.ping((err) => {
@@ -9,6 +9,37 @@ client.ping((err) => {
         console.log('All is well')
     }
 })
+
+async function seedBrokerages() {
+
+    await client.indices.create({
+        index: 'brokerage'
+    })
+
+    const brokerages = await Brokerage.findAll()
+
+    const brokerageDocs = await brokerages.map(brokerage => {
+        const brokerageDoc = {
+            id: brokerage.id,
+            name: brokerage.name,
+            brokerageId: brokerage.id,
+        }
+
+        return brokerageDoc
+    })
+
+    const result = await client.helpers.bulk({
+        datasource: brokerageDocs,
+        onDocument(doc) {
+            return {
+                index: { _index: 'brokerage', _id: doc.id },
+                id: doc.id
+            }
+        }
+    })
+
+    console.log('Brokerages: ', result)
+}
 
 async function seedCustomer() {
 
@@ -331,6 +362,7 @@ async function setUp() {
         index: '*'
     })
 
+    await seedBrokerages()
     await seedContacts()
     await seedCustomer()
     await seedCustomerLocations()

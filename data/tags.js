@@ -127,7 +127,7 @@ const tags = [
     },
     {
         type: 'Equipment',
-        content: 'Reeler',
+        content: 'Reefer',
         createdAt: new Date(),
         updatedAt: new Date()
     },

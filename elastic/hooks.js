@@ -285,7 +285,7 @@ module.exports.deleteDocument = async (item) => {
     }
 }
 
-module.exports.saveContact = async (contact, brokerageId) => {
+module.exports.saveContact = async (contact) => {
 
     const doc = {
         id: contact.id,
@@ -293,7 +293,7 @@ module.exports.saveContact = async (contact, brokerageId) => {
         lastName: contact.lastName,
         fullName: `${contact.firstName} ${contact.lastName}`,
         title: contact.title,
-        brokerageId: brokerageId
+        brokerageId: contact.brokerageId
     }
 
     await client.update({

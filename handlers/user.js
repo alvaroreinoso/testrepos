@@ -54,8 +54,12 @@ module.exports.getUser = async (event, context) => {
 
 module.exports.getEmailById = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const userId = event.pathParameters.userId
 
         const user = await User.findOne({
@@ -80,12 +84,15 @@ module.exports.getEmailById = async (event, context) => {
 
 module.exports.getUserById = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const currentUser = await getCurrentUser(event.headers.Authorization)
 
         if (currentUser.id == null) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -122,7 +129,7 @@ module.exports.getUserById = async (event, context) => {
 
         if (lanes.length == 0) {
             user.dataValues.revenue = 0
-            user.dataValues.loadsPerWeek = 0
+            user.dataValues.loadsPerMonth = 0
 
             return {
                 body: JSON.stringify(user),
@@ -135,7 +142,7 @@ module.exports.getUserById = async (event, context) => {
         user.dataValues.revenue = revenue
 
         const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-        user.dataValues.loadsPerWeek = loadsPerWeek.frequency
+        user.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
 
         return {
             body: JSON.stringify(user),
@@ -144,31 +151,27 @@ module.exports.getUserById = async (event, context) => {
         }
 
     } catch (err) {
-        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,
         }
-
     }
-
 }
 
 module.exports.createProfile = async (event, context) => {
 
-    const req = await (JSON.parse(event.body))
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
-
-        const ledger = await Ledger.create({
-            brokerageId: req.brokerageId
-        })
+        const req = JSON.parse(event.body)
 
         await User.create({
             username: req.username,
             email: req.email,
             brokerageId: req.brokerageId,
-            ledgerId: ledger.id
         })
 
         return {
@@ -178,6 +181,7 @@ module.exports.createProfile = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,
@@ -186,21 +190,17 @@ module.exports.createProfile = async (event, context) => {
     }
 }
 
-module.exports.joinTeam = async (event, context) => {
-
-
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-
-
-}
-
 module.exports.updateProfile = async (event, context) => {
 
-    const req = (JSON.parse(event.body))
-
-    const user = await getCurrentUser(event.headers.Authorization)
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        const req = JSON.parse(event.body)
 
         user.firstName = req.firstName
         user.lastName = req.lastName
@@ -224,10 +224,14 @@ module.exports.updateProfile = async (event, context) => {
             statusCode: 500,
         }
     }
-
 }
 
 module.exports.updateUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -356,6 +360,11 @@ module.exports.updateUser = async (event, context) => {
 }
 module.exports.deleteUser = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
@@ -428,6 +437,11 @@ module.exports.deleteUser = async (event, context) => {
 
 module.exports.getTeams = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -455,34 +469,33 @@ module.exports.getTeams = async (event, context) => {
 
 module.exports.getTopCustomersForUser = async (event, context) => {
 
-    const currentUser = await getCurrentUser(event.headers.Authorization)
-    const userId = event.pathParameters.userId
-
-    if (currentUser.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401,
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
-        const targetUser = await User.findOne({
-            where: {
-                id: userId,
-            }
-        })
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+        const userId = event.pathParameters.userId
 
-        if (targetUser == null) {
-            return {
-                headers: corsHeaders,
-                statusCode: 404,
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
+        if (currentUser.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401,
+            }
+        }
+
+        const targetUser = await User.findOne({
+            where: {
+                id: userId,
+                brokerageId: currentUser.brokerageId
+            }
+        })
+
+        if (targetUser === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 404,
             }
         }
 
@@ -490,7 +503,7 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
         const customersWithSpend = await customers.map(async customer => {
 
-            customer.dataValues.spend = await getCustomerSpend(customer)
+            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
 
             return customer
         })
@@ -508,6 +521,8 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
+
         return {
             headers: corsHeaders,
             statusCode: 500,
@@ -517,6 +532,11 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 }
 
 module.exports.getTopLanesForUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const currentUser = await getCurrentUser(event.headers.Authorization)
     const userId = event.pathParameters.userId
@@ -532,6 +552,7 @@ module.exports.getTopLanesForUser = async (event, context) => {
         const targetUser = await User.findOne({
             where: {
                 id: userId,
+                brokerageId: currentUser.brokerageId
             }
         })
 
@@ -539,13 +560,6 @@ module.exports.getTopLanesForUser = async (event, context) => {
             return {
                 headers: corsHeaders,
                 statusCode: 404,
-            }
-        }
-
-        if (targetUser.brokerageId != currentUser.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401,
             }
         }
 
@@ -579,5 +593,4 @@ module.exports.getTopLanesForUser = async (event, context) => {
             statusCode: 500,
         }
     }
-
 }

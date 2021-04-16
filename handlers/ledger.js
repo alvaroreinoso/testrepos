@@ -1,14 +1,26 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Ledger, Message, Customer, User } = require('.././models');
+const { Ledger, Message, Customer, User, Team } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.getLedger = async (event, context) => {
 
-    try {
-        const ledgerId = event.pathParameters.id
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const ledgerId = event.pathParameters.id
 
         const ledger = await Ledger.findOne({
             where: {
@@ -19,7 +31,10 @@ module.exports.getLedger = async (event, context) => {
                 model: Message,
                 include: [{
                     model: User,
-                    paranoid: false
+                    paranoid: false,
+                    include: {
+                        model: Team
+                    }
                 }]
             }, {
                 model: User,
@@ -55,18 +70,20 @@ module.exports.getLedger = async (event, context) => {
 
 module.exports.writeMessage = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
-
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
 
         const request = JSON.parse(event.body)
 
@@ -80,7 +97,7 @@ module.exports.writeMessage = async (event, context) => {
         if (ledger == null) {
             return {
                 headers: corsHeaders,
-                statusCode: 401
+                statusCode: 404
             }
         }
 
@@ -96,54 +113,6 @@ module.exports.writeMessage = async (event, context) => {
         }
 
     } catch (err) {
-
-        return {
-            headers: corsHeaders,
-            statusCode: 500
-        }
-
-    }
-
-}
-
-module.exports.deleteMessage = async (event, context) => {
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
-    }
-
-    try {
-        const messageId = event.pathParameters.id
-
-        const message = await Message.findOne({
-            where: {
-                id: messageId,
-                userId: user.id
-            }
-        })
-
-        if (message == null) {
-            return {
-                headers: corsHeaders,
-                statusCode: 404
-            }
-        }
-
-        await message.destroy()
-
-        return {
-            headers: corsHeaders,
-            statusCode: 204
-        }
-
-    } catch (err) {
-
         return {
             headers: corsHeaders,
             statusCode: 500
@@ -153,11 +122,15 @@ module.exports.deleteMessage = async (event, context) => {
 
 module.exports.updateMessage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == undefined) {
-
+        if (user.id == null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -187,7 +160,7 @@ module.exports.updateMessage = async (event, context) => {
             case 'PUT': {
                 const request = JSON.parse(event.body)
 
-                message.update({
+                await message.update({
                     content: request.content
                 })
 

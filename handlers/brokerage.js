@@ -6,12 +6,24 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.getBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
     const brokerageId = event.pathParameters.brokerageId
 
     if (user.id == null) {
         return {
             statusCode: 401,
+            headers: corsHeaders
+        }
+    }
+
+    if (user.brokerageId != brokerageId) {
+        return {
+            statusCode: 403,
             headers: corsHeaders
         }
     }
@@ -109,6 +121,11 @@ module.exports.getBrokerage = async (event, context) => {
 
 module.exports.getUsersForBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -148,6 +165,11 @@ module.exports.getUsersForBrokerage = async (event, context) => {
 
 module.exports.getLanesForBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
     const brokerageId = event.pathParameters.brokerageId
 
@@ -160,7 +182,7 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 
     if (user.brokerageId != brokerageId) {
         return {
-            statusCode: 401,
+            statusCode: 403,
             headers: corsHeaders
         }
     }
@@ -254,6 +276,11 @@ module.exports.getLanesForBrokerage = async (event, context) => {
 
 module.exports.editBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -272,6 +299,13 @@ module.exports.editBrokerage = async (event, context) => {
                 id: request.id
             }
         })
+
+        if (brokerage.id != user.brokerageId) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
 
         brokerage.name = request.name,
         brokerage.address = request.address,

@@ -7,21 +7,27 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.getTeamById = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
@@ -29,13 +35,6 @@ module.exports.getTeamById = async (event, context) => {
             return {
                 headers: corsHeaders,
                 statusCode: 404
-            }
-        }
-
-        if (team.brokerageId != user.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401
             }
         }
 
@@ -63,7 +62,10 @@ module.exports.getTeamById = async (event, context) => {
                 }
             })
 
-            customer.dataValues.spend = await getCustomerSpend(customer)
+            const spendAndLoads = await getCustomerSpend(customer)
+
+            customer.dataValues.spend = spendAndLoads[0]
+            customer.dataValues.loadsPerMonth = spendAndLoads[1]
 
             return customer
         })
@@ -72,7 +74,6 @@ module.exports.getTeamById = async (event, context) => {
         const topCustomers = [...customersResolved].sort((a, b) => { return b.dataValues.spend - a.dataValues.spend })
 
         team.dataValues.customerCount = uniqueCustomerIds.size
-
         team.dataValues.topCustomers = topCustomers
 
         return {
@@ -91,13 +92,27 @@ module.exports.getTeamById = async (event, context) => {
 
 module.exports.getTeammatesForTeam = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
                 id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
@@ -108,17 +123,35 @@ module.exports.getTeammatesForTeam = async (event, context) => {
             }
         }
 
-        if (team.brokerageId != user.brokerageId) {
-            return {
-                headers: corsHeaders,
-                statusCode: 401
-            }
-        }
-
         const teammates = await team.getUsers()
 
+        const teammatesWithSpend = await Promise.all(await teammates.map(async teammate => {
+
+            const lanes = await teammate.getLanes()
+            const customers = await teammate.getCustomers()
+
+            teammate.dataValues.customerCount = customers.length
+
+            if (lanes.length == 0) {
+                teammate.dataValues.spendPerMonth = 0
+                teammate.dataValues.loadsPerMonth = 0
+
+                return teammate
+            }
+
+            const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+            const spendPerMonth = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+            teammate.dataValues.spendPerMonth = spendPerMonth.spend
+            teammate.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
+
+            return teammate
+        }))
+
+        const sortedTeammates = await teammatesWithSpend.sort((a, b) => { return b.dataValues.spendPerMonth - a.dataValues.spendPerMonth })
+
         return {
-            body: JSON.stringify(teammates),
+            body: JSON.stringify(sortedTeammates),
             headers: corsHeaders,
             statusCode: 200
         }
@@ -133,21 +166,34 @@ module.exports.getTeammatesForTeam = async (event, context) => {
 
 module.exports.getLanesForTeam = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
 
         const teamId = event.pathParameters.teamId
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
-        if (team.brokerageId != user.brokerageId) {
+        if (team === null) {
             return {
-                headers: corsHeaders,
-                statusCode: 401
+                statusCode: 404,
+                headers: corsHeaders
             }
         }
 
@@ -232,25 +278,39 @@ module.exports.getLanesForTeam = async (event, context) => {
             return lane
         })
 
+        if (lanes.length == 0) {
+            const body = {
+                revenue: 0,
+                loadsPerWeek: 0,
+                Lanes: []
+            }
 
-        const lanesResolved = await Promise.all(lanes)
-        const laneSpend = lanesResolved.map(lane => lane.spend)
-        const teamSpend = await laneSpend.reduce((a, b) => a + b)
-
-        const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-
-        const body = {
-            revenue: teamSpend,
-            loadsPerWeek: loadsPerWeek.frequency,
-            Lanes: lanesResolved
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
+        else {
+            const lanesResolved = await Promise.all(lanes)
+            const laneSpend = lanesResolved.map(lane => lane.spend)
+            const teamSpend = await laneSpend.reduce((a, b) => a + b)
 
-        return {
-            body: JSON.stringify(body),
-            headers: corsHeaders,
-            statusCode: 200
+            const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+            const loadsPerMonth = loadsPerWeek.frequency * 4
+
+            const body = {
+                revenue: teamSpend,
+                loadsPerMonth: loadsPerMonth,
+                Lanes: lanesResolved
+            }
+
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
-
     }
 
     catch (err) {
@@ -263,8 +323,12 @@ module.exports.getLanesForTeam = async (event, context) => {
 
 module.exports.addTeam = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -274,23 +338,12 @@ module.exports.addTeam = async (event, context) => {
             }
         }
 
-        if (user.admin == false) {
-            return {
-                headers: corsHeaders,
-                statusCode: 403
-            }
-        }
-
         const request = JSON.parse(event.body)
 
         const team = await Team.create({
             icon: request.icon,
             name: request.name,
             brokerageId: user.brokerageId,
-        })
-
-        await team.createLedger({
-            brokerageId: team.brokerageId
         })
 
         const response = {
@@ -313,11 +366,16 @@ module.exports.addTeam = async (event, context) => {
 }
 
 module.exports.editTeam = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -326,16 +384,24 @@ module.exports.editTeam = async (event, context) => {
 
         const teamId = event.pathParameters.teamId
 
-        const request = JSON.parse(event.body)
-
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             }
         })
 
+        if (team === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
         team.name = request.name,
-            team.icon = request.icon
+        team.icon = request.icon
 
         await team.save()
 
@@ -343,10 +409,8 @@ module.exports.editTeam = async (event, context) => {
             headers: corsHeaders,
             statusCode: 204
         }
+
     } catch (err) {
-
-        console.log(err)
-
         return {
             headers: corsHeaders,
             statusCode: 500
@@ -356,11 +420,15 @@ module.exports.editTeam = async (event, context) => {
 
 module.exports.deleteTeam = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.admin == false) {
-
             return {
                 headers: corsHeaders,
                 statusCode: 403
@@ -371,9 +439,17 @@ module.exports.deleteTeam = async (event, context) => {
 
         const team = await Team.findOne({
             where: {
-                id: teamId
+                id: teamId,
+                brokerageId: user.brokerageId
             },
         })
+
+        if (team === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         await Ledger.destroy({
             where: {
@@ -398,77 +474,129 @@ module.exports.deleteTeam = async (event, context) => {
 
 module.exports.removeTeammate = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
-    if (user.admin == false) {
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        const targetUserId = event.pathParameters.userId
+
+        if (user.admin == true) {
+
+            const targetUser = await User.findOne({
+                where: {
+                    id: targetUserId,
+                    brokerageId: user.brokerageId
+                }
+            })
+
+            if (targetUser == null) {
+                return {
+                    statusCode: 404
+                }
+            }
+
+            targetUser.teamId = null
+
+            await targetUser.save()
+
+            return {
+                headers: corsHeaders,
+                statusCode: 204
+            }
+        } else {
+
+            if (targetUserId != user.id) {
+                return {
+                    headers: corsHeaders,
+                    statusCode: 403
+                }
+            }
+
+            else {
+
+                user.teamId = null
+
+                await user.save()
+
+                return {
+                    headers: corsHeaders,
+                    statusCode: 403
+                }
+            }
+        }
+    } catch (err) {
         return {
-            headers: corsHeaders,
-            statusCode:403
+            statusCode: 500
         }
-    }
-
-    const targetUserId = event.pathParameters.userId
-
-    const targetUser = await User.findOne({
-        where: {
-            id: targetUserId,
-            brokerageId: user.brokerageId
-        }
-    })
-
-    if (targetUser == null) {
-        return {
-            statusCode: 404
-        }
-    }
-
-    targetUser.teamId = null
-
-    await targetUser.save()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 204
     }
 }
 
 module.exports.addTeammate = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
-    if (user.id == null) {
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const targetUserId = request.userId
+        const teamId = request.teamId
+
+        const team = await Team.findOne({
+            where: {
+                id: teamId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (targetUser === null || team === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        targetUser.teamId = teamId
+
+        await targetUser.save()
 
         return {
             headers: corsHeaders,
-            statusCode: 401
+            statusCode: 204
+        }
+    } catch (err) {
+        return {
+            statusCode: 500,
+            headers: corsHeaders
         }
     }
-
-    const request = JSON.parse(event.body)
-
-    const targetUserId = request.userId
-    const teamId = request.teamId
-
-    const targetUser = await User.findOne({
-        where: {
-            id: targetUserId
-        }
-    })
-
-    targetUser.teamId = teamId
-
-    await targetUser.save()
-
-    return {
-        headers: corsHeaders,
-        statusCode: 204
-    }
-
 }

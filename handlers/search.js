@@ -6,11 +6,15 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.search = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == null) {
-
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -20,7 +24,7 @@ module.exports.search = async (event, context) => {
         const query = event.queryStringParameters.q
 
         const searchResults = await client.search({
-            index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location'],
+            index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location', 'brokerage'],
             body: {
                 query: {
                     bool: {
@@ -58,6 +62,11 @@ module.exports.search = async (event, context) => {
 
 module.exports.searchLedger = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
 
     const ledgerId = event.queryStringParameters.id
@@ -70,7 +79,6 @@ module.exports.searchLedger = async (event, context) => {
     })
 
     if (ledger == null) {
-
         return {
             headers: corsHeaders,
             statusCode: 401
@@ -137,6 +145,11 @@ module.exports.searchLedger = async (event, context) => {
 }
 
 module.exports.searchUsersInBrokerage = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
 
@@ -212,6 +225,11 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 }
 
 module.exports.searchContacts = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
 

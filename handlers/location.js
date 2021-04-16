@@ -1,16 +1,21 @@
 'use strict';
-const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation } = require('.././models');
+const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation, User, Team } = require('.././models');
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
-const corsHeaders = require('.././helpers/cors')
+const corsHeaders = require('.././helpers/cors');
 
 module.exports.getLocationById = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == undefined) {
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -21,7 +26,8 @@ module.exports.getLocationById = async (event, context) => {
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             },
             include: [
                 {
@@ -36,27 +42,29 @@ module.exports.getLocationById = async (event, context) => {
                 }]
         })
 
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         const lanes = await location.getLanes()
 
         if (lanes.length != 0) {
 
             const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            const loadsPerWeekPerLane = await lanes.map(async lane => {
+            const loadsPerMonthPerLane = await lanes.map( lane => {
 
-                const frequency = await getFrequency(lane) // returns loads per week per lane
+                const loadsPerMonth = lane.frequency * 4
 
-                if (frequency == 0) {
-                    return 0
-                }
-
-                return frequency
+                return loadsPerMonth
             })
 
-            const loadsResolved = await Promise.all(loadsPerWeekPerLane)
-            const totalLoads = loadsResolved.reduce((a, b) => { return a + b })
+            const totalLoadsPerMonth = loadsPerMonthPerLane.reduce((a, b) => { return a + b })
 
-            location.dataValues.loadsPerWeek = totalLoads
+            location.dataValues.loadsPerMonth = totalLoadsPerMonth
             location.dataValues.spendPerMonth = totalSpend.spend
 
             return {
@@ -88,15 +96,36 @@ module.exports.getLocationById = async (event, context) => {
 
 module.exports.editLocation = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+        
         const request = JSON.parse(event.body)
 
         const location = await Location.findOne({
             where: {
-                id: request.id
+                id: request.id,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         location.hoursType = request.hoursType
         location.open = request.open
@@ -121,6 +150,11 @@ module.exports.editLocation = async (event, context) => {
 
 module.exports.getLanesForLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -132,6 +166,20 @@ module.exports.getLanesForLocation = async (event, context) => {
         }
 
         const locationId = event.pathParameters.locationId
+
+        const location = await Location.findOne({
+            where: {
+                id: locationId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const lanes = await Lane.findAll({
             attributes: ['id'],
@@ -201,10 +249,13 @@ module.exports.getLanesForLocation = async (event, context) => {
 
 module.exports.getTeammatesForLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -217,14 +268,27 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             },
+            include: { 
+                model: User,
+                through: { attributes: []},
+                include: {
+                    model: Team
+                }
+            }
         })
 
-        const users = await location.getUsers()
+        if (location === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         return {
-            body: JSON.stringify(users),
+            body: JSON.stringify(location.Users),
             headers: corsHeaders,
             statusCode: 200
         }
@@ -243,6 +307,11 @@ module.exports.getTeammatesForLocation = async (event, context) => {
 
 module.exports.addTeammateToLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -256,18 +325,33 @@ module.exports.addTeammateToLocation = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const locationId = request.locationId
-        const userId = request.userId
+        const targetUserId = request.userId
 
-        const location = await Location.findOne({
+        const targetUser = await User.findOne({
             where: {
-                id: locationId
+                id: targetUserId,
+                brokerageId: user.brokerageId
             }
         })
 
+        const location = await Location.findOne({
+            where: {
+                id: locationId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLocation.findOrCreate({
             where: {
-                locationId: locationId,
-                userId: userId
+                locationId: location.id,
+                userId: targetUser.id
             }
         })
 
@@ -278,7 +362,7 @@ module.exports.addTeammateToLocation = async (event, context) => {
             await TaggedLane.findOrCreate({
                 where: {
                     laneId: lane.id,
-                    userId: userId
+                    userId: targetUser.id
                 }
             })
         }
@@ -299,6 +383,11 @@ module.exports.addTeammateToLocation = async (event, context) => {
 
 module.exports.deleteTeammateFromLocation = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -312,18 +401,33 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const locationId = request.locationId
-        const userId = request.userId
+        const targetUserId = request.userId
 
         const location = await Location.findOne({
             where: {
-                id: locationId
+                id: locationId,
+                brokerageId: user.brokerageId
             }
         })
 
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (location === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLocation.destroy({
             where: {
-                userId: userId,
-                locationId: locationId
+                userId: targetUser.id,
+                locationId: location.id
             }
         })
 
@@ -334,7 +438,7 @@ module.exports.deleteTeammateFromLocation = async (event, context) => {
             await TaggedLane.destroy({
                 where: {
                     laneId: lane.id,
-                    userId: userId
+                    userId: targetUser.id
                 }
             })
         }

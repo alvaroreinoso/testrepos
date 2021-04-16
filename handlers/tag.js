@@ -1,22 +1,26 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerTag, BrokerageTag, UserTag, TeamTag, Brokerage, User, Team, LocationTag, Tag, LaneTag, Location, Lane } = require('.././models')
-const elastic = require('.././elastic/hooks')
 const noOtherAssoications = require('.././helpers/noAssociatedTags').noOtherAssociations
 const corsHeaders = require('.././helpers/cors')
+const { Op } = require("sequelize");
 
 module.exports.getTags = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            headers: corsHeaders,
-            statusCode: 401
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
 
         const type = event.queryStringParameters.tagType
         const id = event.pathParameters.itemId
@@ -27,14 +31,37 @@ module.exports.getTags = async (event, context) => {
 
                 const lane = await Lane.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
 
-                const laneTags = await lane.getTags()
+                if (lane === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await lane.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await lane.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const data = customTags.concat(otherTags)
+                
 
                 return {
-                    body: JSON.stringify(laneTags),
+                    body: JSON.stringify(data),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -43,14 +70,36 @@ module.exports.getTags = async (event, context) => {
 
                 const location = await Location.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
 
-                const locationTags = await location.getTags()
+                if (location === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await location.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await location.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(locationTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -59,29 +108,73 @@ module.exports.getTags = async (event, context) => {
 
                 const customer = await Customer.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
 
-                const customerTags = await customer.getTags()
+                if (customer === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await customer.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await customer.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(customerTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
             } case 'user': {
 
-                const user = await User.findOne({
+                const targetUser = await User.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
 
-                const userTags = await user.getTags()
+                if (targetUser === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await targetUser.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await targetUser.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(userTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -93,10 +186,31 @@ module.exports.getTags = async (event, context) => {
                     }
                 })
 
-                const brokerageTags = await brokerage.getTags()
+                if (brokerage.id != user.brokerageId) {
+                    return {
+                        statusCode: 401,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await brokerage.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await brokerage.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(brokerageTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -104,14 +218,36 @@ module.exports.getTags = async (event, context) => {
 
                 const team = await Team.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
 
-                const teamTags = await team.getTags()
+                if (team === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
+
+                const customTags = await team.getTags({
+                    where: {
+                        type: 'Custom'
+                    }
+                })
+
+                const otherTags = await team.getTags({
+                    where: {
+                        type: {
+                            [Op.not]: 'Custom'
+                        }
+                    }
+                })
+
+                const tags = customTags.concat(otherTags)
 
                 return {
-                    body: JSON.stringify(teamTags),
+                    body: JSON.stringify(tags),
                     headers: corsHeaders,
                     statusCode: 200
                 }
@@ -126,7 +262,7 @@ module.exports.getTags = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
@@ -136,11 +272,15 @@ module.exports.getTags = async (event, context) => {
 
 module.exports.addTag = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const user = await getCurrentUser(event.headers.Authorization)
 
-        if (user.id == null) {
+        if (user.id === null) {
             return {
                 headers: corsHeaders,
                 statusCode: 401
@@ -164,9 +304,23 @@ module.exports.addTag = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneTag.findOrCreate({
                         where: {
-                            laneId: id,
+                            laneId: lane.id,
                             tagId: tag.id
                         }
                     })
@@ -176,9 +330,23 @@ module.exports.addTag = async (event, context) => {
                 }
                 case 'user': {
 
+                    const targetUser = await User.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (targetUser === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await UserTag.findOrCreate({
                         where: {
-                            userId: id,
+                            userId: targetUser.id,
                             tagId: tag.id
                         }
                     })
@@ -187,9 +355,22 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'brokerage': {
 
+                    const brokerage = await Brokerage.findOne({
+                        where: {
+                            id: id,
+                        }
+                    })
+
+                    if (brokerage.id != user.brokerageId) {
+                        return {
+                            statusCode: 401,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await BrokerageTag.findOrCreate({
                         where: {
-                            brokerageId: id,
+                            brokerageId: brokerage.id,
                             tagId: tag.id
                         }
                     })
@@ -198,9 +379,23 @@ module.exports.addTag = async (event, context) => {
                 }
                 case 'team': {
 
+                    const team = await Team.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (team === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await TeamTag.findOrCreate({
                         where: {
-                            teamId: id,
+                            teamId: team.id,
                             tagId: tag.id
                         }
                     })
@@ -209,9 +404,23 @@ module.exports.addTag = async (event, context) => {
                 }
                 case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationTag.findOrCreate({
                         where: {
-                            locationId: id,
+                            locationId: location.id,
                             tagId: tag.id
                         }
                     })
@@ -220,9 +429,23 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerTag.findOrCreate({
                         where: {
-                            customerId: id,
+                            customerId: customer.id,
                             tagId: tag.id
                         }
                     })
@@ -255,8 +478,22 @@ module.exports.addTag = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneTag.create({
-                        laneId: id,
+                        laneId: lane.id,
                         tagId: tag.id
                     })
 
@@ -264,8 +501,22 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationTag.create({
-                        locationId: id,
+                        locationId: location.id,
                         tagId: tag.id
                     })
 
@@ -273,20 +524,47 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerTag.create({
-                        customerId: id,
+                        customerId: customer.id,
                         tagId: tag.id
                     })
 
                     break
-
                 }
 
                 case 'user': {
 
+                    const targetUser = await User.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (targetUser === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await UserTag.findOrCreate({
                         where: {
-                            userId: id,
+                            userId: targetUser.id,
                             tagId: tag.id
                         }
                     })
@@ -295,9 +573,22 @@ module.exports.addTag = async (event, context) => {
 
                 } case 'brokerage': {
 
+                    const brokerage = await Brokerage.findOne({
+                        where: {
+                            id: id,
+                        }
+                    })
+
+                    if (brokerage.id != user.brokerageId) {
+                        return {
+                            statusCode: 401,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await BrokerageTag.findOrCreate({
                         where: {
-                            brokerageId: id,
+                            brokerageId: brokerage.id,
                             tagId: tag.id
                         }
                     })
@@ -306,9 +597,23 @@ module.exports.addTag = async (event, context) => {
                 }
                 case 'team': {
 
+                    const team = await Team.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (team === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await TeamTag.findOrCreate({
                         where: {
-                            teamId: id,
+                            teamId: team.id,
                             tagId: tag.id
                         }
                     })
@@ -316,13 +621,11 @@ module.exports.addTag = async (event, context) => {
                     break;
                 }
                 default: {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 500
                     }
                 }
-
             }
 
             return {
@@ -341,10 +644,22 @@ module.exports.addTag = async (event, context) => {
 
 module.exports.deleteTag = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id === null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
 
         const request = JSON.parse(event.body)
-
         const type = event.queryStringParameters.tagType
 
         switch (type) {
@@ -355,11 +670,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         laneId: request.LaneTag.laneId,
                         tagId: request.LaneTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: Lane,
+                        where: {
+                            brokerageId: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
                 if (laneTag === null) {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -378,7 +699,6 @@ module.exports.deleteTag = async (event, context) => {
                 if (await noOtherAssoications(tag)) {
 
                     await tag.destroy()
-
                 }
 
                 return {
@@ -392,11 +712,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         locationId: request.LocationTag.locationId,
                         tagId: request.LocationTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: Location,
+                        where: {
+                            brokerageId: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
                 if (locationTag === null) {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -415,14 +741,12 @@ module.exports.deleteTag = async (event, context) => {
                 if (await noOtherAssoications(tag)) {
 
                     await tag.destroy()
-
                 }
 
                 return {
                     headers: corsHeaders,
                     statusCode: 204
                 }
-
             }
             case 'customer': {
 
@@ -430,11 +754,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         customerId: request.CustomerTag.customerId,
                         tagId: request.CustomerTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: Customer,
+                        where: {
+                            brokerageId: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
                 if (customerTag === null) {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -453,14 +783,12 @@ module.exports.deleteTag = async (event, context) => {
                 if (await noOtherAssoications(tag)) {
 
                     await tag.destroy()
-
                 }
 
                 return {
                     headers: corsHeaders,
                     statusCode: 204
                 }
-
             }
             case 'user': {
 
@@ -468,11 +796,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         userId: request.UserTag.userId,
                         tagId: request.UserTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: User,
+                        where: {
+                            brokerageId: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
                 if (userTag === null) {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -497,7 +831,6 @@ module.exports.deleteTag = async (event, context) => {
                     headers: corsHeaders,
                     statusCode: 204
                 }
-
             }
             case 'brokerage': {
 
@@ -505,11 +838,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         brokerageId: request.BrokerageTag.brokerageId,
                         tagId: request.BrokerageTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: Brokerage,
+                        where: {
+                            id: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
                 if (brokerageTag === null) {
-
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -534,7 +873,6 @@ module.exports.deleteTag = async (event, context) => {
                     headers: corsHeaders,
                     statusCode: 204
                 }
-
             }
             case 'team': {
 
@@ -542,11 +880,17 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         teamId: request.TeamTag.teamId,
                         tagId: request.TeamTag.tagId
-                    }
+                    },
+                    include: [{
+                        model: Team,
+                        where: {
+                            brokerageId: user.brokerageId,
+                        },
+                        required: true
+                    }]
                 })
 
-                if (brokerageTag === null) {
-
+                if (teamTag === null) {
                     return {
                         headers: corsHeaders,
                         statusCode: 404
@@ -587,6 +931,4 @@ module.exports.deleteTag = async (event, context) => {
             statusCode: 500
         }
     }
-
-
 }

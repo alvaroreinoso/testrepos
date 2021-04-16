@@ -1,10 +1,16 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, CustomerLocation, Carrier, Lane, LanePartner, User, Location, MarketFeedback, TaggedLane } = require('.././models');
+const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane, Team } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
+const sequelize = require('sequelize')
 
 module.exports.getLanesByUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const targetUserId = event.pathParameters.id
 
@@ -67,21 +73,27 @@ module.exports.getLanesByUser = async (event, context) => {
 
 module.exports.getLaneById = async (event, context) => {
 
-    const laneId = event.pathParameters.laneId
-
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const laneId = event.pathParameters.laneId
+
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             },
             include: [{
                 model: Location,
@@ -112,7 +124,7 @@ module.exports.getLaneById = async (event, context) => {
             }]
         })
 
-        if (lane == null) {
+        if (lane === null) {
             return {
                 statusCode: 404,
                 headers: corsHeaders
@@ -125,7 +137,6 @@ module.exports.getLaneById = async (event, context) => {
             headers: corsHeaders
         }
     } catch (err) {
-        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -135,69 +146,63 @@ module.exports.getLaneById = async (event, context) => {
 
 module.exports.getTopCarriers = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
 
-    const laneId = event.pathParameters.laneId
-
-    const lane = await Lane.findOne({
-        where: {
-            id: laneId
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
         }
-    })
 
-    if (lane === null) {
-        return {
-            statusCode: 404
-        }
-    }
+        const laneId = event.pathParameters.laneId
 
-    const loads = await lane.getLoads({
-        include: [{
-            model: Carrier,
-            required: true
-        }]
-    })
-
-    const carriers = await loads.map(load => load.Carrier.name)
-
-    let counts = {}
-
-    for (let i = 0; i < carriers.length; i++) {
-        let num = carriers[i];
-        counts[num] = counts[num] ? counts[num] + 1 : 1;
-    }
-
-    const sorted = Object.fromEntries(
-        Object.entries(counts).sort(([,a],[,b]) => b-a)
-    );
-    
-    const topCarriers = Object.keys(sorted).map(async item => {
-
-        const carrier = await Carrier.findOne({
+        const lane = await Lane.findOne({
             where: {
-                name: item
-            },
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
         })
 
-        const loads = await carrier.getLoads()
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
-        const rates = await loads.map(load => load.rate)
-        const rateSum = await rates.reduce((a, b) => { return a + b })
-        const historicalRate = rateSum / rates.length
-        
-        carrier.dataValues.historicalRate = historicalRate
+        const carriers = await Carrier.findAll({
+            include: [{
+                model: Load,
+                where: {
+                    laneId: lane.id
+                }
+            }],
+        });
 
-        return carrier
-    })
+        const carriersWithCount = await carriers.map(carrier => {
+            carrier.dataValues.loadCount = carrier.Loads.length
+            carrier.dataValues.historicalRate = carrier.Loads[0].rate
 
-    const results = await Promise.all(topCarriers)
+            delete carrier.dataValues.Loads
 
-    return {
-        body: JSON.stringify(results),
-        statusCode: 200,
-        headers: corsHeaders
-    }
-    } catch(err) {
+            return carrier
+        })
+
+        const topCarriers = await carriersWithCount.sort((a, b) => b.loadCount - a.loadCount)
+
+        return {
+            body: JSON.stringify(topCarriers),
+            headers: corsHeaders,
+            statusCode: 200
+        }
+    } catch (err) {
         console.log(err)
         return {
             statusCode: 500,
@@ -208,17 +213,37 @@ module.exports.getTopCarriers = async (event, context) => {
 
 module.exports.updateLane = async (event, context) => {
 
-    const request = JSON.parse(event.body)
-
-    const laneId = event.pathParameters.laneId
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+        const laneId = event.pathParameters.laneId
 
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         lane.routeGeometry = request.routeGeometry
         lane.frequency = request.frequency
@@ -251,20 +276,39 @@ module.exports.updateLane = async (event, context) => {
 
 module.exports.getMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const feedback = await MarketFeedback.findAll({
             where: {
-                laneId: laneId
+                laneId: lane.id
             }
         })
 
@@ -284,22 +328,41 @@ module.exports.getMarketFeedback = async (event, context) => {
 
 module.exports.addMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const request = JSON.parse(event.body)
 
         await MarketFeedback.create({
-            laneId: laneId,
+            laneId: lane.id,
             rate: request.rate,
             motorCarrierNumber: request.motorCarrierNumber,
         })
@@ -309,7 +372,6 @@ module.exports.addMarketFeedback = async (event, context) => {
             headers: corsHeaders
         }
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -319,17 +381,36 @@ module.exports.addMarketFeedback = async (event, context) => {
 
 module.exports.deleteMarketFeedback = async (event, context) => {
 
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-        return {
-            statusCode: 401,
-            headers: corsHeaders
-        }
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
     }
 
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
         const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         const feedbackId = event.pathParameters.feedbackId
 
@@ -346,7 +427,6 @@ module.exports.deleteMarketFeedback = async (event, context) => {
         }
 
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -356,10 +436,13 @@ module.exports.deleteMarketFeedback = async (event, context) => {
 
 module.exports.getTeammatesForLane = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -372,31 +455,45 @@ module.exports.getTeammatesForLane = async (event, context) => {
 
         const lane = await Lane.findOne({
             where: {
-                id: laneId
+                id: laneId,
+                brokerageId: user.brokerageId
             },
+            include: { 
+                model: User,
+                through: { attributes: []},
+                include: {
+                    model: Team
+                }
+            }
         })
 
-        const users = await lane.getUsers()
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         return {
-            body: JSON.stringify(users),
+            body: JSON.stringify(lane.Users),
             statusCode: 200,
             headers: corsHeaders
         }
     }
     catch (err) {
-
-        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
         }
     }
-
-
 }
 
 module.exports.addTeammateToLane = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -411,12 +508,34 @@ module.exports.addTeammateToLane = async (event, context) => {
         const request = JSON.parse(event.body)
 
         const laneId = request.laneId
-        const userId = request.userId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        const targetUserId = request.userId
+
+        const targetUser = await User.findOne({
+            where: {
+                id: targetUserId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         await TaggedLane.findOrCreate({
             where: {
-                laneId: laneId,
-                userId: userId
+                laneId: lane.id,
+                userId: targetUser.id
             }
         })
 
@@ -436,6 +555,11 @@ module.exports.addTeammateToLane = async (event, context) => {
 
 module.exports.deleteTeammateFromLane = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -448,10 +572,31 @@ module.exports.deleteTeammateFromLane = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
+        const lane = await Lane.findOne({
+            where: {
+                id: request.laneId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        const targetUser = await User.findOne({
+            where: {
+                id: request.userId,
+                brokerageId: user.brokerageId
+            }
+        })
+
+        if (lane === null || targetUser === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
         await TaggedLane.destroy({
             where: {
-                userId: request.userId,
-                laneId: request.laneId
+                userId: targetUser.id,
+                laneId: lane.id
             }
         })
 

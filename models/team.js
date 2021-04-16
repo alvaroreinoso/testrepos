@@ -10,9 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'teamId',
         onDelete: 'SET NULL'
       }),
-      Team.belongsTo(models.Brokerage, {
-        foreignKey: 'brokerageId'
-      })
+        Team.belongsTo(models.Brokerage, {
+          foreignKey: 'brokerageId'
+        })
       Team.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
         onDelete: 'CASCADE'
@@ -31,6 +31,11 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER
   }, {
     hooks: {
+      afterCreate: async (team, options) => {
+        await team.createLedger({
+          brokerageId: team.brokerageId
+        })
+      },
       afterSave: async (team, options) => {
         await elastic.saveDocument(team)
       },

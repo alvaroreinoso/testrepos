@@ -1,10 +1,14 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerContact, Ledger, LocationContact, Contact, LaneContact, Location, Lane } = require('.././models')
-const elastic = require('.././elastic/hooks')
 const corsHeaders = require('.././helpers/cors')
 
 module.exports.getContacts = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const user = await getCurrentUser(event.headers.Authorization)
 
@@ -16,7 +20,6 @@ module.exports.getContacts = async (event, context) => {
     }
 
     try {
-
         const type = event.queryStringParameters.contactType
         const id = event.pathParameters.itemId
 
@@ -26,9 +29,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const lane = await Lane.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (lane === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const laneContacts = await lane.getContacts({
                     order: [
@@ -46,9 +57,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const location = await Location.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (location === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const locationContacts = await location.getContacts({
                     order: [
@@ -66,9 +85,17 @@ module.exports.getContacts = async (event, context) => {
 
                 const customer = await Customer.findOne({
                     where: {
-                        id: id
+                        id: id,
+                        brokerageId: user.brokerageId
                     }
                 })
+
+                if (customer === null) {
+                    return {
+                        statusCode: 404,
+                        headers: corsHeaders
+                    }
+                }
 
                 const customerContacts = await customer.getContacts({
                     order: [
@@ -93,6 +120,8 @@ module.exports.getContacts = async (event, context) => {
 
     } catch (err) {
 
+        console.log(err)
+
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -102,8 +131,12 @@ module.exports.getContacts = async (event, context) => {
 
 module.exports.addContact = async (event, context) => {
 
-    try {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
+    try {
         const user = await getCurrentUser(event.headers.Authorization)
 
         if (user.id == null) {
@@ -122,7 +155,8 @@ module.exports.addContact = async (event, context) => {
 
             const contact = await Contact.findOne({
                 where: {
-                    id: request.id
+                    id: request.id,
+                    brokerageId: user.brokerageId
                 }
             })
 
@@ -130,18 +164,24 @@ module.exports.addContact = async (event, context) => {
 
                 case 'universal': {
 
-                    // create customer contact
-
-                    await CustomerContact.findOrCreate({
+                    const customer = await Customer.findOne({
                         where: {
-                            customerId: id,
-                            contactId: contact.id
+                            id: id,
+                            brokerageId: user.brokerageId
                         }
                     })
 
-                    const customer = await Customer.findOne({
+                    if (customer === null) {
+                        return {
+                            status: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
+                    await CustomerContact.findOrCreate({
                         where: {
-                            id: id
+                            customerId: customer.id,
+                            contactId: contact.id
                         }
                     })
 
@@ -181,9 +221,23 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneContact.findOrCreate({
                         where: {
-                            laneId: id,
+                            laneId: lane.id,
                             contactId: contact.id
                         }
                     })
@@ -192,9 +246,23 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationContact.findOrCreate({
                         where: {
-                            locationId: id,
+                            locationId: location.id,
                             contactId: contact.id
                         }
                     })
@@ -203,9 +271,23 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerContact.findOrCreate({
                         where: {
-                            customerId: id,
+                            customerId: customer.id,
                             contactId: contact.id
                         }
                     })
@@ -230,6 +312,7 @@ module.exports.addContact = async (event, context) => {
         else {
 
             const contact = await Contact.create({
+                brokerageId: user.brokerageId,
                 firstName: request.firstName,
                 lastName: request.lastName,
                 phoneExt: request.phoneExt,
@@ -239,24 +322,28 @@ module.exports.addContact = async (event, context) => {
                 title: request.title
             })
 
-            await elastic.saveContact(contact, user.brokerageId)
-
             switch (type) {
 
                 case 'universal': {
 
-                    // create customer contact
-
-                    await CustomerContact.findOrCreate({
+                    const customer = await Customer.findOne({
                         where: {
-                            customerId: id,
-                            contactId: contact.id
+                            id: id,
+                            brokerageId: user.brokerageId
                         }
                     })
 
-                    const customer = await Customer.findOne({
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
+                    await CustomerContact.findOrCreate({
                         where: {
-                            id: id
+                            customerId: customer.id,
+                            contactId: contact.id
                         }
                     })
 
@@ -296,8 +383,22 @@ module.exports.addContact = async (event, context) => {
 
                 case 'lane': {
 
+                    const lane = await Lane.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (lane === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LaneContact.create({
-                        laneId: id,
+                        laneId: lane.id,
                         contactId: contact.id
                     })
 
@@ -305,8 +406,22 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'location': {
 
+                    const location = await Location.findOne({
+                        where: {
+                            id: id,
+                            brokerageId: user.brokerageId
+                        }
+                    })
+
+                    if (location === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await LocationContact.create({
-                        locationId: id,
+                        locationId: location.id,
                         contactId: contact.id
                     })
 
@@ -314,8 +429,20 @@ module.exports.addContact = async (event, context) => {
 
                 } case 'customer': {
 
+                    const customer = await Customer.findOne({
+                        id: id,
+                        brokerageId: user.brokerageId
+                    })
+
+                    if (customer === null) {
+                        return {
+                            statusCode: 404,
+                            headers: corsHeaders
+                        }
+                    }
+
                     await CustomerContact.create({
-                        customerId: id,
+                        customerId: customer.id,
                         contactId: contact.id
                     })
 
@@ -346,6 +473,11 @@ module.exports.addContact = async (event, context) => {
 
 module.exports.editContact = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -361,9 +493,17 @@ module.exports.editContact = async (event, context) => {
 
         const contact = await Contact.findOne({
             where: {
-                id: id
+                id: id,
+                brokerageId: user.brokerageId
             }
         })
+
+        if (contact === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
 
         contact.firstName = request.firstName
         contact.lastName = request.lastName
@@ -374,8 +514,6 @@ module.exports.editContact = async (event, context) => {
         contact.level = request.level
 
         await contact.save()
-
-        await elastic.editContact(contact)
 
         return {
             statusCode: 204,
@@ -392,7 +530,20 @@ module.exports.editContact = async (event, context) => {
 
 module.exports.deleteContact = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
 
         const request = JSON.parse(event.body)
 
@@ -406,7 +557,14 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         laneId: request.LaneContact.laneId,
                         contactId: request.LaneContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (laneContact === null) {
@@ -449,11 +607,17 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         locationId: request.LocationContact.locationId,
                         contactId: request.LocationContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (locationContact === null) {
-
                     return {
                         statusCode: 404,
                         headers: corsHeaders
@@ -491,11 +655,17 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         customerId: request.CustomerContact.customerId,
                         contactId: request.CustomerContact.contactId
-                    }
+                    },
+                    include: [{
+                        model: Contact,
+                        where: {
+                            brokerageId: user.brokerageId
+                        },
+                        required: true
+                    }]
                 })
 
                 if (customerContact === null) {
-
                     return {
                         statusCode: 404,
                         headers: corsHeaders
@@ -537,12 +707,9 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders
         }
     }
-
-
 }
