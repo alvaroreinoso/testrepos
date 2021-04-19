@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
   };
   Customer.init({
     name: DataTypes.STRING,
+    email: DataTypes.STRING,
+    phone: DataTypes.STRING,
+    logo: DataTypes.STRING,
+    displayName: DataTypes.STRING,
     industry: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
