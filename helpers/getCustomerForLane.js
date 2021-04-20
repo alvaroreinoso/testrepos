@@ -1,7 +1,7 @@
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+const { Customer } = require('.././models');
 
+module.exports = async (origin, destination) => {
 
-module.exports = async (lane, origin, destination) => {
     const originCustomerLocation = await origin.getCustomerLocation({
         include: {
             model: Customer,

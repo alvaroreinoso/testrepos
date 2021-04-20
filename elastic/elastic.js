@@ -119,7 +119,7 @@ async function seedLanes() {
         const destination = await lane.getDestination()
         const ledger = await lane.getLedger()
 
-        const customerName = await getCustomerForLane(lane, origin, destination)
+        const customerName = await getCustomerForLane(origin, destination)
 
         const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
         const shortRoute = `${origin.city} to ${destination.city}`
@@ -133,6 +133,7 @@ async function seedLanes() {
             originStateName: originState,
             destination: destination.city,
             destinationStateName: destinationState,
+            laneCustomerName: customerName,
             route: route,
             shortRoute: shortRoute,
             brokerageId: ledger.brokerageId
