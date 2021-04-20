@@ -1,6 +1,7 @@
 const stateAbbreviations = require('states-abbreviations')
 const { Customer, Brokerage, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = require('./client')
+const getCustomerForLane = require('../helpers/getCustomerFromLane')
 
 client.ping((err) => {
     if (err) {
@@ -117,6 +118,8 @@ async function seedLanes() {
         const origin = await lane.getOrigin()
         const destination = await lane.getDestination()
         const ledger = await lane.getLedger()
+
+        const customerName = await getCustomerForLane(lane, origin, destination)
 
         const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
         const shortRoute = `${origin.city} to ${destination.city}`
