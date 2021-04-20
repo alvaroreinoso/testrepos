@@ -1,7 +1,7 @@
 const stateAbbreviations = require('states-abbreviations')
 const { Customer, Brokerage, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = require('./client')
-const getCustomerForLane = require('../helpers/getCustomerFromLane')
+const getCustomerForLane = require('../helpers/getCustomerForLane')
 
 client.ping((err) => {
     if (err) {
