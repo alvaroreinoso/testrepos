@@ -449,6 +449,7 @@ module.exports.addContact = async (event, context) => {
                     break
 
                 } default: {
+                    console.log(err)
 
                     return {
                         statusCode: 500,
@@ -464,6 +465,7 @@ module.exports.addContact = async (event, context) => {
             }
         }
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -557,15 +559,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         laneId: request.LaneContact.laneId,
                         contactId: request.LaneContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const lane = await Lane.findOne({
+                    where: {
+                        id: request.LaneContact.laneId
+                    }
+                })
+
+                if (lane.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }                
 
                 if (laneContact === null) {
 
@@ -607,15 +615,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         locationId: request.LocationContact.locationId,
                         contactId: request.LocationContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const location = await Location.findOne({
+                    where: {
+                        id: request.LocationContact.locationId
+                    }
+                })
+
+                if (location.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (locationContact === null) {
                     return {
@@ -655,15 +669,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         customerId: request.CustomerContact.customerId,
                         contactId: request.CustomerContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const customer = await Customer.findOne({
+                    where: {
+                        id: request.CustomerContact.customerId
+                    }
+                })
+
+                if (customer.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (customerContact === null) {
                     return {
@@ -707,6 +727,7 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
