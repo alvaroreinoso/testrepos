@@ -1,6 +1,7 @@
 const stateAbbreviations = require('states-abbreviations')
 const { Customer, Brokerage, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
 const client = require('./client')
+const { Op } = require("sequelize");
 
 client.ping((err) => {
     if (err) {
@@ -116,7 +117,19 @@ async function seedLanes() {
 
         const origin = await lane.getOrigin()
         const destination = await lane.getDestination()
-        const ledger = await lane.getLedger()
+
+        const cL = await CustomerLocation.findOne({
+            where: {
+                [Op.or]: [
+                    { locationId: origin.id },
+                    { locationId: destination.id }
+                ]
+            },
+            include: [{
+                model: Customer,
+                required: true
+            }]
+        })
 
         const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
         const shortRoute = `${origin.city} to ${destination.city}`
@@ -130,9 +143,10 @@ async function seedLanes() {
             originStateName: originState,
             destination: destination.city,
             destinationStateName: destinationState,
+            laneCustomerName: cL.Customer.name,
             route: route,
             shortRoute: shortRoute,
-            brokerageId: ledger.brokerageId
+            brokerageId: lane.brokerageId
         }
 
         return body

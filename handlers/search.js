@@ -37,6 +37,15 @@ module.exports.search = async (event, context) => {
                                 }
                             },
                         ],
+                        must_not: [
+                            {
+                                multi_match: {
+                                    query: query,
+                                    type: "phrase_prefix",
+                                    fields: 'laneCustomerName'
+                                }
+                            }
+                        ],
                         filter: [
                             { "term": { "brokerageId": user.brokerageId } }
                         ]

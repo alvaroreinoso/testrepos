@@ -25,8 +25,6 @@ module.exports.updateCustomer = async (event, context) => {
         const customerId = event.pathParameters.customerId
         const request = JSON.parse(event.body)
 
-        const bio = request.bio
-
         const customer = await Customer.findOne({
             where: {
                 id: customerId,
@@ -41,7 +39,11 @@ module.exports.updateCustomer = async (event, context) => {
             }
         }
 
-        customer.bio = bio
+        customer.bio = request.bio
+        customer.email = request.email
+        customer.displayName = request.displayName
+        customer.phone = request.phone
+        customer.logo = request.logo
 
         await customer.save()
 

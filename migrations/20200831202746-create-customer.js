@@ -12,6 +12,22 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
+      displayName: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      phone: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      logo: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      email: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       industry: {
         type: Sequelize.STRING
       },

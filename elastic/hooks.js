@@ -1,8 +1,7 @@
 const stateAbbreviations = require('states-abbreviations')
-const elasticsearch = require('@elastic/elasticsearch');
 const getIndex = require('../helpers/getIndexName').getIndexName
-const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
-const client = require('./client')
+const { Customer, CustomerLocation } = require('.././models');
+const client = require('./client');
 
 module.exports.saveDocument = async (item) => {
 
@@ -127,7 +126,6 @@ module.exports.saveDocument = async (item) => {
             case 'lane': {
 
                 const origin = await item.getOrigin()
-
                 const destination = await item.getDestination()
 
                 const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
@@ -136,15 +134,29 @@ module.exports.saveDocument = async (item) => {
                 const originState = stateAbbreviations[origin.state]
                 const destinationState = stateAbbreviations[destination.state]
 
+                const cL = await CustomerLocation.findOne({
+                    where: {
+                        [Op.or]: [
+                            { locationId: origin.id },
+                            { locationId: destination.id }
+                        ]
+                    },
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                })
+
                 const lane = {
                     id: item.id,
                     origin: origin.city,
                     originStateName: originState,
                     destination: destination.city,
                     destinationStateName: destinationState,
+                    laneCustomerName: cL.Customer.name,
                     route: route,
                     shortRoute: shortRoute,
-                    // brokerageId: brokerageId[0]
+                    brokerageId: item.brokerageId
                 }
 
                 await client.update({
