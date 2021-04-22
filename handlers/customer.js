@@ -43,6 +43,7 @@ module.exports.updateCustomer = async (event, context) => {
         customer.email = request.email
         customer.displayName = request.displayName
         customer.phone = request.phone
+        customer.logo = request.logo
 
         await customer.save()
 
