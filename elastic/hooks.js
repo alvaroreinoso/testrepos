@@ -1,9 +1,7 @@
 const stateAbbreviations = require('states-abbreviations')
-const elasticsearch = require('@elastic/elasticsearch');
 const getIndex = require('../helpers/getIndexName').getIndexName
-const { Customer, Lane, Location, CustomerLocation, Contact, Ledger } = require('.././models');
+const { Customer, CustomerLocation } = require('.././models');
 const client = require('./client');
-const getCustomerForLane = require('../helpers/getCustomerForLane');
 
 module.exports.saveDocument = async (item) => {
 
@@ -136,7 +134,18 @@ module.exports.saveDocument = async (item) => {
                 const originState = stateAbbreviations[origin.state]
                 const destinationState = stateAbbreviations[destination.state]
 
-                const customerName = await getCustomerForLane(origin, destination)
+                const cL = await CustomerLocation.findOne({
+                    where: {
+                        [Op.or]: [
+                            { locationId: origin.id },
+                            { locationId: destination.id }
+                        ]
+                    },
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                })
 
                 const lane = {
                     id: item.id,
@@ -144,7 +153,7 @@ module.exports.saveDocument = async (item) => {
                     originStateName: originState,
                     destination: destination.city,
                     destinationStateName: destinationState,
-                    laneCustomerName: customerName,
+                    laneCustomerName: cL.Customer.name,
                     route: route,
                     shortRoute: shortRoute,
                     brokerageId: item.brokerageId
