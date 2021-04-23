@@ -654,15 +654,41 @@ module.exports.addCarrier = async (event, context) => {
             }
         }
 
-        const carrier = await Carrier.create({
-            name: request.name,
-            laneId: laneId,
-            mcn: request.mcn,
-            historicalRate: request.historicalRate,
-            contactEmail: request.contactEmail,
-            contactPhone: request.contactPhone,
-            contactName: request.contactName,
-        })
+        if (event.httpMethod === 'POST') {
+
+            const carrier = await Carrier.create({
+                name: request.name,
+                laneId: laneId,
+                mcn: request.mcn,
+                historicalRate: request.historicalRate,
+                contactEmail: request.contactEmail,
+                contactPhone: request.contactPhone,
+                contactName: request.contactName,
+            })
+    
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
+
+        if (event.httpMethod === 'PUT') {
+
+            const carrier = await Carrier.findOne({
+                where: {
+                    id: request.id
+                }
+            })
+    
+            carrier.name = request.name
+            carrier.mcn = request.mcn
+            carrier.historicalRate = request.historicalRate
+            carrier.contactEmail = request.contactEmail
+            carrier.contactPhone = request.contactPhone
+            carrier.contactName = request.contactName
+    
+            await carrier.save()
+        }
 
         return {
             statusCode: 204,
