@@ -14,10 +14,19 @@ module.exports = (sequelize, DataTypes) => {
       Carrier.hasMany(models.Load, {
         foreignKey: 'carrierId'
       })
+      Carrier.belongsTo(models.Lane, {
+        foreignKey: 'laneId'
+      })
     }
   };
   Carrier.init({
     name: DataTypes.STRING,
+    laneId: DataTypes.INTEGER,
+    historicalRate: DataTypes.INTEGER,
+    mcn: DataTypes.INTEGER,
+    contactPhone: DataTypes.STRING,
+    contactEmail: DataTypes.STRING,
+    contactName: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Carrier',
