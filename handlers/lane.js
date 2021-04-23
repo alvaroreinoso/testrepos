@@ -458,9 +458,9 @@ module.exports.getTeammatesForLane = async (event, context) => {
                 id: laneId,
                 brokerageId: user.brokerageId
             },
-            include: { 
+            include: {
                 model: User,
-                through: { attributes: []},
+                through: { attributes: [] },
                 include: {
                     model: Team
                 }
@@ -606,6 +606,70 @@ module.exports.deleteTeammateFromLane = async (event, context) => {
         }
     }
     catch (err) {
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
+module.exports.addCarrier = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const laneId = event.pathParameters.laneId
+
+        const lane = await Lane.findOne({
+            where: {
+                id: laneId
+            }
+        })
+
+        if (lane === null) {
+            return {
+                statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        if (lane.brokerageId != user.brokerageId) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        const carrier = await Carrier.create({
+            name: request.name,
+            laneId: laneId,
+            mcn: request.mcn,
+            historicalRate: request.historicalRate,
+            contactEmail: request.contactEmail,
+            contactPhone: request.contactPhone,
+            contactName: request.contactName,
+        })
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
