@@ -54,6 +54,11 @@ module.exports.getUser = async (event, context) => {
 
 module.exports.getEmailById = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const userId = event.pathParameters.userId
 
@@ -78,6 +83,11 @@ module.exports.getEmailById = async (event, context) => {
 }
 
 module.exports.getUserById = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const currentUser = await getCurrentUser(event.headers.Authorization)
@@ -150,6 +160,11 @@ module.exports.getUserById = async (event, context) => {
 
 module.exports.createProfile = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const req = JSON.parse(event.body)
 
@@ -176,6 +191,11 @@ module.exports.createProfile = async (event, context) => {
 }
 
 module.exports.updateProfile = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -207,6 +227,11 @@ module.exports.updateProfile = async (event, context) => {
 }
 
 module.exports.updateUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -335,6 +360,11 @@ module.exports.updateUser = async (event, context) => {
 }
 module.exports.deleteUser = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
@@ -407,6 +437,11 @@ module.exports.deleteUser = async (event, context) => {
 
 module.exports.getTeams = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -433,6 +468,11 @@ module.exports.getTeams = async (event, context) => {
 }
 
 module.exports.getTopCustomersForUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const currentUser = await getCurrentUser(event.headers.Authorization)
@@ -492,6 +532,11 @@ module.exports.getTopCustomersForUser = async (event, context) => {
 }
 
 module.exports.getTopLanesForUser = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const currentUser = await getCurrentUser(event.headers.Authorization)
     const userId = event.pathParameters.userId

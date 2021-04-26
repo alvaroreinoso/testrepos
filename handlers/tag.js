@@ -7,6 +7,11 @@ const { Op } = require("sequelize");
 
 module.exports.getTags = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -53,7 +58,7 @@ module.exports.getTags = async (event, context) => {
                 })
 
                 const data = customTags.concat(otherTags)
-                
+
 
                 return {
                     body: JSON.stringify(data),
@@ -266,6 +271,11 @@ module.exports.getTags = async (event, context) => {
 }
 
 module.exports.addTag = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -634,6 +644,11 @@ module.exports.addTag = async (event, context) => {
 
 module.exports.deleteTag = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -655,15 +670,21 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         laneId: request.LaneTag.laneId,
                         tagId: request.LaneTag.tagId
-                    },
-                    include: [{
-                        model: Lane,
-                        where: {
-                            brokerageId: user.brokerageId,
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const lane = await Lane.findOne({
+                    where: {
+                        id: request.LaneTag.laneId
+                    }
+                })
+
+                if (lane.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (laneTag === null) {
                     return {
@@ -697,15 +718,21 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         locationId: request.LocationTag.locationId,
                         tagId: request.LocationTag.tagId
-                    },
-                    include: [{
-                        model: Location,
-                        where: {
-                            brokerageId: user.brokerageId,
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const location = await Location.findOne({
+                    where: {
+                        id: request.LocationTag.locationId
+                    }
+                })
+
+                if (location.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (locationTag === null) {
                     return {
@@ -740,14 +767,20 @@ module.exports.deleteTag = async (event, context) => {
                         customerId: request.CustomerTag.customerId,
                         tagId: request.CustomerTag.tagId
                     },
-                    include: [{
-                        model: Customer,
-                        where: {
-                            brokerageId: user.brokerageId,
-                        },
-                        required: true
-                    }]
                 })
+
+                const customer = await Customer.findOne({
+                    where: {
+                        id: request.CustomerTag.customerId
+                    }
+                })
+
+                if (customer.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (customerTag === null) {
                     return {
@@ -782,14 +815,20 @@ module.exports.deleteTag = async (event, context) => {
                         userId: request.UserTag.userId,
                         tagId: request.UserTag.tagId
                     },
-                    include: [{
-                        model: User,
-                        where: {
-                            brokerageId: user.brokerageId,
-                        },
-                        required: true
-                    }]
                 })
+
+                const targetUser = await User.findOne({
+                    where: {
+                        id: request.UserTag.userId
+                    }
+                })
+
+                if (targetUser.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (userTag === null) {
                     return {
@@ -823,15 +862,15 @@ module.exports.deleteTag = async (event, context) => {
                     where: {
                         brokerageId: request.BrokerageTag.brokerageId,
                         tagId: request.BrokerageTag.tagId
-                    },
-                    include: [{
-                        model: Brokerage,
-                        where: {
-                            id: user.brokerageId,
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                if (request.BrokerageTag.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (brokerageTag === null) {
                     return {
@@ -866,14 +905,14 @@ module.exports.deleteTag = async (event, context) => {
                         teamId: request.TeamTag.teamId,
                         tagId: request.TeamTag.tagId
                     },
-                    include: [{
-                        model: Team,
-                        where: {
-                            brokerageId: user.brokerageId,
-                        },
-                        required: true
-                    }]
                 })
+
+                if (user.teamId != request.TeamTag.teamId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (teamTag === null) {
                     return {
@@ -910,7 +949,6 @@ module.exports.deleteTag = async (event, context) => {
             }
         }
     } catch (err) {
-
         return {
             headers: corsHeaders,
             statusCode: 500

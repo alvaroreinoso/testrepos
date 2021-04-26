@@ -9,6 +9,11 @@ require('dotenv').config()
 
 module.exports.webhookHandler = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const body = JSON.parse(event.body)
 
     let stripeEvent;
@@ -71,6 +76,11 @@ module.exports.webhookHandler = async (event, context) => {
 }
 
 module.exports.createStripeCustomer = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -140,10 +150,13 @@ module.exports.createStripeCustomer = async (event, context) => {
 
 module.exports.createStripeSubscription = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
-
         const user = await getCurrentUser(event.headers.Authorization)
-
 
         if (user.id == null) {
             return {
@@ -233,6 +246,11 @@ module.exports.createStripeSubscription = async (event, context) => {
 
 module.exports.getBillingDetails = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
 
         const user = await getCurrentUser(event.headers.Authorization)
@@ -290,6 +308,11 @@ module.exports.getBillingDetails = async (event, context) => {
 
 module.exports.updateSubscription = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -318,6 +341,45 @@ module.exports.updateSubscription = async (event, context) => {
         const subscription = await stripe.subscriptions.update(
             brokerage.stripeSubscriptionId,
             request
+        );
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
+module.exports.updatePaymentInfo = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const paymentMethod = await stripe.paymentMethods.update(
+            request.paymentMethodId,
+            request.body
         );
 
         return {

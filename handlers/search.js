@@ -6,6 +6,11 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.search = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -32,6 +37,15 @@ module.exports.search = async (event, context) => {
                                 }
                             },
                         ],
+                        must_not: [
+                            {
+                                multi_match: {
+                                    query: query,
+                                    type: "phrase_prefix",
+                                    fields: 'laneCustomerName'
+                                }
+                            }
+                        ],
                         filter: [
                             { "term": { "brokerageId": user.brokerageId } }
                         ]
@@ -56,6 +70,11 @@ module.exports.search = async (event, context) => {
 }
 
 module.exports.searchLedger = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     const user = await getCurrentUser(event.headers.Authorization)
 
@@ -140,6 +159,11 @@ module.exports.searchLedger = async (event, context) => {
 
 module.exports.searchUsersInBrokerage = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
 
         const user = await getCurrentUser(event.headers.Authorization)
@@ -214,6 +238,11 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 }
 
 module.exports.searchContacts = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
 

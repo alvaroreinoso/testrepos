@@ -5,6 +5,11 @@ const corsHeaders = require('.././helpers/cors')
 
 module.exports.getContacts = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     const user = await getCurrentUser(event.headers.Authorization)
 
     if (user.id == null) {
@@ -126,6 +131,11 @@ module.exports.getContacts = async (event, context) => {
 
 module.exports.addContact = async (event, context) => {
 
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -137,6 +147,7 @@ module.exports.addContact = async (event, context) => {
         }
 
         const type = event.queryStringParameters.contactType
+        const universal = event.queryStringParameters.universal
         const request = JSON.parse(event.body)
         const id = event.pathParameters.itemId
         const existing = event.queryStringParameters.existing
@@ -150,41 +161,85 @@ module.exports.addContact = async (event, context) => {
                 }
             })
 
-            switch (type) {
+            if (universal == 'true') {
 
-                case 'universal': {
+                switch (type) {
+                    case 'customer': {
 
-                    const customer = await Customer.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
+                        const customer = await Customer.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (customer === null) {
+                            return {
+                                status: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
 
-                    if (customer === null) {
+                        await CustomerContact.findOrCreate({
+                            where: {
+                                customerId: customer.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        const customerLocations = await customer.getCustomerLocations({
+                            include: [{
+                                model: Location,
+                                required: true
+                            }]
+                        })
+
+                        for (const customerLocation of customerLocations) {
+
+                            const location = customerLocation.Location
+
+                            await LocationContact.findOrCreate({
+                                where: {
+                                    locationId: location.id,
+                                    contactId: contact.id
+                                }
+                            })
+
+                            const lanes = await location.getLanes()
+
+                            for (const lane of lanes) {
+
+                                await LaneContact.findOrCreate({
+                                    where: {
+                                        laneId: lane.id,
+                                        contactId: contact.id
+                                    }
+                                })
+                            }
+                        }
+
                         return {
-                            status: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await CustomerContact.findOrCreate({
-                        where: {
-                            customerId: customer.id,
-                            contactId: contact.id
+
+
+                    } case 'location': {
+
+                        const location = await Location.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (location === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
-
-                    const customerLocations = await customer.getCustomerLocations({
-                        include: [{
-                            model: Location,
-                            required: true
-                        }]
-                    })
-
-                    for (const customerLocation of customerLocations) {
-
-                        const location = customerLocation.Location
 
                         await LocationContact.findOrCreate({
                             where: {
@@ -204,98 +259,120 @@ module.exports.addContact = async (event, context) => {
                                 }
                             })
                         }
+
+                        return {
+                            statusCode: 204,
+                            headers: corsHeaders
+                        }
+
+
+                    } default: {
+
+                        return {
+                            statusCode: 500,
+                            headers: corsHeaders
+                        }
+
                     }
 
-                    break;
                 }
 
-                case 'lane': {
+            } else {
 
-                    const lane = await Lane.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
+                switch (type) {
+                    case 'cusomter': {
+
+                        const customer = await Customer.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (customer === null) {
+                            return {
+                                status: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
 
-                    if (lane === null) {
+                        await CustomerContact.findOrCreate({
+                            where: {
+                                customerId: customer.id,
+                                contactId: contact.id
+                            }
+                        })
+
                         return {
-                            statusCode: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await LaneContact.findOrCreate({
-                        where: {
-                            laneId: lane.id,
-                            contactId: contact.id
+                    } case 'location': {
+
+                        const location = await Location.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (location === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
 
-                    break;
+                        await LocationContact.findOrCreate({
+                            where: {
+                                locationId: location.id,
+                                contactId: contact.id
+                            }
+                        })
 
-                } case 'location': {
-
-                    const location = await Location.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
-                        }
-                    })
-
-                    if (location === null) {
                         return {
-                            statusCode: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await LocationContact.findOrCreate({
-                        where: {
-                            locationId: location.id,
-                            contactId: contact.id
+                    } case 'lane': {
+
+                        const lane = await Lane.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (lane === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
 
-                    break;
+                        await LaneContact.findOrCreate({
+                            where: {
+                                laneId: lane.id,
+                                contactId: contact.id
+                            }
+                        })
 
-                } case 'customer': {
-
-                    const customer = await Customer.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
-                        }
-                    })
-
-                    if (customer === null) {
                         return {
-                            statusCode: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await CustomerContact.findOrCreate({
-                        where: {
-                            customerId: customer.id,
-                            contactId: contact.id
+                    } default: {
+
+                        return {
+                            statusCode: 500,
+                            headers: corsHeaders
                         }
-                    })
 
-                    break;
-
-                } default: {
-
-                    return {
-                        statusCode: 500,
-                        headers: corsHeaders
                     }
                 }
-            }
-
-            return {
-                statusCode: 204,
-                headers: corsHeaders
             }
         }
 
@@ -312,41 +389,83 @@ module.exports.addContact = async (event, context) => {
                 title: request.title
             })
 
-            switch (type) {
+            if (universal == 'true') {
 
-                case 'universal': {
+                switch (type) {
+                    case 'customer': {
 
-                    const customer = await Customer.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
+                        const customer = await Customer.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (customer === null) {
+                            return {
+                                status: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
 
-                    if (customer === null) {
+                        await CustomerContact.findOrCreate({
+                            where: {
+                                customerId: customer.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        const customerLocations = await customer.getCustomerLocations({
+                            include: [{
+                                model: Location,
+                                required: true
+                            }]
+                        })
+
+                        for (const customerLocation of customerLocations) {
+
+                            const location = customerLocation.Location
+
+                            await LocationContact.findOrCreate({
+                                where: {
+                                    locationId: location.id,
+                                    contactId: contact.id
+                                }
+                            })
+
+                            const lanes = await location.getLanes()
+
+                            for (const lane of lanes) {
+
+                                await LaneContact.findOrCreate({
+                                    where: {
+                                        laneId: lane.id,
+                                        contactId: contact.id
+                                    }
+                                })
+                            }
+                        }
+
                         return {
-                            statusCode: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await CustomerContact.findOrCreate({
-                        where: {
-                            customerId: customer.id,
-                            contactId: contact.id
+                    } case 'location': {
+
+                        const location = await Location.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (location === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
                         }
-                    })
-
-                    const customerLocations = await customer.getCustomerLocations({
-                        include: [{
-                            model: Location,
-                            required: true
-                        }]
-                    })
-
-                    for (const customerLocation of customerLocations) {
-
-                        const location = customerLocation.Location
 
                         await LocationContact.findOrCreate({
                             where: {
@@ -366,94 +485,121 @@ module.exports.addContact = async (event, context) => {
                                 }
                             })
                         }
-                    }
 
-                    break;
-                }
-
-                case 'lane': {
-
-                    const lane = await Lane.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
-                        }
-                    })
-
-                    if (lane === null) {
                         return {
-                            statusCode: 404,
+                            statusCode: 204,
                             headers: corsHeaders
                         }
-                    }
 
-                    await LaneContact.create({
-                        laneId: lane.id,
-                        contactId: contact.id
-                    })
+                    } default: {
 
-                    break
-
-                } case 'location': {
-
-                    const location = await Location.findOne({
-                        where: {
-                            id: id,
-                            brokerageId: user.brokerageId
-                        }
-                    })
-
-                    if (location === null) {
                         return {
-                            statusCode: 404,
+                            statusCode: 500,
                             headers: corsHeaders
                         }
-                    }
-
-                    await LocationContact.create({
-                        locationId: location.id,
-                        contactId: contact.id
-                    })
-
-                    break
-
-                } case 'customer': {
-
-                    const customer = await Customer.findOne({
-                        id: id,
-                        brokerageId: user.brokerageId
-                    })
-
-                    if (customer === null) {
-                        return {
-                            statusCode: 404,
-                            headers: corsHeaders
-                        }
-                    }
-
-                    await CustomerContact.create({
-                        customerId: customer.id,
-                        contactId: contact.id
-                    })
-
-                    break
-
-                } default: {
-
-                    return {
-                        statusCode: 500,
-                        headers: corsHeaders
                     }
                 }
+            } else {
 
+                switch (type) {
+                    case 'cusomter': {
+
+                        const customer = await Customer.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (customer === null) {
+                            return {
+                                status: 404,
+                                headers: corsHeaders
+                            }
+                        }
+
+                        await CustomerContact.findOrCreate({
+                            where: {
+                                customerId: customer.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        return {
+                            statusCode: 204,
+                            headers: corsHeaders
+                        }
+
+                    } case 'location': {
+
+                        const location = await Location.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (location === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
+                        }
+
+                        await LocationContact.findOrCreate({
+                            where: {
+                                locationId: location.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        return {
+                            statusCode: 204,
+                            headers: corsHeaders
+                        }
+
+                    } case 'lane': {
+
+                        const lane = await Lane.findOne({
+                            where: {
+                                id: id,
+                                brokerageId: user.brokerageId
+                            }
+                        })
+
+                        if (lane === null) {
+                            return {
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
+                        }
+
+                        await LaneContact.findOrCreate({
+                            where: {
+                                laneId: lane.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        return {
+                            statusCode: 204,
+                            headers: corsHeaders
+                        }
+
+                    } default: {
+
+                        return {
+                            statusCode: 500,
+                            headers: corsHeaders
+                        }
+
+                    }
+                }
             }
 
-            return {
-                statusCode: 204,
-                headers: corsHeaders
-            }
         }
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -462,6 +608,11 @@ module.exports.addContact = async (event, context) => {
 }
 
 module.exports.editContact = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -495,7 +646,7 @@ module.exports.editContact = async (event, context) => {
         contact.title = request.title
         contact.phoneExt = request.phoneExt
         contact.phone = request.phone
-        contact.email = request.email 
+        contact.email = request.email
         contact.level = request.level
 
         await contact.save()
@@ -514,6 +665,11 @@ module.exports.editContact = async (event, context) => {
 }
 
 module.exports.deleteContact = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -537,15 +693,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         laneId: request.LaneContact.laneId,
                         contactId: request.LaneContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const lane = await Lane.findOne({
+                    where: {
+                        id: request.LaneContact.laneId
+                    }
+                })
+
+                if (lane.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (laneContact === null) {
 
@@ -587,15 +749,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         locationId: request.LocationContact.locationId,
                         contactId: request.LocationContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const location = await Location.findOne({
+                    where: {
+                        id: request.LocationContact.locationId
+                    }
+                })
+
+                if (location.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (locationContact === null) {
                     return {
@@ -635,15 +803,21 @@ module.exports.deleteContact = async (event, context) => {
                     where: {
                         customerId: request.CustomerContact.customerId,
                         contactId: request.CustomerContact.contactId
-                    },
-                    include: [{
-                        model: Contact,
-                        where: {
-                            brokerageId: user.brokerageId
-                        },
-                        required: true
-                    }]
+                    }
                 })
+
+                const customer = await Customer.findOne({
+                    where: {
+                        id: request.CustomerContact.customerId
+                    }
+                })
+
+                if (customer.brokerageId != user.brokerageId) {
+                    return {
+                        statusCode: 403,
+                        headers: corsHeaders
+                    }
+                }
 
                 if (customerContact === null) {
                     return {
@@ -687,6 +861,7 @@ module.exports.deleteContact = async (event, context) => {
             }
         }
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders

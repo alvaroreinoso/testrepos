@@ -1,23 +1,6 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 org: terralanes
 app: terralanes-backend
 service: terralanes-api
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-# frameworkVersion: "=X.X.X" test
 
 provider:
   name: aws
@@ -27,9 +10,9 @@ provider:
     securityGroupIds:
       - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
     subnetIds:
-      - subnet-03086cdd9e1e48134
-      - subnet-0243c1302f458775f
-      - subnet-016928dcc4b9cba7b
+      - subnet-03086cdd9e1e48134 # public-1
+      - subnet-0243c1302f458775f # public-2
+      - subnet-016928dcc4b9cba7b # public-3
   profile: default
   region: us-east-1
   stage: dev
@@ -61,15 +44,17 @@ custom:
     automatic: true
     number: 3
   warmup:
-    test:
-      # enabled: ${param:WARMUP_ENABLED, false}
+    allLambdas:
+      enabled: ${param:WARMUP_ENABLED, false}
+      prewarm: true
+      concurrency: 1
       vpc:
         securityGroupIds:
           - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
         subnetIds:
-          - subnet-03086cdd9e1e48134
-          - subnet-0243c1302f458775f
-          - subnet-016928dcc4b9cba7b
+          - subnet-0969f48a6ba21d4da # private-1
+          - subnet-0c4379e623f530211 # private-2
+          - subnet-0b713d464c35059f9 # private-3
 
 package:
   individually: false
@@ -80,10 +65,8 @@ package:
     - migrations/**
 
 functions:
-
 # Search
   search:
-    # warmup: true,
     handler:
       ./handlers/search.search
     events:
@@ -92,7 +75,6 @@ functions:
             method: get
             cors: true
   searchLedger:
-    # warmup: true,
     handler:
       ./handlers/search.searchLedger
     events:
@@ -101,7 +83,6 @@ functions:
             method: get
             cors: true
   searchUsersInBrokerage:
-    # warmup: true,
     handler:
       ./handlers/search.searchUsersInBrokerage
     events:
@@ -110,7 +91,6 @@ functions:
             method: get
             cors: true
   searchContacts:
-    # warmup: true,
     handler:
       ./handlers/search.searchContacts
     events:
@@ -121,7 +101,6 @@ functions:
 
 # Ledger
   getLedger:
-    # warmup: true,
     handler:
       ./handlers/ledger.getLedger
     events:
@@ -130,7 +109,6 @@ functions:
             method: get
             cors: true
   writeMessage:
-    # warmup: true,
     handler:
       ./handlers/ledger.writeMessage
     events:
@@ -139,7 +117,6 @@ functions:
             method: post
             cors: true
   updateMessage:
-    # warmup: true,
     handler:
       ./handlers/ledger.updateMessage
     events:
@@ -154,9 +131,6 @@ functions:
 
 # User
   getUser:
-    warmup: 
-      test:
-        enabled: ${param:WARMUP_ENABLED, false}
     handler:
       ./handlers/user.getUser
     events:
@@ -173,7 +147,6 @@ functions:
             method: get
             cors: true
   deleteUser:
-    # warmup: true,
     handler:
       ./handlers/user.deleteUser
     events:
@@ -182,7 +155,6 @@ functions:
             method: delete
             cors: true
   updateUser:
-    # warmup: true,
     handler:
       ./handlers/user.updateUser
     events:
@@ -191,7 +163,6 @@ functions:
             method: put
             cors: true
   getUserById:
-    # warmup: true,
     handler:
       ./handlers/user.getUserById
     events:
@@ -200,7 +171,6 @@ functions:
             method: get
             cors: true
   getTeams:
-    # warmup: true,
     handler:
       ./handlers/user.getTeams
     events:
@@ -209,7 +179,6 @@ functions:
             method: get
             cors: true
   createProfile:
-    # warmup: true,
     handler:
       ./handlers/user.createProfile
     events:
@@ -218,7 +187,6 @@ functions:
             method: post
             cors: true
   updateProfile:
-    # warmup: true,
     handler:
       ./handlers/user.updateProfile
     events:
@@ -227,7 +195,6 @@ functions:
             method: put
             cors: true
   getTopCustomersForUser:
-    # warmup: true,
     handler:
       ./handlers/user.getTopCustomersForUser
     events:
@@ -236,7 +203,6 @@ functions:
             method: get
             cors: true
   getTopLanesForUser:
-    # warmup: true,
     handler:
       ./handlers/user.getTopLanesForUser
     events:
@@ -247,7 +213,6 @@ functions:
 
 # Customer
   updateCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.updateCustomer
     events:
@@ -256,7 +221,6 @@ functions:
             method: put
             cors: true
   getCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.getCustomer
     events:
@@ -265,7 +229,6 @@ functions:
             method: get
             cors: true
   getLanesForCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.getLanesForCustomer
     events:
@@ -274,7 +237,6 @@ functions:
             method: get
             cors: true
   getLocationsForCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.getLocationsForCustomer
     events:
@@ -283,7 +245,6 @@ functions:
             method: get
             cors: true
   getTeammatesForCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.getTeammatesForCustomer
     events:
@@ -292,7 +253,6 @@ functions:
             method: get
             cors: true
   addTeammateToCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.addTeammateToCustomer
     events:
@@ -301,7 +261,6 @@ functions:
             method: post
             cors: true
   deleteTeammateFromCustomer:
-    # warmup: true,
     handler:
       ./handlers/customer.deleteTeammateFromCustomer
     events:
@@ -312,7 +271,6 @@ functions:
 
 # Lane
   getLanesByUser:
-    # warmup: true,
     handler:
       ./handlers/lane.getLanesByUser
     events:
@@ -321,7 +279,6 @@ functions:
             method: get
             cors: true
   getLaneById:
-    # warmup: true,
     handler:
       ./handlers/lane.getLaneById
     events:
@@ -330,7 +287,6 @@ functions:
             method: get
             cors: true
   updateLane:
-    # warmup: true,
     handler:
       ./handlers/lane.updateLane
     events:
@@ -339,7 +295,6 @@ functions:
             method: put
             cors: true
   getMarketFeedback:
-    # warmup: true,
     handler:
       ./handlers/lane.getMarketFeedback
     events:
@@ -348,7 +303,6 @@ functions:
             method: get
             cors: true
   addMarketFeedback:
-    # warmup: true,
     handler:
       ./handlers/lane.addMarketFeedback
     events:
@@ -357,7 +311,6 @@ functions:
             method: post
             cors: true
   deleteMarketFeedback:
-    # warmup: true,
     handler:
       ./handlers/lane.deleteMarketFeedback
     events:
@@ -366,7 +319,6 @@ functions:
             method: delete
             cors: true
   getTeammatesForLane:
-    # warmup: true,
     handler:
       ./handlers/lane.getTeammatesForLane
     events:
@@ -375,7 +327,6 @@ functions:
             method: get
             cors: true
   addTeammatetoLane:
-    # warmup: true,
     handler:
       ./handlers/lane.addTeammateToLane
     events:
@@ -384,7 +335,6 @@ functions:
             method: post
             cors: true
   deleteTeammateFromLane:
-    # warmup: true,
     handler:
       ./handlers/lane.deleteTeammateFromLane
     events:
@@ -393,7 +343,6 @@ functions:
             method: delete
             cors: true
   getTopCarriers:
-    # warmup: true,
     handler:
       ./handlers/lane.getTopCarriers
     events:
@@ -401,10 +350,22 @@ functions:
             path: api/lane/{laneId}/carriers
             method: get
             cors: true
+  updateCarriers:
+    handler:
+      ./handlers/lane.addCarrier
+    events:
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: post
+            cors: true
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: put
+            cors: true
+
 
   # Team
   addTeam:
-    # warmup: true,
     handler:
       ./handlers/team.addTeam
     events:
@@ -413,7 +374,6 @@ functions:
             method: post
             cors: true
   editTeam:
-    # warmup: true,
     handler:
       ./handlers/team.editTeam
     events:
@@ -422,7 +382,6 @@ functions:
             method: put
             cors: true
   deleteTeam:
-    # warmup: true,
     handler:
       ./handlers/team.deleteTeam
     events:
@@ -431,7 +390,6 @@ functions:
             method: delete
             cors: true
   getTeamById: 
-    # warmup: true,
     handler:
       ./handlers/team.getTeamById
     events:
@@ -440,7 +398,6 @@ functions:
             method: get
             cors: true
   getLanesForTeam:
-    # warmup: true,
     handler:
       ./handlers/team.getLanesForTeam
     events:
@@ -449,7 +406,6 @@ functions:
             method: get
             cors: true
   getTeammatesForTeam:
-    # warmup: true,
     handler:
       ./handlers/team.getTeammatesForTeam
     events:
@@ -458,7 +414,6 @@ functions:
             method: get
             cors: true
   removeTeammate:
-    # warmup: true,
     handler:
       ./handlers/team.removeTeammate
     events:
@@ -467,7 +422,6 @@ functions:
             method: delete
             cors: true
   addTeammate:
-    # warmup: true,
     handler:
       ./handlers/team.addTeammate
     events:
@@ -478,7 +432,6 @@ functions:
 
   # Location
   getLocationById:
-    # warmup: true,
     handler:
       ./handlers/location.getLocationById
     events:
@@ -487,7 +440,6 @@ functions:
             method: get
             cors: true
   editLocation:
-    # warmup: true,
     handler:
       ./handlers/location.editLocation
     events:
@@ -496,7 +448,6 @@ functions:
             method: put
             cors: true
   getLanesForLocation:
-    # warmup: true,
     handler:
       ./handlers/location.getLanesForLocation
     events:
@@ -505,7 +456,6 @@ functions:
             method: get
             cors: true
   getTeammatesForLocation:
-    # warmup: true,
     handler:
       ./handlers/location.getTeammatesForLocation
     events:
@@ -515,7 +465,6 @@ functions:
             cors: true
 
   addTeammatetoLocation:
-    # warmup: true,
     handler:
       ./handlers/location.addTeammateToLocation
     events:
@@ -524,7 +473,6 @@ functions:
             method: post
             cors: true
   deleteTeammateFromLocation:
-    # warmup: true,
     handler:
       ./handlers/location.deleteTeammateFromLocation
     events:
@@ -535,7 +483,6 @@ functions:
   
   # Brokerage
   getBrokerage:
-    # warmup: true,
     handler:
       ./handlers/brokerage.getBrokerage
     events:
@@ -544,7 +491,6 @@ functions:
             method: get
             cors: true
   getUsersForBrokerage:
-    # warmup: true,
     handler:
       ./handlers/brokerage.getUsersForBrokerage
     events:
@@ -553,7 +499,6 @@ functions:
             method: get
             cors: true
   getLanesForBrokerage:
-    # warmup: true,
     handler:
       ./handlers/brokerage.getLanesForBrokerage
     events:
@@ -562,7 +507,6 @@ functions:
             method: get
             cors: true
   editBrokerage:
-    # warmup: true,
     handler:
       ./handlers/brokerage.editBrokerage
     events:
@@ -573,7 +517,6 @@ functions:
 
   # Tag
   getTags:
-    # warmup: true,
     handler:
       ./handlers/tag.getTags
     events:
@@ -582,7 +525,6 @@ functions:
             method: get
             cors: true
   addTag:
-    # warmup: true,
     handler:
       ./handlers/tag.addTag
     events:
@@ -591,7 +533,6 @@ functions:
             method: post
             cors: true
   deleteTag:
-    # warmup: true,
     handler:
       ./handlers/tag.deleteTag
     events:
@@ -601,7 +542,6 @@ functions:
             cors: true
   # Contact
   getContacts:
-    # warmup: true,
     handler:
       ./handlers/contact.getContacts
     events:
@@ -610,7 +550,6 @@ functions:
             method: get
             cors: true
   addContact:
-    # warmup: true,
     handler:
       ./handlers/contact.addContact
     events:
@@ -619,7 +558,6 @@ functions:
             method: post
             cors: true
   editContact:
-    # warmup: true,
     handler:
       ./handlers/contact.editContact
     events:
@@ -628,7 +566,6 @@ functions:
             method: put
             cors: true
   deleteContact:
-    # warmup: true,
     handler:
       ./handlers/contact.deleteContact
     events:
@@ -643,7 +580,7 @@ functions:
       ./handlers/onboarding.requestAccount
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -657,7 +594,7 @@ functions:
       ./handlers/onboarding.inviteUser
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     events:
@@ -674,7 +611,7 @@ functions:
             method: get
             cors: true
   getTeamsForBrokerage:
-    # warmup: true,
+    
     handler:
       ./handlers/onboarding.getTeamsForBrokerage
     events:
@@ -683,7 +620,7 @@ functions:
             method: get
             cors: true
   getCustomersForBrokerage:
-    # warmup: true,
+    
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
     events:
@@ -698,7 +635,7 @@ functions:
       ./handlers/billing.webhookHandler
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -712,7 +649,7 @@ functions:
       ./handlers/billing.createStripeCustomer
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -726,7 +663,7 @@ functions:
       ./handlers/billing.createStripeSubscription
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -740,7 +677,7 @@ functions:
       ./handlers/billing.getBillingDetails
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
@@ -754,12 +691,26 @@ functions:
       ./handlers/billing.updateSubscription
     vpc:
       securityGroupIds:
-        - sg-012e7222a5f8ac6cc                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
         - http:
             path: api/subscription
+            method: post
+            cors: true
+  updatePaymentInfo:
+    handler:
+      ./handlers/billing.updatePaymentInfo
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
+    events:
+        - http:
+            path: api/payment
             method: post
             cors: true
