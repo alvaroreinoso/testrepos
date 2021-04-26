@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   Carrier.init({
     name: DataTypes.STRING,
     laneId: DataTypes.INTEGER,
+    serviceRating: DataTypes.INTEGER,
     historicalRate: DataTypes.INTEGER,
     mcn: DataTypes.INTEGER,
     contactPhone: DataTypes.STRING,

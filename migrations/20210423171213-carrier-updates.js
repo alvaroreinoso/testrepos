@@ -10,6 +10,10 @@ module.exports = {
       type: Sequelize.INTEGER,
       allowNull: true
     })
+    await queryInterface.addColumn('Carriers', 'serviceRating', {
+      type: Sequelize.INTEGER,
+      allowNull: true
+    })
     await queryInterface.addColumn('Carriers', 'contactName', {
       type: Sequelize.STRING,
       allowNull: true

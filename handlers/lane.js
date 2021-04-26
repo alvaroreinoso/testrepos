@@ -659,6 +659,7 @@ module.exports.addCarrier = async (event, context) => {
             const carrier = await Carrier.create({
                 name: request.name,
                 laneId: laneId,
+                serviceRating: request.serviceRating,
                 mcn: request.mcn,
                 historicalRate: request.historicalRate,
                 contactEmail: request.contactEmail,
@@ -679,7 +680,8 @@ module.exports.addCarrier = async (event, context) => {
                     id: request.id
                 }
             })
-    
+            
+            carrier.serviceRating = request.serviceRating
             carrier.name = request.name
             carrier.mcn = request.mcn
             carrier.historicalRate = request.historicalRate
