@@ -164,7 +164,7 @@ module.exports.addContact = async (event, context) => {
             if (universal == 'true') {
 
                 switch (type) {
-                    case 'cusomter': {
+                    case 'customer': {
 
                         const customer = await Customer.findOne({
                             where: {
@@ -376,7 +376,6 @@ module.exports.addContact = async (event, context) => {
             }
         }
 
-
         else {
 
             const contact = await Contact.create({
@@ -393,7 +392,7 @@ module.exports.addContact = async (event, context) => {
             if (universal == 'true') {
 
                 switch (type) {
-                    case 'cusomter': {
+                    case 'customer': {
 
                         const customer = await Customer.findOne({
                             where: {
@@ -452,8 +451,6 @@ module.exports.addContact = async (event, context) => {
                             headers: corsHeaders
                         }
 
-
-
                     } case 'location': {
 
                         const location = await Location.findOne({
@@ -494,18 +491,14 @@ module.exports.addContact = async (event, context) => {
                             headers: corsHeaders
                         }
 
-
                     } default: {
 
                         return {
                             statusCode: 500,
                             headers: corsHeaders
                         }
-
                     }
-
                 }
-
             } else {
 
                 switch (type) {
