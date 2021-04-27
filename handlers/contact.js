@@ -280,7 +280,7 @@ module.exports.addContact = async (event, context) => {
             } else {
 
                 switch (type) {
-                    case 'cusomter': {
+                    case 'customer': {
 
                         const customer = await Customer.findOne({
                             where: {
@@ -502,7 +502,7 @@ module.exports.addContact = async (event, context) => {
             } else {
 
                 switch (type) {
-                    case 'cusomter': {
+                    case 'customer': {
 
                         const customer = await Customer.findOne({
                             where: {
