@@ -213,6 +213,9 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
             const results = User.findOne({
                 where: {
                     id: user._source.id
+                },
+                include: {
+                    model: Team        
                 }
             })
 
