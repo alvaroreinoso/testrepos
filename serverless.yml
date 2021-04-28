@@ -350,6 +350,19 @@ functions:
             path: api/lane/{laneId}/carriers
             method: get
             cors: true
+  updateCarriers:
+    handler:
+      ./handlers/lane.addCarrier
+    events:
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: post
+            cors: true
+        - http:
+            path: api/lane/{laneId}/carriers
+            method: put
+            cors: true
+
 
   # Team
   addTeam:

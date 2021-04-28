@@ -1,5 +1,5 @@
 'use strict';
-const { Ledger, Message, User, Brokerage, Contact } = require('.././models');
+const { Ledger, Message, User, Brokerage, Contact, Team } = require('.././models');
 const client = require('.././elastic/client')
 const getCurrentUser = require('.././helpers/user')
 const corsHeaders = require('.././helpers/cors')
@@ -126,10 +126,14 @@ module.exports.searchLedger = async (event, context) => {
             where: {
                 id: message._source.id
             },
-            include: [{
+            include: {
                 model: User,
                 attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId', 'title'],
-            }]
+                include: {
+                    model: Team
+                }
+            }
+           
         })
 
         return results
@@ -209,6 +213,9 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
             const results = User.findOne({
                 where: {
                     id: user._source.id
+                },
+                include: {
+                    model: Team        
                 }
             })
 
