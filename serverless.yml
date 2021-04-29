@@ -700,9 +700,9 @@ functions:
             path: api/subscription
             method: post
             cors: true
-  updatePaymentInfo:
+  updateDefaultPaymentMethod:
     handler:
-      ./handlers/billing.updatePaymentInfo
+      ./handlers/billing.updateDefaultPaymentMethod
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
@@ -711,6 +711,20 @@ functions:
     timeout: 20
     events:
         - http:
-            path: api/payment
+            path: api/default-payment
+            method: post
+            cors: true
+  createSetupIntent:
+    handler:
+      ./handlers/billing.createSetupIntent
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
+    events:
+        - http:
+            path: api/setup-intent
             method: post
             cors: true
