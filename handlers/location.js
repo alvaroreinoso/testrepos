@@ -231,8 +231,12 @@ module.exports.getLanesForLocation = async (event, context) => {
             return lane
         }))
 
+        const sortedLanes = uniqueLanes.sort((a, b) => {
+            return b.spend - a.spend;
+        });
+
         return {
-            body: JSON.stringify(uniqueLanes),
+            body: JSON.stringify(sortedLanes),
             headers: corsHeaders,
             statusCode: 200
         }
