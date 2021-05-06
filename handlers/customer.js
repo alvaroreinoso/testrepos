@@ -380,7 +380,6 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
             },
             include: { 
                 model: User,
-                through: { attributes: []},
                 include: {
                     model: Team
                 }

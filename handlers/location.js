@@ -273,7 +273,6 @@ module.exports.getTeammatesForLocation = async (event, context) => {
             },
             include: { 
                 model: User,
-                through: { attributes: []},
                 include: {
                     model: Team
                 }

@@ -462,7 +462,6 @@ module.exports.getTeammatesForLane = async (event, context) => {
             },
             include: {
                 model: User,
-                through: { attributes: [] },
                 include: {
                     model: Team
                 }
