@@ -285,10 +285,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             },
             include: [{
                 model: Location,
-                // include: [{
-                //     model: Lane,
-                //     attributes: ['spend', 'frequency']
-                // }]
             }]
         })
 
@@ -336,7 +332,9 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }
         }))
 
-        const sortedLocations = await locationsWithStats.sort((a, b) => b.spend - a.spend)
+        const sortedLocations = locationsWithStats.sort((a, b) => {
+            return b.spend - a.spend
+        })
 
         return {
             body: JSON.stringify(sortedLocations),
