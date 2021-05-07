@@ -138,7 +138,6 @@ module.exports.addContact = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
-
         if (user.id == null) {
             return {
                 statusCode: 401,
@@ -175,7 +174,21 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
+                                headers: corsHeaders
+                            }
+                        }
+
+                        const customerContact = await CustomerContact.findOne({
+                            where: {
+                                customerId: customer.id,
+                                contactId: contact.id
+                            }
+                        })
+
+                        if (customerContact !== null) {
+                            return {
+                                statusCode: 409,
                                 headers: corsHeaders
                             }
                         }
@@ -291,7 +304,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
@@ -403,7 +416,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
@@ -513,7 +526,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
