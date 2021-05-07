@@ -242,6 +242,16 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 
 module.exports.searchContacts = async (event, context) => {
 
+    // Add check for:
+    // Does this Customer/Location/Lane already include this contact?
+    // If it does, do not return contact.
+    // Currently, we display every contact in a brokerage
+    // but we want only the ones not connected with this item
+
+    // This means we should probably send up, with the request:
+    // a type of "customer", "location", or "lane" and possibly its Id?
+    // so we can pull its info in to compare against the search results
+
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
