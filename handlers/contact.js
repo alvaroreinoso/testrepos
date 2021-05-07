@@ -447,6 +447,14 @@ module.exports.addContact = async (event, context) => {
         }
 
         else {
+            // ADD CHECK:
+            // 1. Does the request have a contactId?
+            // 2. If so, attempt to get the contact with that Id
+            // 3. If that contact is null, then create(?)
+            // 4. Else, if we have a contact in the database, with that Id:
+            // **** DO NOT CREATE A NEW CONTACT ****
+            // 4. Else, the contactId is null
+            // 5. Then make the contact
 
             const contact = await Contact.create({
                 brokerageId: user.brokerageId,
