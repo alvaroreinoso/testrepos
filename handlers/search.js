@@ -1,5 +1,5 @@
 'use strict';
-const { Ledger, Message, User, Brokerage, Contact, Team } = require('.././models');
+const { Ledger, Message, User, Brokerage, Contact, Team, Customer } = require('.././models');
 const client = require('.././elastic/client')
 const getCurrentUser = require('.././helpers/user')
 const corsHeaders = require('.././helpers/cors')
@@ -240,7 +240,38 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
     }
 }
 
+// Search helpers --- move to a handlers/utils/?
+async function getContactsForItem(itemType, itemId, brokerageId) {
+    switch (itemType) {
+        case "customer":
+            console.log("START CUSTOMER")
+            const customer = await Customer.findOne({
+                where: {
+                    id: itemId,
+                    brokerageId
+                }
+            })
+            console.log("FOUND CUSTOMER", customer)
+
+            if (customer === null) {
+                return {
+                    statusCode: 404,
+                    headers: corsHeaders
+                }
+            }
+
+            return await customer.getContacts()
+        case "location":
+            break;
+        case "lane":
+            break;
+        default:
+            console.log("Invalid itemType given")
+    }
+}
+
 module.exports.searchContacts = async (event, context) => {
+    // Add itemType & itemId query string parameter so we can exlcude those that have been added
 
     // Add check for:
     // Does this Customer/Location/Lane already include this contact?
@@ -248,9 +279,6 @@ module.exports.searchContacts = async (event, context) => {
     // Currently, we display every contact in a brokerage
     // but we want only the ones not connected with this item
 
-    // This means we should probably send up, with the request:
-    // a type of "customer", "location", or "lane" and possibly its Id?
-    // so we can pull its info in to compare against the search results
 
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
@@ -277,7 +305,10 @@ module.exports.searchContacts = async (event, context) => {
 
         const brokerageId = brokerage.id
 
+        // Query Params
         const query = event.queryStringParameters.q
+        const itemType = event.queryStringParameters.itemType
+        const itemId = event.queryStringParameters.itemId
 
         const searchResults = await client.search({
             index: 'contact',
@@ -312,10 +343,25 @@ module.exports.searchContacts = async (event, context) => {
             return results
         })
 
-        const response = await Promise.all(dbResults)
+        // We have contacts to check
+        // 1. Based on the itemType, find the contacts by that item id
+        //    ie: location id: 2 contacts list
+        // 2. Compare the response array with the one from the database
+        //    If the contact from the response, at this location, do not add them
+        //    WHICH MEANS, we need another array to push our real matches into
+
+        const contactsToCheck = await Promise.all(dbResults)
+        console.log("CHECK ME", contactsToCheck)
+
+        const contactsAtItem = await getContactsForItem(itemType, itemId, brokerageId)
+
+        // Remove duplicates
+        const contactsAvailable = [...contactsAtItem]
+
+        console.log("FINAL AVAILABLE:", contactsAvailable)
 
         return {
-            body: JSON.stringify(response),
+            body: JSON.stringify(contactsAvailable),
             headers: corsHeaders,
             statusCode: 200
         }
