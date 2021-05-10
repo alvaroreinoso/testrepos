@@ -244,14 +244,12 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
 async function getContactsForItem(itemType, itemId, brokerageId) {
     switch (itemType) {
         case "customer":
-            console.log("START CUSTOMER")
             const customer = await Customer.findOne({
                 where: {
                     id: itemId,
                     brokerageId
                 }
             })
-            console.log("FOUND CUSTOMER", customer)
 
             if (customer === null) {
                 return {
@@ -270,15 +268,43 @@ async function getContactsForItem(itemType, itemId, brokerageId) {
     }
 }
 
+async function getBrokerageIdByUser(user) {
+    const brokerage = await Brokerage.findOne({
+        where: {
+            id: user.brokerageId
+        }
+    })
+
+    return brokerage.id
+}
+
+function removeDuplicateObjectsFromArrays(fullArray, partialArray) {
+    // Make copies of incoming arrays
+    const array1 = [...fullArray] // main array that has most/all data
+    const array2 = [...partialArray] // array that holds what will become duplicate data
+    // Holding array for combined items
+    const combinedItems = []
+    // Holding array for unique matches
+    const uniqueResults = []
+
+    // Combine both arrays into one with duplicates
+    array1.forEach(item => combinedItems.push(item))
+    array2.forEach(item => combinedItems.push(item))
+
+    // Loop over full array to find duplicates
+    fullArray.forEach(obj => {
+        let temporaryFilteredArray = combinedItems.filter(possibleDuplicate => possibleDuplicate.id === obj.id)
+
+        // If the temporaryFilteredArray is 1, add it to the result
+        if (temporaryFilteredArray.length === 1) {
+            uniqueResults.push(obj)
+        }
+    })
+
+    return uniqueResults
+}
+
 module.exports.searchContacts = async (event, context) => {
-    // Add itemType & itemId query string parameter so we can exlcude those that have been added
-
-    // Add check for:
-    // Does this Customer/Location/Lane already include this contact?
-    // If it does, do not return contact.
-    // Currently, we display every contact in a brokerage
-    // but we want only the ones not connected with this item
-
 
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
@@ -297,13 +323,7 @@ module.exports.searchContacts = async (event, context) => {
             }
         }
 
-        const brokerage = await Brokerage.findOne({
-            where: {
-                id: user.brokerageId
-            }
-        })
-
-        const brokerageId = brokerage.id
+        const brokerageId = await getBrokerageIdByUser(user)
 
         // Query Params
         const query = event.queryStringParameters.q
@@ -343,23 +363,18 @@ module.exports.searchContacts = async (event, context) => {
             return results
         })
 
-        // We have contacts to check
-        // 1. Based on the itemType, find the contacts by that item id
-        //    ie: location id: 2 contacts list
-        // 2. Compare the response array with the one from the database
-        //    If the contact from the response, at this location, do not add them
-        //    WHICH MEANS, we need another array to push our real matches into
-
-        const contactsToCheck = await Promise.all(dbResults)
-        console.log("CHECK ME", contactsToCheck)
-
-        const contactsAtItem = await getContactsForItem(itemType, itemId, brokerageId)
-
-        // Remove duplicates
-        const contactsAvailable = [...contactsAtItem]
-
-        console.log("FINAL AVAILABLE:", contactsAvailable)
-
+        const contactsFromSearch = await Promise.all(dbResults)
+        console.log("")
+        console.log("************************")
+        console.log("FROM SEARCH",contactsFromSearch)
+        const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
+        console.log("")
+        console.log("************************")
+        console.log("CONTACTS FROM CUSTOMER:",contactsInItem)
+        const contactsAvailable = removeDuplicateObjectsFromArrays(contactsFromSearch, contactsInItem)
+        console.log("")
+        console.log("************************")
+        console.log("DE-DUPLICATED",contactsAvailable)
         return {
             body: JSON.stringify(contactsAvailable),
             headers: corsHeaders,
