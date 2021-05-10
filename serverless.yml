@@ -618,17 +618,15 @@ functions:
             path: api/register/{uuid}
             method: get
             cors: true
-  getTeamsForBrokerage:
-    
-    handler:
-      ./handlers/onboarding.getTeamsForBrokerage
-    events:
-        - http:
-            path: api/onboarding/teams
-            method: get
-            cors: true
-  getCustomersForBrokerage:
-    
+  # getTeamsForBrokerage:
+  #   handler:
+  #     ./handlers/onboarding.getTeamsForBrokerage
+  #   events:
+  #       - http:
+  #           path: api/onboarding/teams
+  #           method: get
+  #           cors: true
+  getCustomersForBrokerage:  
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
     events:
