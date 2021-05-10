@@ -210,6 +210,14 @@ functions:
             path: api/lane/top/{userId}
             method: get
             cors: true
+  getAdminUsers:
+    handler:
+      ./handlers/user.getAdminUsers
+    events:
+        - http:
+            path: api/user/admins
+            method: get
+            cors: true
 
 # Customer
   updateCustomer:

@@ -594,3 +594,48 @@ module.exports.getTopLanesForUser = async (event, context) => {
         }
     }
 }
+
+module.exports.getAdminUsers = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+
+        if (currentUser.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
+        }
+
+        const admins = await User.findAll({
+            where: {
+                brokerageId: currentUser.brokerageId,
+                admin: true
+            }
+        })
+
+        if (admins.length == 0) {
+            return {
+                headers: corsHeaders,
+                statusCode: 404,
+            }
+        }
+
+        return {
+            body: JSON.stringify(admins),
+            headers: corsHeaders,
+            statusCode: 200
+        }
+
+    } catch (err) {
+        return {
+            headers: corsHeaders,
+            statusCode: 500,
+        }
+    }
+}
