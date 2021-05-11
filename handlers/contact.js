@@ -375,8 +375,7 @@ module.exports.addContact = async (event, context) => {
             }
         }
 
-        else {      
-               
+        else {
             const contact = await Contact.create({
                 brokerageId: user.brokerageId,
                 firstName: request.firstName,

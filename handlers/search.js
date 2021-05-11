@@ -1,8 +1,11 @@
 'use strict';
-const { Ledger, Message, User, Brokerage, Contact, Team, Customer } = require('.././models');
+const { Ledger, Message, User, Brokerage, Contact, Team } = require('.././models');
 const client = require('.././elastic/client')
 const getCurrentUser = require('.././helpers/user')
-const corsHeaders = require('.././helpers/cors')
+const corsHeaders = require('.././helpers/cors');
+const { getBrokerageIdByUser } = require('../helpers/getBrokerageIdByUser');
+const { getContactsForItem } = require('../helpers/getContactsForItem');
+const { filterSearchResultsForItem } = require('../helpers/filterSearchResultsForItem');
 
 module.exports.search = async (event, context) => {
 
@@ -240,78 +243,6 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
     }
 }
 
-// Search helpers --- move to a handlers/utils/?
-async function getContactsForItem(itemType, itemId, brokerageId) {
-    switch (itemType) {
-        case "customer":
-            const customer = await Customer.findOne({
-                where: {
-                    id: itemId,
-                    brokerageId
-                }
-            })
-
-            if (customer === null) {
-                return {
-                    statusCode: 404,
-                    headers: corsHeaders
-                }
-            }
-
-            return await customer.getContacts()
-        case "location":
-            break;
-        case "lane":
-            break;
-        default:
-            console.log("Invalid itemType given")
-    }
-}
-
-async function getBrokerageIdByUser(user) {
-    const brokerage = await Brokerage.findOne({
-        where: {
-            id: user.brokerageId
-        }
-    })
-
-    return brokerage.id
-}
-
-function removeDuplicateObjectsFromArrays(searchResults, allContacts) {
-    const uniqueResults = []
-
-    // For each search result
-    searchResults.forEach(searchResult => {
-        if (searchResult !== null) {
-            // If that contact is in already contacts for this item,
-            // Add them to the temporary array
-            let temporaryArray = allContacts.filter(contact => {
-                if (contact?.id === searchResult?.id) {
-                    return true
-                }
-                // Check for if they're in the database twice but under different Ids
-                if (contact?.firstName === searchResult?.firstName
-                    && contact?.lastName === searchResult?.lastName
-                    && contact?.title === searchResult?.title
-                    && contact?.phone === searchResult?.phone) {
-                    return true
-                }
-
-                return false
-            })
-
-            // If we have any length in the temporary array, we know this searchResult
-            // is already saved to the contacts list
-            if (temporaryArray.length < 1) {
-                uniqueResults.push(searchResult)
-            }
-        }
-    })
-
-    return uniqueResults
-}
-
 module.exports.searchContacts = async (event, context) => {
 
     if (event.source === 'serverless-plugin-warmup') {
@@ -372,17 +303,10 @@ module.exports.searchContacts = async (event, context) => {
         })
 
         const contactsFromSearch = await Promise.all(dbResults)
-        console.log("")
-        console.log("************************")
-        console.log("FROM SEARCH",contactsFromSearch)
+
         const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
-        // console.log("")
-        // console.log("************************")
-        // console.log("CONTACTS FROM CUSTOMER:",contactsInItem)
-        const contactsAvailable = removeDuplicateObjectsFromArrays(contactsFromSearch, contactsInItem)
-        // console.log("")
-        // console.log("************************")
-        // console.log("DE-DUPLICATED",contactsAvailable)
+
+        const contactsAvailable = await filterSearchResultsForItem(contactsFromSearch, contactsInItem)
 
         return {
             body: JSON.stringify(contactsAvailable),
