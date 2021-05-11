@@ -240,21 +240,6 @@ module.exports.addContact = async (event, context) => {
                             }
                         }
 
-
-                        const locationContact = await LocationContact.findOne({
-                            where: {
-                                locationId: location.id,
-                                contactId: contact.id
-                            }
-                        })
-
-                        if (locationContact !== null) {
-                            return {
-                                statusCode: 409,
-                                headers: corsHeaders
-                            }
-                        }
-
                         await LocationContact.findOrCreate({
                             where: {
                                 locationId: location.id,
@@ -310,20 +295,6 @@ module.exports.addContact = async (event, context) => {
                             }
                         }
 
-                        const customerContact = await CustomerContact.findOne({
-                            where: {
-                                customerId: customer.id,
-                                contactId: contact.id
-                            }
-                        })
-
-                        if (customerContact !== null) {
-                            return {
-                                statusCode: 409,
-                                headers: corsHeaders
-                            }
-                        }
-
                         await CustomerContact.findOrCreate({
                             where: {
                                 customerId: customer.id,
@@ -352,20 +323,6 @@ module.exports.addContact = async (event, context) => {
                             }
                         }
 
-                        const locationContact = await LocationContact.findOne({
-                            where: {
-                                locationId: location.id,
-                                contactId: contact.id
-                            }
-                        })
-
-                        if (locationContact !== null) {
-                            return {
-                                statusCode: 409,
-                                headers: corsHeaders
-                            }
-                        }
-
                         await LocationContact.findOrCreate({
                             where: {
                                 locationId: location.id,
@@ -390,20 +347,6 @@ module.exports.addContact = async (event, context) => {
                         if (lane === null) {
                             return {
                                 statusCode: 404,
-                                headers: corsHeaders
-                            }
-                        }
-
-                        const laneContact = await LaneContact.findOne({
-                            where: {
-                                laneId: lane.id,
-                                contactId: contact.id
-                            }
-                        })
-
-                        if (laneContact !== null) {
-                            return {
-                                statusCode: 409,
                                 headers: corsHeaders
                             }
                         }
