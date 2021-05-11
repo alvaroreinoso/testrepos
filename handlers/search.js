@@ -278,22 +278,31 @@ async function getBrokerageIdByUser(user) {
     return brokerage.id
 }
 
-function removeDuplicateObjectsFromArrays(fullArray, partialArray) {
+function removeDuplicateObjectsFromArrays(partialArray, fullArray) {
     // Make copies of incoming arrays
-    const array1 = [...fullArray] // main array that has most/all data
-    const array2 = [...partialArray] // array that holds what will become duplicate data
+    const array1 = [...partialArray] // main array that has most/all data
+    const array2 = [...fullArray] // array that holds what will become duplicate data
     // Holding array for combined items
     const combinedItems = []
     // Holding array for unique matches
     const uniqueResults = []
 
     // Combine both arrays into one with duplicates
-    array1.forEach(item => combinedItems.push(item))
-    array2.forEach(item => combinedItems.push(item))
+    // Check for nulls because elastic can return null
+    array1.forEach(item => {
+        if (item !== null) {
+            combinedItems.push(item)
+        }
+    })
+    array2.forEach(item => {
+        if (item !== null) {
+            combinedItems.push(item)
+        }
+    })
 
     // Loop over full array to find duplicates
-    fullArray.forEach(obj => {
-        let temporaryFilteredArray = combinedItems.filter(possibleDuplicate => possibleDuplicate.id === obj.id)
+    partialArray.forEach(obj => {
+        let temporaryFilteredArray = combinedItems.filter(possibleDuplicate => possibleDuplicate?.id === obj?.id)
 
         // If the temporaryFilteredArray is 1, add it to the result
         if (temporaryFilteredArray.length === 1) {
@@ -375,6 +384,7 @@ module.exports.searchContacts = async (event, context) => {
         console.log("")
         console.log("************************")
         console.log("DE-DUPLICATED",contactsAvailable)
+
         return {
             body: JSON.stringify(contactsAvailable),
             headers: corsHeaders,
