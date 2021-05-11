@@ -177,26 +177,28 @@ module.exports.getTopCarriers = async (event, context) => {
             }
         }
 
-        const carriers = await Carrier.findAll({
-            include: [{
-                model: Load,
-                where: {
-                    laneId: lane.id
-                }
-            }],
-        });
+        // const carriers = await Carrier.findAll({
+        //     include: [{
+        //         model: Load,
+        //         where: {
+        //             laneId: lane.id
+        //         }
+        //     }],
+        // });
 
-        const carriersWithCount = await carriers.map(carrier => {
-            carrier.dataValues.loadCount = carrier.Loads.length
-            carrier.dataValues.historicalRate = carrier.Loads[0].rate
+        // const carriersWithCount = await carriers.map(carrier => {
+        //     carrier.dataValues.loadCount = carrier.Loads.length
+        //     carrier.dataValues.historicalRate = carrier.Loads[0].rate
 
-            delete carrier.dataValues.Loads
+        //     delete carrier.dataValues.Loads
 
-            return carrier
-        })
+        //     return carrier
+        // })
 
-        const topCarriers = await carriersWithCount.sort((a, b) => b.loadCount - a.loadCount)
+        // const topCarriers = await carriersWithCount.sort((a, b) => b.loadCount - a.loadCount)
 
+        const topCarriers = await lane.getCarriers()
+        
         return {
             body: JSON.stringify(topCarriers),
             headers: corsHeaders,
@@ -460,7 +462,6 @@ module.exports.getTeammatesForLane = async (event, context) => {
             },
             include: {
                 model: User,
-                through: { attributes: [] },
                 include: {
                     model: Team
                 }

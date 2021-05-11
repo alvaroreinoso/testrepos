@@ -356,7 +356,7 @@ module.exports.updateSubscription = async (event, context) => {
     }
 }
 
-module.exports.updatePaymentInfo = async (event, context) => {
+module.exports.updateDefaultPaymentMethod = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
@@ -377,15 +377,57 @@ module.exports.updatePaymentInfo = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
-        const paymentMethod = await stripe.paymentMethods.update(
-            request.paymentMethodId,
-            request.body
+        const customer = await stripe.customers.update(
+            request.customerId,
+            {invoice_settings: {
+                default_payment_method: request.paymentMethodId
+            }}
         );
 
         return {
             statusCode: 204,
             headers: corsHeaders
         }
+    } catch (err) {
+        console.log(err)
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
+
+module.exports.createSetupIntent = async (event, context) => {
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        if (user.admin == false) {
+            return {
+                statusCode: 403,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const intent = await stripe.setupIntents.create({
+            customer: request.customerId,
+          });
+          
+        return {
+            statusCode: 201,
+            headers: corsHeaders,
+            body: JSON.stringify(intent)
+        }
+
     } catch (err) {
         console.log(err)
         return {
