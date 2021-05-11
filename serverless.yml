@@ -138,6 +138,7 @@ functions:
             path: api/user
             method: get
             cors: true
+    timeout: 20
   getEmailById:
     handler:
       ./handlers/user.getEmailById
