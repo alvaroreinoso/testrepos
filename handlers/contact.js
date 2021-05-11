@@ -179,20 +179,6 @@ module.exports.addContact = async (event, context) => {
                             }
                         }
 
-                        const customerContact = await CustomerContact.findOne({
-                            where: {
-                                customerId: customer.id,
-                                contactId: contact.id
-                            }
-                        })
-
-                        if (customerContact !== null) {
-                            return {
-                                statusCode: 409,
-                                headers: corsHeaders
-                            }
-                        }
-
                         await CustomerContact.findOrCreate({
                             where: {
                                 customerId: customer.id,
