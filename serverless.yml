@@ -138,6 +138,7 @@ functions:
             path: api/user
             method: get
             cors: true
+    timeout: 20
   getEmailById:
     handler:
       ./handlers/user.getEmailById
@@ -208,6 +209,14 @@ functions:
     events:
         - http:
             path: api/lane/top/{userId}
+            method: get
+            cors: true
+  getAdminUsers:
+    handler:
+      ./handlers/user.getAdminUsers
+    events:
+        - http:
+            path: api/user/admins
             method: get
             cors: true
 
@@ -610,17 +619,15 @@ functions:
             path: api/register/{uuid}
             method: get
             cors: true
-  getTeamsForBrokerage:
-    
-    handler:
-      ./handlers/onboarding.getTeamsForBrokerage
-    events:
-        - http:
-            path: api/onboarding/teams
-            method: get
-            cors: true
-  getCustomersForBrokerage:
-    
+  # getTeamsForBrokerage:
+  #   handler:
+  #     ./handlers/onboarding.getTeamsForBrokerage
+  #   events:
+  #       - http:
+  #           path: api/onboarding/teams
+  #           method: get
+  #           cors: true
+  getCustomersForBrokerage:  
     handler:
       ./handlers/onboarding.getCustomersForBrokerage
     events:
@@ -700,9 +707,9 @@ functions:
             path: api/subscription
             method: post
             cors: true
-  updatePaymentInfo:
+  updateDefaultPaymentMethod:
     handler:
-      ./handlers/billing.updatePaymentInfo
+      ./handlers/billing.updateDefaultPaymentMethod
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
@@ -711,6 +718,20 @@ functions:
     timeout: 20
     events:
         - http:
-            path: api/payment
+            path: api/default-payment
+            method: post
+            cors: true
+  createSetupIntent:
+    handler:
+      ./handlers/billing.createSetupIntent
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
+    events:
+        - http:
+            path: api/setup-intent
             method: post
             cors: true
