@@ -264,7 +264,6 @@ module.exports.searchContacts = async (event, context) => {
 
         const brokerageId = await getBrokerageIdByUser(user)
 
-        // Query Params
         const query = event.queryStringParameters.q
         const itemType = event.queryStringParameters.itemType
         const itemId = event.queryStringParameters.itemId
