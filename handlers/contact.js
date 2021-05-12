@@ -138,7 +138,6 @@ module.exports.addContact = async (event, context) => {
 
     try {
         const user = await getCurrentUser(event.headers.Authorization)
-
         if (user.id == null) {
             return {
                 statusCode: 401,
@@ -175,7 +174,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
@@ -291,7 +290,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
@@ -377,7 +376,6 @@ module.exports.addContact = async (event, context) => {
         }
 
         else {
-
             const contact = await Contact.create({
                 brokerageId: user.brokerageId,
                 firstName: request.firstName,
@@ -403,7 +401,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }
@@ -513,7 +511,7 @@ module.exports.addContact = async (event, context) => {
 
                         if (customer === null) {
                             return {
-                                status: 404,
+                                statusCode: 404,
                                 headers: corsHeaders
                             }
                         }

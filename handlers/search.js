@@ -2,7 +2,9 @@
 const { Ledger, Message, User, Brokerage, Contact, Team } = require('.././models');
 const client = require('.././elastic/client')
 const getCurrentUser = require('.././helpers/user')
-const corsHeaders = require('.././helpers/cors')
+const corsHeaders = require('.././helpers/cors');
+const { getContactsForItem } = require('../helpers/getContactsForItem');
+const { filterSearchResultsForItem } = require('../helpers/filterSearchResultsForItem');
 
 module.exports.search = async (event, context) => {
 
@@ -176,13 +178,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
             }
         }
 
-        const brokerage = await Brokerage.findOne({
-            where: {
-                id: user.brokerageId
-            }
-        })
-
-        const brokerageId = brokerage.id
+        const brokerageId = user.brokerageId
 
         const query = event.queryStringParameters.q
 
@@ -259,15 +255,11 @@ module.exports.searchContacts = async (event, context) => {
             }
         }
 
-        const brokerage = await Brokerage.findOne({
-            where: {
-                id: user.brokerageId
-            }
-        })
-
-        const brokerageId = brokerage.id
+        const brokerageId = user.brokerageId
 
         const query = event.queryStringParameters.q
+        const itemType = event.queryStringParameters.itemType
+        const itemId = event.queryStringParameters.itemId
 
         const searchResults = await client.search({
             index: 'contact',
@@ -302,10 +294,14 @@ module.exports.searchContacts = async (event, context) => {
             return results
         })
 
-        const response = await Promise.all(dbResults)
+        const contactsFromSearch = await Promise.all(dbResults)
+
+        const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
+
+        const contactsAvailable = await filterSearchResultsForItem(contactsFromSearch, contactsInItem)
 
         return {
-            body: JSON.stringify(response),
+            body: JSON.stringify(contactsAvailable),
             headers: corsHeaders,
             statusCode: 200
         }
