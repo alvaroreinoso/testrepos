@@ -1,9 +1,11 @@
 const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
-const { Customer, CustomerLocation } = require('.././models');
 const client = require('./client');
+const { Op } = require("sequelize");
 
 module.exports.saveDocument = async (item) => {
+
+    const { Customer, CustomerLocation } = require('.././models');
 
     try {
         const indexName = await getIndex(item)
