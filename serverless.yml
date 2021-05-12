@@ -139,6 +139,13 @@ functions:
             method: get
             cors: true
     timeout: 20
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        - subnet-03086cdd9e1e48134 # public-1
+
   getEmailById:
     handler:
       ./handlers/user.getEmailById
