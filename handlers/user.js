@@ -43,7 +43,7 @@ module.exports.getUser = async (event, context) => {
             }
         }
 
-	console.log('pre response: ', response)
+	console.log('pre response')
 
         return {
             headers: corsHeaders,
