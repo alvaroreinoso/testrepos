@@ -2,8 +2,6 @@ org: terralanes
 app: terralanes-backend
 service: terralanes-api
 
-#
-
 provider:
   name: aws
   runtime: nodejs12.x
@@ -60,11 +58,11 @@ custom:
 
 package:
   individually: false
-  exclude:
-    - data/**
-    - tests/**
-    - seeders/**
-    - migrations/**
+  patterns:
+    - '!data/**'
+    - '!tests/**'
+    - '!seeders/**'
+    - '!migrations/**'
 
 functions:
 # Search
