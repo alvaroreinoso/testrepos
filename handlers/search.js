@@ -217,7 +217,7 @@ module.exports.search = async (event, context) => {
 
                 const contactsFromSearch = await Promise.all(dbResults)
 
-                const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
+                const contactsInItem = await getContactsForItem(itemType, itemId, user.brokerageId)
 
                 const contactsAvailable = await filterSearchResultsForItem(contactsFromSearch, contactsInItem)
 
