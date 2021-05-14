@@ -24,13 +24,10 @@ module.exports.search = async (event, context) => {
         }
 
         const path = event.path
-
-        console.log(path)
+        const query = event.queryStringParameters.q
 
         switch (path) {
-
             case '/api/search': {
-                const query = event.queryStringParameters.q
 
                 const searchResults = await client.search({
                     index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location', 'brokerage'],
@@ -87,8 +84,6 @@ module.exports.search = async (event, context) => {
                     }
                 }
 
-                const query = event.queryStringParameters.q
-
                 const searchResults = await client.search({
                     index: 'message',
                     body: {
@@ -139,10 +134,6 @@ module.exports.search = async (event, context) => {
                 }
             } case '/api/search/users': {
 
-                const brokerageId = user.brokerageId
-
-                const query = event.queryStringParameters.q
-
                 const searchResults = await client.search({
                     index: 'user',
                     body: {
@@ -158,7 +149,7 @@ module.exports.search = async (event, context) => {
                                     },
                                 ],
                                 filter: [
-                                    { "term": { "brokerageId": brokerageId } }
+                                    { "term": { "brokerageId": user.brokerageId } }
                                 ]
                             }
                         }
@@ -186,89 +177,58 @@ module.exports.search = async (event, context) => {
                     statusCode: 200
                 }
 
-            }
-        }
-    } catch (err) {
-        console.log(err)
-        return {
-            headers: corsHeaders,
-            statusCode: 500
-        }
-    }
-}
+            } case '/api/search/contacts': {
 
-module.exports.searchContacts = async (event, context) => {
+                const itemType = event.queryStringParameters.itemType
+                const itemId = event.queryStringParameters.itemId
 
-    if (event.source === 'serverless-plugin-warmup') {
-        console.log('WarmUp - Lambda is warm!');
-        return 'Lambda is warm!';
-    }
-
-    try {
-
-        const user = await getCurrentUser(event.headers.Authorization)
-
-        if (user.id == null) {
-
-            return {
-                headers: corsHeaders,
-                statusCode: 401
-            }
-        }
-
-        const brokerageId = user.brokerageId
-
-        const query = event.queryStringParameters.q
-        const itemType = event.queryStringParameters.itemType
-        const itemId = event.queryStringParameters.itemId
-
-        const searchResults = await client.search({
-            index: 'contact',
-            body: {
-                query: {
-                    bool: {
-                        must: [
-                            {
-                                multi_match: {
-                                    query: query,
-                                    type: "phrase_prefix",
-                                    fields: ["firstName", "lastName", "fullName"]
-                                }
-                            },
-                        ],
-                        filter: [
-                            { "term": { "brokerageId": brokerageId } }
-                        ]
+                const searchResults = await client.search({
+                    index: 'contact',
+                    body: {
+                        query: {
+                            bool: {
+                                must: [
+                                    {
+                                        multi_match: {
+                                            query: query,
+                                            type: "phrase_prefix",
+                                            fields: ["firstName", "lastName", "fullName"]
+                                        }
+                                    },
+                                ],
+                                filter: [
+                                    { "term": { "brokerageId": user.brokerageId } }
+                                ]
+                            }
+                        }
                     }
+                })
+
+                const dbResults = searchResults.body.hits.hits.map(contact => {
+
+                    const results = Contact.findOne({
+                        where: {
+                            id: contact._source.id
+                        }
+                    })
+
+                    return results
+                })
+
+                const contactsFromSearch = await Promise.all(dbResults)
+
+                const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
+
+                const contactsAvailable = await filterSearchResultsForItem(contactsFromSearch, contactsInItem)
+
+                return {
+                    body: JSON.stringify(contactsAvailable),
+                    headers: corsHeaders,
+                    statusCode: 200
                 }
             }
-        })
-
-        const dbResults = searchResults.body.hits.hits.map(contact => {
-
-            const results = Contact.findOne({
-                where: {
-                    id: contact._source.id
-                }
-            })
-
-            return results
-        })
-
-        const contactsFromSearch = await Promise.all(dbResults)
-
-        const contactsInItem = await getContactsForItem(itemType, itemId, brokerageId)
-
-        const contactsAvailable = await filterSearchResultsForItem(contactsFromSearch, contactsInItem)
-
-        return {
-            body: JSON.stringify(contactsAvailable),
-            headers: corsHeaders,
-            statusCode: 200
         }
-
     } catch (err) {
-
         console.log(err)
         return {
             headers: corsHeaders,
