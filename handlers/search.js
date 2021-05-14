@@ -23,43 +23,122 @@ module.exports.search = async (event, context) => {
             }
         }
 
-        const query = event.queryStringParameters.q
+        const path = event.path
 
-        const searchResults = await client.search({
-            index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location', 'brokerage'],
-            body: {
-                query: {
-                    bool: {
-                        must: [
-                            {
-                                multi_match: {
-                                    query: query,
-                                    type: "phrase_prefix",
-                                    fields: '*'
-                                }
-                            },
-                        ],
-                        must_not: [
-                            {
-                                multi_match: {
-                                    query: query,
-                                    type: "phrase_prefix",
-                                    fields: 'laneCustomerName'
-                                }
+        console.log(path)
+
+        switch (path) {
+
+            case '/api/search': {
+                const query = event.queryStringParameters.q
+
+                const searchResults = await client.search({
+                    index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location', 'brokerage'],
+                    body: {
+                        query: {
+                            bool: {
+                                must: [
+                                    {
+                                        multi_match: {
+                                            query: query,
+                                            type: "phrase_prefix",
+                                            fields: '*'
+                                        }
+                                    },
+                                ],
+                                must_not: [
+                                    {
+                                        multi_match: {
+                                            query: query,
+                                            type: "phrase_prefix",
+                                            fields: 'laneCustomerName'
+                                        }
+                                    }
+                                ],
+                                filter: [
+                                    { "term": { "brokerageId": user.brokerageId } }
+                                ]
                             }
-                        ],
-                        filter: [
-                            { "term": { "brokerageId": user.brokerageId } }
-                        ]
+                        }
+                    }
+                })
+
+                return {
+                    body: JSON.stringify(searchResults.body.hits.hits),
+                    headers: corsHeaders,
+                    statusCode: 200
+                }
+
+            } case '/api/ledger/search': {
+
+                const ledgerId = event.queryStringParameters.id
+
+                const ledger = await Ledger.findOne({
+                    where: {
+                        id: ledgerId,
+                        brokerageId: user.brokerageId
+                    }
+                })
+
+                if (ledger == null) {
+                    return {
+                        headers: corsHeaders,
+                        statusCode: 401
                     }
                 }
-            }
-        })
 
-        return {
-            body: JSON.stringify(searchResults.body.hits.hits),
-            headers: corsHeaders,
-            statusCode: 200
+                const query = event.queryStringParameters.q
+
+                const searchResults = await client.search({
+                    index: 'message',
+                    body: {
+                        query: {
+                            bool: {
+                                must: [
+                                    {
+                                        multi_match: {
+                                            query: query,
+                                            type: "phrase_prefix",
+                                            fields: ["content", "userFirstName", "userLastName"]
+                                        }
+                                    },
+                                ],
+                                filter: [
+                                    { "term": { "ledgerId": ledgerId } }
+                                ]
+                            }
+                        }
+                    }
+                })
+
+                const dbResults = searchResults.body.hits.hits.map(message => {
+
+                    const results = Message.findOne({
+                        where: {
+                            id: message._source.id
+                        },
+                        include: {
+                            model: User,
+                            attributes: ['id', 'firstName', 'lastName', 'profileImage', 'teamId', 'title'],
+                            include: {
+                                model: Team
+                            }
+                        }
+
+                    })
+
+                    return results
+                })
+
+                const response = await Promise.all(dbResults)
+
+                return {
+                    body: JSON.stringify(response),
+                    headers: corsHeaders,
+                    statusCode: 200
+                }
+
+            }
         }
 
     } catch (err) {
@@ -135,7 +214,7 @@ module.exports.searchLedger = async (event, context) => {
                     model: Team
                 }
             }
-           
+
         })
 
         return results
@@ -211,7 +290,7 @@ module.exports.searchUsersInBrokerage = async (event, context) => {
                     id: user._source.id
                 },
                 include: {
-                    model: Team        
+                    model: Team
                 }
             })
 

@@ -74,14 +74,18 @@ functions:
             path: api/search
             method: get
             cors: true
-  searchLedger:
-    handler:
-      ./handlers/search.searchLedger
-    events:
         - http:
             path: api/ledger/search
             method: get
             cors: true
+  # searchLedger:
+  #   handler:
+  #     ./handlers/search.searchLedger
+  #   events:
+  #       - http:
+  #           path: api/ledger/search
+  #           method: get
+  #           cors: true
   searchUsersInBrokerage:
     handler:
       ./handlers/search.searchUsersInBrokerage
