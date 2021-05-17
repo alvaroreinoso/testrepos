@@ -30,6 +30,11 @@ module.exports.addCustomer = async (event, context) => {
             displayName: request.name
         })
 
+        await TaggedCustomer.create({
+            customerId: customer.id,
+            userId: user.id
+        })
+
         const lnglat = await getLngLat(request.address)
 
         const hqLocation = await Location.create({
@@ -41,6 +46,11 @@ module.exports.addCustomer = async (event, context) => {
             city: request.city,
             state: request.state,
             lnglat: lnglat
+        })
+
+        await TaggedLocation.create({
+            locationId: hqLocation.id,
+            userId: user.id
         })
 
         const hq = await CustomerLocation.create({
@@ -378,7 +388,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
             } else {
 
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
                 const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                 cL.dataValues.spend = spend.spend
@@ -432,7 +442,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
                 id: customerId,
                 brokerageId: user.brokerageId
             },
-            include: { 
+            include: {
                 model: User,
                 include: {
                     model: Team
@@ -440,7 +450,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
             }
         })
 
-        
+
         if (customer === null) {
             return {
                 headers: corsHeaders,
