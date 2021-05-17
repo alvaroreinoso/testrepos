@@ -23,6 +23,11 @@ module.exports = {
         },
         allowNull: false
       },
+      owned: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       routeGeometry: {
         type: Sequelize.TEXT,
         allowNull: true,

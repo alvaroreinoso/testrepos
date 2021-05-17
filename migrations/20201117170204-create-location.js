@@ -39,6 +39,11 @@ module.exports = {
       phone: {
         type: Sequelize.STRING
       },
+      owned: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
       ledgerId: {
         type: Sequelize.INTEGER,
         allowNull: true,
