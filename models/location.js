@@ -63,6 +63,13 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Location',
+    hooks: {
+      afterCreate: async (location, options) => {
+        await location.createLedger({
+          brokerageId: location.brokerageId
+        })
+      },
+    }
   });
   return Location;
 };

@@ -4,9 +4,75 @@ const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation,
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
+const { getLngLat } = require('.././helpers/mapbox')
+
+module.exports.addCustomer = async (event, context) => {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const customer = await Customer.create({
+            brokerageId: user.brokerageId,
+            name: request.name,
+            displayName: request.name
+        })
+
+        await TaggedCustomer.create({
+            customerId: customer.id,
+            userId: user.id
+        })
+
+        const lnglat = await getLngLat(request.address)
+
+        const hqLocation = await Location.create({
+            owned: false,
+            isHQ: true,
+            brokerageId: user.brokerageId,
+            address: request.address,
+            address2: request.address2,
+            city: request.city,
+            state: request.state,
+            lnglat: lnglat
+        })
+
+        await TaggedLocation.create({
+            locationId: hqLocation.id,
+            userId: user.id
+        })
+
+        const hq = await CustomerLocation.create({
+            customerId: customer.id,
+            locationId: hqLocation.id
+        })
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+    } catch (err) {
+        console.log(err)
+
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+}
 
 module.exports.updateCustomer = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -322,7 +388,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
 
             } else {
 
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency}))
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
                 const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                 cL.dataValues.spend = spend.spend
@@ -376,7 +442,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
                 id: customerId,
                 brokerageId: user.brokerageId
             },
-            include: { 
+            include: {
                 model: User,
                 include: {
                     model: Team
@@ -384,7 +450,7 @@ module.exports.getTeammatesForCustomer = async (event, context) => {
             }
         })
 
-        
+
         if (customer === null) {
             return {
                 headers: corsHeaders,

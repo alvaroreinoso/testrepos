@@ -209,6 +209,21 @@ functions:
             cors: true
 
 # Customer
+  addCustomer:
+    handler:
+      ./handlers/customer.addCustomer
+    events:
+        - http:
+            path: api/customer
+            method: post
+            cors: true
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+        - subnet-03086cdd9e1e48134 # public
+    timeout: 20
   updateCustomer:
     handler:
       ./handlers/customer.updateCustomer
