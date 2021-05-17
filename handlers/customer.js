@@ -4,6 +4,7 @@ const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation,
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
+const { getLngLat } = require('.././helpers/mapbox')
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -29,21 +30,29 @@ module.exports.addCustomer = async (event, context) => {
             displayName: request.name
         })
 
-        const hq = await CustomerLocation.create({
-            customerId: customer.id,
+        const lnglat = await getLngLat(request.address)
+
+        const hqLocation = await Location.create({
             owned: false,
+            isHQ: true,
             brokerageId: user.brokerageId,
             address: request.address,
-            address2: request.address2
+            address2: request.address2,
+            city: request.city,
+            state: request.state,
+            lnglat: lnglat
+        })
+
+        const hq = await CustomerLocation.create({
+            customerId: customer.id,
+            locationId: hqLocation.id
         })
 
         return {
             statusCode: 204,
             headers: corsHeaders
         }
-    
     } catch (err) {
-
         console.log(err)
 
         return {
@@ -51,11 +60,9 @@ module.exports.addCustomer = async (event, context) => {
             headers: corsHeaders
         }
     }
-
 }
 
 module.exports.updateCustomer = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
