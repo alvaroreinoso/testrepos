@@ -36,6 +36,11 @@ module.exports.addCustomer = async (event, context) => {
             address: request.address,
             address2: request.address2
         })
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
     
     } catch (err) {
 

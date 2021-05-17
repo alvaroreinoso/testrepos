@@ -209,6 +209,14 @@ functions:
             cors: true
 
 # Customer
+  addCustomer:
+    handler:
+      ./handlers/customer.addCustomer
+    events:
+        - http:
+            path: api/customer
+            method: post
+            cors: true
   updateCustomer:
     handler:
       ./handlers/customer.updateCustomer
