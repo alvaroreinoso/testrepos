@@ -5,6 +5,50 @@ const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 
+module.exports.addCustomer = async (event, context) => {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+
+        const customer = await Customer.create({
+            brokerageId: user.brokerageId,
+            name: request.name,
+            displayName: request.name
+        })
+
+        const hq = await CustomerLocation.create({
+            customerId: customer.id,
+            owned: false,
+            brokerageId: user.brokerageId,
+            address: request.address,
+            address2: request.address2
+        })
+    
+    } catch (err) {
+
+        console.log(err)
+
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
+    }
+
+}
+
 module.exports.updateCustomer = async (event, context) => {
 
     if (event.source === 'serverless-plugin-warmup') {

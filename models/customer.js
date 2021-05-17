@@ -43,6 +43,11 @@ module.exports = (sequelize, DataTypes) => {
     bio: DataTypes.TEXT
   }, {
     hooks: {
+      afterCreate: async (customer, options) => {
+        await customer.createLedger({
+          brokerageId: customer.brokerageId
+        })
+      },
       afterSave: async (customer, options) => {
         await elastic.saveDocument(customer)
       },
