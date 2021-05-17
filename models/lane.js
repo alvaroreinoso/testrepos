@@ -50,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     destinationLocationId: DataTypes.INTEGER,
     brokerageId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
+    owned: DataTypes.BOOLEAN,
     routeGeometry: DataTypes.STRING,
     frequency: DataTypes.INTEGER,
     mileage: DataTypes.INTEGER,

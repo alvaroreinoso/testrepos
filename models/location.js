@@ -45,6 +45,7 @@ module.exports = (sequelize, DataTypes) => {
   Location.init({
     address: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
+    owned: DataTypes.BOOLEAN,
     city: DataTypes.STRING,
     state: DataTypes.STRING,
     zipcode: DataTypes.STRING,
