@@ -4,7 +4,7 @@ const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Loca
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
 const sequelize = require('sequelize');
-const { getLngLat } = require('../helpers/mapbox');
+const { getLngLat, getRoute } = require('../helpers/mapbox');
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -199,7 +199,7 @@ module.exports.getTopCarriers = async (event, context) => {
         // const topCarriers = await carriersWithCount.sort((a, b) => b.loadCount - a.loadCount)
 
         const topCarriers = await lane.getCarriers()
-        
+
         return {
             body: JSON.stringify(topCarriers),
             headers: corsHeaders,
@@ -231,52 +231,101 @@ module.exports.addLane = async (event, context) => {
         }
 
         const request = JSON.parse(event.body)
-        const customerLocation = request.customerLocation
 
         if (request.inbound === true) {
-
+            // request locationId comes from customer location from getCustomersForLocation
             const destination = await Location.findOne({
                 where: {
-                    id: customerLocation.locationId
+                    id: request.locationId
                 }
             })
 
-            const lnglat = await getLngLat(request.city)
-
-            console.log(lnglat)
+            const originLnglat = await getLngLat(request.city)
 
             const origin = await Location.create({
+                brokerageId: user.brokerageId,
                 address: request.address,
                 address2: request.address2,
                 city: request.city,
                 state: request.state,
-                lnglat: lnglat
+                lnglat: originLnglat
             })
 
-            const lanePartner = await LanePartner.create({
+            console.log('origin: ', origin.toJSON())
+
+            await LanePartner.create({
                 locationId: origin.id
             })
 
+            const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
+
             const lane = await Lane.create({
-                originLocatioinId: origin.id,
-                destinationLocationId: destination.id
+                brokerageId: user.brokerageId,
+                originLocationId: origin.id,
+                destinationLocationId: destination.id,
+                routeGeometry: route,
+                mileage: mileage,
+                inbound: true
             })
 
-        }
+            await TaggedLane.create({
+                laneId: lane.id,
+                userId: user.id
+            })
 
-        const origin = await location.findOne({
-            where: {
-                id: customerLocation.locationId
+            return {
+                statusCode: 204,
+                headers: corsHeaders
             }
-        })
 
-        const lanePartner = await LanePartner.create({
+        } else {
+            const origin = await Location.findOne({
+                where: {
+                    id: request.locationId
+                }
+            })
 
-        })
-    }
+            const destinationLnglat = await getLngLat(request.city)
 
-    catch (err) {
-        console.log(err)
+            const destination = await Location.create({
+                brokerageId: user.brokerageId,
+                address: request.address,
+                address2: request.address2,
+                city: request.city,
+                state: request.state,
+                lnglat: destinationLnglat
+            })
+
+            await LanePartner.create({
+                locationId: destination.id
+            })
+
+            const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
+
+            const lane = await Lane.create({
+                brokerageId: user.brokerageId,
+                originLocationId: origin.id,
+                destinationLocationId: destination.id,
+                routeGeometry: route,
+                mileage: mileage,
+                inbound: false
+            })
+
+            await TaggedLane.create({
+                laneId: lane.id,
+                userId: user.id
+            })
+
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
+    } catch (err) {
+        return {
+            statusCode: 500,
+            headers: corsHeaders
+        }
     }
 }
 
@@ -734,7 +783,7 @@ module.exports.addCarrier = async (event, context) => {
                 contactPhone: request.contactPhone,
                 contactName: request.contactName,
             })
-    
+
             return {
                 statusCode: 204,
                 headers: corsHeaders
@@ -748,7 +797,7 @@ module.exports.addCarrier = async (event, context) => {
                     id: request.id
                 }
             })
-            
+
             carrier.serviceRating = request.serviceRating
             carrier.name = request.name
             carrier.mcn = request.mcn
@@ -756,7 +805,7 @@ module.exports.addCarrier = async (event, context) => {
             carrier.contactEmail = request.contactEmail
             carrier.contactPhone = request.contactPhone
             carrier.contactName = request.contactName
-    
+
             await carrier.save()
         }
 
