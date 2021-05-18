@@ -141,7 +141,6 @@ module.exports.addLocation = async (event, context) => {
             statusCode: 204,
             headers: corsHeaders
         }
-
     } catch (err) {
         console.log(err)
         return {
