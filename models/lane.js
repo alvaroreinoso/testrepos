@@ -65,6 +65,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     hooks: {
+      afterCreate: async (lane, options) => {
+        await lane.createLedger({
+          brokerageId: lane.brokerageId
+        })
+      },
       afterSave: async (lane, options) => {
         await elastic.saveDocument(lane)
       },
