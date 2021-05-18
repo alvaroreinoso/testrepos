@@ -3,7 +3,8 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane, Team } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
-const sequelize = require('sequelize')
+const sequelize = require('sequelize');
+const { getLngLat } = require('../helpers/mapbox');
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -210,6 +211,72 @@ module.exports.getTopCarriers = async (event, context) => {
             statusCode: 500,
             headers: corsHeaders
         }
+    }
+}
+
+module.exports.addLane = async (event, context) => {
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const user = await getCurrentUser(event.headers.Authorization)
+
+        if (user.id == null) {
+            return {
+                statusCode: 401,
+                headers: corsHeaders
+            }
+        }
+
+        const request = JSON.parse(event.body)
+        const customerLocation = request.customerLocation
+
+        if (request.inbound === true) {
+
+            const destination = await Location.findOne({
+                where: {
+                    id: customerLocation.locationId
+                }
+            })
+
+            const lnglat = await getLngLat(request.city)
+
+            console.log(lnglat)
+
+            const origin = await Location.create({
+                address: request.address,
+                address2: request.address2,
+                city: request.city,
+                state: request.state,
+                lnglat: lnglat
+            })
+
+            const lanePartner = await LanePartner.create({
+                locationId: origin.id
+            })
+
+            const lane = await Lane.create({
+                originLocatioinId: origin.id,
+                destinationLocationId: destination.id
+            })
+
+        }
+
+        const origin = await location.findOne({
+            where: {
+                id: customerLocation.locationId
+            }
+        })
+
+        const lanePartner = await LanePartner.create({
+
+        })
+    }
+
+    catch (err) {
+        console.log(err)
     }
 }
 
