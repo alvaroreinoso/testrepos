@@ -233,12 +233,18 @@ module.exports.addLane = async (event, context) => {
         const request = JSON.parse(event.body)
 
         if (request.inbound === true) {
-            // request locationId comes from customer location from getCustomersForLocation
             const destination = await Location.findOne({
                 where: {
                     id: request.locationId
                 }
             })
+
+            if (destination === null) {
+                return {
+                    statusCode: 422,
+                    headers: corsHeaders
+                }
+            }
 
             const originLnglat = await getLngLat(request.city)
 
@@ -250,8 +256,6 @@ module.exports.addLane = async (event, context) => {
                 state: request.state,
                 lnglat: originLnglat
             })
-
-            console.log('origin: ', origin.toJSON())
 
             await LanePartner.create({
                 locationId: origin.id
@@ -284,6 +288,13 @@ module.exports.addLane = async (event, context) => {
                     id: request.locationId
                 }
             })
+
+            if (origin === null) {
+                return {
+                    statusCode: 422,
+                    headers: corsHeaders
+                }
+            }
 
             const destinationLnglat = await getLngLat(request.city)
 
