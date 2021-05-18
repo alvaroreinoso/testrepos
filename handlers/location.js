@@ -138,7 +138,7 @@ module.exports.addLocation = async (event, context) => {
         })
 
         return {
-            statusCode: 200,
+            statusCode: 204,
             headers: corsHeaders
         }
 
@@ -149,8 +149,6 @@ module.exports.addLocation = async (event, context) => {
             headers: corsHeaders
         }
     }
-
-
 }
 
 module.exports.editLocation = async (event, context) => {
