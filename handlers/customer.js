@@ -5,6 +5,7 @@ const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
+const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -205,7 +206,16 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
+        const status = event.queryStringParameters.status
+
+        const statusOperator = await getStatusQueryOperator(status)
+
         const originLanes = await Lane.findAll({
+            where: {
+                [Op.not]: {
+                    owned: statusOperator
+                }
+            },
             include: [{
                 model: Location,
                 as: 'origin',
@@ -238,6 +248,9 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const destinationLanes = await Lane.findAll({
             where: {
+                [Op.not]: {
+                    owned: statusOperator
+                },
                 [Op.not]: {
                     id: originLaneIds
                 }
