@@ -207,7 +207,6 @@ module.exports.getLanesForCustomer = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
-
         const statusOperator = await getStatusQueryOperator(status)
 
         const originLanes = await Lane.findAll({
