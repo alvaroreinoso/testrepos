@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const sendRequestAccountEmail = require('../ses/templates/requestAccount')
+// const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const sendCreateAccountEmail = require('../ses/templates/createAccount')
 const testInvite = require('../ses/templates/testInvite')
 const { Team, User, Customer, Lane, Brokerage, Ledger, Location } = require('.././models');
@@ -19,31 +19,32 @@ module.exports.requestAccount = async (event, context) => {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
 
-        if (event.queryStringParameters.resend == 'true') {
+        // if (event.queryStringParameters.resend == 'true') {
 
-            const user = await User.findOne({
-                where: {
-                    email: request.email
-                }
-            })
+        //     const user = await User.findOne({
+        //         where: {
+        //             email: request.email
+        //         }
+        //     })
 
-            const brokerage = await Brokerage.findOne({
-                where: {
-                    id: user.brokerageId
-                }
-            })
+        //     const brokerage = await Brokerage.findOne({
+        //         where: {
+        //             id: user.brokerageId
+        //         }
+        //     })
 
-            await sendCreateAccountEmail(user, brokerage)
-        }
+        //     await sendCreateAccountEmail(user, brokerage)
+        // }
 
-        else {
+        // else {
 
-            const tms = request.tms
+            // const tms = request.tms
 
-            if (tms === undefined) {
-                await sendRequestAccountEmail(request)
+            // if (tms === undefined) {
+            //     await sendRequestAccountEmail(request)
 
-            } else {
+            // } 
+            // else {
 
                 const brokerage = await Brokerage.create({
                     pin: uuid,
@@ -61,31 +62,34 @@ module.exports.requestAccount = async (event, context) => {
                 })
 
                 const user = await User.create({
+                    username: request.username,
                     firstName: request.firstName,
                     lastName: request.lastName,
                     brokerageId: brokerage.id,
                     ledgerId: userLedger.id,
                     admin: true,
-                    title: request.role,
+                    // title: request.role,
                     email: request.email,
-                    phone: request.phone,
-                    phoneExt: request.ext
+                    // phone: request.phone,
+                    // phoneExt: request.ext
                 })
 
-                await sendCreateAccountEmail(user, brokerage)
-            }
-        }
+                await sendCreateAccountEmail(user)
+            // }
+        // }
 
         return {
             headers: corsHeaders,
-            statusCode: 204
+            statusCode: 201,
+            body: JSON.stringify(user)
         }
 
     } catch (err) {
         console.log(err)
         return {
             headers: corsHeaders,
-            statusCode: 500
+            statusCode: 500,
+            body: JSON.stringify(err)
         }
     }
 }

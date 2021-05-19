@@ -1,17 +1,17 @@
 const AWS_SES = require('../client')
 
-module.exports = async (user, brokerage) => {
+module.exports = async (user) => {
 
   const data = {
     firstName: user.firstName,
-    UUID: brokerage.pin
+    username: user.username
   }
 
   console.log('data in email template: ', data)
 
   const params = {
     Source: 'support@terralanes.com',
-    Template: "TestCreateAccount",
+    Template: "CreateAccount",
     Destination: {
       ToAddresses: [
         user.email
