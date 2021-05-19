@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const sendRequestAccountEmail = require('../ses/templates/requestAccount')
+// const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const sendCreateAccountEmail = require('../ses/templates/createAccount')
 const testInvite = require('../ses/templates/testInvite')
 const { Team, User, Customer, Lane, Brokerage, Ledger, Location } = require('.././models');
@@ -62,24 +62,26 @@ module.exports.requestAccount = async (event, context) => {
                 })
 
                 const user = await User.create({
+                    username: request.username,
                     firstName: request.firstName,
                     lastName: request.lastName,
                     brokerageId: brokerage.id,
                     ledgerId: userLedger.id,
                     admin: true,
-                    title: request.role,
+                    // title: request.role,
                     email: request.email,
-                    phone: request.phone,
-                    phoneExt: request.ext
+                    // phone: request.phone,
+                    // phoneExt: request.ext
                 })
 
-                await sendCreateAccountEmail(user, brokerage)
+                await sendCreateAccountEmail(user)
             // }
         // }
 
         return {
             headers: corsHeaders,
-            statusCode: 204
+            statusCode: 201,
+            body: JSON.stringify(user)
         }
 
     } catch (err) {
