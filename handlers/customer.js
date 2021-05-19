@@ -205,69 +205,117 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
-        const locations = await customer.getCustomerLocations({
+        const originLanes = await Lane.findAll({
             include: [{
                 model: Location,
+                as: 'origin',
+                required: true,
+                include: {
+                    model: CustomerLocation,
+                    required: true,
+                    where: {
+                        customerId: customerId
+                    }
+                }
+            },
+            {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
             }]
         })
 
-        let laneIds = new Set()
+        const originLaneIds = originLanes.map(oL => oL.id)
 
-        for (const location of locations) {
-            const locationLanes = await Lane.findAll({
-                where: {
-                    [Op.or]: [
-                        { originLocationId: location.Location.id },
-                        { destinationLocationId: location.Location.id }
-                    ]
-                },
-                order: [
-                    ['frequency', 'DESC'],
-                ],
-            })
-
-            for (const lane of locationLanes) {
-                laneIds.add(lane.id)
-            }
-        }
-
-        const lanes = await Promise.all([...laneIds].map(async laneId => {
-
-            const lane = await Lane.findOne({
-                where: {
-                    id: laneId
-                },
+        const destinationLanes = await Lane.findAll({
+            where: {
+                [Op.not]: {
+                    id: originLaneIds
+                }
+            },
+            include: [{
+                model: Location,
+                as: 'destination',
+                required: true,
+                include: {
+                    model: CustomerLocation,
+                    required: true,
+                    where: {
+                        customerId: customerId
+                    }
+                }
+            },
+            {
+                model: Location,
+                as: 'origin',
                 include: [{
-                    model: Location,
-                    as: 'origin',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }],
-                }, {
-                    model: Location,
-                    as: 'destination',
-                    include: [{
-                        model: CustomerLocation,
-                        include: [{
-                            model: Customer,
-                            required: true
-                        }]
-                    },
-                    {
-                        model: LanePartner
-                    }],
-                }]
-            })
+                    model: CustomerLocation,
+                    include: {
+                        model: Customer,
+                        required: true
+                    }
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
+        })
 
-            return lane
-        }))
+        const lanes = originLanes.concat(destinationLanes)
+
+        console.log(lanes)
+
+        // let laneIds = new Set()
+
+        // for (const item of allLanes) {
+        //     laneIds.add(item.id)
+        // }
+
+        // const lanes = await Lane.findAll({
+        //     where: {
+        //         id: [...laneIds]
+        //     },
+        //     include: [{
+        //         model: Location,
+        //         as: 'origin',
+        //         include: [{
+        //             model: CustomerLocation,
+        //             include: [{
+        //                 model: Customer,
+        //                 required: true
+        //             }]
+        //         },
+        //         {
+        //             model: LanePartner
+        //         }],
+        //     }, {
+        //         model: Location,
+        //         as: 'destination',
+        //         include: [{
+        //             model: CustomerLocation,
+        //             include: [{
+        //                 model: Customer,
+        //                 required: true
+        //             }]
+        //         },
+        //         {
+        //             model: LanePartner
+        //         }],
+        //     }]
+        // })
+
+        for (const z of lanes) {
+            console.log(z.id)
+        }
 
         if (lanes.length == 0) {
 
