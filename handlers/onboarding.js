@@ -19,31 +19,32 @@ module.exports.requestAccount = async (event, context) => {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
 
-        if (event.queryStringParameters.resend == 'true') {
+        // if (event.queryStringParameters.resend == 'true') {
 
-            const user = await User.findOne({
-                where: {
-                    email: request.email
-                }
-            })
+        //     const user = await User.findOne({
+        //         where: {
+        //             email: request.email
+        //         }
+        //     })
 
-            const brokerage = await Brokerage.findOne({
-                where: {
-                    id: user.brokerageId
-                }
-            })
+        //     const brokerage = await Brokerage.findOne({
+        //         where: {
+        //             id: user.brokerageId
+        //         }
+        //     })
 
-            await sendCreateAccountEmail(user, brokerage)
-        }
+        //     await sendCreateAccountEmail(user, brokerage)
+        // }
 
-        else {
+        // else {
 
-            const tms = request.tms
+            // const tms = request.tms
 
-            if (tms === undefined) {
-                await sendRequestAccountEmail(request)
+            // if (tms === undefined) {
+            //     await sendRequestAccountEmail(request)
 
-            } else {
+            // } 
+            // else {
 
                 const brokerage = await Brokerage.create({
                     pin: uuid,
@@ -73,8 +74,8 @@ module.exports.requestAccount = async (event, context) => {
                 })
 
                 await sendCreateAccountEmail(user, brokerage)
-            }
-        }
+            // }
+        // }
 
         return {
             headers: corsHeaders,
@@ -85,7 +86,8 @@ module.exports.requestAccount = async (event, context) => {
         console.log(err)
         return {
             headers: corsHeaders,
-            statusCode: 500
+            statusCode: 500,
+            body: JSON.stringify(err)
         }
     }
 }
