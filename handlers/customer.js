@@ -272,53 +272,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const lanes = originLanes.concat(destinationLanes)
 
-        console.log(lanes)
-
-        // let laneIds = new Set()
-
-        // for (const item of allLanes) {
-        //     laneIds.add(item.id)
-        // }
-
-        // const lanes = await Lane.findAll({
-        //     where: {
-        //         id: [...laneIds]
-        //     },
-        //     include: [{
-        //         model: Location,
-        //         as: 'origin',
-        //         include: [{
-        //             model: CustomerLocation,
-        //             include: [{
-        //                 model: Customer,
-        //                 required: true
-        //             }]
-        //         },
-        //         {
-        //             model: LanePartner
-        //         }],
-        //     }, {
-        //         model: Location,
-        //         as: 'destination',
-        //         include: [{
-        //             model: CustomerLocation,
-        //             include: [{
-        //                 model: Customer,
-        //                 required: true
-        //             }]
-        //         },
-        //         {
-        //             model: LanePartner
-        //         }],
-        //     }]
-        // })
-
-        for (const z of lanes) {
-            console.log(z.id)
-        }
-
         if (lanes.length == 0) {
-
             const body = {
                 loadsPerWeek: 0,
                 spend: 0,
