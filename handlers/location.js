@@ -2,9 +2,9 @@
 const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation, User, Team } = require('.././models');
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
-const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const corsHeaders = require('.././helpers/cors');
 const { getLngLat } = require('../helpers/mapbox');
+const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
 
 module.exports.getLocationById = async (event, context) => {
 
@@ -56,7 +56,7 @@ module.exports.getLocationById = async (event, context) => {
 
             const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            const loadsPerMonthPerLane = await lanes.map( lane => {
+            const loadsPerMonthPerLane = await lanes.map(lane => {
 
                 const loadsPerMonth = lane.frequency * 4
 
@@ -152,7 +152,6 @@ module.exports.addLocation = async (event, context) => {
 }
 
 module.exports.editLocation = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -167,7 +166,7 @@ module.exports.editLocation = async (event, context) => {
                 statusCode: 401
             }
         }
-        
+
         const request = JSON.parse(event.body)
 
         const location = await Location.findOne({
@@ -206,7 +205,6 @@ module.exports.editLocation = async (event, context) => {
 }
 
 module.exports.getLanesForLocation = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -238,57 +236,89 @@ module.exports.getLanesForLocation = async (event, context) => {
             }
         }
 
-        const lanes = await Lane.findAll({
-            attributes: ['id'],
+        const status = event.queryStringParameters.status
+        const statusOperator = await getStatusQueryOperator(status)
+
+        const originLanes = await Lane.findAll({
             where: {
-                [Op.or]: [
-                    { originLocationId: locationId },
-                    { destinationLocationId: locationId }
-                ]
+                [Op.not]: {
+                    owned: statusOperator
+                },
+                originLocationId: locationId
             },
+            include: [{
+                model: Location,
+                as: 'origin',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }, {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
         })
 
-        const laneIds = new Set([...lanes].map(lane => lane.id))
+        const originLaneIds = originLanes.map(oL => oL.id)
 
-        const uniqueLanes = await Promise.all([...laneIds].map(async laneId => {
-
-            const lane = await Lane.findOne({
-                where: {
-                    id: laneId
+        const destinationLanes = await Lane.findAll({
+            where: {
+                [Op.not]: {
+                    owned: statusOperator
                 },
+                [Op.not]: {
+                    id: originLaneIds
+                },
+                destinationLocationId: locationId
+            },
+            include: [{
+                model: Location,
+                as: 'origin',
                 include: [{
-                        model: Location,
-                        as: 'origin',
-                        include: [{
-                            model: CustomerLocation,
-                            include: [{
-                                model: Customer,
-                                required: true
-                            }]
-                        },
-                        {
-                            model: LanePartner
-                        }],
-                    }, {
-                        model: Location,
-                        as: 'destination',
-                        include: [{
-                            model: CustomerLocation,
-                            include: [{
-                                model: Customer,
-                                required: true
-                            }]
-                        },
-                        {
-                            model: LanePartner
-                        }],
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
                     }]
-            })
+                },
+                {
+                    model: LanePartner
+                }],
+            }, {
+                model: Location,
+                as: 'destination',
+                include: [{
+                    model: CustomerLocation,
+                    include: [{
+                        model: Customer,
+                        required: true
+                    }]
+                },
+                {
+                    model: LanePartner
+                }],
+            }]
+        })
 
-            return lane
-        }))
+        const allLanes = originLanes.concat(destinationLanes)
 
-        const sortedLanes = uniqueLanes.sort((a, b) => {
+        const sortedLanes = allLanes.sort((a, b) => {
             return b.spend - a.spend;
         });
 
@@ -297,7 +327,6 @@ module.exports.getLanesForLocation = async (event, context) => {
             headers: corsHeaders,
             statusCode: 200
         }
-
     } catch (err) {
         console.log(err)
         return {
@@ -305,7 +334,6 @@ module.exports.getLanesForLocation = async (event, context) => {
             statusCode: 500
         }
     }
-
 }
 
 module.exports.getTeammatesForLocation = async (event, context) => {
@@ -332,7 +360,7 @@ module.exports.getTeammatesForLocation = async (event, context) => {
                 id: locationId,
                 brokerageId: user.brokerageId
             },
-            include: { 
+            include: {
                 model: User,
                 include: {
                     model: Team
