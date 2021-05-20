@@ -70,6 +70,7 @@ module.exports.requestAccount = async (event, context) => {
                     admin: true,
                     // title: request.role,
                     email: request.email,
+                    confirmed: true
                     // phone: request.phone,
                     // phoneExt: request.ext
                 })
