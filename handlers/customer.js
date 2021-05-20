@@ -225,6 +225,10 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     required: true,
                     where: {
                         customerId: customerId
+                    },
+                    include: {
+                        model: Customer,
+                        required: true
                     }
                 }
             },
@@ -264,6 +268,10 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     required: true,
                     where: {
                         customerId: customerId
+                    },
+                    include: {
+                        model: Customer,
+                        required: true
                     }
                 }
             },
