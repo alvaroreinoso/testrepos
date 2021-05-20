@@ -36,7 +36,8 @@ module.exports.addCustomer = async (event, context) => {
             userId: user.id
         })
 
-        const lnglat = await getLngLat(request.address)
+        const address = request.address ?? request.city
+        const lnglat = await getLngLat(address)
 
         const hqLocation = await Location.create({
             owned: false,
@@ -225,6 +226,10 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     required: true,
                     where: {
                         customerId: customerId
+                    },
+                    include: {
+                        model: Customer,
+                        required: true
                     }
                 }
             },
@@ -264,6 +269,10 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     required: true,
                     where: {
                         customerId: customerId
+                    },
+                    include: {
+                        model: Customer,
+                        required: true
                     }
                 }
             },
