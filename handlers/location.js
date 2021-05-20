@@ -2,7 +2,6 @@
 const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, TaggedLocation, User, Team } = require('.././models');
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
-const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
 const corsHeaders = require('.././helpers/cors');
 const { getLngLat } = require('../helpers/mapbox');
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
@@ -153,7 +152,6 @@ module.exports.addLocation = async (event, context) => {
 }
 
 module.exports.editLocation = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -207,7 +205,6 @@ module.exports.editLocation = async (event, context) => {
 }
 
 module.exports.getLanesForLocation = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -330,7 +327,6 @@ module.exports.getLanesForLocation = async (event, context) => {
             headers: corsHeaders,
             statusCode: 200
         }
-
     } catch (err) {
         console.log(err)
         return {
