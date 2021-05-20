@@ -138,8 +138,9 @@ module.exports.addLocation = async (event, context) => {
         })
 
         return {
-            statusCode: 204,
-            headers: corsHeaders
+            statusCode: 201,
+            headers: corsHeaders,
+            body: JSON.stringify(location)
         }
     } catch (err) {
         console.log(err)

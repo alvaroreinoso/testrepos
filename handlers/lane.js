@@ -278,7 +278,8 @@ module.exports.addLane = async (event, context) => {
             })
 
             return {
-                statusCode: 204,
+                statusCode: 201,
+                body: JSON.stringify(lane),
                 headers: corsHeaders
             }
 
@@ -328,7 +329,8 @@ module.exports.addLane = async (event, context) => {
             })
 
             return {
-                statusCode: 204,
+                statusCode: 201,
+                body: JSON.stringify(lane),
                 headers: corsHeaders
             }
         }
