@@ -1,8 +1,8 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User } = require('.././models')
+const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
 const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
-const { Op } = require("sequelize");
+const { Op, fn } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
@@ -327,7 +327,6 @@ module.exports.getLanesForCustomer = async (event, context) => {
 }
 
 module.exports.getLocationsForCustomer = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -359,26 +358,40 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             }
         }
 
+        const status = event.queryStringParameters.status
+        const statusOperator = await getStatusQueryOperator(status)
+
         const customerLocations = await CustomerLocation.findAll({
             where: {
-                customerId: customerId
+                customerId: customerId,
             },
-            include: [{
+            include: {
                 model: Location,
-            }]
+                required: true,
+                where: {
+                    [Op.not]: {
+                        owned: statusOperator
+                    }
+                }
+            }
         })
 
         const locationsWithStats = await Promise.all(await customerLocations.map(async cL => {
-
             const lanesAsOrigin = await Lane.findAll({
                 where: {
-                    originLocationId: cL.Location.id
+                    originLocationId: cL.Location.id,
+                    [Op.not]: {
+                        owned: statusOperator
+                    }
                 }
             })
 
             const lanesAsDestination = await Lane.findAll({
                 where: {
-                    destinationLocationId: cL.Location.id
+                    destinationLocationId: cL.Location.id,
+                    [Op.not]: {
+                        owned: statusOperator
+                    }
                 },
                 include: [{
                     model: Location,
@@ -394,14 +407,12 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             const lanes = lanesAsOrigin.concat(lanesAsDestination)
 
             if (lanes.length == 0) {
-
                 cL.dataValues.spend = 0
                 cL.dataValues.loadsPerMonth = 0
 
                 return cL
 
             } else {
-
                 const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
                 const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
