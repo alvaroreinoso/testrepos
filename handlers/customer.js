@@ -60,7 +60,8 @@ module.exports.addCustomer = async (event, context) => {
         })
 
         return {
-            statusCode: 204,
+            statusCode: 201,
+            body: JSON.stringify(customer),
             headers: corsHeaders
         }
     } catch (err) {
