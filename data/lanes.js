@@ -490,8 +490,8 @@ const lanes = [
     updatedAt: new Date()
   },
   {
-    originLocationId: 18,
-    destinationLocationId: 73,
+    originLocationId: 3,
+    destinationLocationId: 1,
     brokerageId: 1,
     ledgerId: 101,
     frequency: 5,
