@@ -1,9 +1,9 @@
 module.exports.getStatusQueryOperator = async(status) => {
     if (status == 'owned') {
-        return false
+        return true
 
     } else if (status == 'opportunities') {
-        return true
+        return false
         
     } else if (status == 'potential') {
         return null
