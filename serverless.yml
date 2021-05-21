@@ -4,7 +4,7 @@ service: terralanes-api
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   versionFunctions: false
   vpc:
     securityGroupIds:
