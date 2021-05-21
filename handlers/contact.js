@@ -737,7 +737,7 @@ module.exports.deleteContact = async (event, context) => {
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200,
+                    statusCode: 204,
                     headers: corsHeaders
                 }
 
@@ -785,13 +785,13 @@ module.exports.deleteContact = async (event, context) => {
 
                     return {
                         headers: corsHeaders,
-                        statusCode: 200
+                        statusCode: 204
                     }
                 }
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200,
+                    statusCode: 204,
                     headers: corsHeaders
                 }
 
@@ -839,14 +839,14 @@ module.exports.deleteContact = async (event, context) => {
 
                     return {
                         body: 'contact destroyed',
-                        statusCode: 200,
+                        statusCode: 204,
                         headers: corsHeaders
                     }
                 }
 
                 return {
                     body: JSON.stringify(contact),
-                    statusCode: 200,
+                    statusCode: 204,
                     headers: corsHeaders
                 }
 
