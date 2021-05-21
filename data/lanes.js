@@ -3,6 +3,7 @@ const lanes = [
     originLocationId: 1,
     destinationLocationId: 24,
     brokerageId: 1,
+    owned: true,
     ledgerId: 52,
     frequency: 5,
     rate: 1200,
@@ -13,6 +14,7 @@ const lanes = [
     originLocationId: 1,
     destinationLocationId: 25,
     brokerageId: 1,
+    owned: true,
     ledgerId: 53,
     frequency: 5,
     rate: 1000,
@@ -22,6 +24,7 @@ const lanes = [
   {
     originLocationId: 1,
     destinationLocationId: 26,
+    owned: false,
     brokerageId: 1,
     ledgerId: 54,
     frequency: 5,
@@ -32,6 +35,7 @@ const lanes = [
   {
     originLocationId: 2,
     destinationLocationId: 27,
+    owned: false,
     brokerageId: 1,
     ledgerId: 55,
     frequency: 2,
@@ -42,6 +46,7 @@ const lanes = [
   {
     originLocationId: 2,
     destinationLocationId: 28,
+    owned: false,
     brokerageId: 1,
     ledgerId: 56,
     frequency: 1,
@@ -52,6 +57,7 @@ const lanes = [
   {
     originLocationId: 2,
     destinationLocationId: 29,
+    owned: false,
     brokerageId: 1,
     ledgerId: 57,
     frequency: 5,
@@ -62,6 +68,7 @@ const lanes = [
   {
     originLocationId: 3,
     destinationLocationId: 30,
+    owned: false,
     brokerageId: 1,
     ledgerId: 58,
     frequency: 3,
@@ -72,6 +79,7 @@ const lanes = [
   {
     originLocationId: 3,
     destinationLocationId: 31,
+    owned: false,
     brokerageId: 1,
     ledgerId: 59,
     frequency: 5,
@@ -84,6 +92,7 @@ const lanes = [
     destinationLocationId: 32,
     brokerageId: 1,
     ledgerId: 60,
+    owned: true,
     frequency: 5,
     rate: 1600,
     createdAt: new Date(),
@@ -93,6 +102,7 @@ const lanes = [
     originLocationId: 4,
     destinationLocationId: 33,
     brokerageId: 1,
+    owned: true,
     ledgerId: 61,
     frequency: 2,
     rate: 900,
@@ -102,6 +112,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 34,
+    owned: false,
     brokerageId: 1,
     ledgerId: 62,
     frequency: 5,
@@ -112,6 +123,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 35,
+    owned: false,
     brokerageId: 1,
     ledgerId: 63,
     frequency: 5,
@@ -122,6 +134,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 36,
+    owned: false,
     brokerageId: 1,
     ledgerId: 64,
     frequency: 3,
@@ -132,6 +145,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 37,
+    owned: false,
     brokerageId: 1,
     ledgerId: 65,
     frequency: 4,
@@ -142,6 +156,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 38,
+    owned: false,
     brokerageId: 1,
     ledgerId: 66,
     frequency: 5,
@@ -152,6 +167,7 @@ const lanes = [
   {
     originLocationId: 4,
     destinationLocationId: 39,
+    owned: false,
     brokerageId: 1,
     ledgerId: 67,
     frequency: 5,
@@ -162,6 +178,7 @@ const lanes = [
   {
     originLocationId: 5,
     destinationLocationId: 40,
+    owned: false,
     brokerageId: 1,
     ledgerId: 68,
     frequency: 5,
@@ -172,6 +189,7 @@ const lanes = [
   {
     originLocationId: 6,
     destinationLocationId: 41,
+    owned: false,
     brokerageId: 1,
     ledgerId: 69,
     frequency: 2,
@@ -182,6 +200,7 @@ const lanes = [
   {
     originLocationId: 7,
     destinationLocationId: 42,
+    owned: false,
     brokerageId: 1,
     ledgerId: 70,
     frequency: 1,
@@ -192,6 +211,7 @@ const lanes = [
   {
     originLocationId: 7,
     destinationLocationId: 43,
+    owned: false,
     brokerageId: 1,
     ledgerId: 71,
     frequency: 2,
@@ -202,6 +222,7 @@ const lanes = [
   {
     originLocationId: 7,
     destinationLocationId: 44,
+    owned: false,
     brokerageId: 1,
     ledgerId: 72,
     frequency: 5,
@@ -212,6 +233,7 @@ const lanes = [
   {
     originLocationId: 8,
     destinationLocationId: 45,
+    owned: false,
     brokerageId: 1,
     ledgerId: 73,
     frequency: 5,
@@ -222,6 +244,7 @@ const lanes = [
   {
     originLocationId: 8,
     destinationLocationId: 46,
+    owned: false,
     brokerageId: 1,
     ledgerId: 74,
     frequency: 3,
@@ -232,6 +255,7 @@ const lanes = [
   {
     originLocationId: 9,
     destinationLocationId: 47,
+    owned: false,
     brokerageId: 1,
     ledgerId: 75,
     frequency: 4,
@@ -242,6 +266,7 @@ const lanes = [
   {
     originLocationId: 9,
     destinationLocationId: 48,
+    owned: false,
     brokerageId: 1,
     ledgerId: 76,
     frequency: 5,
@@ -252,6 +277,7 @@ const lanes = [
   {
     originLocationId: 9,
     destinationLocationId: 49,
+    owned: false,
     brokerageId: 1,
     ledgerId: 77,
     frequency: 2,
@@ -262,6 +288,7 @@ const lanes = [
   {
     originLocationId: 10,
     destinationLocationId: 50,
+    owned: false,
     brokerageId: 1,
     ledgerId: 78,
     frequency: 5,
@@ -272,6 +299,7 @@ const lanes = [
   {
     originLocationId: 10,
     destinationLocationId: 51,
+    owned: false,
     brokerageId: 1,
     ledgerId: 79,
     frequency: 6,
@@ -282,6 +310,7 @@ const lanes = [
   {
     originLocationId: 10,
     destinationLocationId: 52,
+    owned: false,
     brokerageId: 1,
     ledgerId: 80,
     frequency: 2,
@@ -292,6 +321,7 @@ const lanes = [
   {
     originLocationId: 10,
     destinationLocationId: 53,
+    owned: false,
     brokerageId: 1,
     ledgerId: 81,
     frequency: 4,
@@ -302,6 +332,7 @@ const lanes = [
   {
     originLocationId: 10,
     destinationLocationId: 54,
+    owned: false,
     brokerageId: 1,
     ledgerId: 82,
     frequency: 2,
@@ -312,6 +343,7 @@ const lanes = [
   {
     originLocationId: 11,
     destinationLocationId: 55,
+    owned: false,
     brokerageId: 1,
     ledgerId: 83,
     frequency: 5,
@@ -322,6 +354,7 @@ const lanes = [
   {
     originLocationId: 11,
     destinationLocationId: 56,
+    owned: false,
     brokerageId: 1,
     ledgerId: 84,
     frequency: 3,
@@ -332,6 +365,7 @@ const lanes = [
   {
     originLocationId: 12,
     destinationLocationId: 57,
+    owned: false,
     brokerageId: 1,
     ledgerId: 85,
     frequency: 2,
@@ -342,6 +376,7 @@ const lanes = [
   {
     originLocationId: 12,
     destinationLocationId: 58,
+    owned: false,
     brokerageId: 1,
     ledgerId: 86,
     frequency: 1,
@@ -352,6 +387,7 @@ const lanes = [
   {
     originLocationId: 13,
     destinationLocationId: 59,
+    owned: false,
     brokerageId: 1,
     ledgerId: 87,
     frequency: 7,
@@ -362,6 +398,7 @@ const lanes = [
   {
     originLocationId: 13,
     destinationLocationId: 60,
+    owned: false,
     brokerageId: 1,
     ledgerId: 88,
     frequency: 3,
@@ -372,6 +409,7 @@ const lanes = [
   {
     originLocationId: 14,
     destinationLocationId: 61,
+    owned: false,
     brokerageId: 1,
     ledgerId: 89,
     frequency: 1,
@@ -382,6 +420,7 @@ const lanes = [
   {
     originLocationId: 14,
     destinationLocationId: 62,
+    owned: false,
     brokerageId: 1,
     ledgerId: 90,
     frequency: 7,
@@ -392,6 +431,7 @@ const lanes = [
   {
     originLocationId: 15,
     destinationLocationId: 63,
+    owned: false,
     brokerageId: 1,
     ledgerId: 91,
     frequency: 5,
@@ -402,6 +442,7 @@ const lanes = [
   {
     originLocationId: 15,
     destinationLocationId: 64,
+    owned: false,
     brokerageId: 1,
     ledgerId: 92,
     frequency: 2,
@@ -412,6 +453,7 @@ const lanes = [
   {
     originLocationId: 15,
     destinationLocationId: 65,
+    owned: false,
     brokerageId: 1,
     ledgerId: 93,
     frequency: 3,
@@ -422,6 +464,7 @@ const lanes = [
   {
     originLocationId: 16,
     destinationLocationId: 66,
+    owned: false,
     brokerageId: 1,
     ledgerId: 94,
     frequency: 2,
@@ -432,6 +475,7 @@ const lanes = [
   {
     originLocationId: 16,
     destinationLocationId: 67,
+    owned: false,
     brokerageId: 1,
     ledgerId: 95,
     frequency: 5,
@@ -442,6 +486,7 @@ const lanes = [
   {
     originLocationId: 16,
     destinationLocationId: 68,
+    owned: false,
     brokerageId: 1,
     ledgerId: 96,
     frequency: 5,
@@ -452,6 +497,7 @@ const lanes = [
   {
     originLocationId: 17,
     destinationLocationId: 69,
+    owned: false,
     brokerageId: 1,
     ledgerId: 97,
     frequency: 5,
@@ -462,6 +508,7 @@ const lanes = [
   {
     originLocationId: 17,
     destinationLocationId: 70,
+    owned: false,
     brokerageId: 1,
     ledgerId: 98,
     frequency: 2,
@@ -472,6 +519,7 @@ const lanes = [
   {
     originLocationId: 17,
     destinationLocationId: 71,
+    owned: false,
     brokerageId: 1,
     ledgerId: 99,
     frequency: 5,
@@ -482,6 +530,7 @@ const lanes = [
   {
     originLocationId: 18,
     destinationLocationId: 72,
+    owned: false,
     brokerageId: 1,
     ledgerId: 100,
     frequency: 3,
@@ -492,6 +541,7 @@ const lanes = [
   {
     originLocationId: 3,
     destinationLocationId: 1,
+    owned: false,
     brokerageId: 1,
     ledgerId: 101,
     frequency: 5,
