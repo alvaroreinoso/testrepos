@@ -256,7 +256,7 @@ module.exports.getCustomersForBrokerage = async (event, context) => {
                         ]
                     },
                     order: [
-                        ['frequency', 'DESC'],
+                        ['currentVolume', 'DESC'],
                     ],
                 })
 
@@ -288,8 +288,8 @@ module.exports.getCustomersForBrokerage = async (event, context) => {
             } else {
 
                 const spendPerMonth = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-                const loadsPerMonth = loadsPerWeek.frequency * 4
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
                 customer.dataValues.loadsPerMonth = loadsPerMonth
                 customer.dataValues.spendPerMonth = spendPerMonth.spend

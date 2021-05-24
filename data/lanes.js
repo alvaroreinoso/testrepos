@@ -5,7 +5,7 @@ const lanes = [
     brokerageId: 1,
     owned: true,
     ledgerId: 52,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -16,7 +16,7 @@ const lanes = [
     brokerageId: 1,
     owned: true,
     ledgerId: 53,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -27,7 +27,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 54,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1300,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -38,7 +38,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 55,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -49,7 +49,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 56,
-    frequency: 1,
+    currentVolume: 1,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -60,7 +60,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 57,
-    frequency: 5,
+    currentVolume: 5,
     rate: 800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -71,7 +71,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 58,
-    frequency: 3,
+    currentVolume: 3,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -82,7 +82,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 59,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -93,7 +93,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 60,
     owned: true,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -104,7 +104,7 @@ const lanes = [
     brokerageId: 1,
     owned: true,
     ledgerId: 61,
-    frequency: 2,
+    currentVolume: 2,
     rate: 900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -115,7 +115,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 62,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -126,7 +126,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 63,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -137,7 +137,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 64,
-    frequency: 3,
+    currentVolume: 3,
     rate: 800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -148,7 +148,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 65,
-    frequency: 4,
+    currentVolume: 4,
     rate: 900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -159,7 +159,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 66,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -170,7 +170,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 67,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -181,7 +181,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 68,
-    frequency: 5,
+    currentVolume: 5,
     rate: 750,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -192,7 +192,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 69,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -203,7 +203,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 70,
-    frequency: 1,
+    currentVolume: 1,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -214,7 +214,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 71,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -225,7 +225,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 72,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -236,7 +236,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 73,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -247,7 +247,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 74,
-    frequency: 3,
+    currentVolume: 3,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -258,7 +258,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 75,
-    frequency: 4,
+    currentVolume: 4,
     rate: 600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -269,7 +269,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 76,
-    frequency: 5,
+    currentVolume: 5,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -280,7 +280,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 77,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -291,7 +291,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 78,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -302,7 +302,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 79,
-    frequency: 6,
+    currentVolume: 6,
     rate: 1250,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -313,7 +313,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 80,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -324,7 +324,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 81,
-    frequency: 4,
+    currentVolume: 4,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -335,7 +335,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 82,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -346,7 +346,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 83,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -357,7 +357,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 84,
-    frequency: 3,
+    currentVolume: 3,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -368,7 +368,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 85,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -379,7 +379,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 86,
-    frequency: 1,
+    currentVolume: 1,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -390,7 +390,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 87,
-    frequency: 7,
+    currentVolume: 7,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -401,7 +401,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 88,
-    frequency: 3,
+    currentVolume: 3,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -412,7 +412,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 89,
-    frequency: 1,
+    currentVolume: 1,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -423,7 +423,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 90,
-    frequency: 7,
+    currentVolume: 7,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -434,7 +434,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 91,
-    frequency: 5,
+    currentVolume: 5,
     rate: 600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -445,7 +445,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 92,
-    frequency: 2,
+    currentVolume: 2,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -456,7 +456,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 93,
-    frequency: 3,
+    currentVolume: 3,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -467,7 +467,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 94,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -478,7 +478,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 95,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -489,7 +489,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 96,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -500,7 +500,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 97,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -511,7 +511,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 98,
-    frequency: 2,
+    currentVolume: 2,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -522,7 +522,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 99,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -533,7 +533,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 100,
-    frequency: 3,
+    currentVolume: 3,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -544,7 +544,7 @@ const lanes = [
     owned: false,
     brokerageId: 1,
     ledgerId: 101,
-    frequency: 5,
+    currentVolume: 5,
     rate: 1700,
     createdAt: new Date(),
     updatedAt: new Date()

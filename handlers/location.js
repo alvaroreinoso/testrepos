@@ -58,7 +58,7 @@ module.exports.getLocationById = async (event, context) => {
 
             const loadsPerMonthPerLane = await lanes.map(lane => {
 
-                const loadsPerMonth = lane.frequency * 4
+                const loadsPerMonth = lane.currentVolume * 4
 
                 return loadsPerMonth
             })

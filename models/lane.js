@@ -52,7 +52,9 @@ module.exports = (sequelize, DataTypes) => {
     ledgerId: DataTypes.INTEGER,
     owned: DataTypes.BOOLEAN,
     routeGeometry: DataTypes.STRING,
-    frequency: DataTypes.INTEGER,
+    currentVolume: DataTypes.INTEGER,
+    potentialVolume: DataTypes.INTEGER,
+    truckType: DataTypes.STRING,
     mileage: DataTypes.INTEGER,
     inbound: DataTypes.BOOLEAN,
     rate: DataTypes.INTEGER,
@@ -60,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
     spend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('frequency') * this.getDataValue('rate') * 4
+        return this.getDataValue('currentVolume') * this.getDataValue('rate') * 4
       }
     }
   }, {

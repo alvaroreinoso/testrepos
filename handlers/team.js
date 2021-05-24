@@ -139,11 +139,11 @@ module.exports.getTeammatesForTeam = async (event, context) => {
                 return teammate
             }
 
-            const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+            const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
             const spendPerMonth = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
             teammate.dataValues.spendPerMonth = spendPerMonth.spend
-            teammate.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
+            teammate.dataValues.loadsPerMonth = loadsPerWeek.currentVolume * 4
 
             return teammate
         }))
@@ -296,8 +296,8 @@ module.exports.getLanesForTeam = async (event, context) => {
             const laneSpend = lanesResolved.map(lane => lane.spend)
             const teamSpend = await laneSpend.reduce((a, b) => a + b)
 
-            const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-            const loadsPerMonth = loadsPerWeek.frequency * 4
+            const loadsPerWeek = await lanesResolved.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+            const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
             const body = {
                 revenue: teamSpend,
