@@ -45,6 +45,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 55,
     currentVolume: 2,
+    potentialVolume: 20,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -56,6 +57,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 56,
     currentVolume: 1,
+    potentialVolume: 30,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -67,6 +69,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 57,
     currentVolume: 5,
+    potentialVolume: 100,
     rate: 800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -78,6 +81,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 58,
     currentVolume: 3,
+    potentialVolume: 55,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -89,6 +93,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 59,
     currentVolume: 5,
+    potentialVolume: 86,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -100,6 +105,7 @@ const lanes = [
     ledgerId: 60,
     owned: true,
     currentVolume: 5,
+    potentialVolume: 40,
     rate: 1600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -111,6 +117,7 @@ const lanes = [
     owned: true,
     ledgerId: 61,
     currentVolume: 2,
+    potentialVolume: 65,
     rate: 900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -122,6 +129,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 62,
     currentVolume: 5,
+    potentialVolume: 60,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -133,6 +141,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 63,
     currentVolume: 5,
+    potentialVolume: 55,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -144,6 +153,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 64,
     currentVolume: 3,
+    potentialVolume: 50,
     rate: 800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -155,6 +165,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 65,
     currentVolume: 4,
+    potentialVolume: 45,
     rate: 900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -166,6 +177,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 66,
     currentVolume: 5,
+    potentialVolume: 70,
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -177,6 +189,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 67,
     currentVolume: 5,
+    potentialVolume: 30,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -188,6 +201,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 68,
     currentVolume: 5,
+    potentialVolume: 40,
     rate: 750,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -199,6 +213,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 69,
     currentVolume: 2,
+    potentialVolume: 55,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -210,6 +225,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 70,
     currentVolume: 1,
+    potentialVolume: 90,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -221,6 +237,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 71,
     currentVolume: 2,
+    potentialVolume: 85,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -232,6 +249,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 72,
     currentVolume: 5,
+    potentialVolume: 48,
     rate: 1900,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -243,6 +261,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 73,
     currentVolume: 5,
+    potentialVolume: 80,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -254,6 +273,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 74,
     currentVolume: 3,
+    potentialVolume: 75,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -265,6 +285,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 75,
     currentVolume: 4,
+    potentialVolume: 65,
     rate: 600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -276,6 +297,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 76,
     currentVolume: 5,
+    potentialVolume: 55,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -287,6 +309,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 77,
     currentVolume: 2,
+    potentialVolume: 40,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -298,6 +321,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 78,
     currentVolume: 5,
+    potentialVolume: 90,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -309,6 +333,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 79,
     currentVolume: 6,
+    potentialVolume: 15,
     rate: 1250,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -320,6 +345,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 80,
     currentVolume: 2,
+    potentialVolume: 20,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -331,6 +357,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 81,
     currentVolume: 4,
+    potentialVolume: 30,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -342,6 +369,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 82,
     currentVolume: 2,
+    potentialVolume: 35,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -353,6 +381,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 83,
     currentVolume: 5,
+    potentialVolume: 40,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -364,6 +393,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 84,
     currentVolume: 3,
+    potentialVolume: 60,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -375,6 +405,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 85,
     currentVolume: 2,
+    potentialVolume: 65,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -386,6 +417,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 86,
     currentVolume: 1,
+    potentialVolume: 30,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -397,6 +429,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 87,
     currentVolume: 7,
+    potentialVolume: 25,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -408,6 +441,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 88,
     currentVolume: 3,
+    potentialVolume: 65,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -419,6 +453,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 89,
     currentVolume: 1,
+    potentialVolume: 60,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -430,6 +465,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 90,
     currentVolume: 7,
+    potentialVolume: 15,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -441,6 +477,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 91,
     currentVolume: 5,
+    potentialVolume: 20,
     rate: 600,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -452,6 +489,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 92,
     currentVolume: 2,
+    potentialVolume: 40,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -463,6 +501,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 93,
     currentVolume: 3,
+    potentialVolume: 95,
     rate: 3000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -474,6 +513,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 94,
     currentVolume: 2,
+    potentialVolume: 50,
     rate: 1800,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -485,6 +525,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 95,
     currentVolume: 5,
+    potentialVolume: 55,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -496,6 +537,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 96,
     currentVolume: 5,
+    potentialVolume: 105,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -507,6 +549,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 97,
     currentVolume: 5,
+    potentialVolume: 115,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -518,6 +561,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 98,
     currentVolume: 2,
+    potentialVolume: 35,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -529,6 +573,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 99,
     currentVolume: 5,
+    potentialVolume: 80,
     rate: 1400,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -540,6 +585,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 100,
     currentVolume: 3,
+    potentialVolume: 85,
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -551,6 +597,7 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 101,
     currentVolume: 5,
+    potentialVolume: 75,
     rate: 1700,
     createdAt: new Date(),
     updatedAt: new Date()
