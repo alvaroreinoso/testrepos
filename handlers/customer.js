@@ -296,10 +296,6 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const lanes = originLanes.concat(destinationLanes)
 
-        for (const lane of lanes) {
-            console.log(lane.owned)
-        }
-
         if (lanes.length == 0) {
             const body = {
                 loadsPerWeek: 0,
