@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
       get () {
         return this.getDataValue('currentVolume') * this.getDataValue('rate') * 4
       }
+    },
+    opportunityVolume: {
+      type: Sequelize.VIRTUAL,
+      get () {
+        return this.getDataValue('potentialVolume') - this.getDataValue('currentVolume')
+      }
     }
   }, {
     hooks: {
