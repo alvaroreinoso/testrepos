@@ -6,6 +6,8 @@ const lanes = [
     owned: true,
     ledgerId: 52,
     currentVolume: 5,
+    potentialVolume: 60,
+    truckType: 'Flatbed',
     rate: 1200,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -17,6 +19,8 @@ const lanes = [
     owned: true,
     ledgerId: 53,
     currentVolume: 5,
+    potentialVolume: 45,
+    truckType: 'Reefer',
     rate: 1000,
     createdAt: new Date(),
     updatedAt: new Date()
@@ -28,6 +32,8 @@ const lanes = [
     brokerageId: 1,
     ledgerId: 54,
     currentVolume: 5,
+    potentialVolume: 90,
+    truckType: 'Flatbed',
     rate: 1300,
     createdAt: new Date(),
     updatedAt: new Date()
