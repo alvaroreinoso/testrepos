@@ -1,8 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
-const getcurrentVolume = require('.././helpers/getLoadcurrentVolume').getcurrentVolume
-const { Op, fn } = require("sequelize");
+const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
