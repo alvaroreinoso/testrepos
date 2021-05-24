@@ -212,9 +212,9 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const originLanes = await Lane.findAll({
             where: {
-                [Op.not]: {
+                [Op.not]: [{
                     owned: statusOperator
-                }
+                }]
             },
             include: [{
                 model: Location,
@@ -252,12 +252,15 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const destinationLanes = await Lane.findAll({
             where: {
-                [Op.not]: {
-                    owned: statusOperator
-                },
-                [Op.not]: {
-                    id: originLaneIds
-                }
+                [Op.and]: [{
+                    id: {
+                        [Op.not]: originLaneIds
+                    }
+                }, {
+                    owned: {
+                        [Op.not]: statusOperator
+                    }
+                }]
             },
             include: [{
                 model: Location,
@@ -292,6 +295,10 @@ module.exports.getLanesForCustomer = async (event, context) => {
         })
 
         const lanes = originLanes.concat(destinationLanes)
+
+        for (const lane of lanes) {
+            console.log(lane.owned)
+        }
 
         if (lanes.length == 0) {
             const body = {
