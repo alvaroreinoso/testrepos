@@ -36,8 +36,16 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      frequency: {
+      currentVolume: {
         type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      potentialVolume: {
+        type: Sequelize.INTEGER,
+        allowNull: true
+      },
+      truckType: {
+        type: Sequelize.STRING,
         allowNull: true
       },
       rate: {

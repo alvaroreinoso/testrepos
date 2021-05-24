@@ -1,8 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
-const getFrequency = require('.././helpers/getLoadFrequency').getFrequency
-const { Op, fn } = require("sequelize");
+const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
@@ -312,8 +311,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
-        const loadsPerMonth = loadsPerWeek.frequency * 4
+        const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+        const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
         const body = {
             loadsPerMonth: loadsPerMonth,
@@ -423,11 +422,11 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 return cL
 
             } else {
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ frequency: a.frequency + b.frequency }))
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
                 const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                 cL.dataValues.spend = spend.spend
-                cL.dataValues.loadsPerMonth = loadsPerWeek.frequency * 4
+                cL.dataValues.loadsPerMonth = loadsPerWeek.currentVolume * 4
 
                 return cL
             }
@@ -564,7 +563,7 @@ module.exports.addTeammateToCustomer = async (event, context) => {
                     ]
                 },
                 order: [
-                    ['frequency', 'DESC'],
+                    ['currentVolume', 'DESC'],
                 ],
                 include: [{
                     model: Location,
@@ -702,7 +701,7 @@ module.exports.deleteTeammateFromCustomer = async (event, context) => {
                     ]
                 },
                 order: [
-                    ['frequency', 'DESC'],
+                    ['currentVolume', 'DESC'],
                 ],
                 include: [{
                     model: Location,

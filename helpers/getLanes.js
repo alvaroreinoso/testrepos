@@ -32,7 +32,7 @@ module.exports.getLanesFromCustomers = async (customers) => {
 
         const cLanes = await Lane.findAll({
             order: [
-                ['frequency', 'DESC'],
+                ['currentVolume', 'DESC'],
             ],
             include: [{
                 model: Location,

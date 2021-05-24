@@ -377,7 +377,7 @@ module.exports.updateLane = async (event, context) => {
         }
 
         lane.routeGeometry = request.routeGeometry
-        lane.frequency = request.frequency
+        lane.currentVolume = request.currentVolume
         lane.rate = request.rate
 
         if (lane.rate != null) {
