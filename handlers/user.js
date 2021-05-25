@@ -16,11 +16,7 @@ module.exports.getUser = async (event, context) => {
     try {
         const token = event.headers.Authorization
 
-        console.log('token: ', token)
-
         const cognitoUser = jwt.decode(token)
-
-        console.log('cognito user: ', cognitoUser)
 
         if (cognitoUser == null) {
             return {
@@ -35,16 +31,12 @@ module.exports.getUser = async (event, context) => {
             },
         })
 
-        console.log('got user from db: ', user)
-
         if (user == null) {
             return {
                 headers: corsHeaders,
                 statusCode: 404,
             }
         }
-
-        console.log('pre response')
 
         return {
             headers: corsHeaders,
