@@ -1,77 +1,95 @@
-const { Customer, CustomerLocation, Lane, LanePartner, User, Location } = require('.././models');
+const { Customer, CustomerLocation, Lane, LanePartner, Location } = require('.././models');
 const { Op } = require("sequelize");
 
-module.exports.getCustomerSpend = async (customer) => {
-
-    const locations = await customer.getCustomerLocations({
+module.exports.getCustomerSpendAndLoadCount = async (customer) => {
+    const originLanes = await Lane.findAll({
         include: [{
             model: Location,
+            as: 'origin',
+            required: true,
+            include: {
+                model: CustomerLocation,
+                required: true,
+                where: {
+                    customerId: customer.id
+                },
+                include: {
+                    model: Customer,
+                    required: true
+                }
+            }
+        },
+        {
+            model: Location,
+            as: 'destination',
+            include: [{
+                model: CustomerLocation,
+                include: [{
+                    model: Customer,
+                    required: true
+                }]
+            },
+            {
+                model: LanePartner
+            }],
         }]
     })
 
-    let laneIds = new Set()
+    const originLaneIds = originLanes.map(oL => oL.id)
 
-    for (const location of locations) {
-        const locationLanes = await Lane.findAll({
-            where: {
-                [Op.or]: [
-                    { originLocationId: location.Location.id },
-                    { destinationLocationId: location.Location.id }
-                ]
-            },
-            order: [
-                ['currentVolume', 'DESC'],
-            ],
-        })
-
-        for (const lane of locationLanes) {
-            laneIds.add(lane.id)
-        }
-    }
-
-    const lanes = await Promise.all([...laneIds].map(async laneId => {
-
-        const lane = await Lane.findOne({
-            where: {
-                id: laneId
-            },
+    const destinationLanes = await Lane.findAll({
+        where: {
+            id: {
+                [Op.not]: originLaneIds
+            }
+        },
+        include: [{
+            model: Location,
+            as: 'destination',
+            required: true,
+            include: {
+                model: CustomerLocation,
+                required: true,
+                where: {
+                    customerId: customer.id
+                },
+                include: {
+                    model: Customer,
+                    required: true
+                }
+            }
+        },
+        {
+            model: Location,
+            as: 'origin',
             include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }, {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }]
-        })
+                model: CustomerLocation,
+                include: {
+                    model: Customer,
+                    required: true
+                }
+            },
+            {
+                model: LanePartner
+            }],
+        }]
+    })
 
-        return lane
-    }))
+    const lanes = originLanes.concat(destinationLanes)
 
-    const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+    if (lanes.length == 0) {
+        return [0, 0]
 
-    const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+    } else {
+        const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-    const loadsPerMonth = loadsPerWeek.currentVolume * 4
+        const loadsPerWeek = await lanes.reduce((a, b) => ({
+            currentVolume: a.currentVolume + b.currentVolume 
+            
+        }))
+        const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
-    return [customerSpend.spend, loadsPerMonth]
+
+        return [customerSpend.spend, loadsPerMonth]
+    }
 }
