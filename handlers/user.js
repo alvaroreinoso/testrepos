@@ -1,9 +1,10 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 const jwt = require('jsonwebtoken')
-const { Team, Brokerage, User, Ledger, Location } = require('.././models');
-const { getCustomerSpend } = require('.././helpers/getCustomerSpend')
+const { Team, Brokerage, User, Lane, Location, CustomerLocation, Customer, LanePartner } = require('.././models');
+const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend')
 const corsHeaders = require('.././helpers/cors')
+const { Op } = require('sequelize')
 
 module.exports.getUser = async (event, context) => {
 
@@ -15,11 +16,7 @@ module.exports.getUser = async (event, context) => {
     try {
         const token = event.headers.Authorization
 
-	console.log('token: ', token)
-
         const cognitoUser = jwt.decode(token)
-
-	console.log('cognito user: ', cognitoUser)
 
         if (cognitoUser == null) {
             return {
@@ -34,16 +31,12 @@ module.exports.getUser = async (event, context) => {
             },
         })
 
-	console.log('got user from db: ', user)
-
         if (user == null) {
             return {
                 headers: corsHeaders,
                 statusCode: 404,
             }
         }
-
-	console.log('pre response')
 
         return {
             headers: corsHeaders,
@@ -476,7 +469,6 @@ module.exports.getTeams = async (event, context) => {
 }
 
 module.exports.getTopCustomersForUser = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -510,8 +502,7 @@ module.exports.getTopCustomersForUser = async (event, context) => {
         const customers = await targetUser.getCustomers()
 
         const customersWithSpend = await customers.map(async customer => {
-
-            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpend(customer)
+            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpendAndLoadCount(customer)
 
             return customer
         })
@@ -526,9 +517,7 @@ module.exports.getTopCustomersForUser = async (event, context) => {
         }
 
         return response
-
     } catch (err) {
-
         console.log(err)
 
         return {
@@ -536,7 +525,6 @@ module.exports.getTopCustomersForUser = async (event, context) => {
             statusCode: 500,
         }
     }
-
 }
 
 module.exports.getTopLanesForUser = async (event, context) => {
