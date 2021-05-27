@@ -3,6 +3,7 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, CustomerLocation, Carrier, Lane, Load, LanePartner, User, Location, MarketFeedback, TaggedLane, Team } = require('.././models');
 const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
+const { showLaneOnMap } = require('../helpers/showLaneOnMap')
 const sequelize = require('sequelize');
 const { getLngLat, getRoute } = require('../helpers/mapbox');
 
@@ -73,7 +74,6 @@ module.exports.getLanesByUser = async (event, context) => {
 }
 
 module.exports.getLaneById = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -90,6 +90,7 @@ module.exports.getLaneById = async (event, context) => {
         }
 
         const laneId = event.pathParameters.laneId
+        const status = event.queryStringParameters.status
 
         const lane = await Lane.findOne({
             where: {
@@ -132,12 +133,25 @@ module.exports.getLaneById = async (event, context) => {
             }
         }
 
-        return {
-            body: JSON.stringify(lane),
-            statusCode: 200,
-            headers: corsHeaders
+        const showOnMap = await showLaneOnMap(lane, status)
+
+        if (showOnMap === false) {
+            lane.dataValues.routeGeometry = null
+
+            return {
+                body: JSON.stringify(lane),
+                statusCode: 200,
+                headers: corsHeaders
+            }
+        } else if (showOnMap === true) {
+            return {
+                body: JSON.stringify(lane),
+                statusCode: 200,
+                headers: corsHeaders
+            }
         }
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
