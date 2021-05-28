@@ -463,6 +463,22 @@ module.exports.updateLane = async (event, context) => {
             }
         }
 
+        if (lane.rate != null) {
+
+            lane.userAddedRate = true
+
+            await lane.save()
+
+        } else {
+
+            await lane.save()
+        }
+
+        return {
+            statusCode: 204,
+            headers: corsHeaders
+        }
+
     } catch (err) {
 
         return {
