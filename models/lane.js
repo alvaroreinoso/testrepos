@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
     routeGeometry: DataTypes.STRING,
     currentVolume: DataTypes.INTEGER,
     potentialVolume: DataTypes.INTEGER,
+    opportunityVolume: DataTypes.INTEGER,
     truckType: DataTypes.STRING,
     mileage: DataTypes.INTEGER,
     inbound: DataTypes.BOOLEAN,
@@ -63,12 +64,6 @@ module.exports = (sequelize, DataTypes) => {
       type: Sequelize.VIRTUAL,
       get () {
         return this.getDataValue('currentVolume') * this.getDataValue('rate') * 4
-      }
-    },
-    opportunityVolume: {
-      type: Sequelize.VIRTUAL,
-      get () {
-        return this.getDataValue('potentialVolume') - this.getDataValue('currentVolume')
       }
     }
   }, {

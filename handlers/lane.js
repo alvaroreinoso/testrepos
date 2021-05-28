@@ -391,8 +391,77 @@ module.exports.updateLane = async (event, context) => {
         }
 
         lane.routeGeometry = request.routeGeometry
-        lane.currentVolume = request.currentVolume
         lane.rate = request.rate
+
+        // if the user has updated the currentVolume, also update potentialVolume
+        if(lane.currentVolume !== request.currentVolume) {
+            console.log('current volume updated')
+            lane.currentVolume = request.currentVolume
+            lane.potentialVolume = lane.currentVolume + lane.opportunityVolume
+
+            console.log('new current:' + lane.currentVolume)
+            console.log('new potential:' + lane.potentialVolume)
+
+            if (lane.rate != null) {
+
+                lane.userAddedRate = true
+    
+                await lane.save()
+    
+            } else {
+    
+                await lane.save()
+            }
+    
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
+
+        // if the user has updated the opportunity, also update the totalPotential
+        if(lane.opportunityVolume !== request.opportunityVolume) {
+            lane.opportunityVolume = request.opportunityVolume
+            lane.potentialVolume = lane.opportunityVolume + lane.currentVolume
+
+            if (lane.rate != null) {
+
+                lane.userAddedRate = true
+    
+                await lane.save()
+    
+            } else {
+    
+                await lane.save()
+            }
+    
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
+
+        //if the user has updated the potential, also update the opportunity
+        if(lane.potentialVolume !== request.potentialVolume) {
+            lane.potentialVolume = request.potentialVolume
+            lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
+
+            if (lane.rate != null) {
+
+                lane.userAddedRate = true
+    
+                await lane.save()
+    
+            } else {
+    
+                await lane.save()
+            }
+    
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
 
         if (lane.rate != null) {
 
