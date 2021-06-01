@@ -5,6 +5,7 @@ const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
+const { getPotentialForOwnedLanes } = require('../helpers/getPotentialForOwnedLanes')
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -332,16 +333,24 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     headers: corsHeaders
                 }
             } case 'opportunities': {
-                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
 
+                const ownedLanePotential = await getPotentialForOwnedLanes(customer)
+
+                for (const lane of lanes) {
+                    console.log(lane.id, lane.opportunitySpend)
+                }
+
+                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
                 const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
                 const loadsPerWeek = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
                 const loadsPerMonth = loadsPerWeek.opportunityVolume * 4
 
+                const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
+
                 const body = {
                     loadsPerMonth: loadsPerMonth,
-                    spend: totalSpend.opportunitySpend,
+                    spend: totalOpportunitySpend,
                     Lanes: sortedLanes
                 }
 
@@ -354,13 +363,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
             } case 'potential': {
                 const sortedLanes = await lanes.sort((a, b) => b.potentialSpend - a.potentialSpend)
 
-                for (const l of lanes) {
-                    console.log(l.potentialSpend)
-                }
-
                 const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
-
-                console.log('total: ', totalSpend.potentialSpend)
 
                 const loadsPerWeek = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
                 const loadsPerMonth = loadsPerWeek.potentialVolume * 4
