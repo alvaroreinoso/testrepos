@@ -310,6 +310,75 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
+        switch (status) {
+
+            case 'owned': {
+                const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
+
+                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                const loadsPerMonth = loadsPerWeek.currentVolume * 4
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalSpend.spend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            } case 'opportunities': {
+                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
+
+                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                const loadsPerMonth = loadsPerWeek.opportunityVolume * 4
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalSpend.opportunitySpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+
+            } case 'potential': {
+                const sortedLanes = await lanes.sort((a, b) => b.potentialSpend - a.potentialSpend)
+
+                for (const l of lanes) {
+                    console.log(l.potentialSpend)
+                }
+
+                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                console.log('total: ', totalSpend.potentialSpend)
+
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+                const loadsPerMonth = loadsPerWeek.potentialVolume * 4
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalSpend.potentialSpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            }
+        }
+
         const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
         const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
