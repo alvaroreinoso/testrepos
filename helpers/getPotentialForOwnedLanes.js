@@ -86,10 +86,6 @@ module.exports.getPotentialForOwnedLanes = async(customer) => {
 
     const lanes = originLanes.concat(destinationLanes)
 
-    for (const lane of lanes) {
-        console.log(lane.id, lane.opportunitySpend)
-    }
-
     const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
     return totalSpend.opportunitySpend
