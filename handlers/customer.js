@@ -5,7 +5,7 @@ const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
-const { getPotentialForOwnedLanes } = require('../helpers/getPotentialForOwnedLanes')
+const { getHiddenPotentialForCustomer } = require('../helpers/getPotentialForOwnedLanes')
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -332,7 +332,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     headers: corsHeaders
                 }
             } case 'opportunities': {
-                const ownedLanePotential = await getPotentialForOwnedLanes(customer)
+                const ownedLanePotential = await getHiddenPotentialForCustomer(customer)
 
                 const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
                 const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
