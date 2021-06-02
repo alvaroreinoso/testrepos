@@ -5,6 +5,7 @@ const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
+const { getHiddenPotentialForCustomer } = require('../helpers/getPotentialForOwnedLanes')
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -310,23 +311,69 @@ module.exports.getLanesForCustomer = async (event, context) => {
             }
         }
 
-        const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
+        switch (status) {
+            case 'owned': {
+                const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
-        const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-        const loadsPerMonth = loadsPerWeek.currentVolume * 4
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
-        const body = {
-            loadsPerMonth: loadsPerMonth,
-            spend: totalSpend.spend,
-            Lanes: sortedLanes
-        }
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalSpend.spend,
+                    Lanes: sortedLanes
+                }
 
-        return {
-            body: JSON.stringify(body),
-            statusCode: 200,
-            headers: corsHeaders
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            } case 'opportunities': {
+                const ownedLanePotential = await getHiddenPotentialForCustomer(customer)
+
+                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
+                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                const loadsPerMonth = loadsPerWeek.opportunityVolume * 4
+
+                const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalOpportunitySpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+
+            } case 'potential': {
+                const sortedLanes = await lanes.sort((a, b) => b.potentialSpend - a.potentialSpend)
+
+                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                const loadsPerWeek = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+                const loadsPerMonth = loadsPerWeek.potentialVolume * 4
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth,
+                    spend: totalSpend.potentialSpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            }
         }
     }
     catch (err) {
