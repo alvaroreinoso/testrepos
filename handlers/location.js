@@ -384,17 +384,6 @@ module.exports.getLanesForLocation = async (event, context) => {
                 }
             }
         }
-
-        // const sortedLanes = allLanes.sort((a, b) => {
-        //     return b.spend - a.spend;
-        // });
-
-
-        // return {
-        //     body: JSON.stringify(sortedLanes),
-        //     headers: corsHeaders,
-        //     statusCode: 200
-        // }
     } catch (err) {
         console.log(err)
         return {
