@@ -95,7 +95,7 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
     const originLanes = await Lane.findAll({
         where: {
             owned: true,
-            originLocationId: locationId
+            originLocationId: location.id
         },
         include: [{
             model: Location,
@@ -134,7 +134,7 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
             [Op.not]: {
                 id: originLaneIds
             },
-            destinationLocationId: locationId
+            destinationLocationId: location.id
         },
         include: [{
             model: Location,
@@ -164,8 +164,6 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
             }],
         }]
     })
-
-    const lanes = originLanes.concat(destinationLanes)
 
     const lanes = originLanes.concat(destinationLanes)
 
