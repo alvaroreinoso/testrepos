@@ -70,6 +70,18 @@ module.exports = {
         defaultValue: false,
         allowNull: false
       },
+      requirements: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      painPoints: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      competitionAnalysis: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
