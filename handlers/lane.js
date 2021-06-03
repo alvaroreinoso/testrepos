@@ -392,6 +392,9 @@ module.exports.updateLane = async (event, context) => {
 
         lane.routeGeometry = request.routeGeometry
         lane.rate = request.rate
+        lane.requirements = request.requirements
+        lane.painPoints = request.painPoints
+        lane.competitionAnalysis = request.competitionAnalysis
 
         // if the user has updated the currentVolume, also update potentialVolume
         if(lane.currentVolume !== request.currentVolume) {
@@ -443,6 +446,7 @@ module.exports.updateLane = async (event, context) => {
 
         //if the user has updated the potential, also update the opportunity
         if(lane.potentialVolume !== request.potentialVolume) {
+
             lane.potentialVolume = request.potentialVolume
             lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
@@ -480,7 +484,7 @@ module.exports.updateLane = async (event, context) => {
         }
 
     } catch (err) {
-
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders

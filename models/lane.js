@@ -60,6 +60,9 @@ module.exports = (sequelize, DataTypes) => {
     inbound: DataTypes.BOOLEAN,
     rate: DataTypes.INTEGER,
     userAddedRate: DataTypes.BOOLEAN,
+    requirements: DataTypes.TEXT,
+    painPoints: DataTypes.TEXT,
+    competitionAnalysis: DataTypes.TEXT,
     spend: {
       type: Sequelize.VIRTUAL,
       get () {
