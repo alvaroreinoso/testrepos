@@ -59,7 +59,12 @@ module.exports = (sequelize, DataTypes) => {
     close: DataTypes.STRING,
     hoursType: DataTypes.STRING,
     isHQ: DataTypes.BOOLEAN,
-    isShippingReceiving: DataTypes.BOOLEAN
+    isShippingReceiving: DataTypes.BOOLEAN,
+    estimatedVolume: DataTypes.INTEGER,
+    estimatedSpend: DataTypes.INTEGER,
+    requirements: DataTypes.TEXT,
+    painPoints: DataTypes.TEXT,
+    competitionAnalysis: DataTypes.TEXT,
   }, {
     sequelize,
     modelName: 'Location',
