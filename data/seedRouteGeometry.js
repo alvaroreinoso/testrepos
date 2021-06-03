@@ -26,7 +26,8 @@ async function run() {
 
         delete record.id
         delete record.spend
-        delete record.opportunityVolume
+        delete record.opportunitySpend
+        delete record.potentialSpend
 
         return record
     }))
