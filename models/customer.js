@@ -40,7 +40,12 @@ module.exports = (sequelize, DataTypes) => {
     industry: DataTypes.STRING,
     brokerageId: DataTypes.INTEGER,
     ledgerId: DataTypes.INTEGER,
-    bio: DataTypes.TEXT
+    bio: DataTypes.TEXT,
+    estimatedVolume: DataTypes.INTEGER,
+    estimatedSpend: DataTypes.INTEGER,
+    requirements: DataTypes.TEXT,
+    painPoints: DataTypes.TEXT,
+    competitionAnalysis: DataTypes.TEXT,
   }, {
     hooks: {
       afterCreate: async (customer, options) => {
