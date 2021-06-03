@@ -169,11 +169,12 @@ module.exports.updateLocation = async (event, context) => {
             }
         }
 
+        const locationId = event.pathParameters.locationId
         const request = JSON.parse(event.body)
 
         const location = await Location.findOne({
             where: {
-                id: request.id,
+                id: locationId,
                 brokerageId: user.brokerageId
             }
         })

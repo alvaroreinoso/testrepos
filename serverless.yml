@@ -485,7 +485,7 @@ functions:
       ./handlers/location.updateLocation
     events:
         - http:
-            path: api/location
+            path: api/location/{locationId}
             method: put
             cors: true
   getLanesForLocation:
