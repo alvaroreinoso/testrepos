@@ -113,6 +113,11 @@ module.exports.updateCustomer = async (event, context) => {
         customer.displayName = request.displayName
         customer.phone = request.phone
         customer.logo = request.logo
+        customer.estimatedVolume = request.estimatedVolume
+        customer.estimatedSpend = request.estimatedSpend
+        customer.requirements = request.requirements
+        customer.painPoints = request.painPoints
+        customer.competitionAnalysis = request.competitionAnalysis
 
         await customer.save()
 
@@ -122,7 +127,6 @@ module.exports.updateCustomer = async (event, context) => {
         }
 
     } catch (err) {
-
         return {
             statusCode: 500,
             headers: corsHeaders

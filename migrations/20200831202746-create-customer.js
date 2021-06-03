@@ -35,6 +35,18 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true
       },
+      requirements: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      painPoints: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
+      competitionAnalysis: {
+        type: Sequelize.TEXT,
+        allowNull: true
+      },
       brokerageId: {
         type: Sequelize.INTEGER,
         references: {
@@ -44,6 +56,14 @@ module.exports = {
         }
       },
       ledgerId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      estimatedVolume: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      estimatedSpend: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
