@@ -190,6 +190,11 @@ module.exports.editLocation = async (event, context) => {
         location.close = request.close
         location.phone = request.phone
         location.email = request.email
+        location.estimatedVolume = request.estimatedVolume
+        location.estimatedSpend = request.estimatedSpend
+        location.requirements = request.requirements
+        location.painPoints = request.painPoints
+        location.competitionAnalysis = request.competitionAnalysis
 
         await location.save()
 
