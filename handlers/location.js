@@ -153,7 +153,7 @@ module.exports.addLocation = async (event, context) => {
     }
 }
 
-module.exports.editLocation = async (event, context) => {
+module.exports.updateLocation = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -204,6 +204,7 @@ module.exports.editLocation = async (event, context) => {
         }
 
     } catch (err) {
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500

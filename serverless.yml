@@ -480,9 +480,9 @@ functions:
             path: api/location/{locationId}
             method: get
             cors: true
-  editLocation:
+  updateLocation:
     handler:
-      ./handlers/location.editLocation
+      ./handlers/location.updateLocation
     events:
         - http:
             path: api/location
