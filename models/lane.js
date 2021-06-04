@@ -59,7 +59,6 @@ module.exports = (sequelize, DataTypes) => {
     mileage: DataTypes.INTEGER,
     inbound: DataTypes.BOOLEAN,
     rate: DataTypes.INTEGER,
-    userAddedRate: DataTypes.BOOLEAN,
     requirements: DataTypes.TEXT,
     painPoints: DataTypes.TEXT,
     competitionAnalysis: DataTypes.TEXT,

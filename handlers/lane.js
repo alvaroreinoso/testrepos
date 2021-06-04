@@ -357,7 +357,6 @@ module.exports.addLane = async (event, context) => {
 }
 
 module.exports.updateLane = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -396,25 +395,25 @@ module.exports.updateLane = async (event, context) => {
         lane.painPoints = request.painPoints
         lane.competitionAnalysis = request.competitionAnalysis
 
-        // if the user has updated the currentVolume, also update potentialVolume
-        if(lane.currentVolume !== request.currentVolume) {
-            console.log('current volume updated')
+        // if the user updates the currentVolume, opportunity volume goes down
+        if(lane.currentVolume !== request?.currentVolume) {
             lane.currentVolume = request.currentVolume
-            lane.potentialVolume = lane.currentVolume + lane.opportunityVolume
+            lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
-            console.log('new current:' + lane.currentVolume)
-            console.log('new potential:' + lane.potentialVolume)
+            if (lane.currentVolume !== 0) {
+                lane.owned = true
 
-            if (lane.rate != null) {
+                const origin = await lane.getOrigin()
+                const destination = await lane.getDestination()
 
-                lane.userAddedRate = true
-    
-                await lane.save()
-    
-            } else {
-    
-                await lane.save()
+                origin.owned = true
+                destination.owned = true
+
+                await origin.save()
+                await destination.save()
             }
+
+            await lane.save()
     
             return {
                 statusCode: 204,
@@ -423,20 +422,11 @@ module.exports.updateLane = async (event, context) => {
         }
 
         // if the user has updated the opportunity, also update the totalPotential
-        if(lane.opportunityVolume !== request.opportunityVolume) {
+        if(lane.opportunityVolume !== request?.opportunityVolume) {
             lane.opportunityVolume = request.opportunityVolume
             lane.potentialVolume = lane.opportunityVolume + lane.currentVolume
 
-            if (lane.rate != null) {
-
-                lane.userAddedRate = true
-    
-                await lane.save()
-    
-            } else {
-    
-                await lane.save()
-            }
+            await lane.save()
     
             return {
                 statusCode: 204,
@@ -445,21 +435,11 @@ module.exports.updateLane = async (event, context) => {
         }
 
         //if the user has updated the potential, also update the opportunity
-        if(lane.potentialVolume !== request.potentialVolume) {
-
+        if(lane.potentialVolume !== request?.potentialVolume) {
             lane.potentialVolume = request.potentialVolume
             lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
-            if (lane.rate != null) {
-
-                lane.userAddedRate = true
-    
-                await lane.save()
-    
-            } else {
-    
-                await lane.save()
-            }
+            await lane.save()
     
             return {
                 statusCode: 204,
@@ -467,16 +447,7 @@ module.exports.updateLane = async (event, context) => {
             }
         }
 
-        if (lane.rate != null) {
-
-            lane.userAddedRate = true
-
-            await lane.save()
-
-        } else {
-
-            await lane.save()
-        }
+        await lane.save()
 
         return {
             statusCode: 204,
