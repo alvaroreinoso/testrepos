@@ -397,7 +397,6 @@ module.exports.updateLane = async (event, context) => {
 
         // if the user updates the currentVolume, opportunity volume goes down
         if(lane.currentVolume !== request?.currentVolume) {
-            console.log('current volume updated')
             lane.currentVolume = request.currentVolume
             lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
@@ -412,9 +411,6 @@ module.exports.updateLane = async (event, context) => {
 
                 await origin.save()
                 await destination.save()
-
-                console.log(origin.id, origin.owned)
-                console.log(destination.id, destination.owned)
             }
 
             await lane.save()
