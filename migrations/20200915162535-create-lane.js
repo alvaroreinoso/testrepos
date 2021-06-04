@@ -65,11 +65,6 @@ module.exports = {
         defaultValue: false,
         allowNull: false
       },
-      userAddedRate: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false
-      },
       requirements: {
         type: Sequelize.TEXT,
         allowNull: true
