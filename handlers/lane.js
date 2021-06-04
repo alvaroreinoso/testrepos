@@ -395,15 +395,26 @@ module.exports.updateLane = async (event, context) => {
         lane.painPoints = request.painPoints
         lane.competitionAnalysis = request.competitionAnalysis
 
-        // if the user has updated the currentVolume, also update potentialVolume
+        // if the user updates the currentVolume, opportunity volume goes down
         if(lane.currentVolume !== request?.currentVolume) {
             console.log('current volume updated')
             lane.currentVolume = request.currentVolume
-            lane.potentialVolume = lane.currentVolume + lane.opportunityVolume
+            lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
             if (lane.currentVolume !== 0) {
-
                 lane.owned = true
+
+                const origin = await lane.getOrigin()
+                const destination = await lane.getDestination()
+
+                origin.owned = true
+                destination.owned = true
+
+                await origin.save()
+                await destination.save()
+
+                console.log(origin.id, origin.owned)
+                console.log(destination.id, destination.owned)
             }
 
             await lane.save()
@@ -429,7 +440,6 @@ module.exports.updateLane = async (event, context) => {
 
         //if the user has updated the potential, also update the opportunity
         if(lane.potentialVolume !== request?.potentialVolume) {
-
             lane.potentialVolume = request.potentialVolume
             lane.opportunityVolume = lane.potentialVolume - lane.currentVolume
 
