@@ -83,13 +83,11 @@ module.exports.getCustomerSpendAndLoadCount = async (customer) => {
     } else {
         const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({
+        const loadsPerMonth = await lanes.reduce((a, b) => ({
             currentVolume: a.currentVolume + b.currentVolume 
             
         }))
-        const loadsPerMonth = loadsPerWeek.currentVolume * 4
 
-
-        return [customerSpend.spend, loadsPerMonth]
+        return [customerSpend.spend, loadsPerMonth.currentVolume]
     }
 }

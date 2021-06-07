@@ -303,7 +303,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
         if (lanes.length == 0) {
             const body = {
-                loadsPerWeek: 0,
+                loadsPerMonth: 0,
                 spend: 0,
                 Lanes: lanes
             }
@@ -323,7 +323,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
 
                 const body = {
-                    loadsPerMonth: loadsPerMonth,
+                    loadsPerMonth: loadsPerMonth.currentVolume,
                     spend: totalSpend.spend,
                     Lanes: sortedLanes
                 }
@@ -343,7 +343,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
 
                 const body = {
-                    loadsPerMonth: loadsPerMonth,
+                    loadsPerMonth: loadsPerMonth.opportunityVolume,
                     spend: totalOpportunitySpend,
                     Lanes: sortedLanes
                 }
@@ -362,7 +362,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
         
                 const body = {
-                    loadsPerMonth: loadsPerMonth,
+                    loadsPerMonth: loadsPerMonth.potentialVolume,
                     spend: totalSpend.potentialSpend,
                     Lanes: sortedLanes
                 }

@@ -1,7 +1,6 @@
 'use strict';
 const Sequelize = require('sequelize');
 const elastic = require('../elastic/hooks')
-const setRate = require('../helpers/hooks/setRate').setRate
 const {
   Model
 } = require('sequelize');
