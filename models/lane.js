@@ -65,19 +65,19 @@ module.exports = (sequelize, DataTypes) => {
     spend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('currentVolume') * this.getDataValue('rate') * 4
+        return this.getDataValue('currentVolume') * this.getDataValue('rate')
       }
     },
     opportunitySpend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('opportunityVolume') * this.getDataValue('rate') * 4
+        return this.getDataValue('opportunityVolume') * this.getDataValue('rate')
       }
     },
     potentialSpend: {
       type: Sequelize.VIRTUAL,
       get () {
-        return this.getDataValue('potentialVolume') * this.getDataValue('rate') * 4
+        return this.getDataValue('potentialVolume') * this.getDataValue('rate')
       }
     }
   }, {
