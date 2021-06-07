@@ -288,10 +288,9 @@ module.exports.getCustomersForBrokerage = async (event, context) => {
             } else {
 
                 const spendPerMonth = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-                const loadsPerMonth = loadsPerWeek.currentVolume * 4
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
 
-                customer.dataValues.loadsPerMonth = loadsPerMonth
+                customer.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
                 customer.dataValues.spendPerMonth = spendPerMonth.spend
 
                 return customer

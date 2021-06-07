@@ -142,8 +142,8 @@ module.exports.getUserById = async (event, context) => {
         const revenue = await laneSpend.reduce((a, b) => (a + b))
         user.dataValues.revenue = revenue
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-        user.dataValues.loadsPerMonth = loadsPerWeek.currentVolume * 4
+        const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+        user.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
 
         return {
             body: JSON.stringify(user),

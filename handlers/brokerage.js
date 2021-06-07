@@ -252,11 +252,11 @@ module.exports.getLanesForBrokerage = async (event, context) => {
         const laneSpend = lanes.map(lane => lane.spend)
         const brokerageSpend = await laneSpend.reduce((a, b) => a + b)
 
-        const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+        const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
 
         const body = {
             revenue: brokerageSpend,
-            loadsPerWeek: loadsPerWeek.currentVolume,
+            loadsPerMonth: loadsPerMonth.currentVolume,
             Lanes: lanes
         }
 
