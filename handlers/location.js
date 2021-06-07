@@ -57,16 +57,20 @@ module.exports.getLocationById = async (event, context) => {
 
             const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            const loadsPerMonthPerLane = await lanes.map(lane => {
+            // const loadsPerMonthPerLane = await lanes.map(lane => {
 
-                const loadsPerMonth = lane.currentVolume * 4
+            //     const loadsPerMonth = lane.currentVolume * 4
 
-                return loadsPerMonth
-            })
+            //     return loadsPerMonth
+            // })
 
-            const totalLoadsPerMonth = loadsPerMonthPerLane.reduce((a, b) => { return a + b })
+            const loadsPerMonth = await lanes.reduce((a, b) => ({
+                currentVolume: a.currentVolume + b.currentVolume
+            }))
 
-            location.dataValues.loadsPerMonth = totalLoadsPerMonth
+            // const totalLoadsPerMonth = loadsPerMonthPerLane.reduce((a, b) => { return a + b })
+
+            location.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
             location.dataValues.spendPerMonth = totalSpend.spend
 
             return {

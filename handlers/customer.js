@@ -320,9 +320,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
                 const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-                const loadsPerMonth = loadsPerWeek.currentVolume * 4
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
 
                 const body = {
                     loadsPerMonth: loadsPerMonth,
@@ -341,9 +339,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
                 const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
-                const loadsPerMonth = loadsPerWeek.opportunityVolume * 4
-
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
                 const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
 
                 const body = {
@@ -363,9 +359,8 @@ module.exports.getLanesForCustomer = async (event, context) => {
 
                 const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
 
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
-                const loadsPerMonth = loadsPerWeek.potentialVolume * 4
-
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+        
                 const body = {
                     loadsPerMonth: loadsPerMonth,
                     spend: totalSpend.potentialSpend,
@@ -476,11 +471,11 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 return cL
 
             } else {
-                const loadsPerWeek = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
                 const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                 cL.dataValues.spend = spend.spend
-                cL.dataValues.loadsPerMonth = loadsPerWeek.currentVolume * 4
+                cL.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
 
                 return cL
             }
