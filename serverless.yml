@@ -312,7 +312,7 @@ functions:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        - subnet-03086cdd9e1e48134 # public
+        # - subnet-03086cdd9e1e48134 # public
   updateLane:
     handler:
       ./handlers/lane.updateLane
