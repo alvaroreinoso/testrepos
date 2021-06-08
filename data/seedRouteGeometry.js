@@ -8,7 +8,7 @@ async function addGeom(lane) {
 
     const destination = await lane.getDestination()
 
-    const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
+    const route = await getRoute(origin.lnglat, destination.lnglat)
 
     return route
 }

@@ -311,7 +311,8 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            const destinationLnglat = await getLngLat(request.city)
+            const destinationAddress = request.address ?? `${request.city}, ${request.state}`
+            const destinationLnglat = await getLngLat(destinationAddress)
 
             const destination = await Location.create({
                 brokerageId: user.brokerageId,
@@ -326,14 +327,13 @@ module.exports.addLane = async (event, context) => {
                 locationId: destination.id
             })
 
-            const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
+            const route = await getRoute(origin.lnglat, destination.lnglat)
 
             const lane = await Lane.create({
                 brokerageId: user.brokerageId,
                 originLocationId: origin.id,
                 destinationLocationId: destination.id,
                 routeGeometry: route,
-                mileage: mileage,
                 inbound: false
             })
 
