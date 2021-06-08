@@ -394,7 +394,6 @@ module.exports.updateLane = async (event, context) => {
             }
         }
 
-        lane.routeGeometry = request.routeGeometry
         lane.rate = request.rate
         lane.requirements = request.requirements
         lane.painPoints = request.painPoints
