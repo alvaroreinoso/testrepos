@@ -30,7 +30,7 @@ module.exports.search = async (event, context) => {
             case '/api/search': {
 
                 const searchResults = await client.search({
-                    index: ['lane_partner', 'customer', 'user', 'team', 'lane', 'customer_location', 'brokerage'],
+                    index: ['lane_partner', 'customer', 'user', 'lane', 'customer_location'],
                     body: {
                         query: {
                             bool: {
