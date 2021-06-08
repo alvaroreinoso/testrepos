@@ -5,6 +5,7 @@ const { Team, Brokerage, User, Lane, Location, CustomerLocation, Customer, LaneP
 const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend')
 const corsHeaders = require('.././helpers/cors')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
+const { getHiddenPotentialForUser } = require('../helpers/getPotentialForOwnedLanes')
 const { Op } = require('sequelize')
 
 module.exports.getUser = async (event, context) => {
@@ -615,7 +616,7 @@ module.exports.getTopLanesForUser = async (event, context) => {
                     headers: corsHeaders
                 }
             } case 'opportunities': {
-                const ownedLanePotential = await getHiddenPotentialForCustomer(customer)
+                const ownedLanePotential = await getHiddenPotentialForUser(targetUser)
 
                 const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
                 const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
