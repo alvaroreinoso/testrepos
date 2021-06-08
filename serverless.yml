@@ -471,8 +471,9 @@ functions:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        - subnet-03086cdd9e1e48134 # public
-    timeout: 20
+        # - subnet-03086cdd9e1e48134 # public
+    timeout: 30
+    memorySize: 6000
   getLocationById:
     handler:
       ./handlers/location.getLocationById
