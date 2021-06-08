@@ -642,7 +642,7 @@ module.exports.getTopLanesForUser = async (event, context) => {
                 const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
 
                 const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
-        
+
                 const body = {
                     loadsPerMonth: loadsPerMonth.potentialVolume,
                     spend: totalSpend.potentialSpend,
@@ -656,67 +656,56 @@ module.exports.getTopLanesForUser = async (event, context) => {
                 }
             }
         }
-
-                const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
-
-                const response = {
-                    body: JSON.stringify(sortedLanes),
-                    headers: corsHeaders,
-                    statusCode: 200,
-                }
-
-                return response
-
-        } catch (err) {
-            console.log(err)
-            return {
-                headers: corsHeaders,
-                statusCode: 500,
-            }
+    } catch (err) {
+        console.log(err)
+        return {
+            headers: corsHeaders,
+            statusCode: 500,
         }
     }
+}
 
 module.exports.getAdminUsers = async (event, context) => {
 
-        if (event.source === 'serverless-plugin-warmup') {
-            console.log('WarmUp - Lambda is warm!');
-            return 'Lambda is warm!';
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const currentUser = await getCurrentUser(event.headers.Authorization)
+
+        if (currentUser.id == null) {
+            return {
+                headers: corsHeaders,
+                statusCode: 401
+            }
         }
 
-        try {
-            const currentUser = await getCurrentUser(event.headers.Authorization)
-
-            if (currentUser.id == null) {
-                return {
-                    headers: corsHeaders,
-                    statusCode: 401
-                }
+        const admins = await User.findAll({
+            where: {
+                brokerageId: currentUser.brokerageId,
+                admin: true
             }
+        })
 
-            const admins = await User.findAll({
-                where: {
-                    brokerageId: currentUser.brokerageId,
-                    admin: true
-                }
-            })
-
-            if (admins.length == 0) {
-                return {
-                    headers: corsHeaders,
-                    statusCode: 404,
-                }
-            }
-
-            return {
-                body: JSON.stringify(admins),
-                headers: corsHeaders,
-                statusCode: 200
-            }
-
-        } catch (err) {
+        if (admins.length == 0) {
             return {
                 headers: corsHeaders,
-                statusCode: 500,
+                statusCode: 404,
             }
+        }
+
+        return {
+            body: JSON.stringify(admins),
+            headers: corsHeaders,
+            statusCode: 200
+        }
+
+    } catch (err) {
+        return {
+            headers: corsHeaders,
+            statusCode: 500,
         }
     }
+}
