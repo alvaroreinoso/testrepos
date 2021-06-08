@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Lane, Location, CustomerLocation, Customer, LanePartner } = require('.././models');
 const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend')
 const corsHeaders = require('.././helpers/cors')
+const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
+const { getHiddenPotentialForUser } = require('../helpers/getPotentialForOwnedLanes')
 const { Op } = require('sequelize')
 
 module.exports.getUser = async (event, context) => {
@@ -559,7 +561,15 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }
         }
 
+        const status = event.queryStringParameters.status
+        const statusOperator = await getStatusQueryOperator(status)
+
         const lanes = await targetUser.getLanes({
+            where: {
+                [Op.not]: {
+                    owned: statusOperator
+                }
+            },
             include: [{
                 model: Location,
                 as: 'origin',
@@ -573,17 +583,81 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }]
         })
 
-        const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
+        if (lanes.length == 0) {
+            const body = {
+                loadsPerMonth: 0,
+                spend: 0,
+                Lanes: lanes
+            }
 
-        const response = {
-            body: JSON.stringify(sortedLanes),
-            headers: corsHeaders,
-            statusCode: 200,
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
 
-        return response
+        switch (status) {
+            case 'owned': {
+                const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
+                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth.currentVolume,
+                    spend: totalSpend.spend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            } case 'opportunities': {
+                const ownedLanePotential = await getHiddenPotentialForUser(targetUser)
+
+                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
+                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth.opportunityVolume,
+                    spend: totalOpportunitySpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+
+            } case 'potential': {
+                const sortedLanes = await lanes.sort((a, b) => b.potentialSpend - a.potentialSpend)
+
+                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth.potentialVolume,
+                    spend: totalSpend.potentialSpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            }
+        }
     } catch (err) {
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500,

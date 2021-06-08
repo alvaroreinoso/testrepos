@@ -180,3 +180,20 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
 
     return totalSpend.opportunitySpend
 }
+
+module.exports.getHiddenPotentialForUser = async (user) => {
+
+    const lanes = await user.getLanes({
+        where: {
+            owned: true
+        }
+    })
+
+    if (lanes.length == 0) {
+        return 0   
+    }
+
+    const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+
+    return totalSpend.opportunitySpend
+}
