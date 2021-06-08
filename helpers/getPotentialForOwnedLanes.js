@@ -180,3 +180,5 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
 
     return totalSpend.opportunitySpend
 }
+
+// module.exports.getHiddenPotentialForUser

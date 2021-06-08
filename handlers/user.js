@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 const { Team, Brokerage, User, Lane, Location, CustomerLocation, Customer, LanePartner } = require('.././models');
 const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend')
 const corsHeaders = require('.././helpers/cors')
+const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
 const { Op } = require('sequelize')
 
 module.exports.getUser = async (event, context) => {
@@ -559,7 +560,15 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }
         }
 
+        const status = event.queryStringParameters.status
+        const statusOperator = await getStatusQueryOperator(status)
+
         const lanes = await targetUser.getLanes({
+            where: {
+                [Op.not]: {
+                    owned: statusOperator
+                }
+            },
             include: [{
                 model: Location,
                 as: 'origin',
@@ -573,65 +582,140 @@ module.exports.getTopLanesForUser = async (event, context) => {
             }]
         })
 
-        const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
+        if (lanes.length == 0) {
+            const body = {
+                loadsPerMonth: 0,
+                spend: 0,
+                Lanes: lanes
+            }
 
-        const response = {
-            body: JSON.stringify(sortedLanes),
-            headers: corsHeaders,
-            statusCode: 200,
+            return {
+                body: JSON.stringify(body),
+                headers: corsHeaders,
+                statusCode: 200
+            }
         }
 
-        return response
+        switch (status) {
+            case 'owned': {
+                const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
 
-    } catch (err) {
-        return {
-            headers: corsHeaders,
-            statusCode: 500,
+                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth.currentVolume,
+                    spend: totalSpend.spend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            } case 'opportunities': {
+                const ownedLanePotential = await getHiddenPotentialForCustomer(customer)
+
+                const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
+                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
+
+                const body = {
+                    loadsPerMonth: loadsPerMonth.opportunityVolume,
+                    spend: totalOpportunitySpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+
+            } case 'potential': {
+                const sortedLanes = await lanes.sort((a, b) => b.potentialSpend - a.potentialSpend)
+
+                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+        
+                const body = {
+                    loadsPerMonth: loadsPerMonth.potentialVolume,
+                    spend: totalSpend.potentialSpend,
+                    Lanes: sortedLanes
+                }
+
+                return {
+                    body: JSON.stringify(body),
+                    statusCode: 200,
+                    headers: corsHeaders
+                }
+            }
+        }
+
+                const sortedLanes = [...lanes].sort((a, b) => { return b.spend - a.spend })
+
+                const response = {
+                    body: JSON.stringify(sortedLanes),
+                    headers: corsHeaders,
+                    statusCode: 200,
+                }
+
+                return response
+
+        } catch (err) {
+            console.log(err)
+            return {
+                headers: corsHeaders,
+                statusCode: 500,
+            }
         }
     }
-}
 
 module.exports.getAdminUsers = async (event, context) => {
 
-    if (event.source === 'serverless-plugin-warmup') {
-        console.log('WarmUp - Lambda is warm!');
-        return 'Lambda is warm!';
-    }
+        if (event.source === 'serverless-plugin-warmup') {
+            console.log('WarmUp - Lambda is warm!');
+            return 'Lambda is warm!';
+        }
 
-    try {
-        const currentUser = await getCurrentUser(event.headers.Authorization)
+        try {
+            const currentUser = await getCurrentUser(event.headers.Authorization)
 
-        if (currentUser.id == null) {
+            if (currentUser.id == null) {
+                return {
+                    headers: corsHeaders,
+                    statusCode: 401
+                }
+            }
+
+            const admins = await User.findAll({
+                where: {
+                    brokerageId: currentUser.brokerageId,
+                    admin: true
+                }
+            })
+
+            if (admins.length == 0) {
+                return {
+                    headers: corsHeaders,
+                    statusCode: 404,
+                }
+            }
+
+            return {
+                body: JSON.stringify(admins),
+                headers: corsHeaders,
+                statusCode: 200
+            }
+
+        } catch (err) {
             return {
                 headers: corsHeaders,
-                statusCode: 401
+                statusCode: 500,
             }
-        }
-
-        const admins = await User.findAll({
-            where: {
-                brokerageId: currentUser.brokerageId,
-                admin: true
-            }
-        })
-
-        if (admins.length == 0) {
-            return {
-                headers: corsHeaders,
-                statusCode: 404,
-            }
-        }
-
-        return {
-            body: JSON.stringify(admins),
-            headers: corsHeaders,
-            statusCode: 200
-        }
-
-    } catch (err) {
-        return {
-            headers: corsHeaders,
-            statusCode: 500,
         }
     }
-}
