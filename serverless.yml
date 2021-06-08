@@ -222,8 +222,8 @@ functions:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        - subnet-03086cdd9e1e48134 # public
     timeout: 20
+    memorySize: 5000
   updateCustomer:
     handler:
       ./handlers/customer.updateCustomer
@@ -307,12 +307,12 @@ functions:
             method: post
             cors: true
     timeout: 20
+    memorySize: 5000
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
   updateLane:
     handler:
       ./handlers/lane.updateLane
@@ -471,9 +471,8 @@ functions:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
       subnetIds:                                                                                                                                                                       
         - subnet-0969f48a6ba21d4da # private
-        # - subnet-03086cdd9e1e48134 # public
-    timeout: 30
-    memorySize: 6000
+    timeout: 20
+    memorySize: 5000
   getLocationById:
     handler:
       ./handlers/location.getLocationById
