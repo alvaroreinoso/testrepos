@@ -107,14 +107,10 @@ module.exports.addLocation = async (event, context) => {
             }
         }
 
-        console.log('got user')
-
         const request = JSON.parse(event.body)
 
         const address = request.address ?? `${request.city}, ${request.state}`
         const lnglat = await getLngLat(address)
-
-        console.log('got lnglat: ' + lnglat)
 
         const location = await Location.create({
             brokerageId: user.brokerageId,
@@ -137,8 +133,6 @@ module.exports.addLocation = async (event, context) => {
             customerId: request.customerId,
             locationId: location.id
         })
-
-        console.log('created everything')
 
         return {
             statusCode: 201,

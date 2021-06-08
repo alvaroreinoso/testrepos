@@ -86,6 +86,10 @@ module.exports.getHiddenPotentialForCustomer = async(customer) => {
 
     const lanes = originLanes.concat(destinationLanes)
 
+    if (lanes.length == 0) {
+        return 0
+    }
+
     const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
     return totalSpend.opportunitySpend
@@ -166,6 +170,11 @@ module.exports.getHiddenPotentialForLocation = async(location) => {
     })
 
     const lanes = originLanes.concat(destinationLanes)
+
+    if (lanes.length == 0) {
+        return 0
+        
+    }
 
     const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 

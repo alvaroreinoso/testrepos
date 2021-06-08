@@ -244,8 +244,6 @@ module.exports.addLane = async (event, context) => {
             }
         }
 
-        console.log('got user')
-
         const request = JSON.parse(event.body)
 
         if (request.inbound === true) {
@@ -273,15 +271,11 @@ module.exports.addLane = async (event, context) => {
                 lnglat: originLnglat
             })
 
-            console.log('created origin')
-
             await LanePartner.create({
                 locationId: origin.id
             })
 
             const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
-
-            console.log('got route: ' + route)
 
             const lane = await Lane.create({
                 brokerageId: user.brokerageId,
@@ -296,8 +290,6 @@ module.exports.addLane = async (event, context) => {
                 laneId: lane.id,
                 userId: user.id
             })
-
-            console.log('created everything')
 
             return {
                 statusCode: 201,
@@ -330,15 +322,11 @@ module.exports.addLane = async (event, context) => {
                 lnglat: destinationLnglat
             })
 
-            console.log('created destination')
-
             await LanePartner.create({
                 locationId: destination.id
             })
 
             const [route, mileage] = await getRoute(origin.lnglat, destination.lnglat)
-
-            console.log('got route: ' + route)
 
             const lane = await Lane.create({
                 brokerageId: user.brokerageId,
@@ -353,8 +341,6 @@ module.exports.addLane = async (event, context) => {
                 laneId: lane.id,
                 userId: user.id
             })
-
-            console.log('created everything')
 
             return {
                 statusCode: 201,
