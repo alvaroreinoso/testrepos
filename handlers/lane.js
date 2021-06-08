@@ -276,6 +276,8 @@ module.exports.addLane = async (event, context) => {
                 locationId: origin.id
             })
 
+            console.log('lng lat to helper: ' + 'origin: ' + origin.lnglat + 'destination: ' + destination.lnglat)
+
             const route = await getRoute(origin.lnglat, destination.lnglat)
 
             const lane = await Lane.create({
@@ -326,6 +328,8 @@ module.exports.addLane = async (event, context) => {
             await LanePartner.create({
                 locationId: destination.id
             })
+
+            console.log('lng lat to helper: ' + 'origin: ' + origin.lnglat + 'destination: ' + destination.lnglat)
 
             const route = await getRoute(origin.lnglat, destination.lnglat)
 
