@@ -306,6 +306,7 @@ functions:
             path: api/lane
             method: post
             cors: true
+    timeout: 20
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
