@@ -573,13 +573,29 @@ module.exports.getTopLanesForUser = async (event, context) => {
             include: [{
                 model: Location,
                 as: 'origin',
-                attributes: ['city', 'state'],
-                required: true
+                required: true,
+                include: [{
+                    model: CustomerLocation,
+                    include: {
+                        model: Customer,
+                        required: true
+                    }
+                }, {
+                    model: LanePartner
+                }]
             }, {
                 model: Location,
                 as: 'destination',
-                attributes: ['city', 'state'],
-                required: true
+                required: true,
+                include: [{
+                    model: CustomerLocation,
+                    include: {
+                        model: Customer,
+                        required: true
+                    }
+                }, {
+                    model: LanePartner
+                }]
             }]
         })
 
