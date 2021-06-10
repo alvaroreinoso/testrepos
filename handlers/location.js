@@ -8,7 +8,6 @@ const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator');
 const { getHiddenPotentialForLocation } = require('../helpers/getPotentialForOwnedLanes');
 
 module.exports.getLocationById = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
