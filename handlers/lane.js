@@ -260,7 +260,7 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            const originAddress = request.address ?? `${request.city}, ${request.state}`
+            const originAddress = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
             const originLnglat = await getLngLat(originAddress)
 
             const origin = await Location.create({
@@ -275,8 +275,6 @@ module.exports.addLane = async (event, context) => {
             await LanePartner.create({
                 locationId: origin.id
             })
-
-            console.log('lng lat to helper: ' + 'origin: ' + origin.lnglat + 'destination: ' + destination.lnglat)
 
             const route = await getRoute(origin.lnglat, destination.lnglat)
 
@@ -313,7 +311,7 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            const destinationAddress = request.address ?? `${request.city}, ${request.state}`
+            const destinationAddress = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
             const destinationLnglat = await getLngLat(destinationAddress)
 
             const destination = await Location.create({
@@ -328,8 +326,6 @@ module.exports.addLane = async (event, context) => {
             await LanePartner.create({
                 locationId: destination.id
             })
-
-            console.log('lng lat to helper: ' + 'origin: ' + origin.lnglat + 'destination: ' + destination.lnglat)
 
             const route = await getRoute(origin.lnglat, destination.lnglat)
 
