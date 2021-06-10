@@ -260,10 +260,6 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            if (request.address) {
-                console.log('address yooooo')
-            }
-
             const originAddress = parseLocation(request)
             const originLnglat = await getLngLat(originAddress)
 
@@ -313,10 +309,6 @@ module.exports.addLane = async (event, context) => {
                     statusCode: 422,
                     headers: corsHeaders
                 }
-            }
-
-            if (request.address) {
-                console.log('address yooooo')
             }
 
             const destinationAddress = parseLocation(request)

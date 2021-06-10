@@ -3,8 +3,6 @@ const fetch = require('node-fetch');
 
 module.exports.getLngLat = async (address) => {
     if (address.split(',').length == 2) {
-        console.log('place')
-
         const resp = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${address}.json?types=place&access_token=${process.env.REACT_APP_MAPBOX_KEY}`)
         const respJson = await resp.json()
 
