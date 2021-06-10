@@ -5,7 +5,7 @@ const query = require('.././helpers/getLanes')
 const corsHeaders = require('.././helpers/cors')
 const { showLaneOnMap } = require('../helpers/showLaneOnMap')
 const sequelize = require('sequelize');
-const { getLngLat, getRoute } = require('../helpers/mapbox');
+const { getLngLat, getRoute, parseLocation } = require('../helpers/mapbox');
 
 module.exports.getLanesByUser = async (event, context) => {
 
@@ -260,7 +260,11 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            const originAddress = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
+            if (request.address) {
+                console.log('address yooooo')
+            }
+
+            const originAddress = parseLocation(request)
             const originLnglat = await getLngLat(originAddress)
 
             const origin = await Location.create({
@@ -311,7 +315,11 @@ module.exports.addLane = async (event, context) => {
                 }
             }
 
-            const destinationAddress = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
+            if (request.address) {
+                console.log('address yooooo')
+            }
+
+            const destinationAddress = parseLocation(request)
             const destinationLnglat = await getLngLat(destinationAddress)
 
             const destination = await Location.create({
