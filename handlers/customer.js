@@ -36,7 +36,7 @@ module.exports.addCustomer = async (event, context) => {
             userId: user.id
         })
 
-        const address = request.address ?? `${request.city}, ${request.state}`
+        const address = parseLocation(request)
         const lnglat = await getLngLat(address)
 
         const hqLocation = await Location.create({

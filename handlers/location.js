@@ -3,7 +3,7 @@ const { Customer, CustomerLocation, TaggedLane, Lane, LanePartner, Location, Tag
 const { Op } = require("sequelize");
 const getCurrentUser = require('.././helpers/user')
 const corsHeaders = require('.././helpers/cors');
-const { getLngLat } = require('../helpers/mapbox');
+const { getLngLat, parseLocation } = require('../helpers/mapbox');
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator');
 const { getHiddenPotentialForLocation } = require('../helpers/getPotentialForOwnedLanes');
 
@@ -82,7 +82,7 @@ module.exports.addLocation = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
-        const address = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
+        const address = parseLocation(request)
         const lnglat = await getLngLat(address)
 
         const location = await Location.create({
