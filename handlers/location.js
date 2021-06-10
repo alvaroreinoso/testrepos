@@ -8,7 +8,6 @@ const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator');
 const { getHiddenPotentialForLocation } = require('../helpers/getPotentialForOwnedLanes');
 
 module.exports.getLocationById = async (event, context) => {
-
     if (event.source === 'serverless-plugin-warmup') {
         console.log('WarmUp - Lambda is warm!');
         return 'Lambda is warm!';
@@ -31,17 +30,15 @@ module.exports.getLocationById = async (event, context) => {
                 id: locationId,
                 brokerageId: user.brokerageId
             },
-            include: [
-                {
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner,
+            include:
+            {
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: Customer,
+                    required: true
                 }]
+            }
         })
 
         if (location === null) {
@@ -51,34 +48,10 @@ module.exports.getLocationById = async (event, context) => {
             }
         }
 
-        const lanes = await location.getLanes()
-
-        if (lanes.length != 0) {
-
-            const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-
-            const loadsPerMonth = await lanes.reduce((a, b) => ({
-                currentVolume: a.currentVolume + b.currentVolume
-            }))
-
-            location.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
-            location.dataValues.spendPerMonth = totalSpend.spend
-
-            return {
-                body: JSON.stringify(location),
-                headers: corsHeaders,
-                statusCode: 200
-            }
-        } else {
-
-            location.dataValues.totalLoads = 0
-            location.dataValues.spend = 0
-
-            return {
-                body: JSON.stringify(location),
-                headers: corsHeaders,
-                statusCode: 200
-            }
+        return {
+            body: JSON.stringify(location),
+            headers: corsHeaders,
+            statusCode: 200
         }
     }
     catch (err) {

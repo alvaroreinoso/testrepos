@@ -187,46 +187,6 @@ async function seedTeams() {
     console.log('Teams: ', result)
 }
 
-async function seedLanePartners() {
-
-    await client.indices.create({
-        index: 'lane_partner',
-    })
-
-    const partners = await LanePartner.findAll()
-
-    const partnerDocs = await partners.map(async (partner) => {
-
-        const location = await partner.getLocation()
-        const ledger = await location.getLedger()
-        const stateName = stateAbbreviations[location.state]
-
-        const lanePartner = {
-            name: partner.name,
-            address: location.address,
-            id: location.id,
-            city: location.city,
-            state: location.state,
-            fullState: stateName,
-            zipcode: location.zipcode,
-            brokerageId: ledger.brokerageId
-        }
-
-        return lanePartner
-    })
-
-    const result = await client.helpers.bulk({
-        datasource: partnerDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'lane_partner', _id: doc.id },
-            }
-        }
-    })
-
-    console.log('Lane Partners: ', result)
-}
-
 async function seedCustomerLocations() {
 
     await client.indices.create({
@@ -380,7 +340,6 @@ async function setUp() {
     await seedContacts()
     await seedCustomer()
     await seedCustomerLocations()
-    await seedLanePartners()
     await seedLanes()
     await seedTeams()
     await seedUsers()

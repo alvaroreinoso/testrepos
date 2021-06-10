@@ -16,14 +16,6 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     locationId: DataTypes.INTEGER
   }, {
-    hooks: {
-      afterSave: async (lanePartner, options) => {
-        await elastic.saveDocument(lanePartner)
-      },
-      afterDestroy: async (lanePartner, options) => {
-        await elastic.deleteDocument(lanePartner)
-      }
-    },
     sequelize,
     modelName: 'LanePartner',
   });

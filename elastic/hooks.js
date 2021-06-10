@@ -74,7 +74,7 @@ module.exports.saveDocument = async (item) => {
                 const stateName = stateAbbreviations[location.state]
 
                 const customerLocation = {
-                    id: item.id,
+                    id: location.id,
                     customerName: customer.name,
                     address: location.address,
                     city: location.city,
@@ -89,35 +89,6 @@ module.exports.saveDocument = async (item) => {
                     id: item.id,
                     body: {
                         doc: customerLocation,
-                        doc_as_upsert: true
-                    },
-                })
-
-                break;
-            }
-
-            case 'lane_partner': {
-
-                const location = await item.getLocation()
-                const ledger = await location.getLedger()
-                const stateName = stateAbbreviations[location.state]
-
-                const lanePartner = {
-                    id: item.id,
-                    name: item.name,
-                    address: location.address,
-                    city: location.city,
-                    state: location.state,
-                    fullState: stateName,
-                    zipcode: location.zipcode,
-                    brokerageId: ledger.brokerageId
-                }
-
-                await client.update({
-                    index: indexName,
-                    id: item.id,
-                    body: {
-                        doc: lanePartner,
                         doc_as_upsert: true
                     },
                 })
