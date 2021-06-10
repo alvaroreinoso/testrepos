@@ -32,14 +32,14 @@ module.exports.getLocationById = async (event, context) => {
                 brokerageId: user.brokerageId
             },
             include:
-                {
-                    model: CustomerLocation,
-                    required: true,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                }
+            {
+                model: CustomerLocation,
+                required: true,
+                include: [{
+                    model: Customer,
+                    required: true
+                }]
+            }
         })
 
         if (location === null) {
@@ -49,34 +49,10 @@ module.exports.getLocationById = async (event, context) => {
             }
         }
 
-        const lanes = await location.getLanes()
-
-        if (lanes.length != 0) {
-
-            const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-
-            const loadsPerMonth = await lanes.reduce((a, b) => ({
-                currentVolume: a.currentVolume + b.currentVolume
-            }))
-
-            location.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
-            location.dataValues.spendPerMonth = totalSpend.spend
-
-            return {
-                body: JSON.stringify(location),
-                headers: corsHeaders,
-                statusCode: 200
-            }
-        } else {
-
-            location.dataValues.loadsPerMonth = 0
-            location.dataValues.spendPerMonth = 0
-
-            return {
-                body: JSON.stringify(location),
-                headers: corsHeaders,
-                statusCode: 200
-            }
+        return {
+            body: JSON.stringify(location),
+            headers: corsHeaders,
+            statusCode: 200
         }
     }
     catch (err) {
