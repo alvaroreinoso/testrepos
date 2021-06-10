@@ -82,7 +82,7 @@ module.exports.addLocation = async (event, context) => {
 
         const request = JSON.parse(event.body)
 
-        const address = request.address ?? `${request.city}, ${request.state}`
+        const address = `${request.address}, ${request.city}, ${request.state}` ?? `${request.city}, ${request.state}`
         const lnglat = await getLngLat(address)
 
         const location = await Location.create({
