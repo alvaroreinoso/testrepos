@@ -31,17 +31,15 @@ module.exports.getLocationById = async (event, context) => {
                 id: locationId,
                 brokerageId: user.brokerageId
             },
-            include: [
+            include:
                 {
                     model: CustomerLocation,
+                    required: true,
                     include: [{
                         model: Customer,
                         required: true
                     }]
-                },
-                {
-                    model: LanePartner,
-                }]
+                }
         })
 
         if (location === null) {
@@ -71,8 +69,8 @@ module.exports.getLocationById = async (event, context) => {
             }
         } else {
 
-            location.dataValues.totalLoads = 0
-            location.dataValues.spend = 0
+            location.dataValues.loadsPerMonth = 0
+            location.dataValues.spendPerMonth = 0
 
             return {
                 body: JSON.stringify(location),
