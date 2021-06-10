@@ -488,8 +488,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                         cL.dataValues.loadsPerMonth = loadsPerMonth.opportunityVolume
                         cL.dataValues.spend = opportunitySpend.opportunitySpend
 
-                        console.log(opportunitySpend)
-
                         return cL
 
                     } case 'potential': {
@@ -506,7 +504,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
         }))
 
         const sortedLocations = locationsWithStats.sort((a, b) => {
-            return b.spend - a.spend
+            return b.dataValues.spend - a.dataValues.spend
         })
 
         return {
