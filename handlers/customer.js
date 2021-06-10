@@ -360,7 +360,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                 const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
 
                 const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
-        
+
                 const body = {
                     loadsPerMonth: loadsPerMonth.potentialVolume,
                     spend: totalSpend.potentialSpend,
@@ -469,20 +469,42 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                 cL.dataValues.loadsPerMonth = 0
 
                 return cL
+            }
+            else {
+                switch (status) {
+                    case 'owned': {
+                        const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                        const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
-            } else {
-                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-                const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                        cL.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
+                        cL.dataValues.spend = spend.spend
 
-                cL.dataValues.spend = spend.spend
-                cL.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
+                        return cL
+                        
+                    } case 'opportunities': {
+                        const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                        const opportunitySpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
-                return cL
+                        cL.dataValues.loadsPerMonth = loadsPerMonth.opportunityVolume
+                        cL.dataValues.spend = opportunitySpend.opportunitySpend
+
+                        return cL
+
+                    } case 'potential': {
+                        const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+                        const potentialSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                        cL.dataValues.loadsPerMonth = loadsPerMonth.potentialVolume
+                        cL.dataValues.spend = potentialSpend.potentialSpend
+
+                        return cL
+                    }
+                }
             }
         }))
 
         const sortedLocations = locationsWithStats.sort((a, b) => {
-            return b.spend - a.spend
+            return b.dataValues.spend - a.dataValues.spend
         })
 
         return {
