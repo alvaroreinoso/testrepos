@@ -322,6 +322,20 @@ module.exports.getLanesForLocation = async (event, context) => {
 
         const lanes = originLanes.concat(destinationLanes)
 
+        if (lanes.length == 0) {
+            const body = {
+                loadsPerMonth: 0,
+                spend: 0,
+                Lanes: []
+            }
+
+            return {
+                body: JSON.stringify(body),
+                statusCode: 200,
+                headers: corsHeaders
+            }
+        }
+
         switch (status) {
             case 'owned': {
                 const sortedLanes = await lanes.sort((a, b) => b.spend - a.spend)
