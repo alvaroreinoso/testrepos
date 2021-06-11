@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
+const { Customer, TaggedLane, TaggedLocation, CustomerTag, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat, parseLocation } = require('.././helpers/mapbox')
@@ -126,6 +126,23 @@ module.exports.updateCustomer = async (event, context) => {
             await customer.save()
 
         } if (event.httpMethod === 'DELETE') {
+            await TaggedCustomer.destroy({
+                where: {
+                    customerId: customer.id
+                }
+            })
+
+            await CustomerContact.destroy({
+                where: {
+                    customerId: customer.id
+                }
+            })
+
+            await CustomerTag.destroy({
+                where: {
+                    customerId: customer.id
+                }
+            })
 
             await customer.destroy()
         }

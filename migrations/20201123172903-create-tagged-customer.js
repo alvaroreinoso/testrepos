@@ -15,7 +15,7 @@ module.exports = {
           model: 'Customers',
           key: 'id',
           as: 'customerId'
-        }
+        },
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -24,7 +24,7 @@ module.exports = {
           model: 'Users',
           key: 'id',
           as: 'userId'
-        }
+        },
       }
     });
   },
