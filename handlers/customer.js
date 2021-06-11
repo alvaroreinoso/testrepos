@@ -3,7 +3,7 @@ const getCurrentUser = require('.././helpers/user')
 const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
-const { getLngLat } = require('.././helpers/mapbox')
+const { getLngLat, parseLocation } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
 const { getHiddenPotentialForCustomer } = require('../helpers/getPotentialForOwnedLanes')
 
