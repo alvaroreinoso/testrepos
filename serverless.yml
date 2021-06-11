@@ -282,14 +282,6 @@ functions:
             cors: true
 
 # Lane
-  getLanesByUser:
-    handler:
-      ./handlers/lane.getLanesByUser
-    events:
-        - http:
-            path: api/lane/user/{id}
-            method: get
-            cors: true
   getLaneById:
     handler:
       ./handlers/lane.getLaneById
