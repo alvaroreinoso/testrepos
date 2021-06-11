@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
 
       Ledger.hasOne(models.Customer, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Ledger.hasOne(models.User, {
         foreignKey: 'ledgerId'

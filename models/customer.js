@@ -12,22 +12,24 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'brokerageId'
       })
       Customer.hasMany(models.CustomerLocation, {
-        foreignKey: 'customerId'
+        foreignKey: 'customerId',
+        onDelete: 'cascade',
+        hooks: true
       }),
       Customer.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
       Customer.belongsToMany(models.User, {
         through: 'TaggedCustomer',
-        foreignKey: 'customerId'
+        foreignKey: 'customerId',
       })
       Customer.belongsToMany(models.Contact, {
         through: 'CustomerContact',
-        foreignKey: 'customerId'
+        foreignKey: 'customerId',
       })
       Customer.belongsToMany(models.Tag, {
         through: 'CustomerTag',
-        foreignKey: 'customerId'
+        foreignKey: 'customerId',
       })
     }
   };
@@ -58,6 +60,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       afterDestroy: async (customer, options) => {
         await elastic.deleteDocument(customer)
+
+        const ledger = await customer.getLedger()
+        await ledger.destroy()
       }
     },
     sequelize,

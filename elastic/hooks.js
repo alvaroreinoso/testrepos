@@ -261,10 +261,22 @@ module.exports.deleteDocument = async (item) => {
     try {
         const indexName = await getIndex(item)
 
-        await client.delete({
-            index: indexName,
-            id: item.id
-        })
+        if (indexName === 'customer_location') {
+            const id = item.locationId
+
+            await client.delete({
+                index: indexName,
+                id: id
+            })
+
+            return
+        }
+        else {
+            await client.delete({
+                index: indexName,
+                id: item.id
+            })
+        }
     } catch (err) {
 
     }

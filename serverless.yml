@@ -232,6 +232,10 @@ functions:
             path: api/customer/{customerId}
             method: put
             cors: true
+        - http:
+            path: api/customer/{customerId}
+            method: delete
+            cors: true
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
