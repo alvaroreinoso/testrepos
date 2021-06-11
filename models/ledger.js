@@ -13,8 +13,6 @@ module.exports = (sequelize, DataTypes) => {
 
       Ledger.hasOne(models.Customer, {
         foreignKey: 'ledgerId',
-        onDelete: 'cascade',
-        hooks: true
       })
       Ledger.hasOne(models.User, {
         foreignKey: 'ledgerId'
