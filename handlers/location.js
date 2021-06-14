@@ -6,6 +6,7 @@ const corsHeaders = require('.././helpers/cors');
 const { getLngLat, parseLocation } = require('../helpers/mapbox');
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator');
 const { getHiddenPotentialForLocation } = require('../helpers/getPotentialForOwnedLanes');
+const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus');
 
 module.exports.getLocationById = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -214,15 +215,15 @@ module.exports.getLanesForLocation = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
-        const statusOperator = await getStatusQueryOperator(status)
+        const laneWhereOptions = getLaneWhereOptionsByStatus(status)
 
         const originLanes = await Lane.findAll({
-            where: {
-                [Op.not]: {
-                    owned: statusOperator
+            where: [
+                laneWhereOptions,
+                {
+                    originLocationId: locationId
                 },
-                originLocationId: locationId
-            },
+            ],
             include: [{
                 model: Location,
                 as: 'origin',
@@ -255,15 +256,18 @@ module.exports.getLanesForLocation = async (event, context) => {
         const originLaneIds = originLanes.map(oL => oL.id)
 
         const destinationLanes = await Lane.findAll({
-            where: {
-                [Op.not]: {
-                    owned: statusOperator
+            where: [
+                laneWhereOptions,
+                {
+                    [Op.not]: {
+                        id: originLaneIds
+                    },
                 },
-                [Op.not]: {
-                    id: originLaneIds
-                },
-                destinationLocationId: locationId
-            },
+                {
+                    destinationLocationId: locationId
+                }
+            ],
+         
             include: [{
                 model: Location,
                 as: 'origin',

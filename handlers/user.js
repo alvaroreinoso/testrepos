@@ -6,7 +6,8 @@ const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend'
 const corsHeaders = require('.././helpers/cors')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
 const { getHiddenPotentialForUser } = require('../helpers/getPotentialForOwnedLanes')
-const { Op } = require('sequelize')
+const { Op } = require('sequelize');
+const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus');
 
 module.exports.getUser = async (event, context) => {
 
@@ -562,14 +563,10 @@ module.exports.getTopLanesForUser = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
-        const statusOperator = await getStatusQueryOperator(status)
+        const laneWhereOptions = getLaneWhereOptionsByStatus(status)
 
         const lanes = await targetUser.getLanes({
-            where: {
-                [Op.not]: {
-                    owned: statusOperator
-                }
-            },
+            where: laneWhereOptions,
             include: [{
                 model: Location,
                 as: 'origin',
