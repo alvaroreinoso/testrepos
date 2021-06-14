@@ -1,14 +1,14 @@
 module.exports.showLaneOnMap = async(lane, status) => {
-	if (lane.owned === true && status === 'owned') {
+	if (lane.currentVolume > 0 && status === 'owned') {
 		return true
 
-	} if (lane.owned === false && status === 'owned') {
+	} if (lane.currentVolume <= 0 && status === 'owned') {
 		return false
 
-	} if (lane.owned === true && status === 'opportunities') {
+	} if (lane.currentVolume > 0 && status === 'opportunities') {
 		return false
 
-	} if (lane.owned === false && status === 'opportunities') {
+	} if (lane.currentVolume === 0 && status === 'opportunities') {
 		return true
 
 	} if (status === 'potential') {
