@@ -5,7 +5,8 @@ const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat, parseLocation } = require('.././helpers/mapbox')
 const { getStatusQueryOperator } = require('../helpers/getStatusQueryOperator')
-const { getHiddenPotentialForCustomer } = require('../helpers/getPotentialForOwnedLanes')
+const { getHiddenPotentialForCustomer } = require('../helpers/getPotentialForOwnedLanes');
+const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus');
 
 module.exports.addCustomer = async (event, context) => {
     if (event.source === 'serverless-plugin-warmup') {
@@ -213,14 +214,13 @@ module.exports.getLanesForCustomer = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
+        // WILL NO LONGER NEED statusOperator
         const statusOperator = await getStatusQueryOperator(status)
 
+        const laneWhereOptions = getLaneWhereOptionsByStatus(status)
+
         const originLanes = await Lane.findAll({
-            where: {
-                [Op.not]: [{
-                    owned: statusOperator
-                }]
-            },
+            where: laneWhereOptions,
             include: [{
                 model: Location,
                 as: 'origin',
@@ -262,6 +262,7 @@ module.exports.getLanesForCustomer = async (event, context) => {
                         [Op.not]: originLaneIds
                     }
                 }, {
+                    // No longer going to be using owned
                     owned: {
                         [Op.not]: statusOperator
                     }
