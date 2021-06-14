@@ -214,8 +214,6 @@ module.exports.getLanesForCustomer = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
-        // WILL NO LONGER NEED statusOperator
-        const statusOperator = await getStatusQueryOperator(status)
 
         const laneWhereOptions = getLaneWhereOptionsByStatus(status)
 
@@ -261,12 +259,9 @@ module.exports.getLanesForCustomer = async (event, context) => {
                     id: {
                         [Op.not]: originLaneIds
                     }
-                }, {
-                    // No longer going to be using owned
-                    owned: {
-                        [Op.not]: statusOperator
-                    }
-                }]
+                },
+                    laneWhereOptions
+                ]
             },
             include: [{
                 model: Location,

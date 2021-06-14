@@ -8,13 +8,17 @@ module.exports.getLaneWhereOptionsByStatus = status => {
         currentVolume: {
           [Op.gt]: 0
         }
-        
       },
       'opportunities':   {
-       // Stuff
+        opportunityVolume: {
+          [Op.gte]: 0
+        },
+        currentVolume: {
+          [Op.eq]: 0
+        }
       },
       'potential':  {
-        // Return ALL Lanes
+        // Return all lanes
       }
     }
 
