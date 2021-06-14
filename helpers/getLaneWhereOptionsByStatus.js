@@ -25,7 +25,7 @@ module.exports.getLaneWhereOptionsByStatus = status => {
     if (options[status] !== undefined && options[status] !== null) {
       return options[status]
     } else {
-      throw new Error ('No status or incorrect status passed into getWhereOptionsByStatus')
+      throw new Error ('No status or incorrect status passed into getLaneWhereOptionsByStatus')
     }
   }
 
