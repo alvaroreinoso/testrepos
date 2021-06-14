@@ -89,9 +89,6 @@ module.exports.getLaneById = async (event, context) => {
             }
         }
 
-        // Do single lanes need the status param?
-        // Probably
-        // If we're doing all the checks for them, might as well.
         const laneId = event.pathParameters.laneId
         const status = event.queryStringParameters.status
 
