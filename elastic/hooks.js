@@ -86,7 +86,7 @@ module.exports.saveDocument = async (item) => {
 
                 await client.update({
                     index: indexName,
-                    id: item.id,
+                    id: location.id,
                     body: {
                         doc: customerLocation,
                         doc_as_upsert: true
@@ -262,9 +262,11 @@ module.exports.deleteDocument = async (item) => {
         const indexName = await getIndex(item)
 
         if (indexName === 'customer_location') {
-            const id = item.locationId
 
-            console.log('deleting custLoc')
+            console.log('customerLocation: ', item.id)
+
+            console.log('location :,', item.locationId)
+            const id = item.locationId
 
             await client.delete({
                 index: indexName,
@@ -280,6 +282,8 @@ module.exports.deleteDocument = async (item) => {
             })
         }
     } catch (err) {
+
+        console.log(err)
 
     }
 }
