@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
-const { sequelize } = require("../models");
+const Sequelize = require("sequelize");
 
-module.exports.getLaneWhereOptionsByStatus = status => {
+module.exports.getLaneWhereOptionsByStatus = (status) => {
 
   function getOptions(status) {
     const options = {
@@ -10,13 +10,15 @@ module.exports.getLaneWhereOptionsByStatus = status => {
           [Op.gt]: 0
         }
       },
-      'opportunities':   {
-        opportunityVolume: {
-          [Op.gte]: 0,
-        },
-        currentVolume: {
-          [Op.ne]: sequelize.col('potentialVolume') // currentVolume equals potentialVolume, then the lane is fully owned, with 0 opportunity 
-        }
+      'opportunities': {
+        [Op.and]:[{
+          opportunityVolume: {
+            [Op.gte]: 0,
+          },
+          currentVolume: {
+            [Op.ne]: Sequelize.col('potentialVolume') // currentVolume equals potentialVolume, then the lane is fully owned, with 0 opportunity 
+          }
+        }]
       },
       'potential':  {
         // Return all lanes
