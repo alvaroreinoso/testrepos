@@ -424,7 +424,7 @@ module.exports.updateLane = async (event, context) => {
         // if the user has updated the opportunity, also update the totalPotential
         if(lane.opportunityVolume !== request?.opportunityVolume) {
             lane.opportunityVolume = request.opportunityVolume
-            lane.potentialVolume = lane.opportunityVolume + lane.currentVolume
+            lane.potentialVolume = +lane.opportunityVolume + +lane.currentVolume
 
             await lane.save()
     
