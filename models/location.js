@@ -11,16 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Location.hasOne(models.CustomerLocation, {
-        foreignKey: 'locationId'
+        foreignKey: 'locationId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Location.hasOne(models.LanePartner, {
         foreignKey: 'locationId'
       }),
       Location.hasMany(models.Lane, {
         foreignKey: 'originLocationId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Location.belongsToMany(models.User, {
         through: 'TaggedLocation',

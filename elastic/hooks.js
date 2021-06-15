@@ -264,6 +264,8 @@ module.exports.deleteDocument = async (item) => {
         if (indexName === 'customer_location') {
             const id = item.locationId
 
+            console.log('deleting custLoc')
+
             await client.delete({
                 index: indexName,
                 id: id

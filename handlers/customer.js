@@ -126,25 +126,8 @@ module.exports.updateCustomer = async (event, context) => {
             await customer.save()
 
         } if (event.httpMethod === 'DELETE') {
-            await TaggedCustomer.destroy({
-                where: {
-                    customerId: customer.id
-                }
-            })
-
-            await CustomerContact.destroy({
-                where: {
-                    customerId: customer.id
-                }
-            })
-
-            await CustomerTag.destroy({
-                where: {
-                    customerId: customer.id
-                }
-            })
-
             await customer.destroy()
+            
         }
 
         return {

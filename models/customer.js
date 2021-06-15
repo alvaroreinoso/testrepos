@@ -6,7 +6,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Customer extends Model {
     static associate(models) {
-      
+
       Customer.belongsTo(models.Brokerage, {
         foreignKey: 'brokerageId'
       })
@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'cascade',
         hooks: true
       }),
-      Customer.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId',
-      })
+        Customer.belongsTo(models.Ledger, {
+          foreignKey: 'ledgerId',
+        })
       Customer.belongsToMany(models.User, {
         through: 'TaggedCustomer',
         foreignKey: 'customerId',
@@ -57,15 +57,34 @@ module.exports = (sequelize, DataTypes) => {
       afterSave: async (customer, options) => {
         await elastic.saveDocument(customer)
       },
-      afterDestroy: async (customer, options) => {
-        await elastic.deleteDocument(customer)
+      beforeDestroy: async (customer, options) => {
+        await sequelize.models.TaggedCustomer.destroy({
+          where: {
+            customerId: customer.id
+          }
+        })
 
-        const ledger = await customer.getLedger()
-        await ledger.destroy()
-      }
+        await sequelize.models.CustomerContact.destroy({
+          where: {
+            customerId: customer.id
+          }
+        })
+
+        await sequelize.models.CustomerTag.destroy({
+          where: {
+            customerId: customer.id
+          }
+        })
     },
+    afterDestroy: async (customer, options) => {
+      await elastic.deleteDocument(customer)
+
+      const ledger = await customer.getLedger()
+      await ledger.destroy()
+    }
+  },
     sequelize,
     modelName: 'Customer',
   });
-  return Customer;
+return Customer;
 };

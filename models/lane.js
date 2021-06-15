@@ -89,6 +89,25 @@ module.exports = (sequelize, DataTypes) => {
       afterSave: async (lane, options) => {
         await elastic.saveDocument(lane)
       },
+      beforeDestroy: async (lane, options) => {
+        await sequelize.models.TaggedLane.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+
+        await sequelize.models.LaneContact.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+
+        await sequelize.models.LaneTag.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+    },
       afterDestroy: async (lane, options) => {
         await elastic.deleteDocument(lane)
       }
