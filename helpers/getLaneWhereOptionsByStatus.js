@@ -11,14 +11,28 @@ module.exports.getLaneWhereOptionsByStatus = (status) => {
         }
       },
       'opportunities': {
-        [Op.and]:[{
-          opportunityVolume: {
-            [Op.gte]: 0,
+        [Op.and]:[
+          {
+            opportunityVolume: {
+              [Op.gte]: 0,
+            }
           },
-          currentVolume: {
-            [Op.ne]: Sequelize.col('potentialVolume') // currentVolume equals potentialVolume, then the lane is fully owned, with 0 opportunity 
+          {
+            currentVolume: {
+                // currentVolume equals potentialVolume, then the lane is fully owned, with 0 opportunity 
+                // UNLESS They're both 0, then get those too, because they've just been added
+                [Op.or]: {
+                  [Op.ne]: {
+                    [Op.col]: 'Lane.potentialVolume'
+                  },
+                  [Op.and]: {
+                    [Op.col]: 'Lane.potentialVolume',
+                    [Op.eq]: 0
+                  },
+                }
+            }
           }
-        }]
+        ]
       },
       'potential':  {
         // Return all lanes
@@ -32,5 +46,5 @@ module.exports.getLaneWhereOptionsByStatus = (status) => {
     }
   }
 
-  return getOptions(status);
+   return getOptions(status);
 }
