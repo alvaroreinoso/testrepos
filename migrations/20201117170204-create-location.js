@@ -115,7 +115,7 @@ module.exports = {
           model: 'Locations',
           key: 'id',
           as: 'originLocationId'
-        }
+        },
     })
     await queryInterface.changeColumn('Lanes', 'destinationLocationId', {
       type: Sequelize.INTEGER,

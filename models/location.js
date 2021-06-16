@@ -20,13 +20,13 @@ module.exports = (sequelize, DataTypes) => {
       }),
       Location.hasMany(models.Lane, {
         foreignKey: 'originLocationId',
-        onDelete: 'cascade',
-        hooks: true
+        // onDelete: 'cascade',
+        // hooks: true
       })
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
-        onDelete: 'cascade',
-        hooks: true
+        // onDelete: 'cascade',
+        // hooks: true
       })
       Location.belongsToMany(models.User, {
         through: 'TaggedLocation',
