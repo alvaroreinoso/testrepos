@@ -1,5 +1,4 @@
 const { Op } = require("sequelize");
-const Sequelize = require("sequelize");
 
 module.exports.getLaneWhereOptionsByStatus = (status) => {
 
