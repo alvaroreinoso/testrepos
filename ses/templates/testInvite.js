@@ -3,7 +3,7 @@ var AES = require("crypto-js/aes");
 
 module.exports = async (user, brokerageName) => {
     const encrypted = AES.encrypt(user.email, "Josh Lyles").toString()
-    const encoded = encrypted.replace(/\+/g, "xMl3Jk").replace(/\//g, "Por21Ld")
+    const encoded = encrypted.replace(/\+/g, 'aFaFa').replace(/\//g, 'bFbFb').replace(/=+$/, 'cFcFc')
 
     const data = {
         email: user.email,
