@@ -23,14 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       Lane.belongsTo(models.Location, {
         foreignKey: 'originLocationId',
         as: 'origin',
-        onDelete: 'cascade',
-        hooks: true
       })
       Lane.belongsTo(models.Location, {
         foreignKey: 'destinationLocationId',
         as: 'destination',
-        onDelete: 'cascade',
-        hooks: true
       })
       Lane.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',

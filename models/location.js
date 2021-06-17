@@ -12,21 +12,15 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Location.hasOne(models.CustomerLocation, {
         foreignKey: 'locationId',
-        // onDelete: 'cascade',
-        // hooks: true
       })
       Location.hasOne(models.LanePartner, {
         foreignKey: 'locationId'
       }),
       Location.hasMany(models.Lane, {
         foreignKey: 'originLocationId',
-        // onDelete: 'cascade',
-        // hooks: true
       })
       Location.hasMany(models.Lane, {
         foreignKey: 'destinationLocationId',
-        // onDelete: 'cascade',
-        // hooks: true
       })
       Location.belongsToMany(models.User, {
         through: 'TaggedLocation',
@@ -81,6 +75,18 @@ module.exports = (sequelize, DataTypes) => {
         })
       },
       beforeDestroy: async(location, options) => {
+        await sequelize.models.Lane.destroy({
+          where: {
+            originLocationId: location.id
+          },
+          individualHooks: true
+        })
+        await sequelize.models.Lane.destroy({
+          where: {
+            destinationLocationId: location.id
+          },
+          individualHooks: true
+        })
         await sequelize.models.CustomerLocation.destroy({
           where: {
             locationId: location.id
