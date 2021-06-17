@@ -1,11 +1,14 @@
 const AWS_SES = require('../client')
+var AES = require("crypto-js/aes");
 
 module.exports = async (user, brokerageName) => {
+    const encrypted = AES.encrypt(user.email, "Josh Lyles").toString()
+    const encoded = encrypted.replace(/\+/g, "xMl3Jk").replace(/\//g, "Por21Ld")
 
     const data = {
         email: user.email,
         brokerageName: brokerageName,
-        userId: user.id
+        hashedEmail: encoded
     }
 
     const params = {
