@@ -1,6 +1,6 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
-const { Customer, TaggedLane, TaggedLocation, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
+const { Customer, TaggedLane, TaggedLocation, CustomerTag, CustomerContact, CustomerLocation, Team, TaggedCustomer, LanePartner, Location, Lane, User, sequelize } = require('.././models')
 const { Op } = require("sequelize");
 const corsHeaders = require('.././helpers/cors')
 const { getLngLat, parseLocation } = require('.././helpers/mapbox')
@@ -82,6 +82,7 @@ module.exports.updateCustomer = async (event, context) => {
         return 'Lambda is warm!';
     }
 
+
     try {
         const user = await getCurrentUser(event.headers.Authorization)
 
@@ -109,25 +110,32 @@ module.exports.updateCustomer = async (event, context) => {
             }
         }
 
-        customer.bio = request.bio
-        customer.email = request.email
-        customer.displayName = request.displayName
-        customer.phone = request.phone
-        customer.logo = request.logo
-        customer.estimatedVolume = request.estimatedVolume
-        customer.estimatedSpend = request.estimatedSpend
-        customer.requirements = request.requirements
-        customer.painPoints = request.painPoints
-        customer.competitionAnalysis = request.competitionAnalysis
+        if (event.httpMethod === 'PUT') {
 
-        await customer.save()
+            customer.bio = request.bio
+            customer.email = request.email
+            customer.displayName = request.displayName
+            customer.phone = request.phone
+            customer.logo = request.logo
+            customer.estimatedVolume = request.estimatedVolume
+            customer.estimatedSpend = request.estimatedSpend
+            customer.requirements = request.requirements
+            customer.painPoints = request.painPoints
+            customer.competitionAnalysis = request.competitionAnalysis
+
+            await customer.save()
+
+        } if (event.httpMethod === 'DELETE') {
+            await customer.destroy()
+            
+        }
 
         return {
             statusCode: 204,
             headers: corsHeaders
         }
-
     } catch (err) {
+        console.log(err)
         return {
             statusCode: 500,
             headers: corsHeaders
@@ -476,7 +484,7 @@ module.exports.getLocationsForCustomer = async (event, context) => {
                         cL.dataValues.spend = spend.spend
 
                         return cL
-                        
+
                     } case 'opportunities': {
                         const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
                         const opportunitySpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))

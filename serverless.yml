@@ -232,6 +232,10 @@ functions:
             path: api/customer/{customerId}
             method: put
             cors: true
+        - http:
+            path: api/customer/{customerId}
+            method: delete
+            cors: true
   getCustomer:
     handler:
       ./handlers/customer.getCustomer
@@ -282,14 +286,6 @@ functions:
             cors: true
 
 # Lane
-  getLanesByUser:
-    handler:
-      ./handlers/lane.getLanesByUser
-    events:
-        - http:
-            path: api/lane/user/{id}
-            method: get
-            cors: true
   getLaneById:
     handler:
       ./handlers/lane.getLaneById

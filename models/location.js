@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Location.hasOne(models.CustomerLocation, {
-        foreignKey: 'locationId'
+        foreignKey: 'locationId',
       })
       Location.hasOne(models.LanePartner, {
         foreignKey: 'locationId'
@@ -74,6 +74,43 @@ module.exports = (sequelize, DataTypes) => {
           brokerageId: location.brokerageId
         })
       },
+      beforeDestroy: async(location, options) => {
+        await sequelize.models.Lane.destroy({
+          where: {
+            originLocationId: location.id
+          },
+          individualHooks: true
+        })
+        await sequelize.models.Lane.destroy({
+          where: {
+            destinationLocationId: location.id
+          },
+          individualHooks: true
+        })
+        await sequelize.models.CustomerLocation.destroy({
+          where: {
+            locationId: location.id
+          }
+        })
+
+        await sequelize.models.TaggedLocation.destroy({
+          where: {
+            locationId: location.id
+          }
+        })
+
+        await sequelize.models.LocationContact.destroy({
+          where: {
+            locationId: location.id
+          }
+        })
+
+        await sequelize.models.LocationTag.destroy({
+          where: {
+            locationId: location.id
+          }
+        })
+      }
     }
   });
   return Location;

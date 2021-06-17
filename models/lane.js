@@ -11,18 +11,22 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'laneId'
       })
       Lane.hasMany(models.Carrier, {
-        foreignKey: 'laneId'
+        foreignKey: 'laneId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Lane.hasMany(models.MarketFeedback, {
-        foreignKey: 'laneId'
+        foreignKey: 'laneId',
+        onDelete: 'cascade',
+        hooks: true
       })
       Lane.belongsTo(models.Location, {
         foreignKey: 'originLocationId',
-        as: 'origin'
+        as: 'origin',
       })
       Lane.belongsTo(models.Location, {
         foreignKey: 'destinationLocationId',
-        as: 'destination'
+        as: 'destination',
       })
       Lane.belongsTo(models.Ledger, {
         foreignKey: 'ledgerId',
@@ -89,6 +93,25 @@ module.exports = (sequelize, DataTypes) => {
       afterSave: async (lane, options) => {
         await elastic.saveDocument(lane)
       },
+      beforeDestroy: async (lane, options) => {
+        await sequelize.models.TaggedLane.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+
+        await sequelize.models.LaneContact.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+
+        await sequelize.models.LaneTag.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
+    },
       afterDestroy: async (lane, options) => {
         await elastic.deleteDocument(lane)
       }

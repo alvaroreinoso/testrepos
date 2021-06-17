@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'customerId'
       }),
       CustomerLocation.belongsTo(models.Location, {
-        foreignKey: 'locationId'
+        foreignKey: 'locationId',
+        onDelete: 'cascade',
+        hooks: true
       })
     }
   };
