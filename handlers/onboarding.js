@@ -163,7 +163,7 @@ module.exports.acceptInvite = async (event, context) => {
             }
         })
 
-        if(!user) {
+        if(!user || user.username) {
             throw new Error(' ')
         }
 
