@@ -99,6 +99,11 @@ module.exports = (sequelize, DataTypes) => {
             laneId: lane.id
           }
         })
+        await sequelize.models.MarketFeedback.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
 
         await sequelize.models.LaneContact.destroy({
           where: {
