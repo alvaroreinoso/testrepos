@@ -7,7 +7,6 @@ module.exports = async (user, brokerageName) => {
 
     const data = {
         email: user.email,
-        brokerageName: brokerageName,
         hashedEmail: encoded
     }
 
