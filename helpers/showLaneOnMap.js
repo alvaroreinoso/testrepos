@@ -8,8 +8,7 @@ module.exports.showLaneOnMap = async(lane, status) => {
 				return true
 			} else return false
 	}
-
-	// Make this logic match getLaneWhereOptionsByStatus
+	
 	if (status === 'opportunities') {
 		if (lane.currentVolume > 0 && lane.opportunityVolume === 0) {
 			return false
