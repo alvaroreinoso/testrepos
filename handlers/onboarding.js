@@ -147,6 +147,49 @@ module.exports.inviteUser = async (event, context) => {
     }
 }
 
+module.exports.acceptInvite = async (event, context) => {
+
+    if (event.source === 'serverless-plugin-warmup') {
+        console.log('WarmUp - Lambda is warm!');
+        return 'Lambda is warm!';
+    }
+
+    try {
+        const request = JSON.parse(event.body)
+        
+        const user = await User.findOne({
+            where: {
+                email: request.email
+            }
+        })
+
+        if(!user) {
+            throw new Error(' ')
+        }
+
+        user.firstName = request.firstName
+        user.lastName = request.lastName
+        user.username = request.username
+        user.confirmed = true
+
+        await user.save()
+        
+
+        return {
+            headers: corsHeaders,
+            statusCode: 204
+        }
+
+    } catch (err) {
+        console.log(err)
+        return {
+            headers: corsHeaders,
+            statusCode: 500,
+            body: JSON.stringify(err)
+        }
+    }
+}
+
 module.exports.getBrokerageByUUID = async (event, context) => {
 
     if (event.source === 'serverless-plugin-warmup') {
