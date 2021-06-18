@@ -132,24 +132,19 @@ module.exports.getLaneById = async (event, context) => {
                 headers: corsHeaders
             }
         }
-
+        
         const showOnMap = await showLaneOnMap(lane, status)
 
         if (showOnMap === false) {
             lane.dataValues.routeGeometry = null
-
-            return {
-                body: JSON.stringify(lane),
-                statusCode: 200,
-                headers: corsHeaders
-            }
-        } else if (showOnMap === true) {
-            return {
-                body: JSON.stringify(lane),
-                statusCode: 200,
-                headers: corsHeaders
-            }
         }
+
+        return {
+            body: JSON.stringify(lane),
+            statusCode: 200,
+            headers: corsHeaders
+        }
+    
     } catch (err) {
         console.log(err)
         return {
