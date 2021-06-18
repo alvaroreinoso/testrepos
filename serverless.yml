@@ -640,6 +640,20 @@ functions:
             path: api/onboarding/user
             method: post
             cors: true
+  acceptInvite:
+    handler:
+      ./handlers/onboarding.acceptInvite
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
+      subnetIds:                                                                                                                                                                       
+        - subnet-0969f48a6ba21d4da # private
+    timeout: 20
+    events:
+        - http:
+            path: api/account
+            method: put
+            cors: true        
   getBrokerageByUUID:
     handler:
       ./handlers/onboarding.getBrokerageByUUID
