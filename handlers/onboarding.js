@@ -1,7 +1,7 @@
 'use strict';
 const getCurrentUser = require('.././helpers/user')
 // const sendRequestAccountEmail = require('../ses/templates/requestAccount')
-const sendCreateAccountEmail = require('../ses/templates/createAccount')
+// const sendCreateAccountEmail = require('../ses/templates/createAccount')
 const emailUserInvite = require('../ses/templates/emailUserInvite')
 const { Team, User, Customer, Lane, Brokerage, Ledger, Location } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
@@ -18,33 +18,6 @@ module.exports.requestAccount = async (event, context) => {
     try {
         const request = JSON.parse(event.body)
         const uuid = await uuidv4()
-
-        // if (event.queryStringParameters.resend == 'true') {
-
-        //     const user = await User.findOne({
-        //         where: {
-        //             email: request.email
-        //         }
-        //     })
-
-        //     const brokerage = await Brokerage.findOne({
-        //         where: {
-        //             id: user.brokerageId
-        //         }
-        //     })
-
-        //     await sendCreateAccountEmail(user, brokerage)
-        // }
-
-        // else {
-
-            // const tms = request.tms
-
-            // if (tms === undefined) {
-            //     await sendRequestAccountEmail(request)
-
-            // } 
-            // else {
 
                 const brokerage = await Brokerage.create({
                     pin: uuid,
@@ -75,7 +48,7 @@ module.exports.requestAccount = async (event, context) => {
                     // phoneExt: request.ext
                 })
 
-                await sendCreateAccountEmail(user)
+                // await sendCreateAccountEmail(user)
             // }
         // }
 
