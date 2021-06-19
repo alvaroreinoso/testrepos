@@ -4,6 +4,7 @@ var AES = require("crypto-js/aes");
 module.exports = async (user, brokerageName) => {
     const encrypted = AES.encrypt(user.email, "Josh Lyles").toString()
     const encoded = encrypted.replace(/\+/g, 'aFaFa').replace(/\//g, 'bFbFb').replace(/=+$/, 'cFcFc')
+    const env = process.env.NODE_ENV
 
     const data = {
         email: user.email,
@@ -11,20 +12,29 @@ module.exports = async (user, brokerageName) => {
     }
 
     const params = {
-        Source: 'support@terralanes.com',
-        Template: "TestInvite",
-        Destination: {
-            ToAddresses: [
-                user.email
-            ]
-        },
-        TemplateData: JSON.stringify(data)
+      Source: 'support@terralanes.com',
+      Template: "TestInvite",
+      Destination: {
+          ToAddresses: [
+              user.email
+          ]
+      },
+      TemplateData: JSON.stringify(data)
+  }
+    switch(env) {
+      case 'staging':
+        params.Template = 'StagingInvite'
+        break
+      case 'production':
+        params.Template = 'ProdInvite'
+        break
+      default:
+        break
     }
 
     function sendEmail(params) {
         return new Promise((r, x) => {
           AWS_SES.sendTemplatedEmail(params, (err, data) => {
-            console.log('inside test email function')
             if (err) {
               x(err)
             } else {

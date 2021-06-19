@@ -2,7 +2,7 @@
 const getCurrentUser = require('.././helpers/user')
 // const sendRequestAccountEmail = require('../ses/templates/requestAccount')
 const sendCreateAccountEmail = require('../ses/templates/createAccount')
-const testInvite = require('../ses/templates/testInvite')
+const emailUserInvite = require('../ses/templates/emailUserInvite')
 const { Team, User, Customer, Lane, Brokerage, Ledger, Location } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
 const { Op } = require("sequelize");
@@ -132,7 +132,7 @@ module.exports.inviteUser = async (event, context) => {
             }
         })
 
-        await testInvite(newUser, brokerage.name)
+        await emailUserInvite(newUser, brokerage.name)
 
         return {
             statusCode: 204,
