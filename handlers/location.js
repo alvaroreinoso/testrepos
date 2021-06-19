@@ -333,14 +333,14 @@ module.exports.getLanesForLocation = async (event, context) => {
                     headers: corsHeaders
                 }
             } case 'opportunities': {
-                const ownedLanePotential = await getHiddenPotentialForLocation(location)
+                // const ownedLanePotential = await getHiddenPotentialForLocation(location)
 
                 const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
                 const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
                 const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
 
-                const totalOpportunitySpend = totalSpend.opportunitySpend + ownedLanePotential
+                const totalOpportunitySpend = totalSpend.opportunitySpend
 
                 const body = {
                     loadsPerMonth: loadsPerMonth.opportunityVolume,

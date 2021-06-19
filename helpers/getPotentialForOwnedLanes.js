@@ -1,5 +1,8 @@
 const { Customer, CustomerLocation, Lane, LanePartner, Location } = require('.././models');
 const { Op } = require("sequelize");
+// To Jerry - I think this can all be deleted; as it's no longer in use.
+// It is screwing up the numbers for spend on Opportunities. Want your input before 
+// deleting - Sam (from Sam (July 19, 2021)
 
 module.exports.getHiddenPotentialForCustomer = async(customer) => {
     const customerId = customer.id
