@@ -333,9 +333,6 @@ module.exports.getLanesForLocation = async (event, context) => {
                     headers: corsHeaders
                 }
             } case 'opportunities': {
-                // Note to Jerry, from Sam (July 19, 2021) - 
-                // No longer getting hidden hidden potential for a location as it throws off the opportunities default tag
-                // calculation. We can probably get rid of this function, if it's really no longer going to be in use.
                 // const ownedLanePotential = await getHiddenPotentialForLocation(location)
 
                 const sortedLanes = await lanes.sort((a, b) => b.opportunitySpend - a.opportunitySpend)
