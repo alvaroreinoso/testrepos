@@ -317,6 +317,10 @@ functions:
             path: api/lane/{laneId}
             method: put
             cors: true
+        - http:
+            path: api/lane/{laneId}
+            method: delete
+            cors: true
   getMarketFeedback:
     handler:
       ./handlers/lane.getMarketFeedback
