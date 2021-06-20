@@ -489,6 +489,10 @@ functions:
             path: api/location/{locationId}
             method: put
             cors: true
+        - http:
+            path: api/location/{locationId}
+            method: delete
+            cors: true
   getLanesForLocation:
     handler:
       ./handlers/location.getLanesForLocation
