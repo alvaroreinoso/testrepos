@@ -127,7 +127,7 @@ module.exports.updateCustomer = async (event, context) => {
 
         } if (event.httpMethod === 'DELETE') {
             await customer.destroy()
-            
+
         }
 
         return {
@@ -421,7 +421,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
         }
 
         const status = event.queryStringParameters.status
-        const statusOperator = await getStatusQueryOperator(status)
 
         const customerLocations = await CustomerLocation.findAll({
             where: {
@@ -430,11 +429,6 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             include: {
                 model: Location,
                 required: true,
-                where: {
-                    [Op.not]: {
-                        owned: statusOperator
-                    }
-                }
             }
         })
 
@@ -442,72 +436,88 @@ module.exports.getLocationsForCustomer = async (event, context) => {
             const lanesAsOrigin = await Lane.findAll({
                 where: {
                     originLocationId: cL.Location.id,
-                    [Op.not]: {
-                        owned: statusOperator
-                    }
                 }
             })
 
             const lanesAsDestination = await Lane.findAll({
                 where: {
                     destinationLocationId: cL.Location.id,
-                    [Op.not]: {
-                        owned: statusOperator
-                    }
                 },
-                include: [{
-                    model: Location,
-                    as: 'origin',
-                    required: true,
-                    include: [{
-                        model: LanePartner,
-                        required: true
-                    }]
-                }]
             })
 
             const lanes = lanesAsOrigin.concat(lanesAsDestination)
 
-            if (lanes.length == 0) {
-                cL.dataValues.spend = 0
-                cL.dataValues.loadsPerMonth = 0
+            switch (status) {
+                case 'owned': {
+                    const ownedLanes = lanes.filter(lane => lane.currentVolume != 0)
 
-                return cL
-            }
-            else {
-                switch (status) {
-                    case 'owned': {
-                        const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
-                        const spend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                    if (ownedLanes.length == 0) {
+                        return null
+
+                    } else {
+
+                        const loadsPerMonth = await ownedLanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+                        const spend = await ownedLanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
 
                         cL.dataValues.loadsPerMonth = loadsPerMonth.currentVolume
                         cL.dataValues.spend = spend.spend
 
                         return cL
+                    }
 
-                    } case 'opportunities': {
-                        const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
-                        const opportunitySpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+                } case 'opportunities': {
+                    if (lanes.length == 0) { // include locations that don't have lanes
+                        cL.dataValues.spend = 0
+                        cL.dataValues.loadsPerMonth = 0
+
+                        return cL
+
+                    } else {
+                        const unownedLanes = lanes.map(lane => { // filter out lanes that are fully owned
+                            if (lane.currentVolume > 0 && lane.currentVolume == lane.potentialVolume) {
+                                return null
+                            }
+
+                            else {
+                                return lane
+                            }
+                        })
+
+                        const opportunityLanes = unownedLanes.filter(lane => lane !== null)
+
+                        if (opportunityLanes.length == 0) { // filter out locations with only fullyOwnedLanes
+                            return null
+                        }
+
+                        const loadsPerMonth = await opportunityLanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+                        const opportunitySpend = await opportunityLanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
 
                         cL.dataValues.loadsPerMonth = loadsPerMonth.opportunityVolume
                         cL.dataValues.spend = opportunitySpend.opportunitySpend
 
                         return cL
-
-                    } case 'potential': {
-                        const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
-                        const potentialSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
-
-                        cL.dataValues.loadsPerMonth = loadsPerMonth.potentialVolume
-                        cL.dataValues.spend = potentialSpend.potentialSpend
+                    }
+                } case 'potential': {
+                    if (lanes.length == 0) {
+                        cL.dataValues.spend = 0
+                        cL.dataValues.loadsPerMonth = 0
 
                         return cL
                     }
+                    const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+                    const potentialSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+
+                    cL.dataValues.loadsPerMonth = loadsPerMonth.potentialVolume
+                    cL.dataValues.spend = potentialSpend.potentialSpend
+
+                    return cL
                 }
             }
         }))
 
-        const sortedLocations = locationsWithStats.sort((a, b) => {
+        const locations = locationsWithStats.filter(location => location !== null)
+
+        const sortedLocations = locations.sort((a, b) => {
             return b.dataValues.spend - a.dataValues.spend
         })
 
