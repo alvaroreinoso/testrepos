@@ -400,22 +400,22 @@ functions:
             path: api/team
             method: post
             cors: true
-  editTeam:
-    handler:
-      ./handlers/team.editTeam
-    events:
-        - http:
-            path: api/team/{teamId}
-            method: put
-            cors: true
-  deleteTeam:
-    handler:
-      ./handlers/team.deleteTeam
-    events:
-        - http:
-            path: api/team/{teamId}
-            method: delete
-            cors: true
+  # editTeam:
+  #   handler:
+  #     ./handlers/team.editTeam
+  #   events:
+  #       - http:
+  #           path: api/team/{teamId}
+  #           method: put
+  #           cors: true
+  # deleteTeam:
+  #   handler:
+  #     ./handlers/team.deleteTeam
+  #   events:
+  #       - http:
+  #           path: api/team/{teamId}
+  #           method: delete
+  #           cors: true
   getTeamById: 
     handler:
       ./handlers/team.getTeamById
