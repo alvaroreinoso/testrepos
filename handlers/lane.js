@@ -385,6 +385,15 @@ module.exports.updateLane = async (event, context) => {
             }
         }
 
+        if (event.httpMethod === 'DELETE') {
+            await lane.destroy()
+
+            return {
+                statusCode: 204,
+                headers: corsHeaders
+            }
+        }
+
         lane.rate = request.rate
         lane.requirements = request.requirements
         lane.painPoints = request.painPoints

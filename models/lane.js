@@ -104,6 +104,11 @@ module.exports = (sequelize, DataTypes) => {
             laneId: lane.id
           }
         })
+        await sequelize.models.Carrier.destroy({
+          where: {
+            laneId: lane.id
+          }
+        })
 
         await sequelize.models.LaneContact.destroy({
           where: {

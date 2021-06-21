@@ -147,10 +147,20 @@ module.exports.updateLocation = async (event, context) => {
                 brokerageId: user.brokerageId
             }
         })
+        
 
         if (location === null) {
             return {
                 statusCode: 404,
+                headers: corsHeaders
+            }
+        }
+
+        if (event.httpMethod === 'DELETE') {
+            await location.destroy()
+
+            return {
+                statusCode: 204,
                 headers: corsHeaders
             }
         }
