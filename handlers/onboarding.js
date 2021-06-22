@@ -48,6 +48,8 @@ module.exports.requestAccount = async (event, context) => {
                     // phoneExt: request.ext
                 })
 
+                console.log(user)
+
                 // await sendCreateAccountEmail(user)
             // }
         // }
