@@ -1,10 +1,10 @@
 const Stripe = require('stripe');
-const stripe = Stripe('sk_test_51IHAhJHsDRF5ASkOBXJvvDl81evnBbqXr3cT44El9t9WUi098tGSR0hI6SKZiHHdHPbAudyT26V7vU4CjtqXhCnB00KPK9QDyk');
 const { Brokerage } = require('.././models')
 const corsHeaders = require('.././helpers/cors')
 const getCurrentUser = require('.././helpers/user');
 const cors = require('.././helpers/cors');
 require('dotenv').config()
+const stripe = Stripe(process.env.STRIPE_API_KEY);
 
 
 module.exports.webhookHandler = async (event, context) => {
