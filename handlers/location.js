@@ -227,12 +227,19 @@ module.exports.getLanesForLocation = async (event, context) => {
         const status = event.queryStringParameters.status
         const laneWhereOptions = getLaneWhereOptionsByStatus(status)
 
-        const originLanes = await Lane.findAll({
+        const lanes = await Lane.findAll({
             where: [
                 laneWhereOptions,
                 {
-                    originLocationId: locationId
-                },
+                    [Op.or]: [
+                        {
+                            originLocationId: locationId
+                        },
+                        {
+                            destinationLocationId: locationId
+                        }
+                    ] 
+                }           
             ],
             include: [{
                 model: Location,
@@ -262,45 +269,6 @@ module.exports.getLanesForLocation = async (event, context) => {
                 }],
             }]
         })
-
-        const destinationLanes = await Lane.findAll({
-            where: [
-                laneWhereOptions,
-                {
-                    destinationLocationId: locationId
-                }
-            ],
-         
-            include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }, {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: CustomerLocation,
-                    include: [{
-                        model: Customer,
-                        required: true
-                    }]
-                },
-                {
-                    model: LanePartner
-                }],
-            }]
-        })
-
-        const lanes = originLanes.concat(destinationLanes)
 
         if (lanes.length == 0) {
             const body = {
