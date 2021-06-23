@@ -263,16 +263,9 @@ module.exports.getLanesForLocation = async (event, context) => {
             }]
         })
 
-        const originLaneIds = originLanes.map(oL => oL.id)
-
         const destinationLanes = await Lane.findAll({
             where: [
                 laneWhereOptions,
-                {
-                    [Op.not]: {
-                        id: originLaneIds
-                    },
-                },
                 {
                     destinationLocationId: locationId
                 }
