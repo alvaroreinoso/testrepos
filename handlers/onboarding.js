@@ -5,6 +5,7 @@ const getCurrentUser = require('.././helpers/user')
 const emailUserInvite = require('../ses/templates/emailUserInvite')
 const { Team, User, Customer, Lane, Brokerage, Ledger, Location } = require('.././models');
 const corsHeaders = require('.././helpers/cors')
+const { notifySlack } = require('../helpers/notifySlack')
 const { Op } = require("sequelize");
 const { v4: uuidv4 } = require('uuid');
 
@@ -47,6 +48,8 @@ module.exports.requestAccount = async (event, context) => {
                     // phone: request.phone,
                     // phoneExt: request.ext
                 })
+
+                await notifySlack(user)
 
                 console.log(user)
 
