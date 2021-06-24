@@ -1,8 +1,12 @@
 const { Customer, CustomerLocation, Lane, LanePartner, Location } = require('.././models');
 const { Op } = require("sequelize");
+const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus')
 
-module.exports.getCustomerSpendAndLoadCount = async (customer) => {
+module.exports.getCustomerSpendAndLoadCount = async (customer, status) => {
+    const laneWhereOptions = getLaneWhereOptionsByStatus(status)
+
     const originLanes = await Lane.findAll({
+        where: laneWhereOptions,
         include: [{
             model: Location,
             as: 'origin',
@@ -39,9 +43,13 @@ module.exports.getCustomerSpendAndLoadCount = async (customer) => {
 
     const destinationLanes = await Lane.findAll({
         where: {
-            id: {
-                [Op.not]: originLaneIds
-            }
+            [Op.and]: [{
+                id: {
+                    [Op.not]: originLaneIds
+                }
+            },
+                laneWhereOptions
+            ]
         },
         include: [{
             model: Location,
@@ -81,13 +89,25 @@ module.exports.getCustomerSpendAndLoadCount = async (customer) => {
         return [0, 0]
 
     } else {
-        const customerSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+        switch (status) {
+            case 'owned': {
+                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
 
-        const loadsPerMonth = await lanes.reduce((a, b) => ({
-            currentVolume: a.currentVolume + b.currentVolume 
-            
-        }))
+                return [totalSpend.spend, loadsPerMonth.currentVolume]
 
-        return [customerSpend.spend, loadsPerMonth.currentVolume]
+            } case 'opportunities': {
+                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
+
+                return [totalSpend.opportunitySpend, loadsPerMonth.opportunityVolume]
+
+            } case 'potential': {
+                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
+                const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
+
+                return [totalSpend.potentialSpend, loadsPerMonth.potentialVolume]
+            }
+        }
     }
 }

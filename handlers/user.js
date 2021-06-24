@@ -502,10 +502,14 @@ module.exports.getTopCustomersForUser = async (event, context) => {
             }
         }
 
+        const status = event.queryStringParameters.status
+
         const customers = await targetUser.getCustomers()
 
         const customersWithSpend = await customers.map(async customer => {
-            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpendAndLoadCount(customer)
+
+            // use top lanes and pass in status
+            [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpendAndLoadCount(customer, status)
 
             return customer
         })
