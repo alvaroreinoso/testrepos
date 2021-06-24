@@ -7,7 +7,7 @@ module.exports.notifySlack = async (user) => {
 
     if (domain !== 'terralanes.com' && process.env.SLACK_SIGNUP_NOTIFICATION === 'true' ) {
         const message = {
-            "fallback": 'test',
+            "fallback": 'Signup Fallback',
             "text": `${user.email} signed up`
         }
     
