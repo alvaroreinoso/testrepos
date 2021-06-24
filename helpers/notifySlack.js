@@ -10,6 +10,8 @@ module.exports.notifySlack = async (user) => {
             "fallback": 'Signup Fallback',
             "text": `${user.email} signed up`
         }
+
+        console.log(message)
     
         await fetch(reqURL, {
             method: 'post',
