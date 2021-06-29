@@ -1,4 +1,5 @@
 'use strict';
+const { addTag } = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
