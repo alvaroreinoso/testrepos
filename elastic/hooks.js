@@ -3,6 +3,24 @@ const getIndex = require('../helpers/getIndexName').getIndexName
 const client = require('./client');
 const { Op } = require("sequelize");
 
+module.exports.addTag = async (itemId, content, index) => {
+    await client.update({
+        index: index,
+        id: itemId,
+        body: {
+            script: {
+                source: `
+                    if (!ctx._source.containsKey(\"tags\")) { ctx._source.tags = [params.tag] }
+                    else if (!ctx._source.tags.contains(params.tag)) {ctx._source.tags.add(params['tag'])}`,
+                lang: "painless",
+                params: {
+                    tag: content
+                }
+            }
+        }
+    })
+}
+
 module.exports.saveDocument = async (item) => {
 
     const { Customer, CustomerLocation } = require('.././models');

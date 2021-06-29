@@ -634,7 +634,7 @@ module.exports.addTag = async (event, context) => {
             }
         }
     } catch (err) {
-
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500
