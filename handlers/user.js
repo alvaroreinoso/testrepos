@@ -41,6 +41,8 @@ module.exports.getUser = async (event, context) => {
             }
         }
 
+        console.log(user.email)
+
         return {
             headers: corsHeaders,
             statusCode: 200,
