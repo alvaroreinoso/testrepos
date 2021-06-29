@@ -1,44 +1,24 @@
 const stateAbbreviations = require('states-abbreviations')
 const getIndex = require('../helpers/getIndexName').getIndexName
 const client = require('./client');
-const { Tag } = require('../models')
 const { Op } = require("sequelize");
 
-module.exports.addTag = async (item) => {
-
-    const { Tag } = require('../models')
-    console.log(item)
+module.exports.addTag = async (itemId, content, index) => {
     await client.update({
-        index: 'lane',
-        id: item.laneId,
+        index: index,
+        id: itemId,
         body: {
-            // script: "ctx._source.new_field = 'tags'",
-            "script": "if (!ctx._source.containsKey(\"tags\")) { ctx._source.new_field = 'tags' }",
-            // "params" : {"tags" : "blue" },
-            // tags: 'test'
+            script: {
+                source: `
+                    if (!ctx._source.containsKey(\"tags\")) { ctx._source.tags = [params.tag] }
+                    else if (!ctx._source.tags.contains(params.tag)) {ctx._source.tags.add(params['tag'])}`,
+                lang: "painless",
+                params: {
+                    tag: content
+                }
+            }
         }
     })
-
-    const tag = await Tag.findOne({
-        where: {
-            id: item.tagId
-        }
-    })
-
-
-
-    await client.update({
-        index: 'lane',
-        id: item.laneId,
-        body: {
-            doc: {
-                tags: tag.content
-            },
-            doc_as_upsert: true
-        }
-    })
-
-    console.log('added')
 }
 
 module.exports.saveDocument = async (item) => {

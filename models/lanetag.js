@@ -20,7 +20,12 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       afterCreate: async(laneTag, options) => {
-        await addTag(laneTag)
+        const tag = await sequelize.models.Tag.findOne({
+          where: {
+            id: laneTag.tagId
+          }
+        })
+        await addTag(laneTag.laneId, tag.content, 'lane')
       }
     },
     sequelize,
