@@ -1,4 +1,5 @@
 'use strict';
+const { addTag } = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
@@ -17,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     tagId: DataTypes.INTEGER
   }, {
+    hooks: {
+      afterCreate: async (userTag, options) => {
+        const tag = await sequelize.models.Tag.findOne({
+          where: {
+            id: userTag.tagId
+          }
+        })
+        await addTag(userTag.userId, tag.content, 'user')
+      }
+    },
     sequelize,
     modelName: 'UserTag',
   });
