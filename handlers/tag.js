@@ -949,6 +949,7 @@ module.exports.deleteTag = async (event, context) => {
             }
         }
     } catch (err) {
+        console.log(err)
         return {
             headers: corsHeaders,
             statusCode: 500

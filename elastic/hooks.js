@@ -21,6 +21,22 @@ module.exports.addTag = async (itemId, content, index) => {
     })
 }
 
+module.exports.deleteTag = async (itemId, content, index) => {
+    await client.update({
+        index: index,
+        id: itemId,
+        body: {
+            script: {
+                source: "if (ctx._source.tags.contains(params.tag)) { ctx._source.tags.remove(ctx._source.tags.indexOf(params.tag)) }",
+                lang: "painless",
+                params: {
+                    tag: content
+                }
+            }
+        }
+    })
+}
+
 module.exports.saveDocument = async (item) => {
 
     const { Customer, CustomerLocation } = require('.././models');
