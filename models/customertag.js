@@ -1,5 +1,5 @@
 'use strict';
-const { addTag } = require('../elastic/hooks')
+const { addTag, deleteTag } = require('../elastic/hooks')
 const {
   Model
 } = require('sequelize');
@@ -26,6 +26,14 @@ module.exports = (sequelize, DataTypes) => {
           }
         })
         await addTag(customerTag.customerId, tag.content, 'customer')
+      },
+      afterDestroy: async(customerTag, options) => {
+        const tag = await sequelize.models.Tag.findOne({
+          where: {
+            id: customerTag.tagId
+          }
+        })
+        await deleteTag(customerTag.customerId, tag.content, 'customer')
       }
     },
     sequelize,
