@@ -1,7 +1,6 @@
 'use strict';
 const Users = require('../app/users')
 const db = require('../models/index')
-
 const users = new Users(db)
 
 module.exports.user = async (event, context) => {

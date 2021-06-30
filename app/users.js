@@ -1,12 +1,14 @@
+const Auth = require('../app/auth')
+const UserHelpers = require('../helpers/userHelpers')
 const corsHeaders = require('.././helpers/cors')
 const jwt = require('jsonwebtoken')
-const getCurrentUser = require('../helpers/user')
-const { getCustomerSpendAndLoadCount } = require('.././helpers/getCustomerSpend')
 const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus');
 
 class Users {
     constructor(db) {
         this.db = db;
+        this.auth = new Auth(this.db);
+        this.helpers = new UserHelpers(this.db);
     }
 
     async get(event) {
@@ -54,7 +56,7 @@ class Users {
 
     async getById(event) {
         try {
-            const currentUser = await getCurrentUser(event.headers.Authorization)
+            const currentUser = await this.auth.currentUser(event.headers.Authorization)
 
             if (currentUser.id == null) {
                 return {
@@ -175,7 +177,7 @@ class Users {
 
     async updateProfile(event) {
         try {
-            const user = await getCurrentUser(event.headers.Authorization)
+            const user = await this.auth.currentUser(event.headers.Authorization)
 
             const req = JSON.parse(event.body)
 
@@ -205,7 +207,7 @@ class Users {
 
     async update(event) {
         try {
-            const user = await getCurrentUser(event.headers.Authorization)
+            const user = await this.auth.currentUser(event.headers.Authorization)
 
             console.log('yooo')
 
@@ -331,7 +333,7 @@ class Users {
     }
 
     async delete(event) {
-        const user = await getCurrentUser(event.headers.Authorization)
+        const user = await this.auth.currentUser(event.headers.Authorization)
 
         if (user.id == null) {
             return {
@@ -403,7 +405,7 @@ class Users {
 
     async getTopCustomers(event) {
         try {
-            const currentUser = await getCurrentUser(event.headers.Authorization)
+            const currentUser = await this.auth.currentUser(event.headers.Authorization)
             const userId = event.pathParameters.userId
 
             if (currentUser.id === null) {
@@ -434,7 +436,7 @@ class Users {
             const customersWithSpend = await customers.map(async customer => {
 
                 // use top lanes and pass in status
-                [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await getCustomerSpendAndLoadCount(customer, status)
+                [customer.dataValues.spend, customer.dataValues.loadsPerMonth] = await this.helpers.getCustomerSpendAndLoadCount(customer, status)
 
                 return customer
             })
@@ -460,7 +462,7 @@ class Users {
     }
 
     async getTopLanes(event) {
-        const currentUser = await getCurrentUser(event.headers.Authorization)
+        const currentUser = await this.auth.currentUser(event.headers.Authorization)
         const userId = event.pathParameters.userId
 
         if (currentUser.id == null) {
@@ -601,7 +603,7 @@ class Users {
 
     async getAdminUsers(event) {
         try {
-            const currentUser = await getCurrentUser(event.headers.Authorization)
+            const currentUser = await this.auth.currentUser(event.headers.Authorization)
     
             if (currentUser.id == null) {
                 return {
@@ -640,7 +642,7 @@ class Users {
     
     async getTeams(event) {
         try {
-            const user = await getCurrentUser(event.headers.Authorization)
+            const user = await this.auth.currentUser(event.headers.Authorization)
     
             const teams = await this.db.Team.findAll({
                 where: {
