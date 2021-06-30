@@ -1,37 +1,38 @@
-'use strict';
+'use strict'
 
 const elastic = require('../elastic/hooks')
 
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class CustomerLocation extends Model {
     static associate(models) {
       CustomerLocation.belongsTo(models.Customer, {
-        foreignKey: 'customerId'
+        foreignKey: 'customerId',
       }),
-      CustomerLocation.belongsTo(models.Location, {
-        foreignKey: 'locationId',
-        onDelete: 'cascade',
-        hooks: true
-      })
+        CustomerLocation.belongsTo(models.Location, {
+          foreignKey: 'locationId',
+          onDelete: 'cascade',
+          hooks: true,
+        })
     }
-  };
-  CustomerLocation.init({
-    customerId: DataTypes.INTEGER,
-    locationId: DataTypes.INTEGER,
-  }, {
-    hooks: {
-      afterSave: async (customerLocation, options) => {
-        await elastic.saveDocument(customerLocation)
-      },
-      afterDestroy: async (customerLocation, options) => {
-        await elastic.deleteDocument(customerLocation)
-      }
+  }
+  CustomerLocation.init(
+    {
+      customerId: DataTypes.INTEGER,
+      locationId: DataTypes.INTEGER,
     },
-    sequelize,
-    modelName: 'CustomerLocation',
-  });
-  return CustomerLocation;
-};
+    {
+      hooks: {
+        afterSave: async (customerLocation, options) => {
+          await elastic.saveDocument(customerLocation)
+        },
+        afterDestroy: async (customerLocation, options) => {
+          await elastic.deleteDocument(customerLocation)
+        },
+      },
+      sequelize,
+      modelName: 'CustomerLocation',
+    }
+  )
+  return CustomerLocation
+}

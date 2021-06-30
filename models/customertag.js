@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 const { addTag, deleteTag } = require('../elastic/hooks')
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class CustomerTag extends Model {
     /**
@@ -13,31 +11,34 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  CustomerTag.init({
-    customerId: DataTypes.INTEGER,
-    tagId: DataTypes.INTEGER
-  }, {
-    hooks: {
-      afterCreate: async(customerTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: customerTag.tagId
-          }
-        })
-        await addTag(customerTag.customerId, tag.content, 'customer')
-      },
-      afterDestroy: async(customerTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: customerTag.tagId
-          }
-        })
-        await deleteTag(customerTag.customerId, tag.content, 'customer')
-      }
+  }
+  CustomerTag.init(
+    {
+      customerId: DataTypes.INTEGER,
+      tagId: DataTypes.INTEGER,
     },
-    sequelize,
-    modelName: 'CustomerTag',
-  });
-  return CustomerTag;
-};
+    {
+      hooks: {
+        afterCreate: async (customerTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: customerTag.tagId,
+            },
+          })
+          await addTag(customerTag.customerId, tag.content, 'customer')
+        },
+        afterDestroy: async (customerTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: customerTag.tagId,
+            },
+          })
+          await deleteTag(customerTag.customerId, tag.content, 'customer')
+        },
+      },
+      sequelize,
+      modelName: 'CustomerTag',
+    }
+  )
+  return CustomerTag
+}

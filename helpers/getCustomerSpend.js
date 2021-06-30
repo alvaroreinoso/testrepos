@@ -1,113 +1,135 @@
-const { Customer, CustomerLocation, Lane, LanePartner, Location } = require('.././models');
-const { Op } = require("sequelize");
+const { Customer, CustomerLocation, Lane, LanePartner, Location } = require('.././models')
+const { Op } = require('sequelize')
 const { getLaneWhereOptionsByStatus } = require('../helpers/getLaneWhereOptionsByStatus')
 
 module.exports.getCustomerSpendAndLoadCount = async (customer, status) => {
-    const laneWhereOptions = getLaneWhereOptionsByStatus(status)
+  const laneWhereOptions = getLaneWhereOptionsByStatus(status)
 
-    const originLanes = await Lane.findAll({
-        where: laneWhereOptions,
-        include: [{
-            model: Location,
-            as: 'origin',
+  const originLanes = await Lane.findAll({
+    where: laneWhereOptions,
+    include: [
+      {
+        model: Location,
+        as: 'origin',
+        required: true,
+        include: {
+          model: CustomerLocation,
+          required: true,
+          where: {
+            customerId: customer.id,
+          },
+          include: {
+            model: Customer,
             required: true,
-            include: {
-                model: CustomerLocation,
+          },
+        },
+      },
+      {
+        model: Location,
+        as: 'destination',
+        include: [
+          {
+            model: CustomerLocation,
+            include: [
+              {
+                model: Customer,
                 required: true,
-                where: {
-                    customerId: customer.id
-                },
-                include: {
-                    model: Customer,
-                    required: true
-                }
-            }
-        },
+              },
+            ],
+          },
+          {
+            model: LanePartner,
+          },
+        ],
+      },
+    ],
+  })
+
+  const originLaneIds = originLanes.map((oL) => oL.id)
+
+  const destinationLanes = await Lane.findAll({
+    where: {
+      [Op.and]: [
         {
-            model: Location,
-            as: 'destination',
-            include: [{
-                model: CustomerLocation,
-                include: [{
-                    model: Customer,
-                    required: true
-                }]
-            },
-            {
-                model: LanePartner
-            }],
-        }]
-    })
-
-    const originLaneIds = originLanes.map(oL => oL.id)
-
-    const destinationLanes = await Lane.findAll({
-        where: {
-            [Op.and]: [{
-                id: {
-                    [Op.not]: originLaneIds
-                }
-            },
-                laneWhereOptions
-            ]
+          id: {
+            [Op.not]: originLaneIds,
+          },
         },
-        include: [{
-            model: Location,
-            as: 'destination',
+        laneWhereOptions,
+      ],
+    },
+    include: [
+      {
+        model: Location,
+        as: 'destination',
+        required: true,
+        include: {
+          model: CustomerLocation,
+          required: true,
+          where: {
+            customerId: customer.id,
+          },
+          include: {
+            model: Customer,
             required: true,
-            include: {
-                model: CustomerLocation,
-                required: true,
-                where: {
-                    customerId: customer.id
-                },
-                include: {
-                    model: Customer,
-                    required: true
-                }
-            }
+          },
         },
-        {
-            model: Location,
-            as: 'origin',
-            include: [{
-                model: CustomerLocation,
-                include: {
-                    model: Customer,
-                    required: true
-                }
+      },
+      {
+        model: Location,
+        as: 'origin',
+        include: [
+          {
+            model: CustomerLocation,
+            include: {
+              model: Customer,
+              required: true,
             },
-            {
-                model: LanePartner
-            }],
-        }]
-    })
+          },
+          {
+            model: LanePartner,
+          },
+        ],
+      },
+    ],
+  })
 
-    const lanes = originLanes.concat(destinationLanes)
+  const lanes = originLanes.concat(destinationLanes)
 
-    if (lanes.length == 0) {
-        return [0, 0]
+  if (lanes.length == 0) {
+    return [0, 0]
+  } else {
+    switch (status) {
+      case 'owned': {
+        const totalSpend = await lanes.reduce((a, b) => ({
+          spend: a.spend + b.spend,
+        }))
+        const loadsPerMonth = await lanes.reduce((a, b) => ({
+          currentVolume: a.currentVolume + b.currentVolume,
+        }))
 
-    } else {
-        switch (status) {
-            case 'owned': {
-                const totalSpend = await lanes.reduce((a, b) => ({ spend: a.spend + b.spend }))
-                const loadsPerMonth = await lanes.reduce((a, b) => ({ currentVolume: a.currentVolume + b.currentVolume }))
+        return [totalSpend.spend, loadsPerMonth.currentVolume]
+      }
+      case 'opportunities': {
+        const totalSpend = await lanes.reduce((a, b) => ({
+          opportunitySpend: a.opportunitySpend + b.opportunitySpend,
+        }))
+        const loadsPerMonth = await lanes.reduce((a, b) => ({
+          opportunityVolume: a.opportunityVolume + b.opportunityVolume,
+        }))
 
-                return [totalSpend.spend, loadsPerMonth.currentVolume]
+        return [totalSpend.opportunitySpend, loadsPerMonth.opportunityVolume]
+      }
+      case 'potential': {
+        const totalSpend = await lanes.reduce((a, b) => ({
+          potentialSpend: a.potentialSpend + b.potentialSpend,
+        }))
+        const loadsPerMonth = await lanes.reduce((a, b) => ({
+          potentialVolume: a.potentialVolume + b.potentialVolume,
+        }))
 
-            } case 'opportunities': {
-                const totalSpend = await lanes.reduce((a, b) => ({ opportunitySpend: a.opportunitySpend + b.opportunitySpend }))
-                const loadsPerMonth = await lanes.reduce((a, b) => ({ opportunityVolume: a.opportunityVolume + b.opportunityVolume }))
-
-                return [totalSpend.opportunitySpend, loadsPerMonth.opportunityVolume]
-
-            } case 'potential': {
-                const totalSpend = await lanes.reduce((a, b) => ({ potentialSpend: a.potentialSpend + b.potentialSpend }))
-                const loadsPerMonth = await lanes.reduce((a, b) => ({ potentialVolume: a.potentialVolume + b.potentialVolume }))
-
-                return [totalSpend.potentialSpend, loadsPerMonth.potentialVolume]
-            }
-        }
+        return [totalSpend.potentialSpend, loadsPerMonth.potentialVolume]
+      }
     }
+  }
 }

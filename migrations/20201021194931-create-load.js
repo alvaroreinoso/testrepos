@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Loads', {
@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       loadId: {
         type: Sequelize.INTEGER,
@@ -16,25 +16,25 @@ module.exports = {
         references: {
           model: 'Brokerages',
           key: 'id',
-          as: 'brokerageId'
+          as: 'brokerageId',
         },
-        allowNull: false
+        allowNull: false,
       },
       laneId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Lanes',
           key: 'id',
-          as: 'laneId'
-        }
+          as: 'laneId',
+        },
       },
       rate: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       dropDate: {
         type: Sequelize.DATE,
-        allowNull: true
+        allowNull: true,
       },
       carrierId: {
         type: Sequelize.INTEGER,
@@ -42,15 +42,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Loads');
-  }
-};
+    await queryInterface.dropTable('Loads')
+  },
+}

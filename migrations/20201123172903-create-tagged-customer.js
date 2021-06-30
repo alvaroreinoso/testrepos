@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('TaggedCustomers', {
@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       customerId: {
         type: Sequelize.INTEGER,
@@ -14,7 +14,7 @@ module.exports = {
         references: {
           model: 'Customers',
           key: 'id',
-          as: 'customerId'
+          as: 'customerId',
         },
       },
       userId: {
@@ -23,12 +23,12 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'userId'
+          as: 'userId',
         },
-      }
-    });
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('TaggedCustomers');
-  }
-};
+    await queryInterface.dropTable('TaggedCustomers')
+  },
+}

@@ -1,4 +1,3 @@
-
 const lanes = require('./lanesWithRoutes.json')
 
 module.exports = lanes

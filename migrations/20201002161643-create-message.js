@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Messages', {
@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -14,8 +14,8 @@ module.exports = {
         references: {
           model: 'Users',
           key: 'id',
-          as: 'userId'
-        }
+          as: 'userId',
+        },
       },
       ledgerId: {
         type: Sequelize.INTEGER,
@@ -24,24 +24,24 @@ module.exports = {
         references: {
           model: 'Ledgers',
           key: 'id',
-          as: 'ledgerId'
-        }
+          as: 'ledgerId',
+        },
       },
       content: {
         type: Sequelize.TEXT,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Messages');
-  }
-};
+    await queryInterface.dropTable('Messages')
+  },
+}

@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 const { addTag, deleteTag } = require('../elastic/hooks')
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class LaneTag extends Model {
     /**
@@ -13,31 +11,34 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  LaneTag.init({
-    laneId: DataTypes.INTEGER,
-    tagId: DataTypes.INTEGER
-  }, {
-    hooks: {
-      afterCreate: async(laneTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: laneTag.tagId
-          }
-        })
-        await addTag(laneTag.laneId, tag.content, 'lane')
-      },
-      afterDestroy: async(laneTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: laneTag.tagId
-          }
-        })
-        await deleteTag(laneTag.laneId, tag.content, 'lane')
-      }
+  }
+  LaneTag.init(
+    {
+      laneId: DataTypes.INTEGER,
+      tagId: DataTypes.INTEGER,
     },
-    sequelize,
-    modelName: 'LaneTag',
-  });
-  return LaneTag;
-};
+    {
+      hooks: {
+        afterCreate: async (laneTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: laneTag.tagId,
+            },
+          })
+          await addTag(laneTag.laneId, tag.content, 'lane')
+        },
+        afterDestroy: async (laneTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: laneTag.tagId,
+            },
+          })
+          await deleteTag(laneTag.laneId, tag.content, 'lane')
+        },
+      },
+      sequelize,
+      modelName: 'LaneTag',
+    }
+  )
+  return LaneTag
+}

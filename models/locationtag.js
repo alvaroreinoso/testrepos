@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 const { addTag, deleteTag } = require('../elastic/hooks')
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class LocationTag extends Model {
     /**
@@ -13,31 +11,34 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  LocationTag.init({
-    locationId: DataTypes.INTEGER,
-    tagId: DataTypes.INTEGER
-  }, {
-    hooks: {
-      afterCreate: async(locationTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: locationTag.tagId
-          }
-        })
-        await addTag(locationTag.locationId, tag.content, 'customer_location')
-      },
-      afterDestroy: async(locationTag, options) => {
-        const tag = await sequelize.models.Tag.findOne({
-          where: {
-            id: locationTag.tagId
-          }
-        })
-        await deleteTag(locationTag.locationId, tag.content, 'customer_location')
-      }
+  }
+  LocationTag.init(
+    {
+      locationId: DataTypes.INTEGER,
+      tagId: DataTypes.INTEGER,
     },
-    sequelize,
-    modelName: 'LocationTag',
-  });
-  return LocationTag;
-};
+    {
+      hooks: {
+        afterCreate: async (locationTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: locationTag.tagId,
+            },
+          })
+          await addTag(locationTag.locationId, tag.content, 'customer_location')
+        },
+        afterDestroy: async (locationTag, options) => {
+          const tag = await sequelize.models.Tag.findOne({
+            where: {
+              id: locationTag.tagId,
+            },
+          })
+          await deleteTag(locationTag.locationId, tag.content, 'customer_location')
+        },
+      },
+      sequelize,
+      modelName: 'LocationTag',
+    }
+  )
+  return LocationTag
+}

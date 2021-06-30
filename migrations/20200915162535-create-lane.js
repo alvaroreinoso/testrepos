@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Lanes', {
@@ -6,27 +6,27 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       originLocationId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       destinationLocationId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       brokerageId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Brokerages',
           key: 'id',
-          as: 'brokerageId'
+          as: 'brokerageId',
         },
-        allowNull: false
+        allowNull: false,
       },
       owned: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       routeGeometry: {
         type: Sequelize.TEXT,
@@ -38,56 +38,56 @@ module.exports = {
       },
       currentVolume: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       potentialVolume: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       opportunityVolume: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       truckType: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       rate: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       mileage: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       inbound: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
-        allowNull: false
+        allowNull: false,
       },
       requirements: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       painPoints: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       competitionAnalysis: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Lanes');
-  }
-};
+    await queryInterface.dropTable('Lanes')
+  },
+}

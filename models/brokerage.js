@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 const elastic = require('../elastic/hooks')
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Brokerage extends Model {
     /**
@@ -12,64 +10,67 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Brokerage.hasMany(models.User, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       }),
-      Brokerage.hasMany(models.Customer, {
-        foreignKey: 'brokerageId'
-      }),
-      Brokerage.hasMany(models.Team, {
-        foreignKey: 'brokerageId'
-      })
+        Brokerage.hasMany(models.Customer, {
+          foreignKey: 'brokerageId',
+        }),
+        Brokerage.hasMany(models.Team, {
+          foreignKey: 'brokerageId',
+        })
       Brokerage.hasMany(models.Ledger, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Brokerage.belongsTo(models.Ledger, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
       Brokerage.belongsToMany(models.Tag, {
         through: 'BrokerageTag',
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Brokerage.hasMany(models.Load, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Brokerage.hasMany(models.Lane, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Brokerage.hasMany(models.Location, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Brokerage.hasMany(models.Contact, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
     }
-  };
-  Brokerage.init({
-    pin: DataTypes.STRING,
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    logo: DataTypes.STRING,
-    ledgerId: DataTypes.INTEGER,
-    address: DataTypes.STRING,
-    address2: DataTypes.STRING,
-    city: DataTypes.STRING,
-    state: DataTypes.STRING,
-    zipcode: DataTypes.STRING,
-    phone: DataTypes.STRING,
-    stripeCustomerId: DataTypes.STRING,
-    stripeSubscriptionId: DataTypes.STRING,
-    stripeProductId: DataTypes.STRING,
-  }, {
-    hooks: {
-      afterSave: async (brokerage, options) => {
-        await elastic.saveDocument(brokerage)
-      },
-      afterDestroy: async (brokerage, options) => {
-        await elastic.deleteDocument(brokerage)
-      }
+  }
+  Brokerage.init(
+    {
+      pin: DataTypes.STRING,
+      name: DataTypes.STRING,
+      email: DataTypes.STRING,
+      logo: DataTypes.STRING,
+      ledgerId: DataTypes.INTEGER,
+      address: DataTypes.STRING,
+      address2: DataTypes.STRING,
+      city: DataTypes.STRING,
+      state: DataTypes.STRING,
+      zipcode: DataTypes.STRING,
+      phone: DataTypes.STRING,
+      stripeCustomerId: DataTypes.STRING,
+      stripeSubscriptionId: DataTypes.STRING,
+      stripeProductId: DataTypes.STRING,
     },
-    sequelize,
-    modelName: 'Brokerage',
-  });
-  return Brokerage;
-};
+    {
+      hooks: {
+        afterSave: async (brokerage, options) => {
+          await elastic.saveDocument(brokerage)
+        },
+        afterDestroy: async (brokerage, options) => {
+          await elastic.deleteDocument(brokerage)
+        },
+      },
+      sequelize,
+      modelName: 'Brokerage',
+    }
+  )
+  return Brokerage
+}

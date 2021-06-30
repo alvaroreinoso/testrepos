@@ -1,353 +1,367 @@
 const stateAbbreviations = require('states-abbreviations')
-const { Customer, Brokerage, Contact, Lane, LanePartner, Team, Location, CustomerLocation, User, Message, Ledger } = require('.././models');
+const {
+  Customer,
+  Brokerage,
+  Contact,
+  Lane,
+  LanePartner,
+  Team,
+  Location,
+  CustomerLocation,
+  User,
+  Message,
+  Ledger,
+} = require('.././models')
 const client = require('./client')
-const { Op } = require("sequelize");
+const { Op } = require('sequelize')
 
 client.ping((err) => {
-    if (err) {
-        console.trace('cluster is down maybe')
-    } else {
-        console.log('All is well')
-    }
+  if (err) {
+    console.trace('cluster is down maybe')
+  } else {
+    console.log('All is well')
+  }
 })
 
 async function seedBrokerages() {
+  await client.indices.create({
+    index: 'brokerage',
+  })
 
-    await client.indices.create({
-        index: 'brokerage'
-    })
+  const brokerages = await Brokerage.findAll()
 
-    const brokerages = await Brokerage.findAll()
+  const brokerageDocs = await brokerages.map((brokerage) => {
+    const brokerageDoc = {
+      id: brokerage.id,
+      name: brokerage.name,
+      brokerageId: brokerage.id,
+    }
 
-    const brokerageDocs = await brokerages.map(brokerage => {
-        const brokerageDoc = {
-            id: brokerage.id,
-            name: brokerage.name,
-            brokerageId: brokerage.id,
-        }
+    return brokerageDoc
+  })
 
-        return brokerageDoc
-    })
+  const result = await client.helpers.bulk({
+    datasource: brokerageDocs,
+    onDocument(doc) {
+      return {
+        index: { _index: 'brokerage', _id: doc.id },
+        id: doc.id,
+      }
+    },
+  })
 
-    const result = await client.helpers.bulk({
-        datasource: brokerageDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'brokerage', _id: doc.id },
-                id: doc.id
-            }
-        }
-    })
-
-    console.log('Brokerages: ', result)
+  console.log('Brokerages: ', result)
 }
 
 async function seedCustomer() {
+  await client.indices.create({
+    index: 'customer',
+  })
 
-    await client.indices.create({
-        index: 'customer',
-    })
+  const customers = await Customer.findAll({
+    attributes: ['name', 'brokerageId', 'id'],
+  })
 
-    const customers = await Customer.findAll({
-        attributes: ['name', 'brokerageId', 'id']
-    })
+  const result = await client.helpers.bulk({
+    datasource: customers,
+    onDocument(doc) {
+      return {
+        index: { _index: 'customer', _id: doc.id },
+      }
+    },
+  })
 
-    const result = await client.helpers.bulk({
-        datasource: customers,
-        onDocument(doc) {
-            return {
-                index: { _index: 'customer', _id: doc.id },
-            }
-        }
-    })
-
-    console.log('Customers: ', result)
+  console.log('Customers: ', result)
 }
 
 async function seedMessages() {
-    await client.indices.create({
-        index: 'message',
-    })
+  await client.indices.create({
+    index: 'message',
+  })
 
-    const messages = await Message.findAll({
-        include: [{
-            model: Ledger,
-            required: true
-        }, {
-            model: User,
-            required: true
-        }]
-    })
+  const messages = await Message.findAll({
+    include: [
+      {
+        model: Ledger,
+        required: true,
+      },
+      {
+        model: User,
+        required: true,
+      },
+    ],
+  })
 
-    const messageDocs = await messages.map(message => {
-        const messageDoc = {
-            id: message.id,
-            content: message.content,
-            ledgerId: message.ledgerId,
-            brokerageId: message.Ledger.brokerageId,
-            userFirstName: message.User.firstName,
-            userLastName: message.User.lastName
-        }
+  const messageDocs = await messages.map((message) => {
+    const messageDoc = {
+      id: message.id,
+      content: message.content,
+      ledgerId: message.ledgerId,
+      brokerageId: message.Ledger.brokerageId,
+      userFirstName: message.User.firstName,
+      userLastName: message.User.lastName,
+    }
 
-        return messageDoc
-    })
+    return messageDoc
+  })
 
-    const result = await client.helpers.bulk({
-        datasource: messageDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'message', _id: doc.id },
-                id: doc.id
-            }
-        }
-    })
+  const result = await client.helpers.bulk({
+    datasource: messageDocs,
+    onDocument(doc) {
+      return {
+        index: { _index: 'message', _id: doc.id },
+        id: doc.id,
+      }
+    },
+  })
 
-    console.log('Messages: ', result)
+  console.log('Messages: ', result)
 }
 
 async function seedLanes() {
+  await client.indices.create({
+    index: 'lane',
+  })
 
-    await client.indices.create({
-        index: 'lane',
+  const lanes = await Lane.findAll()
+
+  const laneDocs = await lanes.map(async (lane) => {
+    const origin = await lane.getOrigin()
+    const destination = await lane.getDestination()
+
+    const cL = await CustomerLocation.findOne({
+      where: {
+        [Op.or]: [{ locationId: origin.id }, { locationId: destination.id }],
+      },
+      include: [
+        {
+          model: Customer,
+          required: true,
+        },
+      ],
     })
 
-    const lanes = await Lane.findAll()
+    const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
+    const shortRoute = `${origin.city} to ${destination.city}`
 
-    const laneDocs = await lanes.map(async (lane) => {
+    const originState = stateAbbreviations[origin.state]
+    const destinationState = stateAbbreviations[destination.state]
 
-        const origin = await lane.getOrigin()
-        const destination = await lane.getDestination()
+    const body = {
+      id: lane.id,
+      origin: origin.city,
+      originStateName: originState,
+      destination: destination.city,
+      destinationStateName: destinationState,
+      laneCustomerName: cL.Customer.name,
+      route: route,
+      shortRoute: shortRoute,
+      brokerageId: lane.brokerageId,
+    }
 
-        const cL = await CustomerLocation.findOne({
-            where: {
-                [Op.or]: [
-                    { locationId: origin.id },
-                    { locationId: destination.id }
-                ]
-            },
-            include: [{
-                model: Customer,
-                required: true
-            }]
-        })
+    return body
+  })
 
-        const route = `${origin.city} ${origin.state} to ${destination.city} ${destination.state}`
-        const shortRoute = `${origin.city} to ${destination.city}`
+  const result = await client.helpers.bulk({
+    datasource: laneDocs,
+    onDocument(doc) {
+      return {
+        index: { _index: 'lane', _id: doc.id },
+      }
+    },
+  })
 
-        const originState = stateAbbreviations[origin.state]
-        const destinationState = stateAbbreviations[destination.state]
-
-        const body = {
-            id: lane.id,
-            origin: origin.city,
-            originStateName: originState,
-            destination: destination.city,
-            destinationStateName: destinationState,
-            laneCustomerName: cL.Customer.name,
-            route: route,
-            shortRoute: shortRoute,
-            brokerageId: lane.brokerageId
-        }
-
-        return body
-    })
-
-    const result = await client.helpers.bulk({
-        datasource: laneDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'lane', _id: doc.id }
-            }
-        }
-    })
-
-    console.log('Lanes: ', result)
-
+  console.log('Lanes: ', result)
 }
 
 async function seedTeams() {
+  await client.indices.create({
+    index: 'team',
+  })
 
-    await client.indices.create({
-        index: 'team',
-    })
+  const teams = await Team.findAll({
+    attributes: ['id', 'name', 'brokerageId', 'icon'],
+  })
 
-    const teams = await Team.findAll({
-        attributes: ['id', 'name', 'brokerageId', 'icon']
-    })
+  const result = await client.helpers.bulk({
+    datasource: teams,
+    onDocument(doc) {
+      return {
+        index: { _index: 'team', _id: doc.id },
+      }
+    },
+  })
 
-    const result = await client.helpers.bulk({
-        datasource: teams,
-        onDocument(doc) {
-            return {
-                index: { _index: 'team', _id: doc.id }
-            }
-        }
-    })
-
-    console.log('Teams: ', result)
+  console.log('Teams: ', result)
 }
 
 async function seedCustomerLocations() {
+  await client.indices.create({
+    index: 'customer_location',
+  })
 
-    await client.indices.create({
-        index: 'customer_location',
-    })
+  const customerLocations = await CustomerLocation.findAll()
 
-    const customerLocations = await CustomerLocation.findAll()
+  const cLDocs = await customerLocations.map(async (cLocation) => {
+    const customer = await cLocation.getCustomer()
+    const ledger = await customer.getLedger()
+    const location = await cLocation.getLocation()
+    const stateName = stateAbbreviations[location.state]
 
-    const cLDocs = await customerLocations.map(async (cLocation) => {
+    const customerLocation = {
+      customerName: customer.name,
+      id: location.id,
+      address: location.address,
+      city: location.city,
+      state: location.state,
+      fullState: stateName,
+      zipcode: location.zipcode,
+      brokerageId: ledger.brokerageId,
+    }
 
-        const customer = await cLocation.getCustomer()
-        const ledger = await customer.getLedger()
-        const location = await cLocation.getLocation()
-        const stateName = stateAbbreviations[location.state]
+    return customerLocation
+  })
 
-        const customerLocation = {
-            customerName: customer.name,
-            id: location.id,
-            address: location.address,
-            city: location.city,
-            state: location.state,
-            fullState: stateName,
-            zipcode: location.zipcode,
-            brokerageId: ledger.brokerageId
-        }
+  const result = await client.helpers.bulk({
+    datasource: cLDocs,
+    onDocument(doc) {
+      return {
+        index: { _index: 'customer_location', _id: doc.id },
+      }
+    },
+  })
 
-        return customerLocation
-    })
-
-    const result = await client.helpers.bulk({
-        datasource: cLDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'customer_location', _id: doc.id },
-            }
-        }
-    })
-
-    console.log('Customer Locations: ', result)
+  console.log('Customer Locations: ', result)
 }
 
 async function seedUsers() {
+  await client.indices.create({
+    index: 'user',
+  })
 
-    await client.indices.create({
-        index: 'user',
-    })
+  const users = await User.findAll({
+    attributes: [
+      'id',
+      'title',
+      'firstName',
+      'lastName',
+      'fullName',
+      'email',
+      'phone',
+      'brokerageId',
+    ],
+  })
 
-    const users = await User.findAll({
-        attributes: ['id', 'title', 'firstName', 'lastName', 'fullName', 'email', 'phone', 'brokerageId']
-    })
+  const result = await client.helpers.bulk({
+    datasource: users,
+    onDocument(doc) {
+      return {
+        index: { _index: 'user', _id: doc.id },
+      }
+    },
+  })
 
-    const result = await client.helpers.bulk({
-        datasource: users,
-        onDocument(doc) {
-            return {
-                index: { _index: 'user', _id: doc.id },
-            }
-        }
-    })
-
-    console.log('Users: ', result)
+  console.log('Users: ', result)
 }
 
 async function seedContacts() {
+  await client.indices.create({
+    index: 'contact',
+  })
 
-    await client.indices.create({
-        index: 'contact',
-    })
-
-    const contacts = await Contact.findAll({
-        include: [{
+  const contacts = await Contact.findAll({
+    include: [
+      {
+        model: Location,
+        include: [
+          {
+            model: Ledger,
+          },
+        ],
+      },
+      {
+        model: Customer,
+        include: [
+          {
+            model: Ledger,
+          },
+        ],
+      },
+      {
+        model: Lane,
+        include: [
+          {
             model: Location,
-            include: [{
-                model: Ledger
-            }]
-        },
-        {
-            model: Customer,
-            include: [{
-                model: Ledger
-            }]
-        },
-        {
-            model: Lane,
-            include: [{
-                model: Location,
-                as: 'origin',
-                include: [{
-                    model: Ledger
-                }]
-            },
-            {
-                model: Location,
-                as: 'destination',
-                include: [{
-                    model: Ledger
-                }]
-            }]
-        }]
-    })
+            as: 'origin',
+            include: [
+              {
+                model: Ledger,
+              },
+            ],
+          },
+          {
+            model: Location,
+            as: 'destination',
+            include: [
+              {
+                model: Ledger,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  })
 
-    const contactDocs = await contacts.map((contact) => {
+  const contactDocs = await contacts.map((contact) => {
+    let brokerageId = []
 
-        let brokerageId = []
+    if (contact.Locations.length != 0) {
+      brokerageId.push(contact.Locations[0].Ledger.brokerageId)
+    } else if (contact.Lanes.length != 0) {
+      brokerageId.push(contact.Lanes[0].origin.Ledger.brokerageId)
+    } else if (contact.Customers.length != 0) {
+      brokerageId.push(contact.Customers[0].brokerageId)
+    }
 
-        if (contact.Locations.length != 0) {
+    const doc = {
+      id: contact.id,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      fullName: `${contact.firstName} ${contact.lastName}`,
+      brokerageId: brokerageId[0],
+    }
 
-            brokerageId.push(contact.Locations[0].Ledger.brokerageId)
+    return doc
+  })
 
-        } else if (contact.Lanes.length != 0) {
+  const result = await client.helpers.bulk({
+    datasource: contactDocs,
+    onDocument(doc) {
+      return {
+        index: { _index: 'contact', _id: doc.id },
+      }
+    },
+  })
 
-            brokerageId.push(contact.Lanes[0].origin.Ledger.brokerageId)
-
-        } else if (contact.Customers.length != 0) {
-
-            brokerageId.push(contact.Customers[0].brokerageId)
-        }
-
-        const doc = {
-            id: contact.id,
-            firstName: contact.firstName,
-            lastName: contact.lastName,
-            fullName: `${contact.firstName} ${contact.lastName}`,
-            brokerageId: brokerageId[0]
-        }
-
-        return doc
-    })
-
-    const result = await client.helpers.bulk({
-        datasource: contactDocs,
-        onDocument(doc) {
-            return {
-                index: { _index: 'contact', _id: doc.id },
-            }
-        }
-    })
-
-    console.log('Contacts: ', result)
-
+  console.log('Contacts: ', result)
 }
 
-
 async function setUp() {
+  await client.indices.delete({
+    index: '*',
+  })
 
-    await client.indices.delete({
-        index: '*'
-    })
+  await seedBrokerages()
+  await seedContacts()
+  await seedCustomer()
+  await seedCustomerLocations()
+  await seedLanes()
+  await seedTeams()
+  await seedUsers()
+  await seedMessages()
 
-    await seedBrokerages()
-    await seedContacts()
-    await seedCustomer()
-    await seedCustomerLocations()
-    await seedLanes()
-    await seedTeams()
-    await seedUsers()
-    await seedMessages()
-
-    return
+  return
 }
 
 setUp()
-
-

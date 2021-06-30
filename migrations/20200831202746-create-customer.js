@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Customers', {
@@ -6,54 +6,54 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       displayName: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       phone: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       logo: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       industry: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       bio: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       requirements: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       painPoints: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       competitionAnalysis: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       brokerageId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Brokerages',
           key: 'id',
-          as: 'brokerageId'
-        }
+          as: 'brokerageId',
+        },
       },
       ledgerId: {
         type: Sequelize.INTEGER,
@@ -69,15 +69,15 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Customers');
-  }
-};
+    await queryInterface.dropTable('Customers')
+  },
+}
