@@ -120,95 +120,66 @@ functions:
             cors: true
 
 # User
-  getUser:
+  User:
     handler:
-      ./handlers/user.getUser
+      ./handlers/user.user
     events:
+        # getUser
         - http:
             path: api/user
             method: get
             cors: true
-    timeout: 20
-  getEmailById:
-    handler:
-      ./handlers/user.getEmailById
-    events:
+        # getUserById
+        - http:
+            path: api/user/{userId}
+            method: get
+            cors: true
+        # getEmailById
         - http:
             path: api/user/email/{userId}
             method: get
             cors: true
-  deleteUser:
-    handler:
-      ./handlers/user.deleteUser
-    events:
-        - http:
-            path: api/user/{userId}
-            method: delete
-            cors: true
-  updateUser:
-    handler:
-      ./handlers/user.updateUser
-    events:
-        - http:
-            path: api/user/{userId}
-            method: put
-            cors: true
-  getUserById:
-    handler:
-      ./handlers/user.getUserById
-    events:
-        - http:
-            path: api/user/{userId}
-            method: get
-            cors: true
-  getTeams:
-    handler:
-      ./handlers/user.getTeams
-    events:
-        - http:
-            path: api/user/teams
-            method: get
-            cors: true
-  createProfile:
-    handler:
-      ./handlers/user.createProfile
-    events:
+        # createProfile
         - http:
             path: api/user
             method: post
             cors: true
-  updateProfile:
-    handler:
-      ./handlers/user.updateProfile
-    events:
+        # updateProfile
         - http:
             path: api/user
             method: put
             cors: true
-  getTopCustomersForUser:
-    handler:
-      ./handlers/user.getTopCustomersForUser
-    events:
+        # updateUser
+        - http:
+            path: api/user/{userId}
+            method: put
+            cors: true
+        # deleteUser
+        - http:
+            path: api/user/{userId}
+            method: delete
+            cors: true
+        # getTopCustomers
         - http:
             path: api/customer/top/{userId}
             method: get
             cors: true
-  getTopLanesForUser:
-    handler:
-      ./handlers/user.getTopLanesForUser
-    events:
+        # getTopLanes
         - http:
             path: api/lane/top/{userId}
             method: get
             cors: true
-  getAdminUsers:
-    handler:
-      ./handlers/user.getAdminUsers
-    events:
+        # getAdminUsers
         - http:
             path: api/user/admins
             method: get
             cors: true
+        # getTeams
+        - http:
+            path: api/user/teams
+            method: get
+            cors: true
+    timeout: 20
 
 # Customer
   addCustomer:
