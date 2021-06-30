@@ -13,6 +13,8 @@ module.exports = async (token) => {
             }
         })
 
+        console.log(results.email)
+
         if (results === null) {
 
             return {
