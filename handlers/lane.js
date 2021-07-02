@@ -298,6 +298,7 @@ module.exports.addLane = async (event, context) => {
         originLocationId: origin.id,
         destinationLocationId: destination.id,
         routeGeometry: route,
+        truckType: request.truckType,
         inbound: true,
       })
 
@@ -348,6 +349,7 @@ module.exports.addLane = async (event, context) => {
         originLocationId: origin.id,
         destinationLocationId: destination.id,
         routeGeometry: route,
+        truckType: request.truckType,
         inbound: false,
       })
 
