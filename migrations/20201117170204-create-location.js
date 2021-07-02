@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Locations', {
@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       address: {
         type: Sequelize.STRING,
@@ -20,29 +20,29 @@ module.exports = {
         references: {
           model: 'Brokerages',
           key: 'id',
-          as: 'brokerageId'
+          as: 'brokerageId',
         },
-        allowNull: false
+        allowNull: false,
       },
       city: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       state: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       zipcode: {
         type: Sequelize.STRING,
         allowNull: true,
       },
       phone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       owned: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       ledgerId: {
         type: Sequelize.INTEGER,
@@ -50,8 +50,8 @@ module.exports = {
         references: {
           model: 'Ledgers',
           key: 'id',
-          as: 'ledgerId'
-        }
+          as: 'ledgerId',
+        },
       },
       isHQ: {
         type: Sequelize.BOOLEAN,
@@ -59,37 +59,37 @@ module.exports = {
       },
       isShippingReceiving: {
         type: Sequelize.BOOLEAN,
-        allowNull: true
+        allowNull: true,
       },
       lnglat: {
         type: Sequelize.STRING,
         allowNull: true,
       },
       open: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       close: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       hoursType: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       requirements: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       painPoints: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       competitionAnalysis: {
         type: Sequelize.TEXT,
-        allowNull: true
+        allowNull: true,
       },
       estimatedVolume: {
         type: Sequelize.INTEGER,
@@ -101,51 +101,51 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
     await queryInterface.changeColumn('Lanes', 'originLocationId', {
       type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'originLocationId'
-        },
+      allowNull: true,
+      references: {
+        model: 'Locations',
+        key: 'id',
+        as: 'originLocationId',
+      },
     })
     await queryInterface.changeColumn('Lanes', 'destinationLocationId', {
       type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'destinationLocationId'
-        }
+      allowNull: true,
+      references: {
+        model: 'Locations',
+        key: 'id',
+        as: 'destinationLocationId',
+      },
     })
     await queryInterface.changeColumn('LanePartners', 'locationId', {
       type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'locationId'
-        }
+      allowNull: true,
+      references: {
+        model: 'Locations',
+        key: 'id',
+        as: 'locationId',
+      },
     })
     await queryInterface.changeColumn('CustomerLocations', 'locationId', {
       type: Sequelize.INTEGER,
-        allowNull: true,
-        references: {
-          model: 'Locations',
-          key: 'id',
-          as: 'locationId'
-        }
+      allowNull: true,
+      references: {
+        model: 'Locations',
+        key: 'id',
+        as: 'locationId',
+      },
     })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Locations');
-  }
-};
+    await queryInterface.dropTable('Locations')
+  },
+}

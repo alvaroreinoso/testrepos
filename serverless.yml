@@ -67,341 +67,286 @@ package:
     - '!migrations/**'
 
 functions:
-# Search
+  # Search
   search:
-    handler:
-      ./handlers/search.search
+    handler: ./handlers/search.search
     events:
-        - http:
-            path: api/search
-            method: get
-            cors: true
-        - http:
-            path: api/ledger/search
-            method: get
-            cors: true
-        - http:
-            path: api/search/users
-            method: get
-            cors: true
-        - http:
-            path: api/search/contacts
-            method: get
-            cors: true
+      - http:
+          path: api/search
+          method: get
+          cors: true
+      - http:
+          path: api/ledger/search
+          method: get
+          cors: true
+      - http:
+          path: api/search/users
+          method: get
+          cors: true
+      - http:
+          path: api/search/contacts
+          method: get
+          cors: true
 
-# Ledger
+  # Ledger
   getLedger:
-    handler:
-      ./handlers/ledger.getLedger
+    handler: ./handlers/ledger.getLedger
     events:
-        - http:
-            path: api/ledger/{id}
-            method: get
-            cors: true
+      - http:
+          path: api/ledger/{id}
+          method: get
+          cors: true
   writeMessage:
-    handler:
-      ./handlers/ledger.writeMessage
+    handler: ./handlers/ledger.writeMessage
     events:
-        - http:
-            path: api/ledger
-            method: post
-            cors: true
+      - http:
+          path: api/ledger
+          method: post
+          cors: true
   updateMessage:
-    handler:
-      ./handlers/ledger.updateMessage
+    handler: ./handlers/ledger.updateMessage
     events:
-        - http:
-            path: api/ledger/message/{id}
-            method: put
-            cors: true
-        - http:
-            path: api/ledger/message/{id}
-            method: delete
-            cors: true
+      - http:
+          path: api/ledger/message/{id}
+          method: put
+          cors: true
+      - http:
+          path: api/ledger/message/{id}
+          method: delete
+          cors: true
 
-# User
-  getUser:
-    handler:
-      ./handlers/user.getUser
+  # User
+  User:
+    handler: ./handlers/user.user
     events:
-        - http:
-            path: api/user
-            method: get
-            cors: true
+      # getUser
+      - http:
+          path: api/user
+          method: get
+          cors: true
+      # getUserById
+      - http:
+          path: api/user/{userId}
+          method: get
+          cors: true
+      # getEmailById
+      - http:
+          path: api/user/email/{userId}
+          method: get
+          cors: true
+      # createProfile
+      - http:
+          path: api/user
+          method: post
+          cors: true
+      # updateProfile
+      - http:
+          path: api/user
+          method: put
+          cors: true
+      # updateUser
+      - http:
+          path: api/user/{userId}
+          method: put
+          cors: true
+      # deleteUser
+      - http:
+          path: api/user/{userId}
+          method: delete
+          cors: true
+      # getTopCustomers
+      - http:
+          path: api/customer/top/{userId}
+          method: get
+          cors: true
+      # getTopLanes
+      - http:
+          path: api/lane/top/{userId}
+          method: get
+          cors: true
+      # getAdminUsers
+      - http:
+          path: api/user/admins
+          method: get
+          cors: true
+      # getTeams
+      - http:
+          path: api/user/teams
+          method: get
+          cors: true
     timeout: 20
-  getEmailById:
-    handler:
-      ./handlers/user.getEmailById
-    events:
-        - http:
-            path: api/user/email/{userId}
-            method: get
-            cors: true
-  deleteUser:
-    handler:
-      ./handlers/user.deleteUser
-    events:
-        - http:
-            path: api/user/{userId}
-            method: delete
-            cors: true
-  updateUser:
-    handler:
-      ./handlers/user.updateUser
-    events:
-        - http:
-            path: api/user/{userId}
-            method: put
-            cors: true
-  getUserById:
-    handler:
-      ./handlers/user.getUserById
-    events:
-        - http:
-            path: api/user/{userId}
-            method: get
-            cors: true
-  getTeams:
-    handler:
-      ./handlers/user.getTeams
-    events:
-        - http:
-            path: api/user/teams
-            method: get
-            cors: true
-  createProfile:
-    handler:
-      ./handlers/user.createProfile
-    events:
-        - http:
-            path: api/user
-            method: post
-            cors: true
-  updateProfile:
-    handler:
-      ./handlers/user.updateProfile
-    events:
-        - http:
-            path: api/user
-            method: put
-            cors: true
-  getTopCustomersForUser:
-    handler:
-      ./handlers/user.getTopCustomersForUser
-    events:
-        - http:
-            path: api/customer/top/{userId}
-            method: get
-            cors: true
-  getTopLanesForUser:
-    handler:
-      ./handlers/user.getTopLanesForUser
-    events:
-        - http:
-            path: api/lane/top/{userId}
-            method: get
-            cors: true
-  getAdminUsers:
-    handler:
-      ./handlers/user.getAdminUsers
-    events:
-        - http:
-            path: api/user/admins
-            method: get
-            cors: true
 
-# Customer
+  # Customer
   addCustomer:
-    handler:
-      ./handlers/customer.addCustomer
+    handler: ./handlers/customer.addCustomer
     events:
-        - http:
-            path: api/customer
-            method: post
-            cors: true
+      - http:
+          path: api/customer
+          method: post
+          cors: true
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     memorySize: 5000
   updateCustomer:
-    handler:
-      ./handlers/customer.updateCustomer
+    handler: ./handlers/customer.updateCustomer
     events:
-        - http:
-            path: api/customer/{customerId}
-            method: put
-            cors: true
-        - http:
-            path: api/customer/{customerId}
-            method: delete
-            cors: true
+      - http:
+          path: api/customer/{customerId}
+          method: put
+          cors: true
+      - http:
+          path: api/customer/{customerId}
+          method: delete
+          cors: true
   getCustomer:
-    handler:
-      ./handlers/customer.getCustomer
+    handler: ./handlers/customer.getCustomer
     events:
-        - http:
-            path: api/customer/{customerId}
-            method: get
-            cors: true
+      - http:
+          path: api/customer/{customerId}
+          method: get
+          cors: true
   getLanesForCustomer:
-    handler:
-      ./handlers/customer.getLanesForCustomer
+    handler: ./handlers/customer.getLanesForCustomer
     events:
-        - http:
-            path: api/lanes/customer/{customerId}
-            method: get
-            cors: true
+      - http:
+          path: api/lanes/customer/{customerId}
+          method: get
+          cors: true
   getLocationsForCustomer:
-    handler:
-      ./handlers/customer.getLocationsForCustomer
+    handler: ./handlers/customer.getLocationsForCustomer
     events:
-        - http:
-            path: api/customer/{customerId}/locations
-            method: get
-            cors: true
+      - http:
+          path: api/customer/{customerId}/locations
+          method: get
+          cors: true
   getTeammatesForCustomer:
-    handler:
-      ./handlers/customer.getTeammatesForCustomer
+    handler: ./handlers/customer.getTeammatesForCustomer
     events:
-        - http:
-            path: api/customer/{customerId}/teammates
-            method: get
-            cors: true
+      - http:
+          path: api/customer/{customerId}/teammates
+          method: get
+          cors: true
   addTeammateToCustomer:
-    handler:
-      ./handlers/customer.addTeammateToCustomer
+    handler: ./handlers/customer.addTeammateToCustomer
     events:
-        - http:
-            path: api/customer/teammates
-            method: post
-            cors: true
+      - http:
+          path: api/customer/teammates
+          method: post
+          cors: true
   deleteTeammateFromCustomer:
-    handler:
-      ./handlers/customer.deleteTeammateFromCustomer
+    handler: ./handlers/customer.deleteTeammateFromCustomer
     events:
-        - http:
-            path: api/customer/teammates
-            method: delete
-            cors: true
+      - http:
+          path: api/customer/teammates
+          method: delete
+          cors: true
 
-# Lane
+  # Lane
   getLaneById:
-    handler:
-      ./handlers/lane.getLaneById
+    handler: ./handlers/lane.getLaneById
     events:
-        - http:
-            path: api/lane/{laneId}
-            method: get
-            cors: true
+      - http:
+          path: api/lane/{laneId}
+          method: get
+          cors: true
   addLane:
-    handler:
-      ./handlers/lane.addLane
+    handler: ./handlers/lane.addLane
     events:
-        - http:
-            path: api/lane
-            method: post
-            cors: true
+      - http:
+          path: api/lane
+          method: post
+          cors: true
     timeout: 20
     memorySize: 5000
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
   updateLane:
-    handler:
-      ./handlers/lane.updateLane
+    handler: ./handlers/lane.updateLane
     events:
-        - http:
-            path: api/lane/{laneId}
-            method: put
-            cors: true
-        - http:
-            path: api/lane/{laneId}
-            method: delete
-            cors: true
+      - http:
+          path: api/lane/{laneId}
+          method: put
+          cors: true
+      - http:
+          path: api/lane/{laneId}
+          method: delete
+          cors: true
   getMarketFeedback:
-    handler:
-      ./handlers/lane.getMarketFeedback
+    handler: ./handlers/lane.getMarketFeedback
     events:
-        - http:
-            path: api/lane/{laneId}/feedback
-            method: get
-            cors: true
+      - http:
+          path: api/lane/{laneId}/feedback
+          method: get
+          cors: true
   addMarketFeedback:
-    handler:
-      ./handlers/lane.addMarketFeedback
+    handler: ./handlers/lane.addMarketFeedback
     events:
-        - http:
-            path: api/lane/{laneId}/feedback
-            method: post
-            cors: true
+      - http:
+          path: api/lane/{laneId}/feedback
+          method: post
+          cors: true
   deleteMarketFeedback:
-    handler:
-      ./handlers/lane.deleteMarketFeedback
+    handler: ./handlers/lane.deleteMarketFeedback
     events:
-        - http:
-            path: api/lane/{laneId}/feedback/{feedbackId}
-            method: delete
-            cors: true
+      - http:
+          path: api/lane/{laneId}/feedback/{feedbackId}
+          method: delete
+          cors: true
   getTeammatesForLane:
-    handler:
-      ./handlers/lane.getTeammatesForLane
+    handler: ./handlers/lane.getTeammatesForLane
     events:
-        - http:
-            path: api/lane/{laneId}/teammates
-            method: get
-            cors: true
+      - http:
+          path: api/lane/{laneId}/teammates
+          method: get
+          cors: true
   addTeammatetoLane:
-    handler:
-      ./handlers/lane.addTeammateToLane
+    handler: ./handlers/lane.addTeammateToLane
     events:
-        - http:
-            path: api/lane/teammates
-            method: post
-            cors: true
+      - http:
+          path: api/lane/teammates
+          method: post
+          cors: true
   deleteTeammateFromLane:
-    handler:
-      ./handlers/lane.deleteTeammateFromLane
+    handler: ./handlers/lane.deleteTeammateFromLane
     events:
-        - http:
-            path: api/lane/teammates
-            method: delete
-            cors: true
+      - http:
+          path: api/lane/teammates
+          method: delete
+          cors: true
   getTopCarriers:
-    handler:
-      ./handlers/lane.getTopCarriers
+    handler: ./handlers/lane.getTopCarriers
     events:
-        - http:
-            path: api/lane/{laneId}/carriers
-            method: get
-            cors: true
+      - http:
+          path: api/lane/{laneId}/carriers
+          method: get
+          cors: true
   updateCarriers:
-    handler:
-      ./handlers/lane.addCarrier
+    handler: ./handlers/lane.addCarrier
     events:
-        - http:
-            path: api/lane/{laneId}/carriers
-            method: post
-            cors: true
-        - http:
-            path: api/lane/{laneId}/carriers
-            method: put
-            cors: true
-
+      - http:
+          path: api/lane/{laneId}/carriers
+          method: post
+          cors: true
+      - http:
+          path: api/lane/{laneId}/carriers
+          method: put
+          cors: true
 
   # Team
   addTeam:
-    handler:
-      ./handlers/team.addTeam
+    handler: ./handlers/team.addTeam
     events:
-        - http:
-            path: api/team
-            method: post
-            cors: true
+      - http:
+          path: api/team
+          method: post
+          cors: true
   # editTeam:
   #   handler:
   #     ./handlers/team.editTeam
@@ -418,134 +363,120 @@ functions:
   #           path: api/team/{teamId}
   #           method: delete
   #           cors: true
-  getTeamById: 
-    handler:
-      ./handlers/team.getTeamById
+  getTeamById:
+    handler: ./handlers/team.getTeamById
     events:
-        - http:
-            path: api/team/{teamId}
-            method: get
-            cors: true
+      - http:
+          path: api/team/{teamId}
+          method: get
+          cors: true
   getLanesForTeam:
-    handler:
-      ./handlers/team.getLanesForTeam
+    handler: ./handlers/team.getLanesForTeam
     events:
-        - http:
-            path: api/team/{teamId}/lanes
-            method: get
-            cors: true
+      - http:
+          path: api/team/{teamId}/lanes
+          method: get
+          cors: true
   getTeammatesForTeam:
-    handler:
-      ./handlers/team.getTeammatesForTeam
+    handler: ./handlers/team.getTeammatesForTeam
     events:
-        - http:
-            path: api/team/{teamId}/teammates
-            method: get
-            cors: true
+      - http:
+          path: api/team/{teamId}/teammates
+          method: get
+          cors: true
   removeTeammate:
-    handler:
-      ./handlers/team.removeTeammate
+    handler: ./handlers/team.removeTeammate
     events:
-        - http:
-            path: api/team/teammate/{userId}
-            method: delete
-            cors: true
+      - http:
+          path: api/team/teammate/{userId}
+          method: delete
+          cors: true
   addTeammate:
-    handler:
-      ./handlers/team.addTeammate
+    handler: ./handlers/team.addTeammate
     events:
-        - http:
-            path: api/team/teammate
-            method: put
-            cors: true
+      - http:
+          path: api/team/teammate
+          method: put
+          cors: true
 
   # Location
   addLocation:
-    handler:
-      ./handlers/location.addLocation
+    handler: ./handlers/location.addLocation
     events:
-        - http:
-            path: api/location
-            method: post
-            cors: true
+      - http:
+          path: api/location
+          method: post
+          cors: true
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     memorySize: 5000
   getLocationById:
-    handler:
-      ./handlers/location.getLocationById
+    handler: ./handlers/location.getLocationById
     events:
-        - http:
-            path: api/location/{locationId}
-            method: get
-            cors: true
+      - http:
+          path: api/location/{locationId}
+          method: get
+          cors: true
   updateLocation:
-    handler:
-      ./handlers/location.updateLocation
+    handler: ./handlers/location.updateLocation
     events:
-        - http:
-            path: api/location/{locationId}
-            method: put
-            cors: true
-        - http:
-            path: api/location/{locationId}
-            method: delete
-            cors: true
+      - http:
+          path: api/location/{locationId}
+          method: put
+          cors: true
+      - http:
+          path: api/location/{locationId}
+          method: delete
+          cors: true
   getLanesForLocation:
-    handler:
-      ./handlers/location.getLanesForLocation
+    handler: ./handlers/location.getLanesForLocation
     events:
-        - http:
-            path: api/location/{locationId}/lanes
-            method: get
-            cors: true
+      - http:
+          path: api/location/{locationId}/lanes
+          method: get
+          cors: true
   getTeammatesForLocation:
-    handler:
-      ./handlers/location.getTeammatesForLocation
+    handler: ./handlers/location.getTeammatesForLocation
     events:
-        - http:
-            path: api/location/{locationId}/teammates
-            method: get
-            cors: true
+      - http:
+          path: api/location/{locationId}/teammates
+          method: get
+          cors: true
 
   addTeammatetoLocation:
-    handler:
-      ./handlers/location.addTeammateToLocation
+    handler: ./handlers/location.addTeammateToLocation
     events:
-        - http:
-            path: api/location/teammates
-            method: post
-            cors: true
+      - http:
+          path: api/location/teammates
+          method: post
+          cors: true
   deleteTeammateFromLocation:
-    handler:
-      ./handlers/location.deleteTeammateFromLocation
+    handler: ./handlers/location.deleteTeammateFromLocation
     events:
-        - http:
-            path: api/location/teammates
-            method: delete
-            cors: true
-  
+      - http:
+          path: api/location/teammates
+          method: delete
+          cors: true
+
   # Brokerage
   getBrokerage:
-    handler:
-      ./handlers/brokerage.getBrokerage
+    handler: ./handlers/brokerage.getBrokerage
     events:
-        - http:
-            path: api/brokerage/{brokerageId}
-            method: get
-            cors: true
+      - http:
+          path: api/brokerage/{brokerageId}
+          method: get
+          cors: true
   getUsersForBrokerage:
-    handler:
-      ./handlers/brokerage.getUsersForBrokerage
+    handler: ./handlers/brokerage.getUsersForBrokerage
     events:
-        - http:
-            path: api/brokerage/users
-            method: get
-            cors: true
+      - http:
+          path: api/brokerage/users
+          method: get
+          cors: true
   # getLanesForBrokerage:
   #   handler:
   #     ./handlers/brokerage.getLanesForBrokerage
@@ -555,123 +486,111 @@ functions:
   #           method: get
   #           cors: true
   editBrokerage:
-    handler:
-      ./handlers/brokerage.editBrokerage
+    handler: ./handlers/brokerage.editBrokerage
     events:
-        - http:
-            path: api/brokerage
-            method: put
-            cors: true
+      - http:
+          path: api/brokerage
+          method: put
+          cors: true
 
   # Tag
   getTags:
-    handler:
-      ./handlers/tag.getTags
+    handler: ./handlers/tag.getTags
     events:
-        - http:
-            path: api/tag/{itemId}
-            method: get
-            cors: true
+      - http:
+          path: api/tag/{itemId}
+          method: get
+          cors: true
   addTag:
-    handler:
-      ./handlers/tag.addTag
+    handler: ./handlers/tag.addTag
     events:
-        - http:
-            path: api/tag/{itemId}
-            method: post
-            cors: true
+      - http:
+          path: api/tag/{itemId}
+          method: post
+          cors: true
   deleteTag:
-    handler:
-      ./handlers/tag.deleteTag
+    handler: ./handlers/tag.deleteTag
     events:
-        - http:
-            path: api/tag
-            method: delete
-            cors: true
+      - http:
+          path: api/tag
+          method: delete
+          cors: true
   # Contact
   getContacts:
-    handler:
-      ./handlers/contact.getContacts
+    handler: ./handlers/contact.getContacts
     events:
-        - http:
-            path: api/contact/{itemId}
-            method: get
-            cors: true
+      - http:
+          path: api/contact/{itemId}
+          method: get
+          cors: true
   addContact:
-    handler:
-      ./handlers/contact.addContact
+    handler: ./handlers/contact.addContact
     events:
-        - http:
-            path: api/contact/{itemId}
-            method: post
-            cors: true
+      - http:
+          path: api/contact/{itemId}
+          method: post
+          cors: true
   editContact:
-    handler:
-      ./handlers/contact.editContact
+    handler: ./handlers/contact.editContact
     events:
-        - http:
-            path: api/contact
-            method: put
-            cors: true
+      - http:
+          path: api/contact
+          method: put
+          cors: true
   deleteContact:
-    handler:
-      ./handlers/contact.deleteContact
+    handler: ./handlers/contact.deleteContact
     events:
-        - http:
-            path: api/contact
-            method: delete
-            cors: true
+      - http:
+          path: api/contact
+          method: delete
+          cors: true
 
   # Onboarding
   createAccount:
-    handler:
-      ./handlers/onboarding.requestAccount
+    handler: ./handlers/onboarding.requestAccount
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/account
-            method: post
-            cors: true
+      - http:
+          path: api/account
+          method: post
+          cors: true
   inviteUser:
-    handler:
-      ./handlers/onboarding.inviteUser
+    handler: ./handlers/onboarding.inviteUser
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     events:
-        - http:
-            path: api/onboarding/user
-            method: post
-            cors: true
+      - http:
+          path: api/onboarding/user
+          method: post
+          cors: true
   acceptInvite:
-    handler:
-      ./handlers/onboarding.acceptInvite
+    handler: ./handlers/onboarding.acceptInvite
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/account
-            method: put
-            cors: true        
+      - http:
+          path: api/account
+          method: put
+          cors: true
   getBrokerageByUUID:
-    handler:
-      ./handlers/onboarding.getBrokerageByUUID
+    handler: ./handlers/onboarding.getBrokerageByUUID
     events:
-        - http:
-            path: api/register/{uuid}
-            method: get
-            cors: true
+      - http:
+          path: api/register/{uuid}
+          method: get
+          cors: true
   # getTeamsForBrokerage:
   #   handler:
   #     ./handlers/onboarding.getTeamsForBrokerage
@@ -680,111 +599,103 @@ functions:
   #           path: api/onboarding/teams
   #           method: get
   #           cors: true
-  getCustomersForBrokerage:  
-    handler:
-      ./handlers/onboarding.getCustomersForBrokerage
+  getCustomersForBrokerage:
+    handler: ./handlers/onboarding.getCustomersForBrokerage
     events:
-        - http:
-            path: api/onboarding/customers
-            method: get
-            cors: true
+      - http:
+          path: api/onboarding/customers
+          method: get
+          cors: true
 
   # Billing
   webhookHandler:
-    handler:
-      ./handlers/billing.webhookHandler
+    handler: ./handlers/billing.webhookHandler
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/stripe-webhook
-            method: post
-            cors: true
+      - http:
+          path: api/stripe-webhook
+          method: post
+          cors: true
   createStripeCustomer:
-    handler:
-      ./handlers/billing.createStripeCustomer
+    handler: ./handlers/billing.createStripeCustomer
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/create-stripe-customer/{brokerageId}
-            method: post
-            cors: true
+      - http:
+          path: api/create-stripe-customer/{brokerageId}
+          method: post
+          cors: true
   createStripeSubscription:
-    handler:
-      ./handlers/billing.createStripeSubscription
+    handler: ./handlers/billing.createStripeSubscription
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/create-stripe-subscription
-            method: post
-            cors: true
+      - http:
+          path: api/create-stripe-subscription
+          method: post
+          cors: true
   getBillingDetails:
-    handler:
-      ./handlers/billing.getBillingDetails
+    handler: ./handlers/billing.getBillingDetails
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/billing-details
-            method: get
-            cors: true
+      - http:
+          path: api/billing-details
+          method: get
+          cors: true
   updateSubscription:
-    handler:
-      ./handlers/billing.updateSubscription
+    handler: ./handlers/billing.updateSubscription
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/subscription
-            method: post
-            cors: true
+      - http:
+          path: api/subscription
+          method: post
+          cors: true
   updateDefaultPaymentMethod:
-    handler:
-      ./handlers/billing.updateDefaultPaymentMethod
+    handler: ./handlers/billing.updateDefaultPaymentMethod
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/default-payment
-            method: post
-            cors: true
+      - http:
+          path: api/default-payment
+          method: post
+          cors: true
   createSetupIntent:
-    handler:
-      ./handlers/billing.createSetupIntent
+    handler: ./handlers/billing.createSetupIntent
     vpc:
       securityGroupIds:
-        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}                                                                                                                                                       
-      subnetIds:                                                                                                                                                                       
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
         - subnet-0969f48a6ba21d4da # private
     timeout: 20
     events:
-        - http:
-            path: api/setup-intent
-            method: post
-            cors: true
+      - http:
+          path: api/setup-intent
+          method: post
+          cors: true

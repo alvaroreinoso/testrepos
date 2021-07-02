@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Ledger extends Model {
     /**
@@ -10,41 +8,42 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-
       Ledger.hasOne(models.Customer, {
         foreignKey: 'ledgerId',
       })
       Ledger.hasOne(models.User, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
       Ledger.hasOne(models.Location, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
       Ledger.hasMany(models.Message, {
         foreignKey: 'ledgerId',
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
       })
       Ledger.hasOne(models.Lane, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
       Ledger.hasOne(models.Team, {
         foreignKey: 'ledgerId',
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
       })
       Ledger.belongsTo(models.Brokerage, {
-        foreignKey: 'brokerageId'
+        foreignKey: 'brokerageId',
       })
       Ledger.hasOne(models.Brokerage, {
-        foreignKey: 'ledgerId'
+        foreignKey: 'ledgerId',
       })
-
     }
-  };
-  Ledger.init({
-    brokerageId: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'Ledger',
-  });
-  return Ledger;
-};
+  }
+  Ledger.init(
+    {
+      brokerageId: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: 'Ledger',
+    }
+  )
+  return Ledger
+}

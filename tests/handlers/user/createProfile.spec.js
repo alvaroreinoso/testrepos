@@ -1,22 +1,23 @@
 const userHandler = require('../../../handlers/user')
 
 describe('Test createProfile Lambda', () => {
+  test('Create Profile with invalid request body', async () => {
+    const request = {
+      body: '{"fakeKey":"test-test-test","notEmail":"test","notBrokerageId":3}',
+    }
 
-    test('Create Profile with invalid request body', async () => {
+    const response = await userHandler.createProfile(request)
 
-        const request = {"body":'{"fakeKey":"test-test-test","notEmail":"test","notBrokerageId":3}'}
+    expect(response.statusCode).toStrictEqual(500)
+  })
 
-        const response = await userHandler.createProfile(request)
+  test('Create Profile with valid request body', async () => {
+    const request = {
+      body: '{"username":"test-test-test","email":"test@gmail.com","brokerageId":2}',
+    }
 
-        expect(response.statusCode).toStrictEqual(500)
-    })
+    const response = await userHandler.createProfile(request)
 
-    test('Create Profile with valid request body', async () => {
-
-        const request = {"body":'{"username":"test-test-test","email":"test@gmail.com","brokerageId":2}'}
-
-        const response = await userHandler.createProfile(request)
-
-        expect(response.statusCode).toStrictEqual(200)
-    })
+    expect(response.statusCode).toStrictEqual(200)
+  })
 })

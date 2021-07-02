@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Tag extends Model {
     /**
@@ -12,36 +10,39 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Tag.belongsToMany(models.Customer, {
         through: 'CustomerTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
       Tag.belongsToMany(models.Location, {
         through: 'LocationTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
       Tag.belongsToMany(models.Lane, {
         through: 'LaneTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
       Tag.belongsToMany(models.User, {
         through: 'UserTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
       Tag.belongsToMany(models.Brokerage, {
         through: 'BrokerageTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
       Tag.belongsToMany(models.Team, {
         through: 'TeamTag',
-        foreignKey: 'tagId'
+        foreignKey: 'tagId',
       })
     }
-  };
-  Tag.init({
-    type: DataTypes.STRING,
-    content: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Tag',
-  });
-  return Tag;
-};
+  }
+  Tag.init(
+    {
+      type: DataTypes.STRING,
+      content: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: 'Tag',
+    }
+  )
+  return Tag
+}

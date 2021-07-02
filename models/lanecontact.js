@@ -1,8 +1,6 @@
-'use strict';
+'use strict'
 const elastic = require('../elastic/hooks')
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class LaneContact extends Model {
     /**
@@ -13,16 +11,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
     }
-  };
-  LaneContact.init({
-    laneId: DataTypes.INTEGER,
-    contactId: DataTypes.INTEGER
-  }, {
-    hooks: {
-
+  }
+  LaneContact.init(
+    {
+      laneId: DataTypes.INTEGER,
+      contactId: DataTypes.INTEGER,
     },
-    sequelize,
-    modelName: 'LaneContact',
-  });
-  return LaneContact;
-};
+    {
+      hooks: {},
+      sequelize,
+      modelName: 'LaneContact',
+    }
+  )
+  return LaneContact
+}

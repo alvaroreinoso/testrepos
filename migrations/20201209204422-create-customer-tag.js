@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('CustomerTags', {
@@ -6,7 +6,7 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       customerId: {
         type: Sequelize.INTEGER,
@@ -14,8 +14,8 @@ module.exports = {
         references: {
           model: 'Customers',
           key: 'id',
-          as: 'customerId'
-        }
+          as: 'customerId',
+        },
       },
       tagId: {
         type: Sequelize.INTEGER,
@@ -23,20 +23,20 @@ module.exports = {
         references: {
           model: 'Tags',
           key: 'id',
-          as: 'tagId'
-        }
+          as: 'tagId',
+        },
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('CustomerTags');
-  }
-};
+    await queryInterface.dropTable('CustomerTags')
+  },
+}

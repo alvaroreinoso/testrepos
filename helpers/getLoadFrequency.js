@@ -1,37 +1,32 @@
 const dateFns = require('date-fns')
 
 module.exports.getFrequency = async (lane) => {
+  const loads = await lane.getLoads()
 
-    const loads = await lane.getLoads()
+  if (loads.length == 0) {
+    return 0
+  }
 
-    if (loads.length == 0) {
+  const dates = loads.map((load) => load.dropDate)
 
-        return 0
-    }
+  const firstDate = dates[0]
+  const lastDate = dates[dates.length - 1]
 
-    const dates = loads.map(load => load.dropDate)
+  const daysBetween = dateFns.differenceInDays(lastDate, firstDate)
 
-    const firstDate = dates[0]
-    const lastDate = dates[dates.length - 1]
+  const count = dates.length
 
-    const daysBetween = dateFns.differenceInDays(lastDate, firstDate)
+  if (daysBetween == 0) {
+    let frequency = count
 
-    const count = dates.length
+    return frequency
+  } else {
+    const numberOfWeeks = daysBetween / 7
 
-    if (daysBetween == 0) {
+    const frequency = count / numberOfWeeks
 
-        let frequency = count
+    const roundedFrequency = Math.round(frequency)
 
-        return frequency
-
-    } else {
-
-        const numberOfWeeks = daysBetween / 7
-
-        const frequency = count / numberOfWeeks
-
-        const roundedFrequency = Math.round(frequency)
-
-        return roundedFrequency
-    }
+    return roundedFrequency
+  }
 }

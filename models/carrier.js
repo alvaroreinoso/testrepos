@@ -1,8 +1,6 @@
-'use strict';
-const Sequelize = require('sequelize');
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const Sequelize = require('sequelize')
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Carrier extends Model {
     /**
@@ -12,25 +10,28 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Carrier.hasMany(models.Load, {
-        foreignKey: 'carrierId'
+        foreignKey: 'carrierId',
       })
       Carrier.belongsTo(models.Lane, {
-        foreignKey: 'laneId'
+        foreignKey: 'laneId',
       })
     }
-  };
-  Carrier.init({
-    name: DataTypes.STRING,
-    laneId: DataTypes.INTEGER,
-    serviceRating: DataTypes.INTEGER,
-    historicalRate: DataTypes.INTEGER,
-    mcn: DataTypes.INTEGER,
-    contactPhone: DataTypes.STRING,
-    contactEmail: DataTypes.STRING,
-    contactName: DataTypes.STRING,
-  }, {
-    sequelize,
-    modelName: 'Carrier',
-  });
-  return Carrier;
-};
+  }
+  Carrier.init(
+    {
+      name: DataTypes.STRING,
+      laneId: DataTypes.INTEGER,
+      serviceRating: DataTypes.INTEGER,
+      historicalRate: DataTypes.INTEGER,
+      mcn: DataTypes.INTEGER,
+      contactPhone: DataTypes.STRING,
+      contactEmail: DataTypes.STRING,
+      contactName: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: 'Carrier',
+    }
+  )
+  return Carrier
+}

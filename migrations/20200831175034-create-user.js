@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('Users', {
@@ -6,11 +6,11 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       username: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       brokerageId: {
         type: Sequelize.INTEGER,
@@ -24,31 +24,31 @@ module.exports = {
           model: 'Teams',
           key: 'id',
           as: 'teamId',
-        }
+        },
       },
       ledgerId: {
         type: Sequelize.INTEGER,
-        allowNull: true
+        allowNull: true,
       },
       confirmed: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       active: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: true
+        defaultValue: true,
       },
       admin: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       deleted: {
         type: Sequelize.BOOLEAN,
         allowNull: false,
-        defaultValue: false
+        defaultValue: false,
       },
       title: {
         type: Sequelize.STRING,
@@ -62,33 +62,33 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         unique: true,
-        allowNull: false
+        allowNull: false,
       },
       phone: {
         type: Sequelize.STRING,
       },
       phoneExt: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       profileImage: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       deletedAt: {
         allowNull: true,
-        type: Sequelize.DATE
-      }
-    });
+        type: Sequelize.DATE,
+      },
+    })
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
-  }
-};
+    await queryInterface.dropTable('Users')
+  },
+}

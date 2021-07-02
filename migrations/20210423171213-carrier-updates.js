@@ -1,30 +1,30 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addColumn('Carriers', 'historicalRate', {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'mcn', {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'serviceRating', {
       type: Sequelize.INTEGER,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'contactName', {
       type: Sequelize.STRING,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'contactPhone', {
       type: Sequelize.STRING,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'contactEmail', {
       type: Sequelize.STRING,
-      allowNull: true
+      allowNull: true,
     })
     await queryInterface.addColumn('Carriers', 'laneId', {
       type: Sequelize.INTEGER,
@@ -32,8 +32,8 @@ module.exports = {
       references: {
         model: 'Lanes',
         key: 'id',
-        as: 'laneId'
-      }
+        as: 'laneId',
+      },
     })
   },
 
@@ -50,5 +50,5 @@ module.exports = {
     await queryInterface.removeColumn('Carriers', 'contactEmail')
     await queryInterface.removeColumn('Carriers', 'contactName')
     await queryInterface.removeColumn('Carriers', 'laneId')
-  }
-};
+  },
+}
