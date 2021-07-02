@@ -1,4 +1,7 @@
-const userHandler = require('../../../handlers/user')
+const Users = require('../../../app/users')
+const mockDb = require('../../mocks/mockDb')
+
+const userHandler = new Users(mockDb)
 
 describe('Test getUserById Lambda', () => {
   test('Get User by id with no token', async () => {
@@ -11,7 +14,7 @@ describe('Test getUserById Lambda', () => {
       },
     }
 
-    const response = await userHandler.getUserById(request)
+    const response = await userHandler.getById(request)
 
     expect(response.statusCode).toStrictEqual(401)
     expect(response.body).toBe(undefined)
@@ -28,7 +31,7 @@ describe('Test getUserById Lambda', () => {
       },
     }
 
-    const response = await userHandler.getUserById(request)
+    const response = await userHandler.getById(request)
 
     expect(response.statusCode).toStrictEqual(404)
     expect(response.body).toBe(undefined)
@@ -45,7 +48,7 @@ describe('Test getUserById Lambda', () => {
       },
     }
 
-    const response = await userHandler.getUserById(request)
+    const response = await userHandler.getById(request)
 
     expect(response.statusCode).toStrictEqual(200)
     expect(response.body).not.toBe(undefined)
