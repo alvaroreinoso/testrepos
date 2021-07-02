@@ -508,6 +508,7 @@ functions:
           path: api/tag/{itemId}
           method: post
           cors: true
+    timeout: 12
   deleteTag:
     handler: ./handlers/tag.deleteTag
     events:
