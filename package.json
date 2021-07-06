@@ -18,8 +18,7 @@
     "faker": "^5.1.0",
     "jest": "^26.4.2",
     "sequelize-cli": "^6.2.0",
-    "sequelize-mock": "^0.10.2",
-    "serverless-offline": "^7.0.0"
+    "sequelize-mock": "^0.10.2"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.10.0",
@@ -35,6 +34,7 @@
     "sequelize": "^6.3.5",
     "serverless": "^2.18.0",
     "serverless-dependson-plugin": "^1.1.2",
+    "serverless-offline": "^7.0.0",
     "serverless-plugin-warmup": "^5.1.0",
     "serverless-prune-plugin": "^1.4.3",
     "states-abbreviations": "^1.0.0",
