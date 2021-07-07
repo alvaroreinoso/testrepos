@@ -5,6 +5,7 @@ const stepfunctions = new AWS.StepFunctions()
 const { newLoad, lastDropIsCustomer, firstPickIsCustomer, matchedInternalLane, getLngLat, getRoute, getDropDate, getAddress, getLpAddress, getRate } = require('.././helpers/upload')
 const { Location, Load, Customer, CustomerLocation, Lane, LanePartner, Carrier } = require('.././models');
 const getCurrentUser = require('.././helpers/user')
+const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
 
@@ -59,11 +60,26 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
 
-    let finishedLoads = []
+    // bulk insert customers and locations
 
-    for (const row of event) {
+    // pass body to next map task
 
-        console.log(row)
+    // map over lanes
+
+    const origins = await event.map(lane => lane.originLocation)
+
+    const test = await Location.bulkCreate(origins, {
+        ignoreDuplicates: true
+    })
+
+    return test
+
+    // let finishedLoads = []
+
+
+    // for (const row of event) {
+
+    //     console.log(row)
         // if (row.status == 'new load') {
 
         //     const json = row.body
@@ -399,9 +415,9 @@ module.exports.reduce = async (event, context) => {
         //         console.log('unmatched load')
         //     }
         // }
-    }
+    // }
 
-    return finishedLoads
+    // return finishedLoads
 
 }
 
