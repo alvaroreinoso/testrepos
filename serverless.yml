@@ -785,15 +785,15 @@ stepFunctions:
             Type: Map
             ItemsPath: $
             OutputPath: $
-              Iterator:
-                StartAt: SecondMapTask
-                States:
-                  SecondMapTask:
-                    Type: Task
-                    TimeoutSeconds: 40
-                    Resource:
-                      Fn::GetAtt: [secondMapTask, Arn]
-                    End: true
+            Iterator:
+              StartAt: SecondMapTask
+              States:
+                SecondMapTask:
+                  Type: Task
+                  TimeoutSeconds: 40
+                  Resource:
+                    Fn::GetAtt: [secondMapTask, Arn]
+                  End: true
             End: true
             # ResultPath: $
             # End: true
