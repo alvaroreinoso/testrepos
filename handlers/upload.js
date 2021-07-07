@@ -33,7 +33,7 @@ module.exports.mapTask = async (event, context, callback) => {
 
     const originLocation = await Location.build({
         address: originAddress,
-        lngLat: originLngLat,
+        lnglat: originLngLat,
         brokerageId: row.brokerageId
     })
 
@@ -42,16 +42,9 @@ module.exports.mapTask = async (event, context, callback) => {
 
     const destinationLocation = await Location.build({
         address: destinationAddress,
-        lngLat: destinationLngLat,
+        lnglat: destinationLngLat,
         brokerageId: row.brokerageId
     })
-
-
-    // const firstAddress = await getAddress(json)
-    // const firstLngLat = await getLngLat(json['First Pick Address'])
-    // const secondAddress = await getLpAddress(json)
-    // const secondLngLat = await getLngLat(json['Last Drop Address'])
-    // const dropDate = await getDropDate(json)
 
     const resp = {
         body: row,
