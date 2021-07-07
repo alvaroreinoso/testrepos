@@ -107,23 +107,34 @@ module.exports.reduce = async (event, context) => {
         }
 
         const tmpLane = {
-            origin: origin.id,
-            destination: destination.id,
+            originId: origin.id,
+            destinationId: destination.id,
         }
 
         tmpLanes.push(tmpLane)
     }
 
-    return tmpLanes
+    // return tmpLanes
 
     let newLanes = []
 
-    for (const entry of tmpLanes) {
+    for (const tmpLane of tmpLanes) {
 
         const [lane, newLane] = await Lane.findOrBuild({
-
+            where: {
+                brokerageId: row.body.brokerageId,
+                originLocationId: tmpLane.originId,
+                destinationLocationId: tmpLane.destinationId
+            }
         })
+
+        if (newLane) {
+            newLanes.push(lane)
+        }
     } 
+
+
+    return newLanes
 
     // save unique customters and locations -- with customer locations
 
