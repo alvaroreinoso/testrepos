@@ -715,7 +715,7 @@ functions:
       subnetIds:
         - subnet-0969f48a6ba21d4da # private
   secondMapTask:
-    handler: ./handlers/upload.mapTask
+    handler: ./handlers/upload.secondMapTask
     timeout: 300
     memorySize: 1024
     vpc:

@@ -141,6 +141,7 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
 
+    // save all new lanes with routes
     return event
 }
 
