@@ -1,4 +1,4 @@
-const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('../../models');
+const { Team, Brokerage, User, Ledger, Load, Customer, CustomerLane, CustomerLocation, Lane, LanePartner, Carrier } = require('../models');
 require('dotenv').config()
 const fetch = require('node-fetch');
 const stringSimilarity = require('string-similarity');
