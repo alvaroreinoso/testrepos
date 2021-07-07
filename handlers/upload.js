@@ -107,6 +107,7 @@ module.exports.reduce = async (event, context) => {
         }
 
         const tmpLane = {
+            brokerageId: row.body.brokerageId,
             originId: origin.id,
             destinationId: destination.id,
         }
@@ -122,7 +123,7 @@ module.exports.reduce = async (event, context) => {
 
         const [lane, newLane] = await Lane.findOrBuild({
             where: {
-                brokerageId: row.body.brokerageId,
+                brokerageId: tmpLane.brokerageId,
                 originLocationId: tmpLane.originId,
                 destinationLocationId: tmpLane.destinationId
             }
