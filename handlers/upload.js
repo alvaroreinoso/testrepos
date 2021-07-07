@@ -12,7 +12,9 @@ module.exports.entry = async (event, context, callback) => {
 
     const brokerageId = user.brokerageId
 
-    const lanes = event.body
+    console.log(event)
+
+    const lanes = JSON.parse(event.body)
 
     await lanes.forEach(async lane => { lane.brokerageId = brokerageId });
 
