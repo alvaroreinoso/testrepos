@@ -701,7 +701,7 @@ functions:
           path: api/setup-intent
           method: post
           cors: true
-  
+
   # Upload
   entry:
     handler: ./handlers/upload.entry
@@ -728,7 +728,6 @@ functions:
           cors: true
 stepFunctions:
   stateMachines:
-
     AscendLoads:
       events:
         - http:
@@ -736,7 +735,7 @@ stepFunctions:
             method: POST
             cors: true
       definition:
-        Comment: "Parse and Save Ascend Loads"
+        Comment: 'Parse and Save Ascend Loads'
         StartAt: Entry
         States:
           Entry:
@@ -755,7 +754,7 @@ stepFunctions:
               States:
                 FirstMapTask:
                   Type: Task
-                  TimeoutSeconds: 300 
+                  TimeoutSeconds: 300
                   Resource:
                     Fn::GetAtt: [mapTask, Arn]
                   Retry:
@@ -764,7 +763,7 @@ stepFunctions:
                         - States.ALL
                       IntervalSeconds: 1
                       MaxAttempts: 1
-                      BackoffRate: 1.5      
+                      BackoffRate: 1.5
                   End: true
           Reduce:
             Type: Task
@@ -772,4 +771,20 @@ stepFunctions:
             Resource:
               Fn::GetAtt: [reduce, Arn]
             ResultPath: $
+            Next: SecondMap
+          SecondMap:
+            Type: Map
+            ItemsPath: $
+            OutputPath: $
+              Iterator:
+                StartAt: SecondMapTask
+                States:
+                  SecondMapTask:
+                    Type: Task
+                    TimeoutSeconds: 40
+                    Resource:
+                      Fn::GetAtt: [mapTask, Arn]
+                    End: true
             End: true
+            # ResultPath: $
+            # End: true
