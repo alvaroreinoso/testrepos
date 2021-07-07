@@ -714,6 +714,15 @@ functions:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
       subnetIds:
         - subnet-0969f48a6ba21d4da # private
+  secondMapTask:
+    handler: ./handlers/upload.mapTask
+    timeout: 300
+    memorySize: 1024
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
+        - subnet-0969f48a6ba21d4da # private
   reduce:
     handler: ./handlers/upload.reduce
     timeout: 500
@@ -783,7 +792,7 @@ stepFunctions:
                     Type: Task
                     TimeoutSeconds: 40
                     Resource:
-                      Fn::GetAtt: [mapTask, Arn]
+                      Fn::GetAtt: [secondMapTask, Arn]
                     End: true
             End: true
             # ResultPath: $

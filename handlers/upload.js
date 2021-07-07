@@ -139,6 +139,11 @@ module.exports.reduce = async (event, context) => {
   return newLanes
 }
 
+module.exports.secondMapTask = async (event, context) => {
+
+    return event
+}
+
 module.exports.pollFunction = async (event, context) => {
   const executionArn = event.queryStringParameters.executionArn
 
