@@ -75,7 +75,12 @@ module.exports.reduce = async (event, context) => {
         })
 
         const [origin, newOrigin] = await Location.findCreateFind({
-            where: row.originLocation
+            where: {
+                address: originLocation.address,
+                city: originLocation.city,
+                state: originLocation.state,
+                brokerageId: row.body.brokerageId
+            }
         })
 
         if (newOrigin) {
@@ -86,7 +91,12 @@ module.exports.reduce = async (event, context) => {
         }
 
         const [destination, newDestination] = await Location.findCreateFind({
-            where: row.destinationLocation
+            where: {
+                address: destinationLocation.address,
+                city: destinationLocation.city,
+                state: destinationLocation.state,
+                brokerageId: row.body.brokerageId
+            }
         })
 
         if (newDestination) {
@@ -105,6 +115,15 @@ module.exports.reduce = async (event, context) => {
     }
 
     return tmpLanes
+
+    let newLanes = []
+
+    for (const entry of tmpLanes) {
+
+        const [lane, newLane] = await Lane.findOrBuild({
+
+        })
+    } 
 
     // save unique customters and locations -- with customer locations
 
