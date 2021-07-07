@@ -64,7 +64,7 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
 
-    let tmpLanes = []
+    let newLanes = []
 
     for (const row of event) {
         const [customer, newCustomer] = await Customer.findCreateFind({
@@ -106,20 +106,13 @@ module.exports.reduce = async (event, context) => {
             })
         }
 
-        const tmpLane = {
-            brokerageId: row.body.brokerageId,
-            originId: origin.id,
-            destinationId: destination.id,
-        }
+        // const tmpLane = {
+        //     brokerageId: row.body.brokerageId,
+        //     originId: origin.id,
+        //     destinationId: destination.id,
+        // }
 
-        tmpLanes.push(tmpLane)
-    }
-
-    // return tmpLanes
-
-    let newLanes = []
-
-    for (const tmpLane of tmpLanes) {
+        // tmpLanes.push(tmpLane)
 
         const [lane, newLane] = await Lane.findOrBuild({
             where: {
@@ -132,7 +125,28 @@ module.exports.reduce = async (event, context) => {
         if (newLane) {
             newLanes.push(lane)
         }
-    } 
+    }
+
+    return newLanes
+
+    // return tmpLanes
+
+    // let newLanes = []
+
+    // for (const tmpLane of tmpLanes) {
+
+    //     const [lane, newLane] = await Lane.findOrBuild({
+    //         where: {
+    //             brokerageId: tmpLane.brokerageId,
+    //             originLocationId: tmpLane.originId,
+    //             destinationLocationId: tmpLane.destinationId
+    //         }
+    //     })
+
+    //     if (newLane) {
+    //         newLanes.push(lane)
+    //     }
+    // } 
 
 
     return newLanes
