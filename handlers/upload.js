@@ -34,6 +34,8 @@ module.exports.mapTask = async (event, context, callback) => {
 
     const originLocation = await Location.build({
         address: originAddress,
+        city: row['Origin City'],
+        state: row['Origin State'],
         lnglat: originLngLat,
         brokerageId: row.brokerageId
     })
@@ -43,6 +45,8 @@ module.exports.mapTask = async (event, context, callback) => {
 
     const destinationLocation = await Location.build({
         address: destinationAddress,
+        city: row['Destination City'],
+        state: row['Destination State'],
         lnglat: destinationLngLat,
         brokerageId: row.brokerageId
     })
@@ -60,19 +64,55 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
 
-    // bulk insert customers and locations
+    let tmpLanes = []
+
+    for (const row of event) {
+        const [customer, newCustomer] = await Customer.findCreateFind({
+            where: {
+                name: row.customer.name,
+                brokerageId: row.body.brokerageId
+            }
+        })
+
+        const [origin, newOrigin] = await Location.findCreateFind({
+            where: row.originLocation
+        })
+
+        if (newOrigin) {
+            await CustomerLocation.create({
+                locationId: origin.id,
+                customerId: customer.id
+            })
+        }
+
+        const [destination, newDestination] = await Location.findCreateFind({
+            where: row.destinationLocation
+        })
+
+        if (newDestination) {
+            await CustomerLocation.create({
+                locationId: destination.id,
+                customerId: customer.id
+            })
+        }
+
+        const tmpLane = {
+            origin: origin.id,
+            destination: destination.id,
+        }
+
+        tmpLanes.push(tmpLane)
+    }
+
+    return tmpLanes
+
+    // save unique customters and locations -- with customer locations
+
+    // pass all to map task for lane route geometries
 
     // pass body to next map task
 
     // map over lanes
-
-    const origins = await event.map(lane => lane.originLocation)
-
-    const test = await Location.bulkCreate(origins, {
-        ignoreDuplicates: true
-    })
-
-    return test
 
     // let finishedLoads = []
 
