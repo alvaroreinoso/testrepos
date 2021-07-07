@@ -37,6 +37,7 @@ plugins:
   - serverless-plugin-warmup
   - serverless-dependson-plugin
   - serverless-prune-plugin
+  - serverless-step-functions
 
 custom:
   dependsOn:
