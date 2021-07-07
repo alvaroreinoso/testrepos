@@ -701,3 +701,70 @@ functions:
           path: api/setup-intent
           method: post
           cors: true
+  
+  # Upload
+  entry:
+    handler: ./handlers/upload.entry
+  mapTask:
+    handler: ./handlers/upload.mapTask
+    timeout: 300
+    memorySize: 1024
+  reduce:
+    handler: ./handlers/upload.reduce
+    timeout: 500
+    memorySize: 10000
+  pollFunction:
+    handler: handler.pollFunction
+    role: arn:aws:iam::371499397780:role/stepFunctionAccess
+    events:
+      - http:
+          method: get
+          path: api/upload/status
+          cors: true
+stepFunctions:
+  stateMachines:
+
+    AscendLoads:
+      events:
+        - http:
+            path: api/loads/ascend
+            method: POST
+            cors: true
+      definition:
+        Comment: "Parse and Save Ascend Loads"
+        StartAt: Entry
+        States:
+          Entry:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [entry, Arn]
+            ResultPath: $
+            Next: SecondState
+          SecondState:
+            Type: Map
+            ItemsPath: $
+            OutputPath: $
+            Next: Reduce
+            Iterator:
+              StartAt: FirstMapTask
+              States:
+                FirstMapTask:
+                  Type: Task
+                  TimeoutSeconds: 300 
+                  Resource:
+                    Fn::GetAtt: [mapTask, Arn]
+                  Retry:
+                    - ErrorEquals:
+                        # - States.Timeout
+                        - States.ALL
+                      IntervalSeconds: 1
+                      MaxAttempts: 1
+                      BackoffRate: 1.5      
+                  End: true
+          Reduce:
+            Type: Task
+            InputPath: $
+            Resource:
+              Fn::GetAtt: [reduce, Arn]
+            ResultPath: $
+            End: true
