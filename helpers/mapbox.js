@@ -45,6 +45,18 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
   return route
 }
 
+module.exports.getLaneRoute = async (cLngLat, lpLngLat) => {
+  // const [cLng, cLat] = cLngLat.split(',')
+  // const [lpLng, lpLat] = lpLngLat.split(',')
+  const result = await fetch(
+    `https://api.mapbox.com/directions/v5/mapbox/driving/${cLngLat};${lpLngLat}?geometries=polyline&overview=full&access_token=${process.env.REACT_APP_MAPBOX_KEY}`
+  ).then((resp) => resp.json())
+
+  const route = result.routes[0].geometry
+
+  return route
+}
+
 module.exports.parseLocation = (request) => {
   if (request.address) {
     return `${request.address}, ${request.city}, ${request.state}`
