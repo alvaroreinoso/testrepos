@@ -115,7 +115,7 @@ module.exports.reduce = async (event, context) => {
             destinationlnglat: destination.lnglat,
         }
 
-      newLanes.push(lane)
+      newLanes.push(laneTemplate)
     }
   }
 
