@@ -133,9 +133,7 @@ module.exports.secondMapTask = async (event, context) => {
         routeGeometry: route
     })
 
-    delete lane.routeGeometry
-
-    return lane
+    return lane.id
 }
 
 module.exports.pollFunction = async (event, context) => {
