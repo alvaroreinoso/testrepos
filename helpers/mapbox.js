@@ -40,6 +40,10 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
     `https://api.mapbox.com/directions/v5/mapbox/driving/${cLng},${cLat};${lpLng},${lpLat}?geometries=polyline&overview=full&access_token=${process.env.REACT_APP_MAPBOX_KEY}`
   ).then((resp) => resp.json())
 
+  if (result.routes[0] === undefined) {
+    return null
+  }
+
   const route = result.routes[0].geometry
 
   return route
