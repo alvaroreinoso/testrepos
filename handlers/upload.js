@@ -2,9 +2,7 @@
 const AWS = require('aws-sdk')
 AWS.config.region = 'us-east-1'
 const stepfunctions = new AWS.StepFunctions()
-const {
-  getLngLat,
-} = require('.././helpers/upload')
+const { getLngLat } = require('.././helpers/upload')
 const {
   Location,
   Customer,
@@ -126,14 +124,12 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
 
-    // pass in rate, origin lnglat, destination lnglat
-
-    const route = await getRoute(lane.originlnglat, lane.destinationlnglat)
+    const route = await getRoute(event.lane.originlnglat, event.lane.destinationlnglat)
 
     const lane = await Lane.create({
-        brokerageId: lane.brokerageId,
-        originLocationId: lane.originLocationId,
-        destinationLocationId: lane.destinationLocationId,
+        brokerageId: event.lane.brokerageId,
+        originLocationId: event.lane.originLocationId,
+        destinationLocationId: event.lane.destinationLocationId,
         routeGeometry: route
     })
 
