@@ -10,7 +10,7 @@ const {
   Lane,
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
-const { getLaneRoute } = require('../helpers/mapbox')
+const { getRoute } = require('../helpers/mapbox')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -124,7 +124,7 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
 
-    const route = await getLaneRoute(event.lane.originlnglat, event.lane.destinationlnglat)
+    const route = await getRoute(event.originlnglat, event.destinationlnglat)
 
     const lane = await Lane.create({
         brokerageId: event.lane.brokerageId,
