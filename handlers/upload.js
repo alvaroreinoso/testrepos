@@ -24,6 +24,7 @@ const {
   Carrier,
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
+const { getRoute } = require('../helpers/mapbox')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -43,38 +44,26 @@ module.exports.entry = async (event, context, callback) => {
 module.exports.mapTask = async (event, context, callback) => {
   const row = event
 
-  const customer = await Customer.build({
-    name: row['Customer Name'],
-    brokerageId: row.brokerageId,
-  })
-
   const originAddress = `${row['Origin City']}, ${row['Origin State']}`
   const originLngLat = await getLngLat(originAddress)
-
-  const originLocation = await Location.build({
-    address: originAddress,
-    city: row['Origin City'],
-    state: row['Origin State'],
-    lnglat: originLngLat,
-    brokerageId: row.brokerageId,
-  })
 
   const destinationAddress = `${row['Destination City']}, ${row['Destination State']}`
   const destinationLngLat = await getLngLat(destinationAddress)
 
-  const destinationLocation = await Location.build({
-    address: destinationAddress,
-    city: row['Destination City'],
-    state: row['Destination State'],
-    lnglat: destinationLngLat,
-    brokerageId: row.brokerageId,
-  })
-
   const resp = {
     body: row,
-    customer: customer,
-    originLocation: originLocation,
-    destinationLocation: destinationLocation,
+    origin: {
+        address: originAddress,
+        city: row['Origin City'],
+        state: row['Origin State'],
+        lnglat: originLngLat
+    },
+    destination: {
+        address: destinationAddress,
+        city: row['Destination City'],
+        state: row['Destination State'],
+        lnglat: destinationLngLat,
+    }
   }
 
   return resp
@@ -86,16 +75,17 @@ module.exports.reduce = async (event, context) => {
   for (const row of event) {
     const [customer, newCustomer] = await Customer.findCreateFind({
       where: {
-        name: row.customer.name,
+        name: row.body['Customer Name'],
         brokerageId: row.body.brokerageId,
       },
     })
 
     const [origin, newOrigin] = await Location.findCreateFind({
       where: {
-        address: row.originLocation.address,
-        city: row.originLocation.city,
-        state: row.originLocation.state,
+        address: row.origin.address,
+        city: row.origin.city,
+        state: row.origin.state,
+        lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
       },
     })
@@ -109,9 +99,10 @@ module.exports.reduce = async (event, context) => {
 
     const [destination, newDestination] = await Location.findCreateFind({
       where: {
-        address: row.destinationLocation.address,
-        city: row.destinationLocation.city,
-        state: row.destinationLocation.state,
+        address: row.destination.address,
+        city: row.destination.city,
+        state: row.destination.state,
+        lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
       },
     })
@@ -132,6 +123,12 @@ module.exports.reduce = async (event, context) => {
     })
 
     if (newLane) {
+        const laneTemplate = {
+            lane: lane,
+            originlnglat: origin.lnglat,
+            destinationlnglat: destination.lnglat,
+        }
+
       newLanes.push(lane)
     }
   }
@@ -141,9 +138,20 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
 
-    await event.save()
-    
-    return event
+    // pass in rate, origin lnglat, destination lnglat
+
+    const route = await getRoute(lane.originlnglat, lane.destinationlnglat)
+
+    const lane = await Lane.create({
+        brokerageId: lane.brokerageId,
+        originLocationId: lane.originLocationId,
+        destinationLocationId: lane.destinationLocationId,
+        routeGeometry: route
+    })
+
+    delete lane.routeGeometry
+
+    return lane
 }
 
 module.exports.pollFunction = async (event, context) => {
