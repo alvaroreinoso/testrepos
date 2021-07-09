@@ -708,7 +708,7 @@ functions:
   mapTask:
     handler: ./handlers/upload.mapTask
     timeout: 300
-    memorySize: 10240
+    memorySize: 1024
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
@@ -717,7 +717,7 @@ functions:
   secondMapTask:
     handler: ./handlers/upload.secondMapTask
     timeout: 300
-    memorySize: 10240
+    memorySize: 1024
     vpc:
       securityGroupIds:
         - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
@@ -726,7 +726,7 @@ functions:
   reduce:
     handler: ./handlers/upload.reduce
     timeout: 500
-    memorySize: 10240
+    memorySize: 1024
   pollFunction:
     handler: handler.pollFunction
     role: arn:aws:iam::371499397780:role/stepFunctionAccess
