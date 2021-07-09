@@ -890,6 +890,14 @@ module.exports.addCarrier = async (event, context) => {
       await carrier.save()
     }
 
+    if (event.httpMethod === 'DELETE') {
+      await Carrier.destroy({
+        where: {
+          id: request.id
+        }
+      })
+    }
+
     return {
       statusCode: 204,
       headers: corsHeaders,
