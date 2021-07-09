@@ -338,6 +338,10 @@ functions:
           path: api/lane/{laneId}/carriers
           method: put
           cors: true
+      - http:
+          path: api/lane/{laneId}/carriers
+          method: delete
+          cors: true
 
   # Team
   addTeam:
