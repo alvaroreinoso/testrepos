@@ -110,7 +110,7 @@ module.exports.reduce = async (event, context) => {
         })
 
         await CustomerLocation.create({
-            locationId: destination.id,
+            locationId: origin.id,
             customerId: customer.id
         })
 
