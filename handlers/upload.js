@@ -57,8 +57,6 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
   let newLanes = []
-  let origins = []
-  let destinations = []
   let locations = []
 
   for (const row of event) {
@@ -69,15 +67,6 @@ module.exports.reduce = async (event, context) => {
       },
     })
 
-    // const [origin, newOrigin] = await Location.findCreateFind({
-    //   where: {
-    //     address: row.origin.address,
-    //     city: row.origin.city,
-    //     state: row.origin.state,
-    //     lnglat: row.origin.lnglat,
-    //     brokerageId: row.body.brokerageId,
-    //   },
-    // })
     let origin
 
     const  existingOrigin = await Location.findOne({
@@ -101,12 +90,6 @@ module.exports.reduce = async (event, context) => {
         state: row.origin.state,
         lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
-        // CustomerLocation: {
-        //     customerId: customer.id
-        // },
-        // include: {
-        //     association: Location.CustomerLocation
-        // }
         })
 
         await CustomerLocation.create({
@@ -117,13 +100,6 @@ module.exports.reduce = async (event, context) => {
     } else {
         origin = existingOrigin
     }
-
-    // if (newOrigin) {
-    //   await CustomerLocation.create({
-    //     locationId: origin.id,
-    //     customerId: customer.id,
-    //   })
-    // }
 
     let destination
     const existingDestination = await Location.findOne({
@@ -147,12 +123,6 @@ module.exports.reduce = async (event, context) => {
             state: row.destination.state,
             lnglat: row.destination.lnglat,
             brokerageId: row.body.brokerageId,
-            // CustomerLocation: {
-            //     customerId: customer.id
-            // },
-            // include: {
-            //     association: Location.CustomerLocation
-            // }
         })
 
         await CustomerLocation.create({
@@ -172,34 +142,27 @@ module.exports.reduce = async (event, context) => {
 
     locations.push(locs)
 
-    // if (newDestination) {
-    //   await CustomerLocation.create({
-    //     locationId: destination.id,
-    //     customerId: customer.id,
-    //   })
-    // }
+    const [lane, newLane] = await Lane.findOrBuild({
+      where: {
+        brokerageId: row.body.brokerageId,
+        originLocationId: origin.id,
+        destinationLocationId: destination.id,
+      },
+    })
 
-    // const [lane, newLane] = await Lane.findOrBuild({
-    //   where: {
-    //     brokerageId: row.body.brokerageId,
-    //     originLocationId: origin.id,
-    //     destinationLocationId: destination.id,
-    //   },
-    // })
+    if (newLane) {
+        const laneTemplate = {
+            lane: lane,
+            originlnglat: origin.lnglat,
+            destinationlnglat: destination.lnglat,
+        }
 
-    // if (newLane) {
-    //     const laneTemplate = {
-    //         lane: lane,
-    //         originlnglat: origin.lnglat,
-    //         destinationlnglat: destination.lnglat,
-    //     }
-
-    //   newLanes.push(laneTemplate)
-    // }
+      newLanes.push(laneTemplate)
+    }
   }
 
-//   return newLanes
-    return locations
+  return newLanes
+    // return locations
 }
 
 module.exports.secondMapTask = async (event, context) => {
