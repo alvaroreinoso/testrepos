@@ -85,14 +85,14 @@ module.exports.reduce = async (event, context) => {
         // state: row.origin.state,
         // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
-        include: [{
-            model: CustomerLocation,
-            where: {
-                customerId: customer.id
-            },
-            required: true
-        }]
       },
+      include: {
+        model: CustomerLocation,
+        where: {
+            customerId: customer.id
+        },
+        required: true
+    }
     })
 
     // if (newOrigin) {
@@ -109,14 +109,14 @@ module.exports.reduce = async (event, context) => {
         // state: row.destination.state,
         // lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
-        include: [{
-            model: CustomerLocation,
-            where: {
-                customerId: customer.id
-            },
-            required: true
-        }]
       },
+      include: [{
+        model: CustomerLocation,
+        where: {
+            customerId: customer.id
+        },
+        required: true
+    }]
     })
 
     const locs = {
