@@ -101,12 +101,17 @@ module.exports.reduce = async (event, context) => {
         state: row.origin.state,
         lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
-        CustomerLocation: {
+        // CustomerLocation: {
+        //     customerId: customer.id
+        // },
+        // include: {
+        //     association: Location.CustomerLocation
+        // }
+        })
+
+        await CustomerLocation.create({
+            locationId: destination.id,
             customerId: customer.id
-        },
-        include: {
-            association: Location.CustomerLocation
-        }
         })
 
     } else {
@@ -142,13 +147,19 @@ module.exports.reduce = async (event, context) => {
             state: row.destination.state,
             lnglat: row.destination.lnglat,
             brokerageId: row.body.brokerageId,
-            CustomerLocation: {
-                customerId: customer.id
-            },
-            include: {
-                association: Location.CustomerLocation
-            }
+            // CustomerLocation: {
+            //     customerId: customer.id
+            // },
+            // include: {
+            //     association: Location.CustomerLocation
+            // }
         })
+
+        await CustomerLocation.create({
+            locationId: destination.id,
+            customerId: customer.id
+        })
+
     } else {
         destination = existingDestination
     }
