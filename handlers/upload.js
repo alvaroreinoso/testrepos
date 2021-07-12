@@ -142,7 +142,7 @@ module.exports.reduce = async (event, context) => {
 
     locations.push(locs)
 
-    const [lane, newLane] = await Lane.findOrBuild({
+    const [lane, newLane] = await Lane.findCreateFind({
       where: {
         brokerageId: row.body.brokerageId,
         originLocationId: origin.id,
@@ -168,14 +168,18 @@ module.exports.reduce = async (event, context) => {
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
 
-    const lane = await Lane.create({
-        brokerageId: event.lane.brokerageId,
-        originLocationId: event.lane.originLocationId,
-        destinationLocationId: event.lane.destinationLocationId,
-        routeGeometry: route
-    })
+    // const lane = await Lane.create({
+    //     brokerageId: event.lane.brokerageId,
+    //     originLocationId: event.lane.originLocationId,
+    //     destinationLocationId: event.lane.destinationLocationId,
+    //     routeGeometry: route
+    // })
 
-    return lane.id
+    event.lane.routeGeometry = route
+
+    await event.lane.save()
+
+    // return lane.id
 }
 
 module.exports.pollFunction = async (event, context) => {
