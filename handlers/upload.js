@@ -89,7 +89,8 @@ module.exports.reduce = async (event, context) => {
             customerId: customer.id
         },
         include: [{
-            model: CustomerLocation,
+            // model: CustomerLocation,
+            assoication: Location.CustomerLocation
         }]
       },
     })
@@ -112,7 +113,9 @@ module.exports.reduce = async (event, context) => {
             customerId: customer.id
         },
         include: [{
-            model: CustomerLocation,
+            association: Location.CustomerLocation
+            // include: []
+            // model: CustomerLocation,
         }]
       },
     })
