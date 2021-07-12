@@ -57,6 +57,9 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
   let newLanes = []
+  let origins = []
+  let destinations = []
+  let locations = []
 
   for (const row of event) {
     const [customer, newCustomer] = await Customer.findCreateFind({
@@ -66,74 +69,93 @@ module.exports.reduce = async (event, context) => {
       },
     })
 
-    const [origin, newOrigin] = await Location.findCreateFind({
+    // const [origin, newOrigin] = await Location.findCreateFind({
+    //   where: {
+    //     address: row.origin.address,
+    //     city: row.origin.city,
+    //     state: row.origin.state,
+    //     lnglat: row.origin.lnglat,
+    //     brokerageId: row.body.brokerageId,
+    //   },
+    // })
+    const [origin, newOrigin] = await Location.findOrBuild({
       where: {
         address: row.origin.address,
-        city: row.origin.city,
-        state: row.origin.state,
-        lnglat: row.origin.lnglat,
+        // city: row.origin.city,
+        // state: row.origin.state,
+        // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
       },
     })
 
-    if (newOrigin) {
-      await CustomerLocation.create({
-        locationId: origin.id,
-        customerId: customer.id,
-      })
-    }
+    // if (newOrigin) {
+    //   await CustomerLocation.create({
+    //     locationId: origin.id,
+    //     customerId: customer.id,
+    //   })
+    // }
 
-    const [destination, newDestination] = await Location.findCreateFind({
+    const [destination, newDestination] = await Location.findOrBuild({
       where: {
         address: row.destination.address,
-        city: row.destination.city,
-        state: row.destination.state,
-        lnglat: row.destination.lnglat,
+        // city: row.destination.city,
+        // state: row.destination.state,
+        // lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
       },
     })
 
-    if (newDestination) {
-      await CustomerLocation.create({
-        locationId: destination.id,
-        customerId: customer.id,
-      })
+    const locs = {
+        origin: origin,
+        destination: destination
     }
 
-    const [lane, newLane] = await Lane.findOrBuild({
-      where: {
-        brokerageId: row.body.brokerageId,
-        originLocationId: origin.id,
-        destinationLocationId: destination.id,
-      },
-    })
+    locations.push(locs)
 
-    if (newLane) {
-        const laneTemplate = {
-            lane: lane,
-            originlnglat: origin.lnglat,
-            destinationlnglat: destination.lnglat,
-        }
+    // if (newDestination) {
+    //   await CustomerLocation.create({
+    //     locationId: destination.id,
+    //     customerId: customer.id,
+    //   })
+    // }
 
-      newLanes.push(laneTemplate)
-    }
+    // const [lane, newLane] = await Lane.findOrBuild({
+    //   where: {
+    //     brokerageId: row.body.brokerageId,
+    //     originLocationId: origin.id,
+    //     destinationLocationId: destination.id,
+    //   },
+    // })
+
+    // if (newLane) {
+    //     const laneTemplate = {
+    //         lane: lane,
+    //         originlnglat: origin.lnglat,
+    //         destinationlnglat: destination.lnglat,
+    //     }
+
+    //   newLanes.push(laneTemplate)
+    // }
   }
 
-  return newLanes
+//   return newLanes
+    return locations
 }
 
 module.exports.secondMapTask = async (event, context) => {
 
-    const route = await getRoute(event.originlnglat, event.destinationlnglat)
+    return event
 
-    const lane = await Lane.create({
-        brokerageId: event.lane.brokerageId,
-        originLocationId: event.lane.originLocationId,
-        destinationLocationId: event.lane.destinationLocationId,
-        routeGeometry: route
-    })
+    // const route = await getRoute(event.originlnglat, event.destinationlnglat)
 
-    return lane.id
+    // const lane = await Lane.create({
+    //     brokerageId: event.lane.brokerageId,
+    //     originLocationId: event.lane.originLocationId,
+    //     destinationLocationId: event.lane.destinationLocationId,
+    //     routeGeometry: route
+    // })
+
+    // return lane.id
 }
 
 module.exports.pollFunction = async (event, context) => {
