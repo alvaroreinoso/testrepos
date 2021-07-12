@@ -85,6 +85,10 @@ module.exports.reduce = async (event, context) => {
         // state: row.origin.state,
         // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
+        // include: [{
+        //     model: CustomerLocation,
+        //     customerId
+        // }]
       },
     })
 
@@ -106,6 +110,7 @@ module.exports.reduce = async (event, context) => {
     })
 
     const locs = {
+        customer: customer.name,
         origin: origin,
         destination: destination
     }
