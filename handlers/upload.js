@@ -78,7 +78,7 @@ module.exports.reduce = async (event, context) => {
     //     brokerageId: row.body.brokerageId,
     //   },
     // })
-    const [origin, newOrigin] = await Location.findOne({
+    const [origin, newOrigin] = await Location.findCreateFind({
       where: {
         address: row.origin.address,
         // city: row.origin.city,
@@ -102,7 +102,7 @@ module.exports.reduce = async (event, context) => {
     //   })
     // }
 
-    const [destination, newDestination] = await Location.findOne({
+    const [destination, newDestination] = await Location.findCreateFind({
       where: {
         address: row.destination.address,
         // city: row.destination.city,
