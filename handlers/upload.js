@@ -85,12 +85,15 @@ module.exports.reduce = async (event, context) => {
         // state: row.origin.state,
         // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
-        CustomerLocation: {
-            customerId: customer.id
-        },
+        // CustomerLocation: {
+        //     customerId: customer.id
+        // },
         include: [{
-            // model: CustomerLocation,
-            assoication: Location.CustomerLocation
+            model: CustomerLocation,
+            // assoication: Location.CustomerLocation
+            where: {
+                customerId: customer.id
+            }
         }]
       },
     })
@@ -109,13 +112,15 @@ module.exports.reduce = async (event, context) => {
         // state: row.destination.state,
         // lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
-        CustomerLocation: {
-            customerId: customer.id
-        },
+        // CustomerLocation: {
+        //     customerId: customer.id
+        // },
         include: [{
-            association: Location.CustomerLocation
-            // include: []
-            // model: CustomerLocation,
+            model: CustomerLocation,
+            // assoication: Location.CustomerLocation
+            where: {
+                customerId: customer.id
+            }
         }]
       },
     })
