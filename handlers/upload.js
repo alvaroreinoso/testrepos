@@ -166,19 +166,16 @@ module.exports.reduce = async (event, context) => {
 }
 
 module.exports.secondMapTask = async (event, context) => {
+    const route = await getRoute(event.originlnglat, event.destinationlnglat)
 
-    return event
+    const lane = await Lane.create({
+        brokerageId: event.lane.brokerageId,
+        originLocationId: event.lane.originLocationId,
+        destinationLocationId: event.lane.destinationLocationId,
+        routeGeometry: route
+    })
 
-    // const route = await getRoute(event.originlnglat, event.destinationlnglat)
-
-    // const lane = await Lane.create({
-    //     brokerageId: event.lane.brokerageId,
-    //     originLocationId: event.lane.originLocationId,
-    //     destinationLocationId: event.lane.destinationLocationId,
-    //     routeGeometry: route
-    // })
-
-    // return lane.id
+    return lane.id
 }
 
 module.exports.pollFunction = async (event, context) => {

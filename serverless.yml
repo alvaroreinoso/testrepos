@@ -726,7 +726,7 @@ functions:
   reduce:
     handler: ./handlers/upload.reduce
     timeout: 500
-    memorySize: 1024
+    memorySize: 10240
   pollFunction:
     handler: handler.pollFunction
     role: arn:aws:iam::371499397780:role/stepFunctionAccess
