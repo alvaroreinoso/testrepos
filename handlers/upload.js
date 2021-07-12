@@ -78,22 +78,19 @@ module.exports.reduce = async (event, context) => {
     //     brokerageId: row.body.brokerageId,
     //   },
     // })
-    const [origin, newOrigin] = await Location.findOrBuild({
+    const [origin, newOrigin] = await Location.findOne({
       where: {
         address: row.origin.address,
         // city: row.origin.city,
         // state: row.origin.state,
         // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
-        // CustomerLocation: {
-        //     customerId: customer.id
-        // },
         include: [{
             model: CustomerLocation,
-            // assoication: Location.CustomerLocation
             where: {
                 customerId: customer.id
-            }
+            },
+            required: true
         }]
       },
     })
@@ -105,22 +102,19 @@ module.exports.reduce = async (event, context) => {
     //   })
     // }
 
-    const [destination, newDestination] = await Location.findOrBuild({
+    const [destination, newDestination] = await Location.findOne({
       where: {
         address: row.destination.address,
         // city: row.destination.city,
         // state: row.destination.state,
         // lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
-        // CustomerLocation: {
-        //     customerId: customer.id
-        // },
         include: [{
             model: CustomerLocation,
-            // assoication: Location.CustomerLocation
             where: {
                 customerId: customer.id
-            }
+            },
+            required: true
         }]
       },
     })
