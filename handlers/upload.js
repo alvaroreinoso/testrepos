@@ -78,12 +78,11 @@ module.exports.reduce = async (event, context) => {
     //     brokerageId: row.body.brokerageId,
     //   },
     // })
-    const origin = await Location.findOne({
+    let origin
+
+    const  existingOrigin = await Location.findOne({
       where: {
         address: row.origin.address,
-        // city: row.origin.city,
-        // state: row.origin.state,
-        // lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
       },
       include: {
@@ -95,6 +94,25 @@ module.exports.reduce = async (event, context) => {
     }
     })
 
+    if (existingOrigin == null) {
+       origin = await Location.create({
+        address: row.origin.address,
+        city: row.origin.city,
+        state: row.origin.state,
+        lnglat: row.origin.lnglat,
+        brokerageId: row.body.brokerageId,
+        CustomerLocation: {
+            customerId: customer.id
+        },
+        include: {
+            association: Location.CustomerLocation
+        }
+        })
+
+    } else {
+        origin = existingOrigin
+    }
+
     // if (newOrigin) {
     //   await CustomerLocation.create({
     //     locationId: origin.id,
@@ -102,12 +120,10 @@ module.exports.reduce = async (event, context) => {
     //   })
     // }
 
-    const destination = await Location.findOne({
+    let destination
+    const existingDestination = await Location.findOne({
       where: {
         address: row.destination.address,
-        // city: row.destination.city,
-        // state: row.destination.state,
-        // lnglat: row.destination.lnglat,
         brokerageId: row.body.brokerageId,
       },
       include: [{
@@ -118,6 +134,24 @@ module.exports.reduce = async (event, context) => {
         required: true
     }]
     })
+
+    if (existingDestination == null) {
+        destination = await Location.create({
+            address: row.destination.address,
+            city: row.destination.city,
+            state: row.destination.state,
+            lnglat: row.destination.lnglat,
+            brokerageId: row.body.brokerageId,
+            CustomerLocation: {
+                customerId: customer.id
+            },
+            include: {
+                association: Location.CustomerLocation
+            }
+        })
+    } else {
+        destination = existingDestination
+    }
 
     const locs = {
         customer: customer.name,
