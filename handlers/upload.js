@@ -167,17 +167,15 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
-
-    // const lane = await Lane.create({
-    //     brokerageId: event.lane.brokerageId,
-    //     originLocationId: event.lane.originLocationId,
-    //     destinationLocationId: event.lane.destinationLocationId,
-    //     routeGeometry: route
-    // })
-
-    event.lane.routeGeometry = route
-
-    await event.lane.save()
+    
+    await Lane.update({
+      routeGeometry: route,
+    }, {
+      where: {
+        id: event.lane.id
+      },
+      individualHooks: false
+    })
 
     return event.lane.id
 }
