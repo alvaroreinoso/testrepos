@@ -175,7 +175,7 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
-    const opportunityVolume = event.potentialVolume - event.ownedVolume
+    const opportunityVolume = parseInt(event.potentialVolume, 10) - parseInt(event.ownedVolume, 10)
     
     await Lane.update({
       routeGeometry: route,
