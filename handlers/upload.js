@@ -10,7 +10,7 @@ const {
   Lane,
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
-const { getRoute } = require('../helpers/mapbox')
+const { getRoute, parseDestinationAddress, parseOriginAddress } = require('../helpers/mapbox')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -30,10 +30,12 @@ module.exports.entry = async (event, context, callback) => {
 module.exports.mapTask = async (event, context, callback) => {
   const row = event
 
-  const originAddress = `${row['Origin City']}, ${row['Origin State']}`
+  // const originAddress = `${row['Origin City']}, ${row['Origin State']}`
+  const originAddress = parseOriginAddress(row)
   const originLngLat = await getLngLat(originAddress)
 
-  const destinationAddress = `${row['Destination City']}, ${row['Destination State']}`
+  // const destinationAddress = `${row['Destination City']}, ${row['Destination State']}`
+  const destinationAddress = parseDestinationAddress(row)
   const destinationLngLat = await getLngLat(destinationAddress)
 
   const resp = {
