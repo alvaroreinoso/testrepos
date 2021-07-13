@@ -90,6 +90,7 @@ module.exports.reduce = async (event, context) => {
         address: row.origin.address,
         city: row.origin.city,
         state: row.origin.state,
+        zipcode: row.body['Origin Zip Code'],
         lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
         })
@@ -123,6 +124,7 @@ module.exports.reduce = async (event, context) => {
             address: row.destination.address,
             city: row.destination.city,
             state: row.destination.state,
+            zipcode: row.body['Destination Zip Code'],
             lnglat: row.destination.lnglat,
             brokerageId: row.body.brokerageId,
         })
@@ -155,6 +157,10 @@ module.exports.reduce = async (event, context) => {
     if (newLane) {
         const laneTemplate = {
             lane: lane,
+            truckType: row.body['Truck Type'],
+            rate: row.body['Customer Rate'],
+            potentialVolume: row.body['Total Volume/mo'],
+            ownedVolume: row.body['Owned Volume/mo'],
             originlnglat: origin.lnglat,
             destinationlnglat: destination.lnglat,
         }
@@ -169,9 +175,15 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
+    const opportunityVolume = event.potentialVolume - event.ownedVolume
     
     await Lane.update({
       routeGeometry: route,
+      rate: event.rate,
+      truckType: event.truckType,
+      ownedVolume: event.ownedVolume,
+      opportunityVolume: opportunityVolume,
+      potentialVolume: event.potentialVolume
     }, {
       where: {
         id: event.lane.id
