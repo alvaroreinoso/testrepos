@@ -179,7 +179,7 @@ module.exports.secondMapTask = async (event, context) => {
 
     await event.lane.save()
 
-    // return lane.id
+    return event.lane.id
 }
 
 module.exports.pollFunction = async (event, context) => {
