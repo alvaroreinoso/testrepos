@@ -218,7 +218,10 @@ module.exports.getTruckTypeString = (type) => {
 }
 
 module.exports.getVolumeStates = (row) => {
-  if (row.potentialVolume && row.ownedVolume === '') {
+  if (typeof row.potentialVolume && typeof row.ownedVolume !== 'number') {
+
+    console.log('interpreted both empty strings')
+
     return {
       currentVolume: 0,
       opportunityVolume: 0,
@@ -226,6 +229,8 @@ module.exports.getVolumeStates = (row) => {
     }
 
   } else if (row.potentialVolume === '' && parseInt(row.ownedVolume) !== NaN ) {
+
+    console.log('interpreted potentialVolume empty string')
     return {
       currentVolume: row.ownedVolume,
       opportunityVolume: 0,
@@ -233,6 +238,8 @@ module.exports.getVolumeStates = (row) => {
     }
 
   } else if (row.ownedVolume === '' && parseInt(row.potentialVolume) !== NaN) {
+
+    console.log('interpreted ownedVolume empty string')
     return {
       currentVolume: 0,
       opportunityVolume: 0,
@@ -240,6 +247,8 @@ module.exports.getVolumeStates = (row) => {
     }
 
   } else {
+
+    console.log('all numbers')
     const opportunityVolume = parseInt(row.potentialVolume, 10) - parseInt(row.ownedVolume, 10)
 
     if (opportunityVolume < 0) {
@@ -259,17 +268,14 @@ module.exports.getVolumeStates = (row) => {
 }
 
 module.exports.getRate = (rate) => {
+  // if (isNaN(parseInt(rate))) {
 
-  console.log(rate)
-  console.log('parsed int', parseInt(rate))
+  if (typeof rate !== 'number') {
 
-  if (isNaN(parseInt(rate))) {
-
-    console.log('equaled Nan returning 0')
+    console.log('type of rate works')
     return 0
-  } else {
 
-    console.log('didnt equal nan', parseInt(rate))
+  } else {
     return parseInt(rate)
   }
 }
