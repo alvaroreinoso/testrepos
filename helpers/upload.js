@@ -259,9 +259,9 @@ module.exports.getVolumeStates = (row) => {
 }
 
 module.exports.getRate = (rate) => {
-  if (rate === '') {
+  if (parseInt(rate) == NaN) {
     return 0
   } else {
-    return rate
+    return parseInt(rate)
   }
 }
