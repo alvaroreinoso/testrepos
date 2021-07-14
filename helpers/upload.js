@@ -200,7 +200,7 @@ module.exports.getRate = async (json) => {
   }
 }
 
-module.exports.getTruckTypeString = async (type) => {
+module.exports.getTruckTypeString = (type) => {
   switch (type) {
     case 'V': {
       return 'Van'
@@ -217,7 +217,7 @@ module.exports.getTruckTypeString = async (type) => {
   }
 }
 
-module.exports.getVolumeStates = async (row) => {
+module.exports.getVolumeStates = (row) => {
   if (row.potentialVolume && row.ownedVolume === '') {
     return {
       currentVolume: 0,
@@ -255,5 +255,13 @@ module.exports.getVolumeStates = async (row) => {
         potentialVolume: row.potentialVolume
       }
     }
+  }
+}
+
+module.exports.getRate = (rate) => {
+  if (rate === '') {
+    return 0
+  } else {
+    return rate
   }
 }

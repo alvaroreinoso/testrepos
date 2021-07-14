@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk')
 AWS.config.region = 'us-east-1'
 const stepfunctions = new AWS.StepFunctions()
-const { getLngLat, getTruckTypeString, getVolumeStates } = require('.././helpers/upload')
+const { getLngLat, getTruckTypeString, getVolumeStates, getRate } = require('.././helpers/upload')
 const {
   Location,
   Customer,
@@ -161,12 +161,13 @@ module.exports.reduce = async (event, context) => {
 
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
-    const truckType = await getTruckTypeString(event.truckType)
-    const volumeStates = await getVolumeStates(event)
+    const truckType = getTruckTypeString(event.truckType)
+    const volumeStates = getVolumeStates(event)
+    const rate = getRate(event.rate)
     
     await Lane.update({
       routeGeometry: route,
-      rate: event.rate,
+      rate: rate,
       truckType: truckType,
       currentVolume: volumeStates.currentVolume,
       opportunityVolume: volumeStates.opportunityVolume,
