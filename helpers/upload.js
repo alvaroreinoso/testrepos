@@ -263,7 +263,7 @@ module.exports.getRate = (rate) => {
   console.log(rate)
   console.log('parsed int', parseInt(rate))
 
-  if (parseInt(rate) === NaN) {
+  if (isNaN(parseInt(rate))) {
 
     console.log('equaled Nan returning 0')
     return 0
