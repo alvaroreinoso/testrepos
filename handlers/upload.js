@@ -2,7 +2,7 @@
 const AWS = require('aws-sdk')
 AWS.config.region = 'us-east-1'
 const stepfunctions = new AWS.StepFunctions()
-const { getLngLat } = require('.././helpers/upload')
+const { getLngLat, getTruckTypeString, getVolumeStates } = require('.././helpers/upload')
 const {
   Location,
   Customer,
@@ -57,7 +57,6 @@ module.exports.mapTask = async (event, context, callback) => {
 
 module.exports.reduce = async (event, context) => {
   let newLanes = []
-  let locations = []
 
   for (const row of event) {
     const [customer, newCustomer] = await Customer.findCreateFind({
@@ -134,14 +133,6 @@ module.exports.reduce = async (event, context) => {
         destination = existingDestination
     }
 
-    const locs = {
-        customer: customer.name,
-        origin: origin,
-        destination: destination
-    }
-
-    locations.push(locs)
-
     const [lane, newLane] = await Lane.findCreateFind({
       where: {
         brokerageId: row.body.brokerageId,
@@ -156,7 +147,7 @@ module.exports.reduce = async (event, context) => {
             truckType: row.body['Truck Type'],
             rate: row.body['Customer Rate'],
             potentialVolume: row.body['Total Volume/mo'],
-            currentVolume: row.body['Owned Volume/mo'],
+            ownedVolume: row.body['Owned Volume/mo'],
             originlnglat: origin.lnglat,
             destinationlnglat: destination.lnglat,
         }
@@ -166,20 +157,20 @@ module.exports.reduce = async (event, context) => {
   }
 
   return newLanes
-    // return locations
 }
 
 module.exports.secondMapTask = async (event, context) => {
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
-    const opportunityVolume = parseInt(event.potentialVolume, 10) - parseInt(event.ownedVolume, 10)
+    const truckType = await getTruckTypeString(event.truckType)
+    const volumeStates = await getVolumeStates(event)
     
     await Lane.update({
       routeGeometry: route,
       rate: event.rate,
-      truckType: event.truckType,
-      ownedVolume: event.ownedVolume,
-      opportunityVolume: opportunityVolume,
-      potentialVolume: event.potentialVolume
+      truckType: truckType,
+      currentVolume: volumeStates.currentVolume,
+      opportunityVolume: volumeStates.opportunityVolume,
+      potentialVolume: volumeStates.potentialVolume
     }, {
       where: {
         id: event.lane.id

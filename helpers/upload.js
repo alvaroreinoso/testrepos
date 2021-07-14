@@ -199,3 +199,39 @@ module.exports.getRate = async (json) => {
     return 0
   }
 }
+
+module.exports.getTruckTypeString = async (type) => {
+  switch (type) {
+    case 'V': {
+      return 'Van'
+
+    } case 'R': {
+        return 'Reefer'
+
+    } case 'F': {
+        return 'Flatbed'
+
+    } default: {
+          return null
+    }
+  }
+}
+
+module.exports.getVolumeStates = async (row) => {
+  const opportunityVolume = parseInt(row.potentialVolume, 10) - parseInt(row.ownedVolume, 10)
+
+  if (opportunityVolume < 0) {
+
+    return {
+      currentVolume: 0,
+      opportunityVolume: 0,
+      potentialVolume: row.potentialVolume
+    }
+  } else {
+    return {
+      currentVolume: row.ownedVolume,
+      opportunityVolume: opportunityVolume,
+      potentialVolume: row.potentialVolume
+    }
+  }
+}
