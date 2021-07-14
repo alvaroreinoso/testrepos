@@ -454,61 +454,6 @@ module.exports.addContact = async (event, context) => {
   }
 }
 
-module.exports.editContact = async (event, context) => {
-  if (event.source === 'serverless-plugin-warmup') {
-    console.log('WarmUp - Lambda is warm!')
-    return 'Lambda is warm!'
-  }
-
-  try {
-    const user = await getCurrentUser(event.headers.Authorization)
-
-    if (user.id == null) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-      }
-    }
-
-    const request = JSON.parse(event.body)
-    const id = request.id
-
-    const contact = await Contact.findOne({
-      where: {
-        id: id,
-        brokerageId: user.brokerageId,
-      },
-    })
-
-    if (contact === null) {
-      return {
-        statusCode: 404,
-        headers: corsHeaders,
-      }
-    }
-
-    contact.firstName = request.firstName
-    contact.lastName = request.lastName
-    contact.title = request.title
-    contact.phoneExt = request.phoneExt
-    contact.phone = request.phone
-    contact.email = request.email
-    contact.level = request.level
-
-    await contact.save()
-
-    return {
-      statusCode: 204,
-      headers: corsHeaders,
-    }
-  } catch (err) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-    }
-  }
-}
-
 module.exports.deleteContact = async (event, context) => {
   if (event.source === 'serverless-plugin-warmup') {
     console.log('WarmUp - Lambda is warm!')

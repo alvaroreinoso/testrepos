@@ -7,7 +7,7 @@ class Contacts {
     this.auth = new Auth(this.db)
   };
   
-  async get(event, context) {
+  async get(event) {
     if (event.source === 'serverless-plugin-warmup') {
       console.log('WarmUp - Lambda is warm!')
       return 'Lambda is warm!'
@@ -46,6 +46,61 @@ class Contacts {
     } catch (err) {
       console.log(err)
   
+      return {
+        statusCode: 500,
+        headers: corsHeaders,
+      }
+    }
+  }
+
+  async update(event) {
+    if (event.source === 'serverless-plugin-warmup') {
+      console.log('WarmUp - Lambda is warm!')
+      return 'Lambda is warm!'
+    }
+  
+    try {
+      const user = await this.auth.currentUser(event.headers.Authorization)
+  
+      if (user.id == null) {
+        return {
+          statusCode: 401,
+          headers: corsHeaders,
+        }
+      }
+  
+      const request = JSON.parse(event.body)
+      const id = request.id
+  
+      const contact = await this.db.Contact.findOne({
+        where: {
+          id: id,
+          brokerageId: user.brokerageId,
+        },
+      })
+  
+      if (contact === null) {
+        return {
+          statusCode: 404,
+          headers: corsHeaders,
+        }
+      }
+  
+      contact.firstName = request.firstName
+      contact.lastName = request.lastName
+      contact.title = request.title
+      contact.phoneExt = request.phoneExt
+      contact.phone = request.phone
+      contact.email = request.email
+      contact.level = request.level
+  
+      await contact.save()
+  
+      return {
+        statusCode: 204,
+        headers: corsHeaders,
+      }
+    } catch (err) {
       return {
         statusCode: 500,
         headers: corsHeaders,

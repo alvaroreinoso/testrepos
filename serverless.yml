@@ -554,6 +554,13 @@ functions:
           path: api/contact/{itemId}
           method: get
           cors: true
+      # addContact
+
+      # updateContact
+      - http:
+          path: api/contact
+          method: put
+          cors: true
     timeout: 20
   # addContact:
   #   handler: ./handlers/contact.addContact
@@ -561,13 +568,6 @@ functions:
   #     - http:
   #         path: api/contact/{itemId}
   #         method: post
-  #         cors: true
-  # editContact:
-  #   handler: ./handlers/contact.editContact
-  #   events:
-  #     - http:
-  #         path: api/contact
-  #         method: put
   #         cors: true
   # deleteContact:
   #   handler: ./handlers/contact.deleteContact

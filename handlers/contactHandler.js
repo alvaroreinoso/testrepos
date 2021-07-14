@@ -16,5 +16,11 @@ module.exports.contactHandler = async (event, context) => {
           return contacts.get(event)
       }
     }
+    case 'PUT': {
+      switch (event.resource) {
+        case '/api/contact':
+          return contacts.update(event)
+      }
+    }
   }
 }
