@@ -218,20 +218,42 @@ module.exports.getTruckTypeString = async (type) => {
 }
 
 module.exports.getVolumeStates = async (row) => {
-  const opportunityVolume = parseInt(row.potentialVolume, 10) - parseInt(row.ownedVolume, 10)
+  if (row.potentialVolume && row.ownedVolume === '') {
+    return {
+      currentVolume: 0,
+      opportunityVolume: 0,
+      potentialVolume: 0
+    }
 
-  if (opportunityVolume < 0) {
+  } else if (row.potentialVolume === '' && parseInt(row.ownedVolume) !== NaN ) {
+    return {
+      currentVolume: row.ownedVolume,
+      opportunityVolume: 0,
+      potentialVolume: row.ownedVolume
+    }
 
+  } else if (row.ownedVolume === '' && parseInt(row.potentialVolume) !== NaN) {
     return {
       currentVolume: 0,
       opportunityVolume: 0,
       potentialVolume: row.potentialVolume
     }
+
   } else {
+    const opportunityVolume = parseInt(row.potentialVolume, 10) - parseInt(row.ownedVolume, 10)
+
+    if (opportunityVolume < 0) {
     return {
-      currentVolume: row.ownedVolume,
-      opportunityVolume: opportunityVolume,
+      currentVolume: 0,
+      opportunityVolume: 0,
       potentialVolume: row.potentialVolume
+    }
+    } else {
+      return {
+        currentVolume: row.ownedVolume,
+        opportunityVolume: opportunityVolume,
+        potentialVolume: row.potentialVolume
+      }
     }
   }
 }
