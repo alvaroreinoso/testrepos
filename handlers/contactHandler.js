@@ -22,5 +22,12 @@ module.exports.contactHandler = async (event, context) => {
           return contacts.update(event)
       }
     }
+    case 'DELETE': {
+      switch (event.resource) {
+        case '/api/contact': {
+          return contacts.delete(event)
+        }
+      }
+    }
   }
 }

@@ -555,27 +555,24 @@ functions:
           method: get
           cors: true
       # addContact
-
+        # addContact:
+        #   handler: ./handlers/contact.addContact
+        #   events:
+        #     - http:
+        #         path: api/contact/{itemId}
+        #         method: post
+        #         cors: true
       # updateContact
       - http:
           path: api/contact
           method: put
           cors: true
+      # deleteContact
+      - http:
+          path: api/contact
+          method: delete
+          cors: true
     timeout: 20
-  # addContact:
-  #   handler: ./handlers/contact.addContact
-  #   events:
-  #     - http:
-  #         path: api/contact/{itemId}
-  #         method: post
-  #         cors: true
-  # deleteContact:
-  #   handler: ./handlers/contact.deleteContact
-  #   events:
-  #     - http:
-  #         path: api/contact
-  #         method: delete
-  #         cors: true
 
   # Onboarding
   createAccount:
