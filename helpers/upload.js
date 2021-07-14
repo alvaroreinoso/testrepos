@@ -259,9 +259,17 @@ module.exports.getVolumeStates = (row) => {
 }
 
 module.exports.getRate = (rate) => {
+
+  console.log(rate)
+  console.log('parsed int', parseInt(rate))
+
   if (parseInt(rate) == NaN) {
+
+    console.log('equaled Nan returning 0')
     return 0
   } else {
+
+    console.log('didnt equal nan', parseInt(rate))
     return parseInt(rate)
   }
 }
