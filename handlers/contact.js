@@ -3,7 +3,6 @@ const getCurrentUser = require('.././helpers/user')
 const {
   Customer,
   CustomerContact,
-  Ledger,
   LocationContact,
   Contact,
   LaneContact,
@@ -11,118 +10,6 @@ const {
   Lane,
 } = require('.././models')
 const corsHeaders = require('.././helpers/cors')
-
-module.exports.getContacts = async (event, context) => {
-  if (event.source === 'serverless-plugin-warmup') {
-    console.log('WarmUp - Lambda is warm!')
-    return 'Lambda is warm!'
-  }
-
-  const user = await getCurrentUser(event.headers.Authorization)
-
-  if (user.id == null) {
-    return {
-      statusCode: 401,
-      headers: corsHeaders,
-    }
-  }
-
-  try {
-    const type = event.queryStringParameters.contactType
-    const id = event.pathParameters.itemId
-
-    switch (type) {
-      case 'lane': {
-        const lane = await Lane.findOne({
-          where: {
-            id: id,
-            brokerageId: user.brokerageId,
-          },
-        })
-
-        if (lane === null) {
-          return {
-            statusCode: 404,
-            headers: corsHeaders,
-          }
-        }
-
-        const laneContacts = await lane.getContacts({
-          order: [['level', 'ASC']],
-        })
-
-        return {
-          body: JSON.stringify(laneContacts),
-          statusCode: 200,
-          headers: corsHeaders,
-        }
-      }
-      case 'location': {
-        const location = await Location.findOne({
-          where: {
-            id: id,
-            brokerageId: user.brokerageId,
-          },
-        })
-
-        if (location === null) {
-          return {
-            statusCode: 404,
-            headers: corsHeaders,
-          }
-        }
-
-        const locationContacts = await location.getContacts({
-          order: [['level', 'ASC']],
-        })
-
-        return {
-          body: JSON.stringify(locationContacts),
-          statusCode: 200,
-          headers: corsHeaders,
-        }
-      }
-      case 'customer': {
-        const customer = await Customer.findOne({
-          where: {
-            id: id,
-            brokerageId: user.brokerageId,
-          },
-        })
-
-        if (customer === null) {
-          return {
-            statusCode: 404,
-            headers: corsHeaders,
-          }
-        }
-
-        const customerContacts = await customer.getContacts({
-          order: [['level', 'ASC']],
-        })
-
-        return {
-          body: JSON.stringify(customerContacts),
-          statusCode: 200,
-          headers: corsHeaders,
-        }
-      }
-      default: {
-        return {
-          statusCode: 500,
-          headers: corsHeaders,
-        }
-      }
-    }
-  } catch (err) {
-    console.log(err)
-
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-    }
-  }
-}
 
 module.exports.addContact = async (event, context) => {
   if (event.source === 'serverless-plugin-warmup') {

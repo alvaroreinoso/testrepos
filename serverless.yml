@@ -520,35 +520,62 @@ functions:
           path: api/tag
           method: delete
           cors: true
+
+  # User - TO BASE CONTACTS OFF OF
+  # User:
+  #   handler: ./handlers/user.user
+  #   events:
+  #     # getUser
+  #     - http:
+  #         path: api/user
+  #         method: get
+  #         cors: true
+  #     # createProfile
+  #     - http:
+  #         path: api/user
+  #         method: post
+  #         cors: true
+  #     # updateUser
+  #     - http:
+  #         path: api/user/{userId}
+  #         method: put
+  #         cors: true
+  #     # deleteUser
+  #     - http:
+  #         path: api/user/{userId}
+  #         method: delete
+  #         cors: true
   # Contact
-  getContacts:
-    handler: ./handlers/contact.getContacts
+  Contact:
+    handler: ./handlers/contactHandler.contactHandler
     events:
+      # getContacts
       - http:
           path: api/contact/{itemId}
           method: get
           cors: true
-  addContact:
-    handler: ./handlers/contact.addContact
-    events:
-      - http:
-          path: api/contact/{itemId}
-          method: post
-          cors: true
-  editContact:
-    handler: ./handlers/contact.editContact
-    events:
-      - http:
-          path: api/contact
-          method: put
-          cors: true
-  deleteContact:
-    handler: ./handlers/contact.deleteContact
-    events:
-      - http:
-          path: api/contact
-          method: delete
-          cors: true
+    timeout: 20
+  # addContact:
+  #   handler: ./handlers/contact.addContact
+  #   events:
+  #     - http:
+  #         path: api/contact/{itemId}
+  #         method: post
+  #         cors: true
+  # editContact:
+  #   handler: ./handlers/contact.editContact
+  #   events:
+  #     - http:
+  #         path: api/contact
+  #         method: put
+  #         cors: true
+  # deleteContact:
+  #   handler: ./handlers/contact.deleteContact
+  #   events:
+  #     - http:
+  #         path: api/contact
+  #         method: delete
+  #         cors: true
 
   # Onboarding
   createAccount:
