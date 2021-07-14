@@ -10,7 +10,7 @@ const {
   Lane,
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
-const { getRoute, parseDestinationAddress, parseOriginAddress } = require('../helpers/mapbox')
+const { getRoute } = require('../helpers/mapbox')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -156,7 +156,7 @@ module.exports.reduce = async (event, context) => {
             truckType: row.body['Truck Type'],
             rate: row.body['Customer Rate'],
             potentialVolume: row.body['Total Volume/mo'],
-            ownedVolume: row.body['Owned Volume/mo'],
+            currentVolume: row.body['Owned Volume/mo'],
             originlnglat: origin.lnglat,
             destinationlnglat: destination.lnglat,
         }
