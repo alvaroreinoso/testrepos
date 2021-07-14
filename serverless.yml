@@ -520,31 +520,6 @@ functions:
           path: api/tag
           method: delete
           cors: true
-
-  # User - TO BASE CONTACTS OFF OF
-  # User:
-  #   handler: ./handlers/user.user
-  #   events:
-  #     # getUser
-  #     - http:
-  #         path: api/user
-  #         method: get
-  #         cors: true
-  #     # createProfile
-  #     - http:
-  #         path: api/user
-  #         method: post
-  #         cors: true
-  #     # updateUser
-  #     - http:
-  #         path: api/user/{userId}
-  #         method: put
-  #         cors: true
-  #     # deleteUser
-  #     - http:
-  #         path: api/user/{userId}
-  #         method: delete
-  #         cors: true
   # Contact
   Contact:
     handler: ./handlers/contactHandler.contactHandler
@@ -555,13 +530,10 @@ functions:
           method: get
           cors: true
       # addContact
-        # addContact:
-        #   handler: ./handlers/contact.addContact
-        #   events:
-        #     - http:
-        #         path: api/contact/{itemId}
-        #         method: post
-        #         cors: true
+      - http:
+          path: api/contact/{itemId}
+          method: post
+          cors: true
       # updateContact
       - http:
           path: api/contact
