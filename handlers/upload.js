@@ -30,12 +30,10 @@ module.exports.entry = async (event, context, callback) => {
 module.exports.mapTask = async (event, context, callback) => {
   const row = event
 
-  // const originAddress = `${row['Origin City']}, ${row['Origin State']}`
-  const originAddress = parseOriginAddress(row)
+  const originAddress = `${row['Origin City']}, ${row['Origin State']}`
   const originLngLat = await getLngLat(originAddress)
 
-  // const destinationAddress = `${row['Destination City']}, ${row['Destination State']}`
-  const destinationAddress = parseDestinationAddress(row)
+  const destinationAddress = `${row['Destination City']}, ${row['Destination State']}`
   const destinationLngLat = await getLngLat(destinationAddress)
 
   const resp = {
@@ -90,7 +88,6 @@ module.exports.reduce = async (event, context) => {
         address: row.origin.address,
         city: row.origin.city,
         state: row.origin.state,
-        zipcode: row.body['Origin Zip Code'],
         lnglat: row.origin.lnglat,
         brokerageId: row.body.brokerageId,
         })
@@ -124,7 +121,6 @@ module.exports.reduce = async (event, context) => {
             address: row.destination.address,
             city: row.destination.city,
             state: row.destination.state,
-            zipcode: row.body['Destination Zip Code'],
             lnglat: row.destination.lnglat,
             brokerageId: row.body.brokerageId,
         })
