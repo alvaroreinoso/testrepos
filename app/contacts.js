@@ -82,6 +82,25 @@ class Contacts {
             brokerageId: user.brokerageId,
           },
         })
+    
+        if (contact === null) {
+          return {
+            statusCode: 404,
+            headers: corsHeaders,
+          }
+        }
+
+        // Update contact because user could have changed values
+        contact.firstName = request.firstName
+        contact.lastName = request.lastName
+        contact.title = request.title
+        contact.phoneExt = request.phoneExt
+        contact.phone = request.phone
+        contact.email = request.email
+        contact.level = request.level
+    
+        await contact.save()
+
         // if (universal == 'true') {
         //   switch (type) {
         //     case 'customer': {
