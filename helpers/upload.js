@@ -220,7 +220,7 @@ module.exports.getTruckTypeString = (type) => {
 module.exports.getVolumeStates = (row) => {
   if (typeof row.potentialVolume && typeof row.ownedVolume !== 'number') {
 
-    console.log('interpreted both empty strings')
+    console.log('interpreted both NaN')
 
     return {
       currentVolume: 0,
@@ -228,18 +228,18 @@ module.exports.getVolumeStates = (row) => {
       potentialVolume: 0
     }
 
-  } else if (row.potentialVolume === '' && parseInt(row.ownedVolume) !== NaN ) {
+  } else if (typeof row.potentialVolume !== 'number' && typeof row.ownedVolume === 'number') {
 
-    console.log('interpreted potentialVolume empty string')
+    console.log('potentialVolume NaN')
     return {
       currentVolume: row.ownedVolume,
       opportunityVolume: 0,
       potentialVolume: row.ownedVolume
     }
 
-  } else if (row.ownedVolume === '' && parseInt(row.potentialVolume) !== NaN) {
+  } else if (typeof row.ownedVolume !== 'number' && typeof row.potentialVolume === 'number') {
 
-    console.log('interpreted ownedVolume empty string')
+    console.log('ownedVolume NaN')
     return {
       currentVolume: 0,
       opportunityVolume: 0,
@@ -268,11 +268,7 @@ module.exports.getVolumeStates = (row) => {
 }
 
 module.exports.getRate = (rate) => {
-  // if (isNaN(parseInt(rate))) {
-
   if (typeof rate !== 'number') {
-
-    console.log('type of rate works')
     return 0
 
   } else {
