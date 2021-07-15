@@ -8,11 +8,6 @@ class Contacts {
   };
   
   async get(event) {
-    if (event.source === 'serverless-plugin-warmup') {
-      console.log('WarmUp - Lambda is warm!')
-      return 'Lambda is warm!'
-    }
-  
     const user = await this.auth.currentUser(event.headers.Authorization)
   
     if (user.id == null) {
@@ -56,11 +51,6 @@ class Contacts {
   // as it needs to be refactored with new functionality
   // - Sam (July 14, 2021)
   async create(event) {
-    if (event.source === 'serverless-plugin-warmup') {
-      console.log('WarmUp - Lambda is warm!')
-      return 'Lambda is warm!'
-    }
-  
     try {
       const user = await this.auth.currentUser(event.headers.Authorization)
       if (user.id == null) {
@@ -266,11 +256,6 @@ class Contacts {
   }
 
   async update(event) {
-    if (event.source === 'serverless-plugin-warmup') {
-      console.log('WarmUp - Lambda is warm!')
-      return 'Lambda is warm!'
-    }
-  
     try {
       const user = await this.auth.currentUser(event.headers.Authorization)
   
@@ -322,11 +307,6 @@ class Contacts {
   }
 
   async delete(event) {
-    if (event.source === 'serverless-plugin-warmup') {
-      console.log('WarmUp - Lambda is warm!')
-      return 'Lambda is warm!'
-    }
-  
     try {
       const user = await this.auth.currentUser(event.headers.Authorization)
   
