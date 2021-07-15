@@ -735,6 +735,14 @@ functions:
           method: get
           path: api/upload/status
           cors: true
+  notify:
+    handler: ./handlers/upload.notify
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
+        - subnet-0969f48a6ba21d4da # private
+
 stepFunctions:
   stateMachines:
     AscendLoads:
@@ -794,6 +802,13 @@ stepFunctions:
                   Resource:
                     Fn::GetAtt: [secondMapTask, Arn]
                   End: true
+            Next: Notify
+          Notify:
+            Type: Task
+            InputPath: $
+            Resource:
+              Fn::GetAtt: [notify, Arn]
+            ResultPath: $
             End: true
             # ResultPath: $
             # End: true
