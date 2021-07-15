@@ -11,7 +11,7 @@ const {
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
 const { getRoute } = require('../helpers/mapbox')
-const { testNotify } = require('../ses/templates/emailUserInvite')
+const uploadNotification = require('../ses/templates/uploadNotification')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -193,22 +193,8 @@ module.exports.secondMapTask = async (event, context) => {
 
 module.exports.notify = async (event, context) => {
   const email = event[0].email
-  // const lanesCreated = event.length
-
-  await testNotify(email)
-
-  return event.length
+  await uploadNotification(email)
 }
-
-// notify function
-
-  // input: all saved lanes and user email
-
-  // could push new items from reduce step to array
-
-  // calculate lengths
-
-  // get email and notify user
 
 module.exports.pollFunction = async (event, context) => {
   const executionArn = event.queryStringParameters.executionArn

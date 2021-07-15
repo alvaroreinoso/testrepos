@@ -1,7 +1,7 @@
 const AWS_SES = require('../client')
 var AES = require('crypto-js/aes')
 
-module.exports.emailUserInvite = async (user, brokerageName) => {
+module.exports = async (user, brokerageName) => {
   const encrypted = AES.encrypt(user.email, 'Josh Lyles').toString()
   const encoded = encrypted.replace(/\+/g, 'aFaFa').replace(/\//g, 'bFbFb').replace(/=+$/, 'cFcFc')
   const env = process.env.NODE_ENV
@@ -45,7 +45,7 @@ module.exports.emailUserInvite = async (user, brokerageName) => {
   return await sendEmail(params)
 }
 
-module.exports.testNotify = async (email) => {
+module.exports.uploadNotification = async (email) => {
   const encrypted = AES.encrypt(email, 'Josh Lyles').toString()
   const encoded = encrypted.replace(/\+/g, 'aFaFa').replace(/\//g, 'bFbFb').replace(/=+$/, 'cFcFc')
   const env = process.env.NODE_ENV
@@ -63,16 +63,16 @@ module.exports.testNotify = async (email) => {
     },
     TemplateData: JSON.stringify(data),
   }
-  // switch (env) {
-  //   case 'staging':
-  //     params.Template = 'StagingInvite'
-  //     break
-  //   case 'production':
-  //     params.Template = 'ProdInvite'
-  //     break
-  //   default:
-  //     break
-  // }
+  switch (env) {
+    case 'staging':
+      params.Template = 'StagingUpload'
+      break
+    case 'production':
+      params.Template = 'ProdUpload'
+      break
+    default:
+      break
+  }
 
   function sendEmail(params) {
     return new Promise((r, x) => {
