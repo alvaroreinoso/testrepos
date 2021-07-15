@@ -9,3 +9,5 @@ Set up some kind of monitoring, for success and failure.
 Be able to return errors to execution logs.
 
 Slack notifications??
+
+Delete Garbage

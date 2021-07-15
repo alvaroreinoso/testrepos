@@ -195,6 +195,8 @@ module.exports.secondMapTask = async (event, context) => {
     return resp
 
   } catch (err) {
+
+    const email = event.email
     await uploadNotification.uploadFailed(email)
     return err
   }
