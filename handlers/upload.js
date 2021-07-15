@@ -164,6 +164,10 @@ module.exports.reduce = async (event, context) => {
 }
 
 module.exports.secondMapTask = async (event, context) => {
+
+  try {
+
+    throw new err ('hello error')
     const route = await getRoute(event.originlnglat, event.destinationlnglat)
     const truckType = getTruckTypeString(event.truckType)
     const volumeStates = getVolumeStates(event)
@@ -189,6 +193,11 @@ module.exports.secondMapTask = async (event, context) => {
     }
 
     return resp
+
+  } catch (err) {
+    await uploadNotification.uploadFailed(email)
+    return err
+  }
 }
 
 module.exports.notify = async (event, context) => {
