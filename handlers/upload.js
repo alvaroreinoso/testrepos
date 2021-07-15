@@ -193,7 +193,15 @@ module.exports.secondMapTask = async (event, context) => {
 
 module.exports.notify = async (event, context) => {
   const email = event[0].email
-  await uploadNotification(email)
+  try{
+
+    throw new err('yoooo')
+    await uploadNotification.uploadComplete(email)
+
+  } catch (err) {
+    await uploadNotification.uploadFailed(email)
+    return err
+  }
 }
 
 module.exports.pollFunction = async (event, context) => {
