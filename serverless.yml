@@ -521,34 +521,30 @@ functions:
           method: delete
           cors: true
   # Contact
-  getContacts:
-    handler: ./handlers/contact.getContacts
+  Contact:
+    handler: ./handlers/contactHandler.contactHandler
     events:
+      # getContacts
       - http:
           path: api/contact/{itemId}
           method: get
           cors: true
-  addContact:
-    handler: ./handlers/contact.addContact
-    events:
+      # addContact
       - http:
           path: api/contact/{itemId}
           method: post
           cors: true
-  editContact:
-    handler: ./handlers/contact.editContact
-    events:
+      # updateContact
       - http:
           path: api/contact
           method: put
           cors: true
-  deleteContact:
-    handler: ./handlers/contact.deleteContact
-    events:
+      # deleteContact
       - http:
           path: api/contact
           method: delete
           cors: true
+    timeout: 20
 
   # Onboarding
   createAccount:
