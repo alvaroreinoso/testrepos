@@ -810,5 +810,3 @@ stepFunctions:
               Fn::GetAtt: [notify, Arn]
             ResultPath: $
             End: true
-            # ResultPath: $
-            # End: true
