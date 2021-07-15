@@ -53,7 +53,8 @@ class Contacts {
   }
 
   // Commenting out universal contact functionality
-  // as it needs to be refactored with new functionality - Sam (July 14, 2021)
+  // as it needs to be refactored with new functionality
+  // - Sam (July 14, 2021)
   async create(event) {
     if (event.source === 'serverless-plugin-warmup') {
       console.log('WarmUp - Lambda is warm!')
