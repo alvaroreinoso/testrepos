@@ -57,22 +57,22 @@ module.exports.testNotify = async (email) => {
 
   const params = {
     Source: 'support@terralanes.com',
-    Template: 'TestInvite',
+    Template: 'StagingUpload',
     Destination: {
       ToAddresses: [email],
     },
     TemplateData: JSON.stringify(data),
   }
-  switch (env) {
-    case 'staging':
-      params.Template = 'StagingInvite'
-      break
-    case 'production':
-      params.Template = 'ProdInvite'
-      break
-    default:
-      break
-  }
+  // switch (env) {
+  //   case 'staging':
+  //     params.Template = 'StagingInvite'
+  //     break
+  //   case 'production':
+  //     params.Template = 'ProdInvite'
+  //     break
+  //   default:
+  //     break
+  // }
 
   function sendEmail(params) {
     return new Promise((r, x) => {
