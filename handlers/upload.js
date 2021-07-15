@@ -11,6 +11,7 @@ const {
 } = require('.././models')
 const getCurrentUser = require('.././helpers/user')
 const { getRoute } = require('../helpers/mapbox')
+const { testNotify } = require('../ses/templates/emailUserInvite')
 const db = require('../models/index')
 
 module.exports.entry = async (event, context, callback) => {
@@ -22,6 +23,7 @@ module.exports.entry = async (event, context, callback) => {
 
   await lanes.forEach(async (lane) => {
     lane.brokerageId = brokerageId
+    lane.email = user.email
   })
 
   return lanes
@@ -143,7 +145,9 @@ module.exports.reduce = async (event, context) => {
 
     if (newLane) {
         const laneTemplate = {
+            // could include customer name here
             lane: lane,
+            email: row.body.email,
             truckType: row.body['Truck Type'],
             rate: row.body['Customer Rate'],
             potentialVolume: row.body['Total Volume/mo'],
@@ -179,8 +183,32 @@ module.exports.secondMapTask = async (event, context) => {
       individualHooks: false
     })
 
-    return event.lane.id
+    const resp = {
+      laneId: event.lane.id,
+      email: event.email
+    }
+
+    return resp
 }
+
+module.exports.notify = async (event, context) => {
+  const email = event[0].email
+  // const lanesCreated = event.length
+
+  await testNotify(email)
+
+  return event.length
+}
+
+// notify function
+
+  // input: all saved lanes and user email
+
+  // could push new items from reduce step to array
+
+  // calculate lengths
+
+  // get email and notify user
 
 module.exports.pollFunction = async (event, context) => {
   const executionArn = event.queryStringParameters.executionArn
