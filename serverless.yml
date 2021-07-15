@@ -745,14 +745,14 @@ functions:
 
 stepFunctions:
   stateMachines:
-    AscendLoads:
+    CsvUpload:
       events:
         - http:
-            path: api/loads/ascend
+            path: api/upload
             method: POST
             cors: true
       definition:
-        Comment: 'Parse and Save Ascend Loads'
+        Comment: 'Parse and Save Lanes From Template'
         StartAt: Entry
         States:
           Entry:
