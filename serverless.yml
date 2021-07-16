@@ -774,11 +774,11 @@ stepFunctions:
                   TimeoutSeconds: 300
                   Resource:
                     Fn::GetAtt: [mapTask, Arn]
-                  Catch:
-                    - ErrorEquals:
-                        - States.ALL
-                      ResultPath: $
-                      Next: Notify
+                  # Catch:
+                  #   - ErrorEquals:
+                  #       - States.ALL
+                  #     ResultPath: $
+                  #     Next: Notify
                       # IntervalSeconds: 1
                       # MaxAttempts: 1
                       # BackoffRate: 1.5
