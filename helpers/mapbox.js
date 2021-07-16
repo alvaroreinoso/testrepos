@@ -40,6 +40,22 @@ module.exports.getRoute = async (cLngLat, lpLngLat) => {
     `https://api.mapbox.com/directions/v5/mapbox/driving/${cLng},${cLat};${lpLng},${lpLat}?geometries=polyline&overview=full&access_token=${process.env.REACT_APP_MAPBOX_KEY}`
   ).then((resp) => resp.json())
 
+  if (result.routes[0] === undefined) {
+    return null
+  }
+
+  const route = result.routes[0].geometry
+
+  return route
+}
+
+module.exports.getLaneRoute = async (cLngLat, lpLngLat) => {
+  // const [cLng, cLat] = cLngLat.split(',')
+  // const [lpLng, lpLat] = lpLngLat.split(',')
+  const result = await fetch(
+    `https://api.mapbox.com/directions/v5/mapbox/driving/${cLngLat};${lpLngLat}?geometries=polyline&overview=full&access_token=${process.env.REACT_APP_MAPBOX_KEY}`
+  ).then((resp) => resp.json())
+
   const route = result.routes[0].geometry
 
   return route

@@ -26,17 +26,18 @@ provider:
     REACT_APP_MAPBOX_KEY: ${param:REACT_APP_MAPBOX_KEY, env:REACT_APP_MAPBOX_KEY}
     NODE_ENV: ${param:NODE_ENV, env:NODE_ENV}
     ORIGIN_URL: ${param:ORIGIN_URL, env:ORIGIN_URL}
-    SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
-    SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
-    STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
-    STRIPE_API_KEY: ${param:STRIPE_API_KEY, env:STRIPE_API_KEY}
-    SLACK_SIGNUP_NOTIFICATION: ${param:SLACK_SIGNUP_NOTIFICATION, env:SLACK_SIGNUP_NOTIFICATION}
+    # SES_ACCESS_KEY_ID: ${param:SES_ACCESS_KEY_ID, env:SES_ACCESS_KEY_ID}
+    # SES_SECRET_ACCESS_KEY: ${param:SES_SECRET_ACCESS_KEY, env:SES_SECRET_ACCESS_KEY}
+    # STRIPE_WEBHOOK_SECRET: ${param:STRIPE_WEBHOOK_SECRET, env:STRIPE_WEBHOOK_SECRET}
+    # STRIPE_API_KEY: ${param:STRIPE_API_KEY, env:STRIPE_API_KEY}
+    # SLACK_SIGNUP_NOTIFICATION: ${param:SLACK_SIGNUP_NOTIFICATION, env:SLACK_SIGNUP_NOTIFICATION}
 
 plugins:
   - serverless-offline
   - serverless-plugin-warmup
   - serverless-dependson-plugin
   - serverless-prune-plugin
+  - serverless-step-functions
 
 custom:
   dependsOn:
@@ -700,3 +701,121 @@ functions:
           path: api/setup-intent
           method: post
           cors: true
+
+  # Upload
+  entry:
+    handler: ./handlers/upload.entry
+  mapTask:
+    handler: ./handlers/upload.mapTask
+    timeout: 300
+    memorySize: 1024
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
+        - subnet-0969f48a6ba21d4da # private
+  secondMapTask:
+    handler: ./handlers/upload.secondMapTask
+    timeout: 300
+    memorySize: 1024
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
+        - subnet-0969f48a6ba21d4da # private
+  reduce:
+    handler: ./handlers/upload.reduce
+    timeout: 500
+    memorySize: 10240
+  pollFunction:
+    handler: handler.pollFunction
+    role: arn:aws:iam::371499397780:role/stepFunctionAccess
+    events:
+      - http:
+          method: get
+          path: api/upload/status
+          cors: true
+  notify:
+    handler: ./handlers/upload.notify
+    vpc:
+      securityGroupIds:
+        - ${param:SECURITY_GROUP_ID, env:SECURITY_GROUP_ID}
+      subnetIds:
+        - subnet-0969f48a6ba21d4da # private
+
+stepFunctions:
+  stateMachines:
+    CsvUpload:
+      events:
+        - http:
+            path: api/upload
+            method: POST
+            cors: true
+      definition:
+        Comment: 'Parse and Save Lanes From Template'
+        StartAt: Entry
+        States:
+          Entry:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [entry, Arn]
+            ResultPath: $
+            Next: SecondState
+          SecondState:
+            Type: Map
+            ItemsPath: $
+            OutputPath: $
+            Next: Reduce
+            Iterator:
+              StartAt: FirstMapTask
+              States:
+                FirstMapTask:
+                  Type: Task
+                  TimeoutSeconds: 300
+                  Resource:
+                    Fn::GetAtt: [mapTask, Arn]
+                  # Catch:
+                  #   - ErrorEquals:
+                  #       - States.ALL
+                  #     ResultPath: $
+                  #     Next: Notify
+                      # IntervalSeconds: 1
+                      # MaxAttempts: 1
+                      # BackoffRate: 1.5
+                  # End: true
+                  # Notify:
+                  #   Type: Task
+                  #   InputPath: $
+                  #   Resource:
+                  #     Fn::GetAtt: [notify, Arn]
+                  #   ResultPath: $
+                  #   End: true
+                  End: true
+          Reduce:
+            Type: Task
+            InputPath: $
+            Resource:
+              Fn::GetAtt: [reduce, Arn]
+            ResultPath: $
+            Next: SecondMap
+          SecondMap:
+            Type: Map
+            ItemsPath: $
+            OutputPath: $
+            Iterator:
+              StartAt: SecondMapTask
+              States:
+                SecondMapTask:
+                  Type: Task
+                  TimeoutSeconds: 40
+                  Resource:
+                    Fn::GetAtt: [secondMapTask, Arn]
+                  End: true
+            Next: Notify
+          Notify:
+            Type: Task
+            InputPath: $
+            Resource:
+              Fn::GetAtt: [notify, Arn]
+            ResultPath: $
+            End: true
