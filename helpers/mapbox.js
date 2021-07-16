@@ -68,19 +68,3 @@ module.exports.parseLocation = (request) => {
     return `${request.city}, ${request.state}`
   }
 }
-
-module.exports.parseOriginAddress = (row) => {
-  if (row['Origin Street Address'] === '') {
-    return `${row['Origin City']}, ${row['Origin State']}`
-  } else {
-    return `${row['Origin Street Address']}, ${row['Origin City']}, ${row['Origin State']}`
-  }
-}
-
-module.exports.parseDestinationAddress = (row) => {
-  if (row['Destination Street Address'] === '') {
-    return `${row['Destination City']}, ${row['Destination State']}`
-  } else {
-    return `${row['Destination Street Address']}, ${row['Destination City']}, ${row['Destination State']}`
-  }
-}
