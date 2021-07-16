@@ -783,13 +783,13 @@ stepFunctions:
                       # MaxAttempts: 1
                       # BackoffRate: 1.5
                   # End: true
-                  Notify:
-                    Type: Task
-                    InputPath: $
-                    Resource:
-                      Fn::GetAtt: [notify, Arn]
-                    ResultPath: $
-                    End: true
+                  # Notify:
+                  #   Type: Task
+                  #   InputPath: $
+                  #   Resource:
+                  #     Fn::GetAtt: [notify, Arn]
+                  #   ResultPath: $
+                  #   End: true
                   End: true
           Reduce:
             Type: Task
