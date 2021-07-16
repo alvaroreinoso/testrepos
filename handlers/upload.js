@@ -193,12 +193,11 @@ module.exports.secondMapTask = async (event, context) => {
 
 module.exports.notify = async (event, context) => {
   const email = event[0].email
+  await uploadNotification.uploadComplete(email)
 
-    await uploadNotification.uploadComplete(email)
-
-    await uploadNotification.uploadFailed(email)
+    // await uploadNotification.uploadFailed(email)
     
-    return event
+  return event.length
 }
 
 module.exports.pollFunction = async (event, context) => {
