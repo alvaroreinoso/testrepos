@@ -782,7 +782,7 @@ stepFunctions:
                       # IntervalSeconds: 1
                       # MaxAttempts: 1
                       # BackoffRate: 1.5
-                  End: true
+                  # End: true
                   Notify:
                     Type: Task
                     InputPath: $
@@ -790,6 +790,7 @@ stepFunctions:
                       Fn::GetAtt: [notify, Arn]
                     ResultPath: $
                     End: true
+                  End: true
           Reduce:
             Type: Task
             InputPath: $
